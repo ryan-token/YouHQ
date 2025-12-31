@@ -21,12 +21,13 @@ struct ResidenceScreen: View {
 						vm.createResidenceButtonTapped()
 					}
 				}
-			}
-			ForEach(vm.residences) { residence in
-				Text(residence.street)
-			}
-			.onDelete { offsets in
-				vm.deleteResidences(at: offsets)
+			} else {
+				ForEach(vm.residences) { residence in
+					Text(residence.street)
+				}
+				.onDelete { offsets in
+					vm.deleteResidences(at: offsets)
+				}
 			}
 		}
 		.navigationTitle("Home")
