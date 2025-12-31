@@ -10,9 +10,13 @@ import SwiftUI
 
 @main
 struct YouHQApp: App {
+	@Dependency(\.context) var context
+
 	init() {
-		prepareDependencies {
-			try! $0.bootstrapDatabase()
+		if context == .live {
+			prepareDependencies {
+				try! $0.bootstrapDatabase()
+			}
 		}
 	}
 
