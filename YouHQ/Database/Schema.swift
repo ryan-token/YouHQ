@@ -12,7 +12,7 @@ import SQLiteData
 
 @Table struct Profile: Identifiable {
 	let id: UUID
-	var name: String = "My Life"
+	var name: String = "Default"
 	var createdAt: Date = Date()
 	var updatedAt: Date = Date()
 }

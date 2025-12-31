@@ -9,51 +9,39 @@ import SQLiteData
 import SwiftUI
 
 struct ResidenceScreen: View {
-	@Dependency(\.defaultDatabase) var database
-	@FetchAll var profiles: [Profile]
-	@FetchAll(animation: .default) var residences: [Residence]
-	@State private var isNewResidenceAlertPresented = false
-	@State private var newResidenceAddress = ""
+	@State private var vm = ViewModel()
 
     var body: some View {
 		List {
-			ForEach(residences) { residence in
+			if vm.$residences.isLoading, vm.residences.isEmpty {
+				ContentUnavailableView {
+					Label("No residences", systemImage: "house")
+				} description: {
+					Button("Add residence") {
+						vm.createResidenceButtonTapped()
+					}
+				}
+			}
+			ForEach(vm.residences) { residence in
 				Text(residence.street)
 			}
 			.onDelete { offsets in
-				withErrorReporting {
-					try database.write { db in
-						try Residence.find(offsets.map { residences[$0].id })
-							.delete()
-							.execute(db)
-					}
-				}
+				vm.deleteResidences(at: offsets)
 			}
 		}
 		.navigationTitle("Home")
-		.alert("Create new residence", isPresented: $isNewResidenceAlertPresented) {
-			TextField("Address", text: $newResidenceAddress)
-			Button("Save") {
-				guard let profileID = profiles.first?.id else { return }
-				withErrorReporting {
-					try database.write { db in
-						try Residence.insert {
-							Residence.Draft(
-								profileID: profileID,
-								street: newResidenceAddress
-							)
-						}
-						.execute(db)
-					}
-				}
-			}
+		.task { await vm.onAppear() }
+
+		.alert("Create new residence", isPresented: $vm.isNewResidenceAlertPresented) {
+			TextField("Address", text: $vm.newResidenceAddress)
+			Button("Save") { vm.createResidence() }
 			Button(role: .cancel) {}
 		}
 
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
 				Button {
-					isNewResidenceAlertPresented = true
+					vm.createResidenceButtonTapped()
 				} label: {
 					Label("Add Residence", systemImage: "plus")
 				}

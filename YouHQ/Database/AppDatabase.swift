@@ -42,7 +42,7 @@ func appDatabase() throws -> any DatabaseWriter {
 			"""
 			CREATE TABLE "profiles" (
 				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
-				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'My Life',
+				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'Default',
 				"createdAt" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT (datetime('now')),
 				"updatedAt" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT (datetime('now'))
 			) STRICT
@@ -399,7 +399,7 @@ func appDatabase() throws -> any DatabaseWriter {
 			AFTER DELETE ON "profiles"
 			WHEN (SELECT COUNT(*) FROM "profiles") = 0
 			BEGIN
-				INSERT INTO "profiles" ("name") VALUES ('My Life');
+				INSERT INTO "profiles" ("name") VALUES ('Default');
 			END
 			"""
 		)
@@ -516,7 +516,7 @@ extension DependencyValues {
 
 extension DatabaseWriter {
 	/// Ensures at least one profile exists in the database
-	/// Creates a default "My Life" profile if none exist
+	/// Creates a default "Default" profile if none exist
 	func ensureDefaultProfile() throws {
 		try write { db in
 			let profileCount = try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM profiles") ?? 0
@@ -532,7 +532,7 @@ extension DatabaseWriter {
 			try db.seed {
 				Profile(
 					id: uuid(),
-					name: "My Life",
+					name: "Default",
 					createdAt: now,
 					updatedAt: now
 				)
