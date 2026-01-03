@@ -122,6 +122,12 @@ extension ResidenceScreen {
 						.update { $0.notes = residenceNotes }
 						.execute(db)
 				}
+
+				// After the database updates, @FetchAll will refetch
+				// Update selectedResidence to point to the new instance
+				if let updatedResidence = residences.first(where: { $0.id == selectedResidence.id }) {
+					self.selectedResidence = updatedResidence
+				}
 			}
 		}
 	}
