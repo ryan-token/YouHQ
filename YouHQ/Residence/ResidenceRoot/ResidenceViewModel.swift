@@ -1,5 +1,5 @@
 //
-//  ResidencesViewModel.swift
+//  ResidenceViewModel.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 12/30/25.
@@ -20,6 +20,19 @@ extension ResidenceScreen {
 		@ObservationIgnored
 		@FetchAll(Residence.none, animation: .default) var residences // start empty, load via getResidences
 
+		@ObservationIgnored
+		@FetchAll(Utility.none, animation: .default) var utilities
+
+		var residenceNotes: String {
+			didSet {
+				updateResidenceNotes()
+			}
+		}
+
+		init() {
+			residenceNotes = ""
+		}
+
 		// MARK: EXAMPLE JOIN - for each profile, how many residences are there?
 		//		@Selection struct Row {
 		//			let profile: Profile
@@ -35,24 +48,33 @@ extension ResidenceScreen {
 		//		) var rows
 
 		var profileID: UUID?
-		var selectedResidence: Residence?
+		var selectedResidence: Residence? {
+			didSet {
+				Task { await loadResidenceData() }
+			}
+		}
 		var isShowingEditSheet = false
 		var residenceToEdit: Residence?
 
-		func onAppear() async {
+		func loadResidenceData() async {
 			setProfileID(to: "Default")
-			await getResidences()
+			await loadResidences()
 
 			if selectedResidence == nil && !residences.isEmpty {
 				setSelectedResidence(to: residences.first!)
 			}
+
+			await loadUtilities()
+			residenceNotes = selectedResidence?.notes ?? ""
 		}
 
 		func setProfileID(to profileName: String) {
 			profileID = profiles.first(where: { $0.name == profileName })?.id
 		}
 
-		private func getResidences() async {
+		// MARK: RESIDENCE FUNCTIONS
+
+		private func loadResidences() async {
 			guard let profileID else { return }
 			_ = await withErrorReporting {
 				try await $residences.load(
@@ -76,6 +98,31 @@ extension ResidenceScreen {
 		func showEditResidenceSheet() {
 			residenceToEdit = selectedResidence
 			isShowingEditSheet = true
+		}
+
+		// MARK: UTILITY FUNCTIONS
+
+		private func loadUtilities() async {
+			guard let selectedResidence else { return }
+			_ = await withErrorReporting {
+				try await $utilities.load(
+					Utility
+						.where { $0.residenceID.eq(selectedResidence.id) }
+						.order { $0.type },
+					animation: .default
+				)
+			}
+		}
+
+		private func updateResidenceNotes() {
+			guard let selectedResidence else { return }
+			withErrorReporting {
+				try database.write { db in
+					try Residence.find(selectedResidence.id)
+						.update { $0.notes = residenceNotes }
+						.execute(db)
+				}
+			}
 		}
 	}
 }

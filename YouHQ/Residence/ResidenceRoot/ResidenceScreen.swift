@@ -36,14 +36,23 @@ struct ResidenceScreen: View {
 					}
 				}
 
-				if let selectedResidence = vm.selectedResidence {
-					ResidenceInfo(residence: selectedResidence)
-						.id(vm.selectedResidence)
-				}
+				ResidenceInfo(vm: vm)
 			}
 		}
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
-		.task { await vm.onAppear() }
+		.task { await vm.loadResidenceData() }
+
+		.sheet(isPresented: $vm.isShowingEditSheet) {
+			if let profileID = vm.profileID {
+				ResidenceEdit(
+					residence: vm.residenceToEdit,
+					profileID: profileID,
+					selectedResidence: $vm.selectedResidence
+				)
+			}
+		}
+
+
 		.toolbar {
 			if vm.selectedResidence != nil {
 				ToolbarItem(placement: .topBarTrailing) {
@@ -61,18 +70,6 @@ struct ResidenceScreen: View {
 				} label: {
 					Label("Add Residence", systemImage: "plus")
 				}
-			}
-		}
-		.sheet(
-			isPresented: $vm.isShowingEditSheet,
-			onDismiss: { Task { await vm.onAppear() } }
-		) {
-			if let profileID = vm.profileID {
-				ResidenceEdit(
-					residence: vm.residenceToEdit,
-					profileID: profileID,
-					selectedResidence: $vm.selectedResidence
-				)
 			}
 		}
 	}

@@ -144,8 +144,10 @@ struct ResidenceEdit: View {
 							Label("Add Utility", systemImage: "plus")
 						}
 					} else {
-						Text("Add utilities after you've created this residence")
-							.foregroundStyle(.secondary)
+						Text(
+							"Add utilities after you've created this residence"
+						)
+						.foregroundStyle(.secondary)
 					}
 				}
 
