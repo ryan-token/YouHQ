@@ -39,6 +39,7 @@ struct ResidenceScreen: View {
 				ResidenceInfo(vm: vm)
 			}
 		}
+		.scrollDismissesKeyboard(.immediately)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.task { await vm.loadResidenceData() }
 
