@@ -71,6 +71,16 @@ import SQLiteData
 		return components.joined(separator: ", ")
 	}
 
+	var unitOrStreet: String? {
+		if unit.isNotEmpty {
+			return unit
+		} else if street.isNotEmpty {
+			return street
+		} else {
+			return nil
+		}
+	}
+
 	// MARK: - Helper Properties
 
 	private var streetLine: String? {

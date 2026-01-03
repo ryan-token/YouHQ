@@ -21,23 +21,23 @@ extension ResidenceScreen {
 		@FetchAll(Residence.none, animation: .default) var residences // start empty, load via getResidences
 
 		// MARK: EXAMPLE JOIN - for each profile, how many residences are there?
-//		@Selection struct Row {
-//			let profile: Profile
-//			let residenceCount: Int
-//		}
-//
-//		@ObservationIgnored
-//		@FetchAll(
-//			Profile
-//				.group(by: \.id)
-//				.leftJoin(Residence.all) { $0.id.eq($1.profileID) }
-//				.select { Row.Columns.init(profile: $0, residenceCount: $1.count()) }
-//		) var rows
+		//		@Selection struct Row {
+		//			let profile: Profile
+		//			let residenceCount: Int
+		//		}
+		//
+		//		@ObservationIgnored
+		//		@FetchAll(
+		//			Profile
+		//				.group(by: \.id)
+		//				.leftJoin(Residence.all) { $0.id.eq($1.profileID) }
+		//				.select { Row.Columns.init(profile: $0, residenceCount: $1.count()) }
+		//		) var rows
 
-		private var profileID: UUID?
+		var profileID: UUID?
 		var selectedResidence: Residence?
-		var isNewResidenceAlertPresented: Bool = false
-		var newResidenceAddress: String = ""
+		var isShowingEditSheet = false
+		var residenceToEdit: Residence?
 
 		func onAppear() async {
 			setProfileID(to: "Default")
@@ -68,34 +68,14 @@ extension ResidenceScreen {
 			selectedResidence = residence
 		}
 
-		func createResidenceButtonTapped() {
-			newResidenceAddress = ""
-			isNewResidenceAlertPresented = true
+		func showCreateResidenceSheet() {
+			residenceToEdit = nil
+			isShowingEditSheet = true
 		}
 
-		func createResidence() {
-			guard let profileID else { return }
-			withErrorReporting {
-				try database.write { db in
-					try Residence.insert {
-						Residence.Draft(
-							profileID: profileID,
-							street: newResidenceAddress
-						)
-					}
-					.execute(db)
-				}
-			}
-		}
-
-		func deleteResidences(at offsets: IndexSet) {
-			withErrorReporting {
-				try database.write { db in
-					try Residence.find(offsets.map { residences[$0].id })
-						.delete()
-						.execute(db)
-				}
-			}
+		func showEditResidenceSheet() {
+			residenceToEdit = selectedResidence
+			isShowingEditSheet = true
 		}
 	}
 }

@@ -14,13 +14,36 @@ struct ResidenceInfo: View {
 		_vm = State(wrappedValue: ViewModel(residence: residence))
 	}
 
-    var body: some View {
+	var body: some View {
 		Section("Info") {
 			if vm.residence.address != vm.residence.shortAddress {
 				HStack(alignment: .top) {
 					Text("Full address:")
 					SecondaryText(vm.residence.address)
 						.textSelection(.enabled)
+				}
+			}
+
+			if let moveInDate = vm.residence.moveInDate {
+				HStack {
+					Text("Move in date:")
+					SecondaryText(
+						moveInDate.formatted(date: .abbreviated, time: .omitted)
+					)
+					.textSelection(.enabled)
+				}
+			}
+
+			if let moveOutDate = vm.residence.moveOutDate {
+				HStack {
+					Text("Move out date:")
+					SecondaryText(
+						moveOutDate.formatted(
+							date: .abbreviated,
+							time: .omitted
+						)
+					)
+					.textSelection(.enabled)
 				}
 			}
 
@@ -45,7 +68,7 @@ struct ResidenceInfo: View {
 		.listRowSeparator(.hidden)
 		.padding(.leading, 12)
 		.task { await vm.onAppear() }
-    }
+	}
 }
 
 #Preview {

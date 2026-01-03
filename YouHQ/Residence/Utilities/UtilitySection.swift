@@ -14,7 +14,7 @@ struct UtilitySection: View {
 		_vm = State(wrappedValue: ViewModel(utility: utility))
 	}
 
-    var body: some View {
+	var body: some View {
 		Section(vm.utilityTitle) {
 			if vm.utility.provider.isNotEmpty {
 				HStack {
@@ -48,7 +48,7 @@ struct UtilitySection: View {
 			}
 			.frame(minHeight: 50)
 		}
-    }
+	}
 }
 
 #Preview {
