@@ -519,19 +519,14 @@ extension DatabaseWriter {
 	/// Creates a default "Default" profile if none exist
 	func ensureDefaultProfile() throws {
 		try write { db in
-			let profileCount = try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM profiles") ?? 0
-
-			guard profileCount == 0 else {
-				print("ℹ️ Profile already exists, skipping default profile creation")
-				return
-			}
+			let profiles = try Profile.fetchAll(db)
+			let defaultProfile = profiles.first(where: { $0.name == "Default" })
+			if defaultProfile != nil { return }
 
 			@Dependency(\.date.now) var now
-			@Dependency(\.uuid) var uuid
 
 			try db.seed {
-				Profile(
-					id: uuid(),
+				Profile.Draft(
 					name: "Default",
 					createdAt: now,
 					updatedAt: now
@@ -548,32 +543,16 @@ extension DatabaseWriter {
 extension DatabaseWriter {
 	func seed() throws {
 		try write { db in
-			// Check if already seeded
-			let profileCount = try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM profiles") ?? 0
-			guard profileCount == 0 else {
-				print("ℹ️ Database already seeded, skipping")
-				return
-			}
-
 			@Dependency(\.date.now) var now
-			@Dependency(\.uuid) var uuid
 
-			let profileID = uuid()
-			let residenceID = uuid()
+			let profiles = try Profile.fetchAll(db)
+			guard let defaultProfile = profiles.first(where: { $0.name == "Default" }) else { return }
 
 			try db.seed {
-				// Create sample profile
-				Profile(
-					id: profileID,
-					name: "Sample Life",
-					createdAt: now,
-					updatedAt: now
-				)
-
 				// Create sample residence
-				Residence(
-					id: residenceID,
-					profileID: profileID,
+				Residence.Draft(
+					id: UUID(1),
+					profileID: defaultProfile.id,
 					type: .apartment,
 					street: "123 Main St",
 					unit: "Apt 4B",
@@ -590,9 +569,8 @@ extension DatabaseWriter {
 				)
 
 				// Utilities for the residence
-				Utility(
-					id: uuid(),
-					residenceID: residenceID,
+				Utility.Draft(
+					residenceID: UUID(1),
 					type: .electric,
 					provider: "PG&E",
 					accountNumber: "1234567890",
@@ -600,9 +578,8 @@ extension DatabaseWriter {
 					notes: ""
 				)
 
-				Utility(
-					id: uuid(),
-					residenceID: residenceID,
+				Utility.Draft(
+					residenceID: UUID(1),
 					type: .internet,
 					provider: "Comcast",
 					accountNumber: "9876543210",
@@ -611,9 +588,8 @@ extension DatabaseWriter {
 				)
 
 				// Bank account
-				BankAccount(
-					id: uuid(),
-					profileID: profileID,
+				BankAccount.Draft(
+					profileID: defaultProfile.id,
 					bankName: "Chase",
 					accountType: .checking,
 					accountNumber: "1234",
@@ -623,9 +599,8 @@ extension DatabaseWriter {
 				)
 
 				// Investment account
-				InvestmentAccount(
-					id: uuid(),
-					profileID: profileID,
+				InvestmentAccount.Draft(
+					profileID: defaultProfile.id,
 					institution: "Vanguard",
 					accountType: .roth401k,
 					accountNumber: "5678",
@@ -634,9 +609,8 @@ extension DatabaseWriter {
 				)
 
 				// Health savings account
-				HealthSavingsAccount(
-					id: uuid(),
-					profileID: profileID,
+				HealthSavingsAccount.Draft(
+					profileID: defaultProfile.id,
 					accountType: .hsa,
 					institution: "Fidelity",
 					accountNumber: "9012",
@@ -645,9 +619,8 @@ extension DatabaseWriter {
 				)
 
 				// Job
-				Job(
-					id: uuid(),
-					profileID: profileID,
+				Job.Draft(
+					profileID: defaultProfile.id,
 					company: "Tech Corp",
 					title: "Senior iOS Developer",
 					startDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 3), // 3 years ago
@@ -659,9 +632,8 @@ extension DatabaseWriter {
 				)
 
 				// Service providers
-				ServiceProvider(
-					id: uuid(),
-					profileID: profileID,
+				ServiceProvider.Draft(
+					profileID: defaultProfile.id,
 					providerType: .internet,
 					name: "Comcast",
 					monthlyCost: 80,
@@ -669,9 +641,8 @@ extension DatabaseWriter {
 					notes: "Gigabit connection"
 				)
 
-				ServiceProvider(
-					id: uuid(),
-					profileID: profileID,
+				ServiceProvider.Draft(
+					profileID: defaultProfile.id,
 					providerType: .cell,
 					name: "Verizon",
 					monthlyCost: 75,
@@ -680,9 +651,8 @@ extension DatabaseWriter {
 				)
 
 				// Subscriptions
-				Subscription(
-					id: uuid(),
-					profileID: profileID,
+				Subscription.Draft(
+					profileID: defaultProfile.id,
 					name: "Netflix",
 					category: .streaming,
 					monthlyCost: 15.99,
@@ -692,9 +662,8 @@ extension DatabaseWriter {
 					notes: "Premium plan"
 				)
 
-				Subscription(
-					id: uuid(),
-					profileID: profileID,
+				Subscription.Draft(
+					profileID: defaultProfile.id,
 					name: "Spotify",
 					category: .music,
 					monthlyCost: 9.99,
@@ -705,9 +674,8 @@ extension DatabaseWriter {
 				)
 
 				// Insurance policy
-				InsurancePolicy(
-					id: uuid(),
-					profileID: profileID,
+				InsurancePolicy.Draft(
+					profileID: defaultProfile.id,
 					type: .health,
 					provider: "Blue Cross",
 					policyNumber: "BC123456789",
@@ -721,9 +689,8 @@ extension DatabaseWriter {
 				)
 
 				// Device
-				Device(
-					id: uuid(),
-					profileID: profileID,
+				Device.Draft(
+					profileID: defaultProfile.id,
 					type: .computer,
 					brand: "Apple",
 					model: "MacBook Pro 16\" M3 Max",

@@ -22,15 +22,23 @@ struct ResidenceScreen: View {
 					}
 				}
 			} else {
-				ForEach(vm.residences) { residence in
-					Text(residence.street)
+				if vm.residences.count > 1 {
+					Section {
+						Picker("Selected Home", selection: $vm.selectedResidence) {
+							ForEach(vm.residences) { residence in
+								Text(residence.street).tag(residence)
+							}
+						}
+						.pickerStyle(.menu)
+					}
 				}
-				.onDelete { offsets in
-					vm.deleteResidences(at: offsets)
+
+				if let selectedResidence = vm.selectedResidence {
+					ResidenceInfo(residence: selectedResidence)
 				}
 			}
 		}
-		.navigationTitle("Home")
+		.navigationTitle(vm.selectedResidence?.street ?? "Home")
 		.task { await vm.onAppear() }
 
 		.alert("Create new residence", isPresented: $vm.isNewResidenceAlertPresented) {

@@ -1,5 +1,5 @@
 //
-//  ResidenceViewModel.swift
+//  ResidencesViewModel.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 12/30/25.
@@ -35,12 +35,17 @@ extension ResidenceScreen {
 //		) var rows
 
 		private var profileID: UUID?
+		var selectedResidence: Residence?
 		var isNewResidenceAlertPresented: Bool = false
 		var newResidenceAddress: String = ""
 
 		func onAppear() async {
 			setProfileID(to: "Default")
 			await getResidences()
+
+			if selectedResidence == nil && !residences.isEmpty {
+				setSelectedResidence(to: residences.first!)
+			}
 		}
 
 		func setProfileID(to profileName: String) {
@@ -57,6 +62,10 @@ extension ResidenceScreen {
 					animation: .default
 				)
 			}
+		}
+
+		private func setSelectedResidence(to residence: Residence) {
+			selectedResidence = residence
 		}
 
 		func createResidenceButtonTapped() {

@@ -19,7 +19,7 @@ import SQLiteData
 
 // MARK: - Residence Section
 
-@Table struct Residence: Identifiable {
+@Table struct Residence: Identifiable, Hashable {
 	let id: UUID
 	let profileID: Profile.ID
 	var type: ResidenceType = .apartment
@@ -35,6 +35,74 @@ import SQLiteData
 	var monthlyCost: Double?
 	var costType: CostType = .rent
 	var notes: String = ""
+
+	// Full address with all available fields
+	var address: String {
+		var components: [String] = []
+
+		if let streetLine {
+			components.append(streetLine)
+		}
+
+		if let cityStateZip {
+			components.append(cityStateZip)
+		}
+
+		// Country (only if not USA)
+		if !country.isEmpty && country != "USA" {
+			components.append(country)
+		}
+
+		return components.joined(separator: ", ")
+	}
+
+	// Short address - street, unit, city, state
+	var shortAddress: String {
+		var components: [String] = []
+
+		if let streetLine {
+			components.append(streetLine)
+		}
+
+		if let cityState {
+			components.append(cityState)
+		}
+
+		return components.joined(separator: ", ")
+	}
+
+	// MARK: - Helper Properties
+
+	private var streetLine: String? {
+		guard !street.isEmpty else { return nil }
+
+		if !unit.isEmpty {
+			return "\(street), \(unit)"
+		} else {
+			return street
+		}
+	}
+
+	private var cityState: String? {
+		let parts = [city, state].filter { !$0.isEmpty }
+		return parts.isEmpty ? nil : parts.joined(separator: ", ")
+	}
+
+	private var cityStateZip: String? {
+		var parts: [String] = []
+
+		if !city.isEmpty {
+			parts.append(city)
+		}
+		if !state.isEmpty {
+			parts.append(state)
+		}
+		if !zipCode.isEmpty {
+			parts.append(zipCode)
+		}
+
+		return parts.isEmpty ? nil : parts.joined(separator: " ")
+	}
 }
 
 @Table struct Utility: Identifiable {
