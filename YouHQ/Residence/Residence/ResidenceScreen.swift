@@ -43,6 +43,10 @@ struct ResidenceScreen: View {
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.task { await vm.loadResidenceData() }
 
+		.onChange(of: vm.selectedResidence) {
+			Task { await vm.loadResidenceData() }
+		}
+
 		.sheet(isPresented: $vm.isShowingEditSheet) {
 			if let profileID = vm.profileID {
 				ResidenceEdit(

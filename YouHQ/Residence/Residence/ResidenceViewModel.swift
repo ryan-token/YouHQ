@@ -48,11 +48,7 @@ extension ResidenceScreen {
 		//		) var rows
 
 		var profileID: UUID?
-		var selectedResidence: Residence? {
-			didSet {
-				Task { await loadResidenceData() }
-			}
-		}
+		var selectedResidence: Residence?
 		var isShowingEditSheet = false
 		var residenceToEdit: Residence?
 
@@ -116,17 +112,12 @@ extension ResidenceScreen {
 
 		private func updateResidenceNotes() {
 			guard let selectedResidence else { return }
+			print("setting db notes to \(residenceNotes)")
 			withErrorReporting {
 				try database.write { db in
 					try Residence.find(selectedResidence.id)
 						.update { $0.notes = residenceNotes }
 						.execute(db)
-				}
-
-				// After the database updates, @FetchAll will refetch
-				// Update selectedResidence to point to the new instance
-				if let updatedResidence = residences.first(where: { $0.id == selectedResidence.id }) {
-					self.selectedResidence = updatedResidence
 				}
 			}
 		}

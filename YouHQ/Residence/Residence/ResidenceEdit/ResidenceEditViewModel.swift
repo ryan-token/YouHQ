@@ -18,7 +18,7 @@ extension ResidenceEdit {
 		@FetchAll(Utility.none) var utilities
 
 		let profileID: UUID
-		let residenceID: UUID?
+		var residenceID: UUID?
 		let isEditing: Bool
 		var isShowingDeleteAlert: Bool = false
 		var isShowingDeletionError: Bool = false

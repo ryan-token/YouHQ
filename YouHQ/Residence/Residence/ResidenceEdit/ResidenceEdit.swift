@@ -99,55 +99,55 @@ struct ResidenceEdit: View {
 				}
 
 				Section("Utilities") {
-					if vm.isEditing {
-						if vm.utilities.isEmpty {
-							Text("No utilities added yet")
-								.foregroundStyle(.secondary)
-						} else {
-							ForEach(vm.utilities) { utility in
-								NavigationLink {
-									Form {
-										UtilityEditRow(utility: utility)
-									}
-									.navigationTitle(utility.type.rawValue)
-									.navigationBarTitleDisplayMode(.inline)
-								} label: {
-									HStack {
-										Text(utility.type.rawValue)
-										Spacer()
-										if utility.provider.isNotEmpty {
-											Text(utility.provider)
-												.foregroundStyle(.secondary)
-										}
-									}
-								}
-							}
-							.onDelete { offsets in
-								for index in offsets {
-									vm.deleteUtility(vm.utilities[index])
-								}
-							}
-						}
-
-						Menu {
-							ForEach(UtilityType.allCases, id: \.self) { type in
-								Button(type.rawValue) {
-									if let residenceID = vm.residenceID {
-										vm.addUtility(
-											type: type,
-											residenceID: residenceID
-										)
-									}
-								}
-							}
-						} label: {
-							Label("Add Utility", systemImage: "plus")
-						}
+					if vm.utilities.isEmpty {
+						Text("No utilities added yet")
+							.foregroundStyle(.secondary)
 					} else {
-						Text(
-							"Add utilities after you've created this residence"
-						)
-						.foregroundStyle(.secondary)
+						ForEach(vm.utilities) { utility in
+							NavigationLink {
+								Form {
+									UtilityEditRow(utility: utility)
+								}
+								.navigationTitle(utility.type.rawValue)
+								.navigationBarTitleDisplayMode(.inline)
+							} label: {
+								HStack {
+									Text(utility.type.rawValue)
+									Spacer()
+									if utility.provider.isNotEmpty {
+										Text(utility.provider)
+											.foregroundStyle(.secondary)
+									}
+								}
+							}
+						}
+						.onDelete { offsets in
+							for index in offsets {
+								vm.deleteUtility(vm.utilities[index])
+							}
+						}
+					}
+
+					Menu {
+						ForEach(UtilityType.allCases, id: \.self) { type in
+							Button(type.rawValue) {
+								if let residenceID = vm.residenceID {
+									vm.addUtility(
+										type: type,
+										residenceID: residenceID
+									)
+								}
+							}
+						}
+						.task {
+							if let newResidence = vm.save() {
+								print("saving residence")
+								vm.residenceID = newResidence.id
+								await vm.loadUtilities(for: newResidence.id)
+							}
+						}
+					} label: {
+						Label("Add Utility", systemImage: "plus")
 					}
 				}
 
