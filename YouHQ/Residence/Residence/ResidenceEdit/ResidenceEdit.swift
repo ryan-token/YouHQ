@@ -161,6 +161,7 @@ struct ResidenceEdit: View {
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
 					Button("Cancel") {
+						_ = vm.delete()
 						dismiss()
 					}
 				}

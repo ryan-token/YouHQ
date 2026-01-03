@@ -23,12 +23,6 @@ extension ResidenceScreen {
 		@ObservationIgnored
 		@FetchAll(Utility.none, animation: .default) var utilities
 
-		var residenceNotes: String {
-			didSet {
-				updateResidenceNotes()
-			}
-		}
-
 		init() {
 			residenceNotes = ""
 		}
@@ -49,9 +43,18 @@ extension ResidenceScreen {
 
 		var profileID: UUID?
 		var selectedResidenceID: UUID?
-		var selectedResidence: Residence?
+		var selectedResidence: Residence? {
+			didSet {
+				selectedResidenceID = selectedResidence?.id
+			}
+		}
 		var isShowingEditSheet = false
 		var residenceToEdit: Residence?
+		var residenceNotes: String {
+			didSet {
+				updateResidenceNotes()
+			}
+		}
 
 		func loadResidenceData() async {
 			setProfileID(to: "Default")
@@ -86,7 +89,6 @@ extension ResidenceScreen {
 		}
 
 		private func setSelectedResidence(to residenceID: UUID) {
-			selectedResidenceID = residenceID
 			selectedResidence = residences.first(where: { $0.id == residenceID })
 		}
 
