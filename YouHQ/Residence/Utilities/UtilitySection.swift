@@ -49,7 +49,6 @@ struct UtilitySection: View {
 						.frame(minHeight: 50)
 				}
 			}
-			.task { await vm.loadUtilityData() }
 		} else {
 			Color.clear
 				.task { await vm.loadUtilityData() }
