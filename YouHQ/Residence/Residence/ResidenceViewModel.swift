@@ -48,6 +48,7 @@ extension ResidenceScreen {
 		//		) var rows
 
 		var profileID: UUID?
+		var selectedResidenceID: UUID?
 		var selectedResidence: Residence?
 		var isShowingEditSheet = false
 		var residenceToEdit: Residence?
@@ -56,8 +57,10 @@ extension ResidenceScreen {
 			setProfileID(to: "Default")
 			await loadResidences()
 
-			if selectedResidence == nil && !residences.isEmpty {
-				setSelectedResidence(to: residences.first!)
+			if let selectedResidenceID {
+				setSelectedResidence(to: selectedResidenceID)
+			} else if selectedResidenceID == nil && !residences.isEmpty {
+				setSelectedResidence(to: residences.first!.id)
 			}
 
 			await loadUtilities()
@@ -82,8 +85,9 @@ extension ResidenceScreen {
 			}
 		}
 
-		private func setSelectedResidence(to residence: Residence) {
-			selectedResidence = residence
+		private func setSelectedResidence(to residenceID: UUID) {
+			selectedResidenceID = residenceID
+			selectedResidence = residences.first(where: { $0.id == residenceID })
 		}
 
 		func showCreateResidenceSheet() {

@@ -26,10 +26,10 @@ struct ResidenceScreen: View {
 					Section {
 						Picker(
 							"Selected Home",
-							selection: $vm.selectedResidence
+							selection: $vm.selectedResidenceID
 						) {
 							ForEach(vm.residences) { residence in
-								Text(residence.unitOrStreet ?? residence.street).tag(residence)
+								Text(residence.unitOrStreet ?? residence.street).tag(residence.id)
 							}
 						}
 						.pickerStyle(.menu)
@@ -43,7 +43,7 @@ struct ResidenceScreen: View {
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.task { await vm.loadResidenceData() }
 
-		.onChange(of: vm.selectedResidence) {
+		.onChange(of: vm.selectedResidenceID) {
 			Task { await vm.loadResidenceData() }
 		}
 
