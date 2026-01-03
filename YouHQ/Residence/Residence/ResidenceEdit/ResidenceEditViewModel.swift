@@ -37,6 +37,10 @@ extension ResidenceEdit {
 		var costType: CostType
 		var notes: String
 
+		var isCreating: Bool {
+			!isEditing
+		}
+
 		var isValid: Bool {
 			street.trimmingCharacters(in: .whitespaces).isNotEmpty
 				&& city.trimmingCharacters(in: .whitespaces).isNotEmpty

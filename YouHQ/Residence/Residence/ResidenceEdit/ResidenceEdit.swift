@@ -160,9 +160,13 @@ struct ResidenceEdit: View {
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel") {
-						_ = vm.delete()
+					Button {
+						if vm.isCreating {
+							_ = vm.delete()
+						}
 						dismiss()
+					} label: {
+						Image(systemName: "xmark")
 					}
 				}
 
@@ -203,16 +207,19 @@ struct ResidenceEdit: View {
 				}
 
 				ToolbarItem(placement: .confirmationAction) {
-					Button("Save") {
+					Button {
 						if let saved = vm.save() {
 							selectedResidence = saved
 						}
 						dismiss()
+					} label: {
+						Image(systemName: "checkmark")
 					}
 					.disabled(!vm.isValid)
 				}
 			}
 		}
+		.interactiveDismissDisabled()
 	}
 }
 
