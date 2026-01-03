@@ -14,7 +14,10 @@ extension UtilitySection {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) var database
 
-		let utility: Utility
+		@ObservationIgnored
+		@FetchOne(Utility.none) var utility: Utility?
+
+		let utilityID: UUID
 		var utilityTitle: String
 		var utilityNotes: String {
 			didSet {
@@ -23,7 +26,7 @@ extension UtilitySection {
 		}
 
 		init(utility: Utility) {
-			self.utility = utility
+			self.utilityID = utility.id
 
 			switch utility.type {
 			case .electric:
@@ -45,20 +48,30 @@ extension UtilitySection {
 			self.utilityNotes = ""
 		}
 
-		func onAppear() {
-			setInitialNotes()
+		func loadUtilityData() async {
+			await loadUtility()
+			setInitialUtilityNotes()
 		}
 
 		// MARK: PRIVATE METHODS
 
-		private func setInitialNotes() {
-			utilityNotes = utility.notes
+		private func loadUtility() async {
+			_ = await withErrorReporting {
+				try await $utility.load(
+					Utility.where { $0.id.eq(utilityID) },
+					animation: .default
+				)
+			}
+		}
+
+		private func setInitialUtilityNotes() {
+			utilityNotes = utility?.notes ?? ""
 		}
 
 		private func updateUtilityNotes() {
 			withErrorReporting {
 				try database.write { db in
-					try Utility.find(utility.id)
+					try Utility.find(utilityID)
 						.update { $0.notes = utilityNotes }
 						.execute(db)
 				}

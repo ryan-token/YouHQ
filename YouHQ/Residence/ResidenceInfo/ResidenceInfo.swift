@@ -61,9 +61,6 @@ struct ResidenceInfo: View {
 				TextEditor(text: $vm.residenceNotes)
 					.frame(minHeight: 100)
 			}
-			.listSectionSpacing(.compact)
-			.listRowSeparator(.hidden)
-			.padding(.leading, 12)
 		}
 	}
 }

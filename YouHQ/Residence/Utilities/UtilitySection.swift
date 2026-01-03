@@ -15,38 +15,44 @@ struct UtilitySection: View {
 	}
 
 	var body: some View {
-		Section(vm.utilityTitle) {
-			if vm.utility.provider.isNotEmpty {
-				HStack {
-					Text("Provider:")
-					SecondaryText(vm.utility.provider)
+		if let utility = vm.utility {
+			Section(vm.utilityTitle) {
+				if utility.provider.isNotEmpty {
+					HStack {
+						Text("Provider:")
+						SecondaryText(utility.provider)
+							.textSelection(.enabled)
+					}
+				}
+
+				if utility.accountNumber.isNotEmpty {
+					HStack {
+						Text("Account number:")
+						SecondaryText(utility.accountNumber)
+							.textSelection(.enabled)
+					}
+				}
+
+				if let appxMonthlyCost = utility.approximateMonthlyCost {
+					HStack {
+						Text("Monthly cost:")
+						SecondaryText("\(appxMonthlyCost.asCost)")
+							.textSelection(.enabled)
+					}
+				}
+
+				VStack(alignment: .leading) {
+					Text("Notes:")
+
+					TextEditor(text: $vm.utilityNotes)
 						.textSelection(.enabled)
+						.frame(minHeight: 50)
 				}
 			}
-
-			if vm.utility.accountNumber.isNotEmpty {
-				HStack {
-					Text("Account number:")
-					SecondaryText(vm.utility.accountNumber)
-						.textSelection(.enabled)
-				}
-			}
-
-			if let appxMonthlyCost = vm.utility.approximateMonthlyCost {
-				HStack {
-					Text("Monthly cost:")
-					SecondaryText("\(appxMonthlyCost.asCost)")
-						.textSelection(.enabled)
-				}
-			}
-
-			VStack(alignment: .leading) {
-				Text("Notes:")
-
-				TextEditor(text: $vm.utilityNotes)
-					.textSelection(.enabled)
-			}
-			.frame(minHeight: 50)
+			.task { await vm.loadUtilityData() }
+		} else {
+			Color.clear
+				.task { await vm.loadUtilityData() }
 		}
 	}
 }

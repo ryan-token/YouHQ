@@ -29,7 +29,7 @@ struct ResidenceScreen: View {
 							selection: $vm.selectedResidence
 						) {
 							ForEach(vm.residences) { residence in
-								Text(residence.street).tag(residence)
+								Text(residence.unitOrStreet ?? residence.street).tag(residence)
 							}
 						}
 						.pickerStyle(.menu)
