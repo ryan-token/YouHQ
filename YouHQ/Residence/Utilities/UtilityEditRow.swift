@@ -17,10 +17,10 @@ struct UtilityEditRow: View {
 
 	var body: some View {
 		Section(vm.utility.type.rawValue) {
-			TextField("Provider (Optional)", text: $vm.provider)
-			TextField("Account Number (Optional)", text: $vm.accountNumber)
+			TextField("Provider", text: $vm.provider)
+			TextField("Account Number", text: $vm.accountNumber)
 			TextField(
-				"Monthly Cost (Optional)",
+				"Monthly Cost",
 				value: Binding(
 					get: { vm.approximateMonthlyCost ?? 0 },
 					set: { vm.approximateMonthlyCost = $0 }

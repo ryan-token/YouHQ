@@ -46,7 +46,7 @@ struct UtilitySection: View {
 
 					TextEditor(text: $vm.utilityNotes)
 						.textSelection(.enabled)
-						.frame(minHeight: 50)
+						.frame(minHeight: 40)
 				}
 			}
 		} else {

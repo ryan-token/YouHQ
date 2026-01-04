@@ -42,11 +42,9 @@ struct ResidenceScreen: View {
 		.scrollDismissesKeyboard(.immediately)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.task { await vm.loadResidenceData() }
-
 		.onChange(of: vm.selectedResidenceID) {
 			Task { await vm.loadResidenceData() }
 		}
-
 		.sheet(isPresented: $vm.isShowingEditSheet) {
 			if let profileID = vm.profileID {
 				ResidenceEdit(
@@ -56,27 +54,7 @@ struct ResidenceScreen: View {
 				)
 			}
 		}
-
-
-		.toolbar {
-			if vm.selectedResidence != nil {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button {
-						vm.showEditResidenceSheet()
-					} label: {
-						Label("Edit", systemImage: "pencil")
-					}
-				}
-			}
-
-			ToolbarItem(placement: .topBarTrailing) {
-				Button {
-					vm.showCreateResidenceSheet()
-				} label: {
-					Label("Add Residence", systemImage: "plus")
-				}
-			}
-		}
+		.toolbar { Toolbar(vm: vm) }
 	}
 }
 
