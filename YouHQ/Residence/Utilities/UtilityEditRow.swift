@@ -33,7 +33,7 @@ struct UtilityEditRow: View {
 				#endif
 			}
 
-			TextField("Notes (Optional)", text: $vm.notes, axis: .vertical)
+			TextField("Notes", text: $vm.notes, axis: .vertical)
 				.lineLimit(3...6)
 		}
 	}

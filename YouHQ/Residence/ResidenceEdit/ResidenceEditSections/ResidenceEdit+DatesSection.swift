@@ -14,7 +14,7 @@ extension ResidenceEdit {
 		var body: some View {
 			Section("Dates") {
 				DatePicker(
-					"Move In Date (Optional)",
+					"Move-In Date",
 					selection: Binding(
 						get: { vm.moveInDate ?? Date() },
 						set: { vm.moveInDate = $0 }
@@ -23,7 +23,7 @@ extension ResidenceEdit {
 				)
 
 				DatePicker(
-					"Move Out Date (Optional)",
+					"Move-Out Date",
 					selection: Binding(
 						get: { vm.moveOutDate ?? Date() },
 						set: { vm.moveOutDate = $0 }

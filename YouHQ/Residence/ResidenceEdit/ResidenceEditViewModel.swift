@@ -43,8 +43,6 @@ extension ResidenceEdit {
 
 		var isValid: Bool {
 			street.trimmingCharacters(in: .whitespaces).isNotEmpty
-				&& city.trimmingCharacters(in: .whitespaces).isNotEmpty
-				&& state.trimmingCharacters(in: .whitespaces).isNotEmpty
 		}
 
 		init(residence: Residence?, profileID: UUID) {

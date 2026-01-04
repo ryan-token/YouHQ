@@ -20,7 +20,7 @@ extension ResidenceEdit {
 							$0.textInputAutocapitalization(.words)
 						#endif
 					}
-				TextField("Unit/Apt (Optional)", text: $vm.unit)
+				TextField("Unit/Apt", text: $vm.unit)
 					.textContentType(.streetAddressLine2)
 					.apply {
 						#if !os(macOS)

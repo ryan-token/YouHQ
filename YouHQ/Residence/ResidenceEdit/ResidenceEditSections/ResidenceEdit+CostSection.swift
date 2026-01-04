@@ -21,7 +21,7 @@ extension ResidenceEdit {
 
 				if vm.costType != .owned {
 					TextField(
-						"Monthly Cost (Optional)",
+						"Monthly Cost",
 						value: Binding(
 							get: { vm.monthlyCost ?? 0 },
 							set: { vm.monthlyCost = $0 }
