@@ -36,7 +36,12 @@ struct ResidenceEdit: View {
 			.navigationTitle(vm.isEditing ? "Edit Residence" : "New Residence")
 			.apply {
 				#if !os(macOS)
-				$0.navigationBarTitleDisplayMode(.inline)
+					$0.navigationBarTitleDisplayMode(.inline)
+				#endif
+			}
+			.apply {
+				#if !os(visionOS)
+					$0.scrollDismissesKeyboard(.immediately)
 				#endif
 			}
 			.toolbar { Toolbar(vm: vm, selectedResidence: $selectedResidence) }
