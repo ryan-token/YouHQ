@@ -15,7 +15,7 @@ extension ResidenceScreen {
 		@Dependency(\.defaultDatabase) private var database
 
 		@ObservationIgnored
-		@FetchAll private var profiles: [Profile]
+		@FetchAll var profiles: [Profile]
 
 		@ObservationIgnored
 		@FetchAll(Residence.none, animation: .default) var residences // start empty, load via getResidences
@@ -56,8 +56,16 @@ extension ResidenceScreen {
 			}
 		}
 
+		// MARK: PROFILE FUNCTIONS
+
+		private func setProfile(to profileName: String) {
+			profileID = profiles.first(where: { $0.name == profileName })?.id
+		}
+
+		// MARK: RESIDENCE FUNCTIONS
+
 		func loadResidenceData() async {
-			setProfileID(to: "Default")
+			setProfile(to: "Default")
 			await loadResidences()
 
 			if let selectedResidenceID {
@@ -69,12 +77,6 @@ extension ResidenceScreen {
 			await loadUtilities()
 			residenceNotes = selectedResidence?.notes ?? ""
 		}
-
-		func setProfileID(to profileName: String) {
-			profileID = profiles.first(where: { $0.name == profileName })?.id
-		}
-
-		// MARK: RESIDENCE FUNCTIONS
 
 		private func loadResidences() async {
 			guard let profileID else { return }
@@ -93,6 +95,7 @@ extension ResidenceScreen {
 		}
 
 		func showCreateResidenceSheet() {
+			try? database.ensureDefaultProfile()
 			residenceToEdit = nil
 			isShowingEditSheet = true
 		}

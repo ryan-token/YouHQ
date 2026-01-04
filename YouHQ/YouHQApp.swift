@@ -6,6 +6,7 @@
 //
 
 import Dependencies
+import SQLiteData
 import SwiftUI
 
 @main
@@ -14,8 +15,24 @@ struct YouHQApp: App {
 
 	init() {
 		if context == .live {
-			prepareDependencies {
-				try! $0.bootstrapDatabase()
+			try! prepareDependencies {
+				try $0.bootstrapDatabase()
+				$0.defaultSyncEngine = try SyncEngine(
+					for: $0.defaultDatabase,
+					tables:
+						Profile.self,
+						Residence.self,
+						Utility.self,
+						Vehicle.self,
+						BankAccount.self,
+						InvestmentAccount.self,
+						HealthSavingsAccount.self,
+						ServiceProvider.self,
+						Device.self,
+						Subscription.self,
+						Job.self,
+						InsurancePolicy.self
+				)
 			}
 		}
 	}

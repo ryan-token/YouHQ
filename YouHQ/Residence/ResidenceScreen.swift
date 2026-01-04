@@ -45,6 +45,9 @@ struct ResidenceScreen: View {
 		.onChange(of: vm.selectedResidenceID) {
 			Task { await vm.loadResidenceData() }
 		}
+		.onChange(of: vm.profiles.count) {
+			Task { await vm.loadResidenceData() }
+		}
 		.sheet(isPresented: $vm.isShowingEditSheet) {
 			if let profileID = vm.profileID {
 				ResidenceEdit(

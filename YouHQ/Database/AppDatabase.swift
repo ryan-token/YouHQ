@@ -508,7 +508,6 @@ func appDatabase() throws -> any DatabaseWriter {
 extension DependencyValues {
 	mutating func bootstrapDatabase() throws {
 		defaultDatabase = try appDatabase()
-		try defaultDatabase.ensureDefaultProfile()
 	}
 }
 
@@ -545,6 +544,7 @@ extension DatabaseWriter {
 		try write { db in
 			@Dependency(\.date.now) var now
 
+			try ensureDefaultProfile()
 			let profiles = try Profile.fetchAll(db)
 			guard let defaultProfile = profiles.first(where: { $0.name == "Default" }) else { return }
 
