@@ -29,7 +29,8 @@ struct ResidenceScreen: View {
 							selection: $vm.selectedResidenceID
 						) {
 							ForEach(vm.residences) { residence in
-								Text(residence.unitOrStreet ?? residence.street).tag(residence.id)
+								Text(residence.unitOrStreet ?? residence.street)
+									.tag(residence.id)
 							}
 						}
 						.pickerStyle(.menu)
@@ -39,7 +40,6 @@ struct ResidenceScreen: View {
 				ResidenceInfo(vm: vm)
 			}
 		}
-		.scrollDismissesKeyboard(.immediately)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.task { await vm.loadResidenceData() }
 		.onChange(of: vm.selectedResidenceID) {
@@ -56,6 +56,11 @@ struct ResidenceScreen: View {
 					selectedResidence: $vm.selectedResidence
 				)
 			}
+		}
+		.apply {
+			#if !os(visionOS)
+				$0.scrollDismissesKeyboard(.immediately)
+			#endif
 		}
 		.toolbar { Toolbar(vm: vm) }
 	}
