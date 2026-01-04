@@ -15,22 +15,46 @@ extension ResidenceEdit {
 			Section("Address") {
 				TextField("Street Address", text: $vm.street)
 					.textContentType(.streetAddressLine1)
-					.textInputAutocapitalization(.words)
+					.apply {
+						#if !os(macOS)
+							$0.textInputAutocapitalization(.words)
+						#endif
+					}
 				TextField("Unit/Apt (Optional)", text: $vm.unit)
 					.textContentType(.streetAddressLine2)
-					.textInputAutocapitalization(.words)
+					.apply {
+						#if !os(macOS)
+							$0.textInputAutocapitalization(.words)
+						#endif
+					}
 				TextField("City", text: $vm.city)
 					.textContentType(.addressCity)
-					.textInputAutocapitalization(.words)
+					.apply {
+						#if !os(macOS)
+							$0.textInputAutocapitalization(.words)
+						#endif
+					}
 				TextField("State", text: $vm.state)
 					.textContentType(.addressState)
-					.textInputAutocapitalization(.characters)
+					.apply {
+						#if !os(macOS)
+							$0.textInputAutocapitalization(.characters)
+						#endif
+					}
 				TextField("ZIP Code", text: $vm.zipCode)
 					.textContentType(.postalCode)
-					.keyboardType(.numberPad)
+					.apply {
+						#if !os(macOS)
+							$0.keyboardType(.numberPad)
+						#endif
+					}
 				TextField("Country", text: $vm.country)
 					.textContentType(.countryName)
-					.textInputAutocapitalization(.words)
+					.apply {
+						#if !os(macOS)
+							$0.textInputAutocapitalization(.words)
+						#endif
+					}
 			}
 		}
 	}

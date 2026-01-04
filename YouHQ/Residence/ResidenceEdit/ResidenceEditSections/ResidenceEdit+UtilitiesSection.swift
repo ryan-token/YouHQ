@@ -23,7 +23,11 @@ extension ResidenceEdit {
 								UtilityEditRow(utility: utility)
 							}
 							.navigationTitle(utility.type.rawValue)
-							.navigationBarTitleDisplayMode(.inline)
+							.apply {
+								#if !os(macOS)
+									$0.navigationBarTitleDisplayMode(.inline)
+								#endif
+							}
 						} label: {
 							HStack {
 								Text(utility.type.rawValue)

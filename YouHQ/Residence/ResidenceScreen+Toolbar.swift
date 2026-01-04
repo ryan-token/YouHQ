@@ -13,7 +13,7 @@ extension ResidenceScreen {
 
 		var body: some ToolbarContent {
 			if vm.selectedResidence != nil {
-				ToolbarItem(placement: .topBarTrailing) {
+				ToolbarItem(placement: .primaryAction) {
 					Button {
 						vm.showEditResidenceSheet()
 					} label: {
@@ -22,7 +22,7 @@ extension ResidenceScreen {
 				}
 			}
 
-			ToolbarItem(placement: .topBarTrailing) {
+			ToolbarItem(placement: .primaryAction) {
 				Button {
 					vm.showCreateResidenceSheet()
 				} label: {

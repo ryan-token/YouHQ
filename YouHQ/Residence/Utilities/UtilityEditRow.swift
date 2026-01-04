@@ -27,7 +27,11 @@ struct UtilityEditRow: View {
 				),
 				format: .currency(code: "USD")
 			)
-			.keyboardType(.decimalPad)
+			.apply {
+				#if !os(macOS)
+					$0.keyboardType(.decimalPad)
+				#endif
+			}
 
 			TextField("Notes (Optional)", text: $vm.notes, axis: .vertical)
 				.lineLimit(3...6)

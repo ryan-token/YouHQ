@@ -34,7 +34,11 @@ struct ResidenceEdit: View {
 				NotesSection(vm: vm)
 			}
 			.navigationTitle(vm.isEditing ? "Edit Residence" : "New Residence")
-			.navigationBarTitleDisplayMode(.inline)
+			.apply {
+				#if !os(macOS)
+				$0.navigationBarTitleDisplayMode(.inline)
+				#endif
+			}
 			.toolbar { Toolbar(vm: vm, selectedResidence: $selectedResidence) }
 		}
 		.interactiveDismissDisabled()
