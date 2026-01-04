@@ -9,7 +9,6 @@ import SQLiteData
 import SwiftUI
 
 struct ResidenceEdit: View {
-	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
 	@Binding var selectedResidence: Residence?
 
@@ -159,64 +158,7 @@ struct ResidenceEdit: View {
 			.navigationTitle(vm.isEditing ? "Edit Residence" : "New Residence")
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button {
-						if vm.isCreating {
-							_ = vm.delete()
-						}
-						dismiss()
-					} label: {
-						Image(systemName: "xmark")
-					}
-				}
-
-				ToolbarItem(placement: .destructiveAction) {
-					Button {
-						vm.isShowingDeleteAlert = true
-					} label: {
-						Image(systemName: "trash")
-					}
-					.alert(
-						"Delete Residence?",
-						isPresented: $vm.isShowingDeleteAlert,
-						actions: {
-							Button(role: .destructive) {
-								if vm.delete() {
-									selectedResidence = nil
-									dismiss()
-								} else {
-									vm.isShowingDeletionError = true
-								}
-							} label: {
-								Text("Delete")
-							}
-							.alert(
-								"Error",
-								isPresented: $vm.isShowingDeletionError,
-								actions: {},
-								message: {
-									Text(
-										"Error deleting residence. Please try again later."
-									)
-								}
-							)
-
-							Button("Cancel", role: .cancel) {}
-						}
-					)
-				}
-
-				ToolbarItem(placement: .confirmationAction) {
-					Button {
-						if let saved = vm.save() {
-							selectedResidence = saved
-						}
-						dismiss()
-					} label: {
-						Image(systemName: "checkmark")
-					}
-					.disabled(!vm.isValid)
-				}
+				ResidenceEditToolbar(selectedResidence: $selectedResidence, vm: vm)
 			}
 		}
 		.interactiveDismissDisabled()
