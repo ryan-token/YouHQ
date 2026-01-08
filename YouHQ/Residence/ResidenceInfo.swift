@@ -12,44 +12,39 @@ struct ResidenceInfo: View {
 
 	var body: some View {
 		if let residence = vm.selectedResidence {
-			Section("Info") {
+			InfoSection(
+				"Info",
+				backgroundColor: $vm.backgroundColor,
+				onColorChange: { newColor in
+					vm.updateResidenceBackgroundColor(newColor)
+				}
+			) {
 				if residence.address != residence.shortAddress {
-					HStack(alignment: .top) {
-						Text("Full address:")
-						SecondaryText(residence.address)
-							.textSelection(.enabled)
-					}
+					InfoRow("Full address:", value: residence.address)
 				}
 
 				if let moveInDate = residence.moveInDate {
-					HStack {
-						Text("Move in date:")
-						SecondaryText(
-							moveInDate.formatted(date: .abbreviated, time: .omitted)
+					InfoRow(
+						"Move in date:",
+						value: moveInDate.formatted(
+							date: .abbreviated,
+							time: .omitted
 						)
-						.textSelection(.enabled)
-					}
+					)
 				}
 
 				if let moveOutDate = residence.moveOutDate {
-					HStack {
-						Text("Move out date:")
-						SecondaryText(
-							moveOutDate.formatted(
-								date: .abbreviated,
-								time: .omitted
-							)
+					InfoRow(
+						"Move out date:",
+						value: moveOutDate.formatted(
+							date: .abbreviated,
+							time: .omitted
 						)
-						.textSelection(.enabled)
-					}
+					)
 				}
 
 				if let monthlyCost = residence.monthlyCost {
-					HStack {
-						Text("Monthly cost:")
-						SecondaryText("\(monthlyCost.asCost)")
-							.textSelection(.enabled)
-					}
+					InfoRow("Monthly cost:", value: "\(monthlyCost.asCost)")
 				}
 			}
 
@@ -57,9 +52,16 @@ struct ResidenceInfo: View {
 				UtilitySection(for: utility)
 			}
 
-			Section("Notes") {
+			InfoSection(
+				"Notes",
+				backgroundColor: $vm.backgroundColor,
+				onColorChange: { newColor in
+					vm.updateResidenceBackgroundColor(newColor)
+				}
+			) {
 				TextEditor(text: $vm.residenceNotes)
 					.frame(minHeight: 100)
+					.foregroundStyle(.white)
 			}
 		}
 	}

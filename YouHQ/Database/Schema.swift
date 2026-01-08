@@ -34,6 +34,7 @@ import SQLiteData
 	var isCurrent: Bool = true
 	var monthlyCost: Double?
 	var costType: CostType = .rent
+	var backgroundColor: String = "indigo"
 	var notes: String = ""
 
 	// Full address with all available fields
@@ -122,6 +123,7 @@ import SQLiteData
 	var provider: String = ""
 	var accountNumber: String = ""
 	var approximateMonthlyCost: Double?
+	var backgroundColor: String = "blue"
 	var notes: String = ""
 }
 
@@ -137,6 +139,7 @@ import SQLiteData
 	var year: String?
 	var color: String?
 	var vin: String?
+	var backgroundColor: String = "teal"
 	var notes: String = ""
 }
 
@@ -150,6 +153,7 @@ import SQLiteData
 	var accountNumber: String = ""  // Last 4 digits
 	var routingNumber: String = ""
 	var isActive: Bool = true
+	var backgroundColor: String = "green"
 	var notes: String = ""
 }
 
@@ -160,6 +164,7 @@ import SQLiteData
 	var accountType: InvestmentAccountType = .brokerage
 	var accountNumber: String = ""  // Last 4 digits
 	var isActive: Bool = true
+	var backgroundColor: String = "mint"
 	var notes: String = ""
 }
 
@@ -170,6 +175,7 @@ import SQLiteData
 	var institution: String = ""
 	var accountNumber: String = ""
 	var isActive: Bool = true
+	var backgroundColor: String = "cyan"
 	var notes: String = ""
 }
 
@@ -182,6 +188,7 @@ import SQLiteData
 	var name: String = ""
 	var monthlyCost: Double?
 	var accountNumber: String = ""
+	var backgroundColor: String = "purple"
 	var notes: String = ""
 }
 
@@ -193,6 +200,7 @@ import SQLiteData
 	var model: String = ""
 	var serialNumber: String = ""
 	var purchaseDate: Date?
+	var backgroundColor: String = "pink"
 	var notes: String = ""
 }
 
@@ -205,6 +213,7 @@ import SQLiteData
 	var billingCycle: BillingCycle = .monthly
 	var renewalDate: Date?
 	var isActive: Bool = true
+	var backgroundColor: String = "orange"
 	var notes: String = ""
 }
 
@@ -220,6 +229,7 @@ import SQLiteData
 	var isCurrent: Bool = false
 	var salary: Double?
 	var employmentType: EmploymentType = .fullTime
+	var backgroundColor: String = "blue"
 	var notes: String = ""
 }
 
@@ -237,6 +247,7 @@ import SQLiteData
 	var startDate: Date?
 	var renewalDate: Date?
 	var isActive: Bool = true
+	var backgroundColor: String = "red"
 	var notes: String = ""
 }
 

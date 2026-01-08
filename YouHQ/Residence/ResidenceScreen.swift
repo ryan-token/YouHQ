@@ -13,33 +13,23 @@ struct ResidenceScreen: View {
 
 	var body: some View {
 		List {
-			if vm.$residences.isLoading, vm.residences.isEmpty {
-				ContentUnavailableView {
-					Label("No residences", systemImage: "house")
-				} description: {
-					Button("Add residence") {
-						vm.showCreateResidenceSheet()
-					}
-				}
-			} else {
-				if vm.residences.count > 1 {
-					Section {
-						Picker(
-							"Selected Home",
-							selection: $vm.selectedResidenceID
-						) {
-							ForEach(vm.residences) { residence in
-								Text(residence.unitOrStreet ?? residence.street)
-									.tag(residence.id)
-							}
+			Group {
+				if vm.$residences.isLoading, vm.residences.isEmpty {
+					ContentUnavailableView {
+						Label("No residences", systemImage: "house")
+					} description: {
+						Button("Add residence") {
+							vm.showCreateResidenceSheet()
 						}
-						.pickerStyle(.menu)
 					}
+				} else {
+					ResidenceInfo(vm: vm)
+						.listRowSeparator(.hidden)
 				}
-
-				ResidenceInfo(vm: vm)
 			}
+			.listRowBackground(Color.clear)
 		}
+		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.scrollContentBackground(.hidden)
 		.task { await vm.loadResidenceData() }
@@ -75,5 +65,6 @@ struct ResidenceScreen: View {
 
 	NavigationStack {
 		ResidenceScreen()
+			//.preferredColorScheme(.dark)
 	}
 }

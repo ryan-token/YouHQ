@@ -16,38 +16,26 @@ struct UtilitySection: View {
 
 	var body: some View {
 		if let utility = vm.utility {
-			Section(vm.utilityTitle) {
+			InfoSection(
+				vm.utilityTitle,
+				backgroundColor: $vm.backgroundColor,
+				onColorChange: { newColor in
+					vm.updateUtilityBackgroundColor(newColor)
+				}
+			) {
 				if utility.provider.isNotEmpty {
-					HStack {
-						Text("Provider:")
-						SecondaryText(utility.provider)
-							.textSelection(.enabled)
-					}
+					InfoRow("Provider:", value: utility.provider)
 				}
 
 				if utility.accountNumber.isNotEmpty {
-					HStack {
-						Text("Account number:")
-						SecondaryText(utility.accountNumber)
-							.textSelection(.enabled)
-					}
+					InfoRow("Account number:", value: utility.accountNumber)
 				}
 
 				if let appxMonthlyCost = utility.approximateMonthlyCost {
-					HStack {
-						Text("Monthly cost:")
-						SecondaryText("\(appxMonthlyCost.asCost)")
-							.textSelection(.enabled)
-					}
+					InfoRow("Monthly cost:", value: "\(appxMonthlyCost.asCost)")
 				}
 
-				VStack(alignment: .leading) {
-					Text("Notes:")
-
-					TextEditor(text: $vm.utilityNotes)
-						.textSelection(.enabled)
-						.frame(minHeight: 40)
-				}
+				UtilityNotes(notes: $vm.utilityNotes)
 			}
 		} else {
 			Color.clear

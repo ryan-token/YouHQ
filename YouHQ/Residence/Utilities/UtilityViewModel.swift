@@ -19,6 +19,7 @@ extension UtilitySection {
 
 		let utilityID: UUID
 		var utilityTitle: String
+		var backgroundColor: Color = .blue
 		var utilityNotes: String {
 			didSet {
 				updateUtilityNotes()
@@ -51,6 +52,7 @@ extension UtilitySection {
 		func loadUtilityData() async {
 			await loadUtility()
 			setInitialUtilityNotes()
+			setInitialBackgroundColor()
 		}
 
 		// MARK: PRIVATE METHODS
@@ -68,11 +70,27 @@ extension UtilitySection {
 			utilityNotes = utility?.notes ?? ""
 		}
 
+		private func setInitialBackgroundColor() {
+			backgroundColor = Color(
+				databaseValue: utility?.backgroundColor ?? "blue"
+			)
+		}
+
 		private func updateUtilityNotes() {
 			withErrorReporting {
 				try database.write { db in
 					try Utility.find(utilityID)
 						.update { $0.notes = utilityNotes }
+						.execute(db)
+				}
+			}
+		}
+
+		func updateUtilityBackgroundColor(_ color: Color) {
+			withErrorReporting {
+				try database.write { db in
+					try Utility.find(utilityID)
+						.update { $0.backgroundColor = color.databaseValue }
 						.execute(db)
 				}
 			}

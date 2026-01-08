@@ -12,6 +12,17 @@ extension ResidenceScreen {
 		@Bindable var vm: ResidenceScreen.ViewModel
 
 		var body: some ToolbarContent {
+			if vm.residences.count > 1 {
+				ToolbarTitleMenu {
+					Picker("Choose Home", selection: $vm.selectedResidenceID) {
+						ForEach(vm.residences) { residence in
+							Text(residence.unitOrStreet ?? residence.street)
+								.tag(residence.id)
+						}
+					}
+				}
+			}
+
 			if vm.selectedResidence != nil {
 				ToolbarItem(placement: .primaryAction) {
 					Button {

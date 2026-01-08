@@ -46,10 +46,15 @@ extension ResidenceScreen {
 		var selectedResidence: Residence? {
 			didSet {
 				selectedResidenceID = selectedResidence?.id
+				backgroundColor = Color(
+					databaseValue: selectedResidence?.backgroundColor
+						?? "indigo"
+				)
 			}
 		}
 		var isShowingEditSheet = false
 		var residenceToEdit: Residence?
+		var backgroundColor: Color = .indigo
 		var residenceNotes: String {
 			didSet {
 				updateResidenceNotes()
@@ -91,7 +96,8 @@ extension ResidenceScreen {
 		}
 
 		private func setSelectedResidence(to residenceID: UUID) {
-			selectedResidence = residences.first(where: { $0.id == residenceID })
+			selectedResidence = residences.first(where: { $0.id == residenceID }
+			)
 		}
 
 		func showCreateResidenceSheet() {
@@ -126,6 +132,17 @@ extension ResidenceScreen {
 				try database.write { db in
 					try Residence.find(selectedResidence.id)
 						.update { $0.notes = residenceNotes }
+						.execute(db)
+				}
+			}
+		}
+
+		func updateResidenceBackgroundColor(_ color: Color) {
+			guard let selectedResidence else { return }
+			withErrorReporting {
+				try database.write { db in
+					try Residence.find(selectedResidence.id)
+						.update { $0.backgroundColor = color.databaseValue }
 						.execute(db)
 				}
 			}

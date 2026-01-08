@@ -68,6 +68,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"isCurrent" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"monthlyCost" TEXT,
 				"costType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'rent',
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'indigo',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -84,13 +85,14 @@ func appDatabase() throws -> any DatabaseWriter {
 				"provider" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"approximateMonthlyCost" TEXT,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'blue',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
 		)
 		.execute(db)
 
-		// Utility table
+		// Vehicle table
 		try #sql(
 			"""
 			CREATE TABLE "vehicles" (
@@ -103,6 +105,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"year" TEXT,
 				"color" TEXT,
 				"vin" TEXT,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'teal',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -120,6 +123,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"routingNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'green',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -136,6 +140,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"accountType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'brokerage',
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'mint',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -152,6 +157,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"institution" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'cyan',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -168,6 +174,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"monthlyCost" TEXT,
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'purple',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -185,6 +192,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"model" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"serialNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"purchaseDate" TEXT,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'pink',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -203,6 +211,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"billingCycle" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'monthly',
 				"renewalDate" TEXT,
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'orange',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -222,6 +231,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"isCurrent" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
 				"salary" TEXT,
 				"employmentType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'fullTime',
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'blue',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -243,6 +253,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"startDate" TEXT,
 				"renewalDate" TEXT,
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'red',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -547,7 +558,9 @@ extension DatabaseWriter {
 			// Ensure default profile exists (inline to avoid reentrancy)
 			let existingProfiles = try Profile.fetchAll(db)
 			let defaultProfile: Profile
-			if let existing = existingProfiles.first(where: { $0.name == "Default" }) {
+			if let existing = existingProfiles.first(where: {
+				$0.name == "Default"
+			}) {
 				defaultProfile = existing
 			} else {
 				try db.seed {
@@ -558,7 +571,10 @@ extension DatabaseWriter {
 					)
 				}
 				let profiles = try Profile.fetchAll(db)
-				guard let profile = profiles.first(where: { $0.name == "Default" }) else { return }
+				guard
+					let profile = profiles.first(where: { $0.name == "Default" }
+					)
+				else { return }
 				defaultProfile = profile
 			}
 
@@ -574,7 +590,7 @@ extension DatabaseWriter {
 					state: "CA",
 					zipCode: "94102",
 					country: "USA",
-					moveInDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 2), // 2 years ago
+					moveInDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 2),  // 2 years ago
 					moveOutDate: nil,
 					isCurrent: true,
 					monthlyCost: 2500,
@@ -637,7 +653,7 @@ extension DatabaseWriter {
 					profileID: defaultProfile.id,
 					company: "Tech Corp",
 					title: "Senior iOS Developer",
-					startDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 3), // 3 years ago
+					startDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 3),  // 3 years ago
 					endDate: nil,
 					isCurrent: true,
 					salary: 150_000,
@@ -671,7 +687,7 @@ extension DatabaseWriter {
 					category: .streaming,
 					monthlyCost: 15.99,
 					billingCycle: .monthly,
-					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30), // 1 month from now
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30),  // 1 month from now
 					isActive: true,
 					notes: "Premium plan"
 				)
@@ -682,7 +698,7 @@ extension DatabaseWriter {
 					category: .music,
 					monthlyCost: 9.99,
 					billingCycle: .monthly,
-					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30), // 1 month from now
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30),  // 1 month from now
 					isActive: true,
 					notes: "Individual plan"
 				)
@@ -697,7 +713,7 @@ extension DatabaseWriter {
 					deductible: 2000,
 					coverageAmount: 1_000_000,
 					startDate: now,
-					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 365), // 1 year from now
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 365),  // 1 year from now
 					isActive: true,
 					notes: "PPO plan through employer"
 				)
@@ -709,7 +725,7 @@ extension DatabaseWriter {
 					brand: "Apple",
 					model: "MacBook Pro 16\" M3 Max",
 					serialNumber: "C02ABC123XYZ",
-					purchaseDate: now.addingTimeInterval(-60 * 60 * 24 * 365), // 1 year ago
+					purchaseDate: now.addingTimeInterval(-60 * 60 * 24 * 365),  // 1 year ago
 					notes: "Work computer"
 				)
 			}
