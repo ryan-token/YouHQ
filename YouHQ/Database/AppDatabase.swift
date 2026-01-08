@@ -544,9 +544,23 @@ extension DatabaseWriter {
 		try write { db in
 			@Dependency(\.date.now) var now
 
-			try ensureDefaultProfile()
-			let profiles = try Profile.fetchAll(db)
-			guard let defaultProfile = profiles.first(where: { $0.name == "Default" }) else { return }
+			// Ensure default profile exists (inline to avoid reentrancy)
+			let existingProfiles = try Profile.fetchAll(db)
+			let defaultProfile: Profile
+			if let existing = existingProfiles.first(where: { $0.name == "Default" }) {
+				defaultProfile = existing
+			} else {
+				try db.seed {
+					Profile.Draft(
+						name: "Default",
+						createdAt: now,
+						updatedAt: now
+					)
+				}
+				let profiles = try Profile.fetchAll(db)
+				guard let profile = profiles.first(where: { $0.name == "Default" }) else { return }
+				defaultProfile = profile
+			}
 
 			try db.seed {
 				// Create sample residence

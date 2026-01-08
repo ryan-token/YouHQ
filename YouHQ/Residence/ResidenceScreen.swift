@@ -41,6 +41,7 @@ struct ResidenceScreen: View {
 			}
 		}
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
+		.scrollContentBackground(.hidden)
 		.task { await vm.loadResidenceData() }
 		.onChange(of: vm.selectedResidenceID) {
 			Task { await vm.loadResidenceData() }
