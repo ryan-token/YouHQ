@@ -53,7 +53,21 @@ struct InfoSection<Content: View>: View {
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.padding()
-			.background(backgroundColor)
+			.background {
+				LinearGradient(
+					colors: [
+						backgroundColor,
+						backgroundColor.opacity(0.8),
+					],
+					startPoint: .topLeading,
+					endPoint: .bottomTrailing
+				)
+				.overlay {
+					GrainTexture()
+						.opacity(0.15)
+						.blendMode(.overlay)
+				}
+			}
 			.clipShape(.rect(cornerRadius: 16))
 			.shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
 		}

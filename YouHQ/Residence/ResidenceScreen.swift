@@ -32,7 +32,7 @@ struct ResidenceScreen: View {
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		.toolbar { Toolbar(vm: vm) }
-		.contentMargins(.top, 8)
+		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
 		.task { await vm.loadResidenceData() }
 		.onChange(of: vm.profiles.count) {

@@ -12,7 +12,7 @@ struct SectionTitle: ViewModifier {
 		content
 			.font(.title2)
 			.foregroundStyle(.white)
-			.opacity(0.8)
+			.opacity(0.9)
 			.padding(.bottom, 8)
 			.textSelection(.enabled)
 	}
