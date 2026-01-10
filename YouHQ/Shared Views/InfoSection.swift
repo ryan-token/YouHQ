@@ -48,7 +48,7 @@ struct InfoSection<Content: View>: View {
 				}
 			}
 
-			VStack(alignment: .leading, spacing: 8) {
+			VStack(alignment: .leading, spacing: 4) {
 				content
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)

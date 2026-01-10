@@ -69,6 +69,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"monthlyCost" TEXT,
 				"costType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'rent',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'indigo',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -86,6 +87,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"approximateMonthlyCost" TEXT,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'blue',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -106,6 +108,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"color" TEXT,
 				"vin" TEXT,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'teal',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -124,6 +127,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"routingNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'green',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -141,6 +145,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'mint',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -158,6 +163,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'cyan',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -175,6 +181,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"monthlyCost" TEXT,
 				"accountNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'purple',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -193,6 +200,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"serialNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"purchaseDate" TEXT,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'pink',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -212,6 +220,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"renewalDate" TEXT,
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'orange',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -232,6 +241,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"salary" TEXT,
 				"employmentType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'fullTime',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'blue',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""
@@ -254,6 +264,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"renewalDate" TEXT,
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'red',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
 			) STRICT
 			"""

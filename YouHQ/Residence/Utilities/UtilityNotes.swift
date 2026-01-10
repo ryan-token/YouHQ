@@ -11,7 +11,7 @@ struct UtilityNotes: View {
 	@Binding var notes: String
 
 	var body: some View {
-		VStack(alignment: .leading) {
+		VStack(alignment: .leading, spacing: 0) {
 			Text("Notes:")
 				.fontWeight(.semibold)
 

@@ -31,6 +31,7 @@ struct ResidenceEdit: View {
 				DatesSection(vm: vm)
 				CostSection(vm: vm)
 				UtilitiesSection(vm: vm)
+				URLSection(vm: vm)
 				NotesSection(vm: vm)
 			}
 			.navigationTitle(vm.isEditing ? "Edit Residence" : "New Residence")

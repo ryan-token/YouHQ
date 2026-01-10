@@ -38,6 +38,8 @@ struct UtilityEditRow: View {
 				#endif
 			}
 
+			URLTextField(text: $vm.url)
+
 			TextField("Notes", text: $vm.notes, axis: .vertical)
 				.lineLimit(3...6)
 		}
@@ -61,6 +63,9 @@ extension UtilityEditRow {
 		var approximateMonthlyCost: Double? {
 			didSet { saveChanges() }
 		}
+		var url: String {
+			didSet { saveChanges() }
+		}
 		var notes: String {
 			didSet { saveChanges() }
 		}
@@ -70,6 +75,7 @@ extension UtilityEditRow {
 			provider = utility.provider
 			accountNumber = utility.accountNumber
 			approximateMonthlyCost = utility.approximateMonthlyCost
+			url = utility.url
 			notes = utility.notes
 		}
 
@@ -81,6 +87,7 @@ extension UtilityEditRow {
 							$0.provider = provider
 							$0.accountNumber = accountNumber
 							$0.approximateMonthlyCost = approximateMonthlyCost
+							$0.url = url
 							$0.notes = notes
 						}
 						.execute(db)

@@ -35,6 +35,7 @@ extension ResidenceEdit {
 		var isCurrent: Bool
 		var monthlyCost: Double?
 		var costType: CostType
+		var url: String
 		var notes: String
 
 		var isCreating: Bool {
@@ -64,6 +65,7 @@ extension ResidenceEdit {
 				isCurrent = residence.isCurrent
 				monthlyCost = residence.monthlyCost
 				costType = residence.costType
+				url = residence.url
 				notes = residence.notes
 			} else {
 				// creating a new residence
@@ -81,6 +83,7 @@ extension ResidenceEdit {
 				isCurrent = true
 				monthlyCost = nil
 				costType = .rent
+				url = ""
 				notes = ""
 			}
 
@@ -144,6 +147,7 @@ extension ResidenceEdit {
 								$0.isCurrent = isCurrent
 								$0.monthlyCost = monthlyCost
 								$0.costType = costType
+								$0.url = url
 								$0.notes = notes
 							}
 							.execute(db)
@@ -168,6 +172,7 @@ extension ResidenceEdit {
 								isCurrent: isCurrent,
 								monthlyCost: monthlyCost,
 								costType: costType,
+								url: url,
 								notes: notes
 							)
 						}

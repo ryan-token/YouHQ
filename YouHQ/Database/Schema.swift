@@ -35,6 +35,7 @@ import SQLiteData
 	var monthlyCost: Double?
 	var costType: CostType = .rent
 	var backgroundColor: String = "indigo"
+	var url: String = ""
 	var notes: String = ""
 
 	// Full address with all available fields
@@ -124,6 +125,7 @@ import SQLiteData
 	var accountNumber: String = ""
 	var approximateMonthlyCost: Double?
 	var backgroundColor: String = "blue"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -140,6 +142,7 @@ import SQLiteData
 	var color: String?
 	var vin: String?
 	var backgroundColor: String = "teal"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -154,6 +157,7 @@ import SQLiteData
 	var routingNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "green"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -165,6 +169,7 @@ import SQLiteData
 	var accountNumber: String = ""  // Last 4 digits
 	var isActive: Bool = true
 	var backgroundColor: String = "mint"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -176,6 +181,7 @@ import SQLiteData
 	var accountNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "cyan"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -189,6 +195,7 @@ import SQLiteData
 	var monthlyCost: Double?
 	var accountNumber: String = ""
 	var backgroundColor: String = "purple"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -201,6 +208,7 @@ import SQLiteData
 	var serialNumber: String = ""
 	var purchaseDate: Date?
 	var backgroundColor: String = "pink"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -214,6 +222,7 @@ import SQLiteData
 	var renewalDate: Date?
 	var isActive: Bool = true
 	var backgroundColor: String = "orange"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -230,6 +239,7 @@ import SQLiteData
 	var salary: Double?
 	var employmentType: EmploymentType = .fullTime
 	var backgroundColor: String = "blue"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -248,6 +258,7 @@ import SQLiteData
 	var renewalDate: Date?
 	var isActive: Bool = true
 	var backgroundColor: String = "red"
+	var url: String = ""
 	var notes: String = ""
 }
 

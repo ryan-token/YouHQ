@@ -25,9 +25,7 @@ struct UtilitySection: View {
 			) {
 				if utility.provider.isNotEmpty {
 					Text(utility.provider)
-						.font(.title2)
-						.foregroundStyle(.white)
-						.opacity(0.8)
+						.sectionTitle()
 				}
 
 				if utility.accountNumber.isNotEmpty {
@@ -36,6 +34,10 @@ struct UtilitySection: View {
 
 				if let appxMonthlyCost = utility.approximateMonthlyCost {
 					InfoRow("Monthly cost:", value: "\(appxMonthlyCost.asCost)")
+				}
+
+				if utility.url.isNotEmpty {
+					LinkRow("Website:", url: utility.url)
 				}
 
 				UtilityNotes(notes: $vm.utilityNotes)

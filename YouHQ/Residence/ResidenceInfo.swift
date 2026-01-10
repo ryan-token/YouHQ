@@ -19,9 +19,8 @@ struct ResidenceInfo: View {
 					vm.updateResidenceBackgroundColor(newColor)
 				}
 			) {
-				if residence.address != residence.shortAddress {
-					InfoRow("Address:", value: residence.address)
-				}
+				Text(residence.address)
+					.sectionTitle()
 
 				if let moveInDate = residence.moveInDate {
 					InfoRow(
@@ -45,6 +44,10 @@ struct ResidenceInfo: View {
 
 				if let monthlyCost = residence.monthlyCost {
 					InfoRow("Monthly cost:", value: "\(monthlyCost.asCost)")
+				}
+
+				if residence.url.isNotEmpty {
+					LinkRow("Website:", url: residence.url)
 				}
 			}
 
