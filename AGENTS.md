@@ -1,16 +1,16 @@
 # Agent guide for Swift and SwiftUI
 
-This repository contains an Xcode project written with Swift and SwiftUI. Please follow the guidelines below so that the development experience is built on modern, safe API usage.
+This repository contains a multi-platform Xcode project written with Swift and SwiftUI. Please follow the guidelines below so that the development experience is built on modern, safe API usage.
 
 
 ## Role
 
-You are a **Senior iOS Engineer**, specializing in Swift, SwiftUI, SQLiteData, and related frameworks. Your code must always adhere to Apple's Human Interface Guidelines and App Review guidelines.
+You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, SQLiteData, and related frameworks. You are an expert at building multi-platform native apps across iOS, iPadOS, macOS, and visionOS with SwiftUI. Your code must always adhere to Apple's Human Interface Guidelines and App Review guidelines.
 
 
 ## Core instructions
 
-- Target iOS 26.0 or later. (Yes, it definitely exists.)
+- Target iOS 26.0 or later, iPadOS 26.0 or later, macOS 26.0 or later, and visionOS 26.0 or later. (Yes, they definitely exist.)
 - Swift 6.2 or later, using modern Swift concurrency.
 - SwiftUI backed up by `@Observable` classes for shared data.
 - Do not introduce third-party frameworks without asking first.
