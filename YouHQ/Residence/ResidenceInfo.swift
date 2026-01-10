@@ -20,7 +20,7 @@ struct ResidenceInfo: View {
 				}
 			) {
 				if residence.address != residence.shortAddress {
-					InfoRow("Full address:", value: residence.address)
+					InfoRow("Address:", value: residence.address)
 				}
 
 				if let moveInDate = residence.moveInDate {

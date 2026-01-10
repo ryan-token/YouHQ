@@ -42,16 +42,26 @@ extension ResidenceScreen {
 		//		) var rows
 
 		var profileID: UUID?
-		var selectedResidenceID: UUID?
+
+		@ObservationIgnored
+		@AppStorage("selectedResidenceID") var selectedResidenceID: String? {
+			didSet {
+				if selectedResidenceID != oldValue {
+					Task { await loadResidenceData() }
+				}
+			}
+		}
+
 		var selectedResidence: Residence? {
 			didSet {
-				selectedResidenceID = selectedResidence?.id
+				selectedResidenceID = selectedResidence?.id.uuidString
 				backgroundColor = Color(
 					databaseValue: selectedResidence?.backgroundColor
 						?? "indigo"
 				)
 			}
 		}
+
 		var isShowingEditSheet = false
 		var residenceToEdit: Residence?
 		var backgroundColor: Color = .indigo
@@ -73,8 +83,8 @@ extension ResidenceScreen {
 			setProfile(to: "Default")
 			await loadResidences()
 
-			if let selectedResidenceID {
-				setSelectedResidence(to: selectedResidenceID)
+			if let selectedResidenceID, let selectedResidenceUUID = UUID(uuidString: selectedResidenceID) {
+				setSelectedResidence(to: selectedResidenceUUID)
 			} else if selectedResidenceID == nil && !residences.isEmpty {
 				setSelectedResidence(to: residences.first!.id)
 			}

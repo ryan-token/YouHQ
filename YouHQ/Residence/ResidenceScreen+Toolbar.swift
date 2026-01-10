@@ -17,7 +17,7 @@ extension ResidenceScreen {
 					Picker("Choose Home", selection: $vm.selectedResidenceID) {
 						ForEach(vm.residences) { residence in
 							Text(residence.unitOrStreet ?? residence.street)
-								.tag(residence.id)
+								.tag(residence.id.uuidString)
 						}
 					}
 				}

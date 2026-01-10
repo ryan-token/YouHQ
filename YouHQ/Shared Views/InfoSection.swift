@@ -51,6 +51,7 @@ struct InfoSection<Content: View>: View {
 			VStack(alignment: .leading, spacing: 8) {
 				content
 			}
+			.frame(maxWidth: .infinity, alignment: .leading)
 			.padding()
 			.background(backgroundColor)
 			.clipShape(.rect(cornerRadius: 16))
@@ -73,7 +74,7 @@ struct InfoRow: View {
 	var body: some View {
 		HStack(alignment: .top) {
 			Text(label)
-				.fontWeight(.semibold)
+				.font(.headline)
 			Text(value)
 				.if(isSelectable) {
 					$0.textSelection(.enabled)

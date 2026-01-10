@@ -24,7 +24,10 @@ struct UtilitySection: View {
 				}
 			) {
 				if utility.provider.isNotEmpty {
-					InfoRow("Provider:", value: utility.provider)
+					Text(utility.provider)
+						.font(.title2)
+						.foregroundStyle(.white)
+						.opacity(0.8)
 				}
 
 				if utility.accountNumber.isNotEmpty {

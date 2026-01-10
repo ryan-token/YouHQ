@@ -31,11 +31,10 @@ struct ResidenceScreen: View {
 		}
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
+		.toolbar { Toolbar(vm: vm) }
+		.contentMargins(.top, 8)
 		.scrollContentBackground(.hidden)
 		.task { await vm.loadResidenceData() }
-		.onChange(of: vm.selectedResidenceID) {
-			Task { await vm.loadResidenceData() }
-		}
 		.onChange(of: vm.profiles.count) {
 			Task { await vm.loadResidenceData() }
 		}
@@ -53,7 +52,6 @@ struct ResidenceScreen: View {
 				$0.scrollDismissesKeyboard(.immediately)
 			#endif
 		}
-		.toolbar { Toolbar(vm: vm) }
 	}
 }
 

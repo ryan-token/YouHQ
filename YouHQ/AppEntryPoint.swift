@@ -10,7 +10,7 @@ import SwiftUI
 struct AppEntryPoint: View {
 	var body: some View {
 		TabView {
-			Tab("Homes", systemImage: "house") {
+			Tab("Home", systemImage: "house") {
 				NavigationStack {
 					ResidenceScreen()
 				}
