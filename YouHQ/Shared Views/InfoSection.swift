@@ -51,63 +51,19 @@ struct InfoSection<Content: View>: View {
 				}
 			}
 
-			if let onTap {
-				Button(action: onTap) {
-					VStack(alignment: .leading, spacing: 4) {
-						content
-					}
-					.frame(
-						maxWidth: .infinity,
-						minHeight: 24,
-						alignment: .leading
-					)
-					.contentShape(.rect)
+			VStack(alignment: .leading, spacing: 4) {
+				content
+			}
+			.frame(maxWidth: .infinity, alignment: .leading)
+			.if(onTap != nil) { view in
+				Button(action: onTap!) {
+					view
+						.frame(minHeight: 24)
+						.contentShape(.rect)
 				}
 				.buttonStyle(.plain)
-				.padding()
-				.background {
-					LinearGradient(
-						colors: [
-							backgroundColor,
-							backgroundColor.opacity(0.6),
-						],
-						startPoint: .topLeading,
-						endPoint: .bottomTrailing
-					)
-					.overlay {
-						GrainTexture()
-							.opacity(0.15)
-							.blendMode(.overlay)
-					}
-				}
-				.clipShape(.rect(cornerRadius: 16))
-				.shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
-				.padding(.bottom)
-			} else {
-				VStack(alignment: .leading, spacing: 4) {
-					content
-				}
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.padding()
-				.background {
-					LinearGradient(
-						colors: [
-							backgroundColor,
-							backgroundColor.opacity(0.6),
-						],
-						startPoint: .topLeading,
-						endPoint: .bottomTrailing
-					)
-					.overlay {
-						GrainTexture()
-							.opacity(0.15)
-							.blendMode(.overlay)
-					}
-				}
-				.clipShape(.rect(cornerRadius: 16))
-				.shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
-				.padding(.bottom)
 			}
+			.cardStyle(backgroundColor: backgroundColor)
 		}
 	}
 }
