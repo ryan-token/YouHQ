@@ -67,9 +67,11 @@ extension ResidenceScreen {
 			}
 		}
 
-		var isShowingEditSheet = false
-		var residenceToEdit: Residence?
-		var backgroundColor: Color = .indigo
+	var isShowingAddResidenceSheet = false
+	var isShowingSectionEditSheet = false
+	var sectionToEdit: EditableSection?
+	var showingAddMoreDialog = false
+	var backgroundColor: Color = .indigo
 		var residenceNotes: String {
 			didSet {
 				updateResidenceNotes()
@@ -122,20 +124,7 @@ extension ResidenceScreen {
 
 		func showCreateResidenceSheet() {
 			try? database.ensureDefaultProfile()
-			residenceToEdit = nil
-			isShowingEditSheet = true
-		}
-
-		func showEditResidenceSheet() {
-			// Reload the latest data from database before editing
-			if let selectedResidence {
-				withErrorReporting {
-					residenceToEdit = try database.write { db in
-						try Residence.find(selectedResidence.id).fetchOne(db)
-					}
-				}
-			}
-			isShowingEditSheet = true
+			isShowingAddResidenceSheet = true
 		}
 
 		// MARK: UTILITY FUNCTIONS
@@ -184,6 +173,78 @@ extension ResidenceScreen {
 				try database.write { db in
 					try Residence.find(selectedResidence.id)
 						.update { $0.backgroundColor = color.databaseValue }
+						.execute(db)
+				}
+			}
+		}
+
+		func showAddUtilitySheet() {
+			guard let selectedResidence else { return }
+			// Create a temporary utility in the database that will be deleted if cancelled
+			var createdUtility: Utility?
+			withErrorReporting {
+				try database.write { db in
+					let utilityID = UUID()
+					try Utility.insert {
+						Utility.Draft(
+							id: utilityID,
+							residenceID: selectedResidence.id,
+							type: .electric
+						)
+					}
+					.execute(db)
+					createdUtility = try Utility.find(utilityID).fetchOne(db)
+				}
+			}
+			if let createdUtility {
+				sectionToEdit = .utility(createdUtility, isNew: true)
+				isShowingSectionEditSheet = true
+			}
+		}
+
+		func showAddInsurancePolicySheet() {
+			guard let selectedResidence, let profileID else { return }
+			// Create a temporary policy in the database that will be deleted if cancelled
+			var createdPolicy: InsurancePolicy?
+			withErrorReporting {
+				try database.write { db in
+					let policyID = UUID()
+					// Use .renters as default since it requires residenceID
+					try InsurancePolicy.insert {
+						InsurancePolicy.Draft(
+							id: policyID,
+							profileID: profileID,
+							residenceID: selectedResidence.id,
+							type: .renters
+						)
+					}
+					.execute(db)
+					createdPolicy = try InsurancePolicy.find(policyID).fetchOne(
+						db
+					)
+				}
+			}
+			if let createdPolicy {
+				sectionToEdit = .insurancePolicy(createdPolicy, isNew: true)
+				isShowingSectionEditSheet = true
+			}
+		}
+
+		func deleteUtility(_ utility: Utility) {
+			withErrorReporting {
+				try database.write { db in
+					try Utility.find(utility.id)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		func deleteInsurancePolicy(_ policy: InsurancePolicy) {
+			withErrorReporting {
+				try database.write { db in
+					try InsurancePolicy.find(policy.id)
+						.delete()
 						.execute(db)
 				}
 			}

@@ -18,7 +18,6 @@ extension UtilitySection {
 		@FetchOne(Utility.none) var utility: Utility?
 
 		let utilityID: UUID
-		var utilityTitle: String
 		var backgroundColor: Color = .blue
 		var utilityNotes: String {
 			didSet {
@@ -26,26 +25,13 @@ extension UtilitySection {
 			}
 		}
 
+		var utilityTitle: String {
+			guard let utility else { return "Utility" }
+			return utility.type.rawValue
+		}
+
 		init(utility: Utility) {
 			self.utilityID = utility.id
-
-			switch utility.type {
-			case .electric:
-				utilityTitle = "Electric"
-			case .gas:
-				utilityTitle = "Gas"
-			case .water:
-				utilityTitle = "Water"
-			case .trash:
-				utilityTitle = "Trash"
-			case .sewage:
-				utilityTitle = "Sewage"
-			case .internet:
-				utilityTitle = "Internet"
-			case .other:
-				utilityTitle = "Other"
-			}
-
 			self.utilityNotes = ""
 		}
 

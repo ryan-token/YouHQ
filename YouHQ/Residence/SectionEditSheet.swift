@@ -1,0 +1,275 @@
+//
+//  SectionEditSheet.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 1/10/26.
+//
+
+import SQLiteData
+import SwiftUI
+
+enum EditableSection {
+	case residenceInfo(Residence)
+	case utility(Utility, isNew: Bool)
+	case insurancePolicy(InsurancePolicy, isNew: Bool)
+
+	var isNew: Bool {
+		switch self {
+		case .residenceInfo:
+			false
+		case .utility(_, let isNew):
+			isNew
+		case .insurancePolicy(_, let isNew):
+			isNew
+		}
+	}
+}
+
+struct SectionEditSheet: View {
+	@Environment(\.dismiss) private var dismiss
+	@State private var vm: ViewModel
+
+	init(section: EditableSection) {
+		_vm = State(wrappedValue: ViewModel(section: section))
+	}
+
+	var body: some View {
+		NavigationStack {
+			List {
+				switch vm.section {
+				case .residenceInfo:
+					ResidenceInfoSection(vm: vm)
+				case .utility:
+					UtilityEditSection(vm: vm)
+				case .insurancePolicy:
+					InsuranceEditSection(vm: vm)
+				}
+			}
+			.navigationTitle(vm.title)
+			#if !os(macOS)
+				.navigationBarTitleDisplayMode(.inline)
+			#endif
+			#if !os(visionOS)
+				.scrollDismissesKeyboard(.immediately)
+			#endif
+			.toolbar {
+				ToolbarItem(placement: .cancellationAction) {
+					Button("Cancel") {
+						vm.cancel()
+						dismiss()
+					}
+				}
+
+				ToolbarItem(placement: .confirmationAction) {
+					Button("Save") {
+						vm.save()
+						dismiss()
+					}
+					.disabled(!vm.isValid)
+				}
+			}
+		}
+		.presentationDetents(vm.section.isNew ? [.large] : [.medium, .large])
+		.interactiveDismissDisabled(vm.section.isNew)
+	}
+}
+
+// MARK: - Residence Info Section
+
+private struct ResidenceInfoSection: View {
+	@Bindable var vm: SectionEditSheet.ViewModel
+
+	var body: some View {
+		Section("Basic Info") {
+			Picker("Type", selection: $vm.residenceType) {
+				ForEach(ResidenceType.allCases, id: \.self) { type in
+					Text(type.rawValue).tag(type)
+				}
+			}
+
+			Toggle("Current Residence", isOn: $vm.residenceIsCurrent)
+		}
+
+		Section("Address") {
+			TextField("Street", text: $vm.residenceStreet)
+			TextField("Unit", text: $vm.residenceUnit)
+			TextField("City", text: $vm.residenceCity)
+			TextField("State", text: $vm.residenceState)
+			TextField("ZIP Code", text: $vm.residenceZipCode)
+			TextField("Country", text: $vm.residenceCountry)
+		}
+
+		Section("Dates") {
+			DatePicker(
+				"Move-In Date",
+				selection: Binding(
+					get: { vm.residenceMoveInDate ?? Date() },
+					set: { vm.residenceMoveInDate = $0 }
+				),
+				displayedComponents: .date
+			)
+
+			Toggle("Has Move-Out Date", isOn: $vm.residenceHasMoveOutDate)
+
+			if vm.residenceHasMoveOutDate {
+				DatePicker(
+					"Move-Out Date",
+					selection: Binding(
+						get: { vm.residenceMoveOutDate ?? Date() },
+						set: { vm.residenceMoveOutDate = $0 }
+					),
+					displayedComponents: .date
+				)
+			}
+		}
+
+		Section("Cost") {
+			Picker("Cost Type", selection: $vm.residenceCostType) {
+				ForEach(CostType.allCases, id: \.self) { type in
+					Text(type.rawValue).tag(type)
+				}
+			}
+
+			TextField(
+				"Monthly Cost",
+				value: $vm.residenceMonthlyCost,
+				format: .currency(code: "USD")
+			)
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
+		}
+
+		Section("Additional") {
+			URLTextField(text: $vm.residenceURL)
+		}
+
+		Section("Notes") {
+			TextEditor(text: $vm.residenceNotes)
+				.frame(minHeight: 100)
+		}
+	}
+}
+
+// MARK: - Utility Edit Section
+
+private struct UtilityEditSection: View {
+	@Bindable var vm: SectionEditSheet.ViewModel
+
+	var body: some View {
+		Section("Utility Info") {
+			Picker("Type", selection: $vm.utilityType) {
+				ForEach(UtilityType.allCases, id: \.self) { type in
+					Text(type.rawValue).tag(type)
+				}
+			}
+
+			TextField("Provider", text: $vm.utilityProvider)
+			TextField("Account Number", text: $vm.utilityAccountNumber)
+
+			TextField(
+				"Approximate Monthly Cost",
+				value: $vm.utilityMonthlyCost,
+				format: .currency(code: "USD")
+			)
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
+		}
+
+		Section("Additional") {
+			URLTextField(text: $vm.utilityURL)
+		}
+
+		Section("Notes") {
+			TextEditor(text: $vm.utilityNotes)
+				.frame(minHeight: 100)
+		}
+	}
+}
+
+// MARK: - Insurance Edit Section
+
+private struct InsuranceEditSection: View {
+	@Bindable var vm: SectionEditSheet.ViewModel
+
+	var body: some View {
+		Section("Policy Info") {
+			Picker("Type", selection: $vm.insuranceType) {
+				ForEach(InsurancePolicyType.allCases, id: \.self) { type in
+					Text(type.rawValue).tag(type)
+				}
+			}
+
+			TextField("Provider", text: $vm.insuranceProvider)
+			TextField("Policy Number", text: $vm.insurancePolicyNumber)
+		}
+
+		Section("Cost") {
+			TextField(
+				"Monthly Cost",
+				value: $vm.insuranceMonthlyCost,
+				format: .currency(code: "USD")
+			)
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
+
+			TextField(
+				"Deductible",
+				value: $vm.insuranceDeductible,
+				format: .currency(code: "USD")
+			)
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
+
+			TextField(
+				"Coverage Amount",
+				value: $vm.insuranceCoverageAmount,
+				format: .currency(code: "USD")
+			)
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
+		}
+
+		Section("Dates") {
+			Toggle("Has Renewal Date", isOn: $vm.insuranceHasRenewalDate)
+
+			if vm.insuranceHasRenewalDate {
+				DatePicker(
+					"Renewal Date",
+					selection: Binding(
+						get: { vm.insuranceRenewalDate ?? Date() },
+						set: { vm.insuranceRenewalDate = $0 }
+					),
+					displayedComponents: .date
+				)
+			}
+		}
+
+		Section("Additional") {
+			URLTextField(text: $vm.insuranceURL)
+		}
+
+		Section("Notes") {
+			TextEditor(text: $vm.insuranceNotes)
+				.frame(minHeight: 100)
+		}
+	}
+}
+
+#Preview("Residence Info") {
+	SectionEditSheet(section: .residenceInfo(Residence.sampleData))
+}
+
+#Preview("Utility") {
+	SectionEditSheet(section: .utility(Utility.sampleData, isNew: false))
+}
+
+#Preview("Insurance") {
+	SectionEditSheet(
+		section: .insurancePolicy(InsurancePolicy.sampleData, isNew: false)
+	)
+}

@@ -2,7 +2,7 @@
 //  InsuranceSection+ViewModel.swift
 //  YouHQ
 //
-//  Created by Ryan Token on 1/11/26.
+//  Created by Ryan Token on 1/10/26.
 //
 
 import SQLiteData
@@ -18,17 +18,21 @@ extension InsuranceSection {
 		@FetchOne(InsurancePolicy.none) var policy: InsurancePolicy?
 
 		let policyID: UUID
-		var policyTitle: String
 		var backgroundColor: Color = .red
+
 		var policyNotes: String {
 			didSet {
 				updatePolicyNotes()
 			}
 		}
 
+		var policyTitle: String {
+			guard let policy else { return "Insurance" }
+			return policy.type.rawValue
+		}
+
 		init(policy: InsurancePolicy) {
 			self.policyID = policy.id
-			self.policyTitle = policy.type.rawValue
 			self.policyNotes = ""
 		}
 

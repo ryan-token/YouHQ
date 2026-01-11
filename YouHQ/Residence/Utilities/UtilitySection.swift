@@ -9,9 +9,11 @@ import SwiftUI
 
 struct UtilitySection: View {
 	@State private var vm: ViewModel
+	let onTap: (() -> Void)?
 
-	init(for utility: Utility) {
+	init(for utility: Utility, onTap: (() -> Void)? = nil) {
 		_vm = State(wrappedValue: ViewModel(utility: utility))
+		self.onTap = onTap
 	}
 
 	var body: some View {
@@ -21,7 +23,8 @@ struct UtilitySection: View {
 				backgroundColor: $vm.backgroundColor,
 				onColorChange: { newColor in
 					vm.updateUtilityBackgroundColor(newColor)
-				}
+				},
+				onTap: onTap
 			) {
 				if utility.provider.isNotEmpty {
 					Text(utility.provider)
@@ -40,7 +43,15 @@ struct UtilitySection: View {
 					LinkRow("Website:", url: utility.url)
 				}
 
-				UtilityNotes(notes: $vm.utilityNotes)
+				if utility.notes.isNotEmpty {
+					VStack(alignment: .leading, spacing: 4) {
+						Text("Notes:")
+							.font(.headline)
+							.foregroundStyle(.white)
+						Text(utility.notes)
+							.foregroundStyle(.white)
+					}
+				}
 			}
 		} else {
 			Color.clear

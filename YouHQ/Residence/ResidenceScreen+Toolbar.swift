@@ -23,21 +23,34 @@ extension ResidenceScreen {
 				}
 			}
 
-			if vm.selectedResidence != nil {
-				ToolbarItem(placement: .primaryAction) {
-					Button {
-						vm.showEditResidenceSheet()
-					} label: {
-						Label("Edit", systemImage: "pencil")
-					}
-				}
-			}
-
 			ToolbarItem(placement: .primaryAction) {
-				Button {
-					vm.showCreateResidenceSheet()
+				Menu {
+					Button {
+						vm.showCreateResidenceSheet()
+					} label: {
+						Label("Add Residence", systemImage: "house.fill")
+					}
+
+					if vm.selectedResidence != nil {
+						Divider()
+
+						Button {
+							vm.showAddUtilitySheet()
+						} label: {
+							Label("Add Utility", systemImage: "bolt.fill")
+						}
+
+						Button {
+							vm.showAddInsurancePolicySheet()
+						} label: {
+							Label(
+								"Add Insurance Policy",
+								systemImage: "shield.fill"
+							)
+						}
+					}
 				} label: {
-					Label("Add Residence", systemImage: "plus")
+					Label("Add", systemImage: "plus")
 				}
 			}
 		}

@@ -17,6 +17,10 @@ struct ResidenceInfo: View {
 				backgroundColor: $vm.backgroundColor,
 				onColorChange: { newColor in
 					vm.updateResidenceBackgroundColor(newColor)
+				},
+				onTap: {
+					vm.sectionToEdit = .residenceInfo(residence)
+					vm.isShowingSectionEditSheet = true
 				}
 			) {
 				Text(residence.address)
@@ -52,11 +56,40 @@ struct ResidenceInfo: View {
 			}
 
 			ForEach(vm.utilities) { utility in
-				UtilitySection(for: utility)
+				UtilitySection(
+					for: utility,
+					onTap: {
+						vm.sectionToEdit = .utility(utility, isNew: false)
+						vm.isShowingSectionEditSheet = true
+					}
+				)
+				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+					Button(role: .destructive) {
+						vm.deleteUtility(utility)
+					} label: {
+						Label("Delete", systemImage: "trash")
+					}
+				}
 			}
 
 			ForEach(vm.insurancePolicies) { policy in
-				InsuranceSection(for: policy)
+				InsuranceSection(
+					for: policy,
+					onTap: {
+						vm.sectionToEdit = .insurancePolicy(
+							policy,
+							isNew: false
+						)
+						vm.isShowingSectionEditSheet = true
+					}
+				)
+				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+					Button(role: .destructive) {
+						vm.deleteInsurancePolicy(policy)
+					} label: {
+						Label("Delete", systemImage: "trash")
+					}
+				}
 			}
 
 			InfoSection(
@@ -69,10 +102,8 @@ struct ResidenceInfo: View {
 				TextEditor(text: $vm.residenceNotes)
 					.textEditorOnColor(minHeight: 100)
 			}
+
+			AddMoreButton(vm: vm)
 		}
 	}
-}
-
-#Preview {
-	ResidenceInfo(vm: ResidenceScreen.ViewModel())
 }

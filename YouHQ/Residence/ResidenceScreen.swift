@@ -58,14 +58,17 @@ struct ResidenceScreen: View {
 		.onChange(of: vm.profiles.count) {
 			Task { await vm.loadResidenceData() }
 		}
-		.sheet(isPresented: $vm.isShowingEditSheet) {
+		.sheet(isPresented: $vm.isShowingAddResidenceSheet) {
 			if let profileID = vm.profileID {
-				ResidenceEdit(
-					residence: vm.residenceToEdit,
+				AddResidenceSheet(
 					profileID: profileID,
-					selectedResidence: $vm.selectedResidence,
-					isShowingEditSheet: $vm.isShowingEditSheet
+					selectedResidence: $vm.selectedResidence
 				)
+			}
+		}
+		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
+			if let sectionToEdit = vm.sectionToEdit {
+				SectionEditSheet(section: sectionToEdit)
 			}
 		}
 		#if !os(visionOS)
