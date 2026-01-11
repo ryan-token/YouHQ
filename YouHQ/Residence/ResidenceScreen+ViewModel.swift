@@ -67,11 +67,11 @@ extension ResidenceScreen {
 			}
 		}
 
-	var isShowingAddResidenceSheet = false
-	var isShowingSectionEditSheet = false
-	var sectionToEdit: EditableSection?
-	var showingAddMoreDialog = false
-	var backgroundColor: Color = .indigo
+		var isShowingAddResidenceSheet = false
+		var isShowingSectionEditSheet = false
+		var sectionToEdit: EditableSection?
+		var showingAddMoreDialog = false
+		var backgroundColor: Color = .indigo
 		var residenceNotes: String {
 			didSet {
 				updateResidenceNotes()
@@ -119,6 +119,17 @@ extension ResidenceScreen {
 
 		private func setSelectedResidence(to residenceID: UUID) {
 			selectedResidence = residences.first(where: { $0.id == residenceID }
+			)
+		}
+
+		func updateBackgroundColorFromResidences() {
+			guard let selectedResidence,
+				let updatedResidence = residences.first(where: {
+					$0.id == selectedResidence.id
+				})
+			else { return }
+			backgroundColor = Color(
+				databaseValue: updatedResidence.backgroundColor
 			)
 		}
 

@@ -60,6 +60,9 @@ struct ResidenceInfoSection: View {
 					LinkRow("Website:", url: residence.url)
 				}
 			}
+			.onChange(of: vm.residence?.backgroundColor) {
+				vm.updateBackgroundColorFromDatabase()
+			}
 		} else {
 			Color.clear
 				.task { await vm.loadResidenceData() }

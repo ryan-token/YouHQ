@@ -19,6 +19,7 @@ struct ResidenceInfo: View {
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.id(residence.id)
 
 			ForEach(vm.utilities) { utility in
 				UtilitySection(

@@ -46,6 +46,12 @@ extension ResidenceInfoSection {
 			)
 		}
 
+		func updateBackgroundColorFromDatabase() {
+			backgroundColor = Color(
+				databaseValue: residence?.backgroundColor ?? "indigo"
+			)
+		}
+
 		func updateResidenceBackgroundColor(_ color: Color) {
 			withErrorReporting {
 				try database.write { db in

@@ -58,6 +58,9 @@ struct ResidenceScreen: View {
 		.onChange(of: vm.profiles.count) {
 			Task { await vm.loadResidenceData() }
 		}
+		.onChange(of: vm.residences) {
+			vm.updateBackgroundColorFromResidences()
+		}
 		.sheet(isPresented: $vm.isShowingAddResidenceSheet) {
 			if let profileID = vm.profileID {
 				AddResidenceSheet(
