@@ -254,6 +254,7 @@ func appDatabase() throws -> any DatabaseWriter {
 			CREATE TABLE "insurancePolicies" (
 				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
 				"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
+				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
 				"type" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'health',
 				"provider" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"policyNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
@@ -265,7 +266,11 @@ func appDatabase() throws -> any DatabaseWriter {
 				"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'red',
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
-				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				CHECK (
+					("type" IN ('Home', 'Renters') AND "residenceID" IS NOT NULL) OR
+					("type" NOT IN ('Home', 'Renters') AND "residenceID" IS NULL)
+				)
 			) STRICT
 			"""
 		)
@@ -348,6 +353,13 @@ func appDatabase() throws -> any DatabaseWriter {
 		try #sql(
 			"""
 			CREATE INDEX "idx_insurancePolicies_profileID" ON "insurancePolicies"("profileID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_insurancePolicies_residenceID" ON "insurancePolicies"("residenceID")
 			"""
 		)
 		.execute(db)
@@ -714,9 +726,10 @@ extension DatabaseWriter {
 					notes: "Individual plan"
 				)
 
-				// Insurance policy
+				// Insurance policies
 				InsurancePolicy.Draft(
 					profileID: defaultProfile.id,
+					residenceID: nil,
 					type: .health,
 					provider: "Blue Cross",
 					policyNumber: "BC123456789",
@@ -727,6 +740,22 @@ extension DatabaseWriter {
 					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 365),  // 1 year from now
 					isActive: true,
 					notes: "PPO plan through employer"
+				)
+
+				// Renters insurance for residence
+				InsurancePolicy.Draft(
+					profileID: defaultProfile.id,
+					residenceID: UUID(1),
+					type: .renters,
+					provider: "State Farm",
+					policyNumber: "SF987654321",
+					monthlyCost: 35,
+					deductible: 500,
+					coverageAmount: 50_000,
+					startDate: now.addingTimeInterval(-60 * 60 * 24 * 365),
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 60),
+					isActive: true,
+					notes: "Covers personal property and liability"
 				)
 
 				// Device

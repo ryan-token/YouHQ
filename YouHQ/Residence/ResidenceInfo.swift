@@ -55,6 +55,10 @@ struct ResidenceInfo: View {
 				UtilitySection(for: utility)
 			}
 
+			ForEach(vm.insurancePolicies) { policy in
+				InsuranceSection(for: policy)
+			}
+
 			InfoSection(
 				"Notes",
 				backgroundColor: $vm.backgroundColor,

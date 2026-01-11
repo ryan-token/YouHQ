@@ -17,6 +17,9 @@ extension ResidenceEdit {
 		@ObservationIgnored
 		@FetchAll(Utility.none) var utilities
 
+		@ObservationIgnored
+		@FetchAll(InsurancePolicy.none) var insurancePolicies
+
 		let profileID: UUID
 		var residenceID: UUID?
 		let isEditing: Bool
@@ -90,6 +93,7 @@ extension ResidenceEdit {
 			if let residenceID {
 				Task {
 					await loadUtilities(for: residenceID)
+					await loadInsurancePolicies(for: residenceID)
 				}
 			}
 		}
@@ -121,6 +125,40 @@ extension ResidenceEdit {
 			withErrorReporting {
 				try database.write { db in
 					try Utility.find(utility.id)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		func loadInsurancePolicies(for residenceID: UUID) async {
+			_ = await withErrorReporting {
+				try await $insurancePolicies.load(
+					InsurancePolicy.where { $0.residenceID.eq(residenceID) },
+					animation: .default
+				)
+			}
+		}
+
+		func addInsurancePolicy(type: InsurancePolicyType, residenceID: UUID) {
+			withErrorReporting {
+				try database.write { db in
+					try InsurancePolicy.insert {
+						InsurancePolicy.Draft(
+							profileID: profileID,
+							residenceID: residenceID,
+							type: type
+						)
+					}
+					.execute(db)
+				}
+			}
+		}
+
+		func deleteInsurancePolicy(_ policy: InsurancePolicy) {
+			withErrorReporting {
+				try database.write { db in
+					try InsurancePolicy.find(policy.id)
 						.delete()
 						.execute(db)
 				}

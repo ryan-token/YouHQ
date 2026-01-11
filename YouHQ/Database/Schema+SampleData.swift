@@ -27,7 +27,11 @@ extension Residence {
 		state: "CA",
 		zipCode: "94102",
 		country: "USA",
-		moveInDate: Calendar.current.date(byAdding: .year, value: -2, to: Date()),
+		moveInDate: Calendar.current.date(
+			byAdding: .year,
+			value: -2,
+			to: Date()
+		),
 		moveOutDate: nil,
 		isCurrent: true,
 		monthlyCost: 2500.00,
@@ -120,7 +124,11 @@ extension Device {
 		brand: "Apple",
 		model: "MacBook Pro 16\"",
 		serialNumber: "C02ABC123456",
-		purchaseDate: Calendar.current.date(byAdding: .year, value: -1, to: Date()),
+		purchaseDate: Calendar.current.date(
+			byAdding: .year,
+			value: -1,
+			to: Date()
+		),
 		notes: "M3 Max, 64GB RAM"
 	)
 }
@@ -133,7 +141,11 @@ extension Subscription {
 		category: .streaming,
 		monthlyCost: 15.49,
 		billingCycle: .monthly,
-		renewalDate: Calendar.current.date(byAdding: .month, value: 1, to: Date()),
+		renewalDate: Calendar.current.date(
+			byAdding: .month,
+			value: 1,
+			to: Date()
+		),
 		isActive: true,
 		notes: "Premium plan with 4K"
 	)
@@ -145,7 +157,11 @@ extension Job {
 		profileID: Profile.sampleData.id,
 		company: "Tech Corp",
 		title: "Senior Software Engineer",
-		startDate: Calendar.current.date(byAdding: .year, value: -3, to: Date()),
+		startDate: Calendar.current.date(
+			byAdding: .year,
+			value: -3,
+			to: Date()
+		),
 		endDate: nil,
 		isCurrent: true,
 		salary: 150000.00,
@@ -158,15 +174,40 @@ extension InsurancePolicy {
 	static let sampleData = InsurancePolicy(
 		id: UUID(),
 		profileID: Profile.sampleData.id,
+		residenceID: nil,
 		type: .health,
 		provider: "Blue Cross Blue Shield",
 		policyNumber: "BCBS123456789",
 		monthlyCost: 450.00,
 		deductible: 2000.00,
 		coverageAmount: 1000000.00,
-		startDate: Date(timeIntervalSinceNow: -365*24*60*60),
-		renewalDate: Date(timeIntervalSinceNow: 30*24*60*60),
+		startDate: Date(timeIntervalSinceNow: -365 * 24 * 60 * 60),
+		renewalDate: Date(timeIntervalSinceNow: 30 * 24 * 60 * 60),
 		isActive: true,
 		notes: "Family plan with dental included"
+	)
+
+	static let homeInsuranceSampleData = InsurancePolicy(
+		id: UUID(),
+		profileID: Profile.sampleData.id,
+		residenceID: Residence.sampleData.id,
+		type: .renters,
+		provider: "State Farm",
+		policyNumber: "SF987654321",
+		monthlyCost: 35.00,
+		deductible: 500.00,
+		coverageAmount: 50000.00,
+		startDate: Calendar.current.date(
+			byAdding: .year,
+			value: -1,
+			to: Date()
+		),
+		renewalDate: Calendar.current.date(
+			byAdding: .month,
+			value: 2,
+			to: Date()
+		),
+		isActive: true,
+		notes: "Covers personal property and liability"
 	)
 }

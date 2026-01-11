@@ -23,6 +23,10 @@ extension ResidenceScreen {
 		@ObservationIgnored
 		@FetchAll(Utility.none, animation: .default) var utilities
 
+		@ObservationIgnored
+		@FetchAll(InsurancePolicy.none, animation: .default)
+		var insurancePolicies
+
 		init() {
 			residenceNotes = ""
 		}
@@ -95,6 +99,7 @@ extension ResidenceScreen {
 			}
 
 			await loadUtilities()
+			await loadInsurancePolicies()
 			residenceNotes = selectedResidence?.notes ?? ""
 		}
 
@@ -140,6 +145,20 @@ extension ResidenceScreen {
 			_ = await withErrorReporting {
 				try await $utilities.load(
 					Utility
+						.where { $0.residenceID.eq(selectedResidence.id) }
+						.order { $0.type },
+					animation: .default
+				)
+			}
+		}
+
+		// MARK: INSURANCE FUNCTIONS
+
+		private func loadInsurancePolicies() async {
+			guard let selectedResidence else { return }
+			_ = await withErrorReporting {
+				try await $insurancePolicies.load(
+					InsurancePolicy
 						.where { $0.residenceID.eq(selectedResidence.id) }
 						.order { $0.type },
 					animation: .default

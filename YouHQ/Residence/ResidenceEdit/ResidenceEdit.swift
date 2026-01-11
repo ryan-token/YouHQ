@@ -34,6 +34,7 @@ struct ResidenceEdit: View {
 				DatesSection(vm: vm)
 				CostSection(vm: vm)
 				UtilitiesSection(vm: vm)
+				InsuranceSection(vm: vm)
 				URLSection(vm: vm)
 				NotesSection(vm: vm)
 			}

@@ -248,6 +248,7 @@ import SQLiteData
 @Table struct InsurancePolicy: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
+	var residenceID: Residence.ID?
 	var type: InsurancePolicyType = .health
 	var provider: String = ""
 	var policyNumber: String = ""
