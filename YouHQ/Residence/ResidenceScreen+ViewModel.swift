@@ -27,6 +27,9 @@ extension ResidenceScreen {
 		@FetchAll(InsurancePolicy.none, animation: .default)
 		var insurancePolicies
 
+		@ObservationIgnored
+		@FetchAll(Other.none, animation: .default) var others
+
 		init() {
 			residenceNotes = ""
 		}
@@ -102,6 +105,7 @@ extension ResidenceScreen {
 
 			await loadUtilities()
 			await loadInsurancePolicies()
+			await loadOthers()
 			residenceNotes = selectedResidence?.notes ?? ""
 		}
 
@@ -255,6 +259,54 @@ extension ResidenceScreen {
 			withErrorReporting {
 				try database.write { db in
 					try InsurancePolicy.find(policy.id)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		// MARK: OTHER FUNCTIONS
+
+		private func loadOthers() async {
+			guard let selectedResidence else { return }
+			_ = await withErrorReporting {
+				try await $others.load(
+					Other
+						.where { $0.residenceID.eq(selectedResidence.id) }
+						.order { $0.name },
+					animation: .default
+				)
+			}
+		}
+
+		func showAddOtherSheet() {
+			guard let selectedResidence, let profileID else { return }
+			// Create a temporary other in the database that will be deleted if cancelled
+			var createdOther: Other?
+			withErrorReporting {
+				try database.write { db in
+					let otherID = UUID()
+					try Other.insert {
+						Other.Draft(
+							id: otherID,
+							profileID: profileID,
+							residenceID: selectedResidence.id
+						)
+					}
+					.execute(db)
+					createdOther = try Other.find(otherID).fetchOne(db)
+				}
+			}
+			if let createdOther {
+				sectionToEdit = .other(createdOther, isNew: true)
+				isShowingSectionEditSheet = true
+			}
+		}
+
+		func deleteOther(_ other: Other) {
+			withErrorReporting {
+				try database.write { db in
+					try Other.find(other.id)
 						.delete()
 						.execute(db)
 				}

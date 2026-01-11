@@ -263,6 +263,19 @@ import SQLiteData
 	var notes: String = ""
 }
 
+// MARK: - Other
+
+@Table struct Other: Identifiable {
+	let id: UUID
+	let profileID: Profile.ID
+	var residenceID: Residence.ID?
+	var name: String = ""
+	var otherDescription: String = ""
+	var backgroundColor: String = "gray"
+	var url: String = ""
+	var notes: String = ""
+}
+
 // MARK: - Enums
 
 enum ResidenceType: String, Codable, CaseIterable, QueryBindable {

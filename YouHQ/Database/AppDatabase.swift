@@ -275,6 +275,23 @@ func appDatabase() throws -> any DatabaseWriter {
 			"""
 		)
 		.execute(db)
+
+		// Other table
+		try #sql(
+			"""
+			CREATE TABLE "others" (
+				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+				"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
+				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
+				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"otherDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'gray',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+			) STRICT
+			"""
+		)
+		.execute(db)
 	}
 
 	// MARK: - Foreign Key Indexes
@@ -360,6 +377,20 @@ func appDatabase() throws -> any DatabaseWriter {
 		try #sql(
 			"""
 			CREATE INDEX "idx_insurancePolicies_residenceID" ON "insurancePolicies"("residenceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_others_profileID" ON "others"("profileID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_others_residenceID" ON "others"("residenceID")
 			"""
 		)
 		.execute(db)
@@ -489,6 +520,7 @@ func appDatabase() throws -> any DatabaseWriter {
 			"subscriptions",
 			"jobs",
 			"insurancePolicies",
+			"others",
 		]
 
 		for table in tables {

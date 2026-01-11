@@ -58,6 +58,23 @@ struct ResidenceInfo: View {
 				}
 			}
 
+			ForEach(vm.others) { other in
+				OtherSection(
+					for: other,
+					onTap: {
+						vm.sectionToEdit = .other(other, isNew: false)
+						vm.isShowingSectionEditSheet = true
+					}
+				)
+				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+					Button(role: .destructive) {
+						vm.deleteOther(other)
+					} label: {
+						Label("Delete", systemImage: "trash")
+					}
+				}
+			}
+
 			InfoSection(
 				"Notes",
 				backgroundColor: $vm.backgroundColor,

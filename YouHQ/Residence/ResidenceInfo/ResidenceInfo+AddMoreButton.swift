@@ -13,20 +13,7 @@ extension ResidenceInfo {
 
 		var body: some View {
 			Menu {
-				Button {
-					vm.showAddUtilitySheet()
-				} label: {
-					Label("Add Utility", systemImage: "bolt.fill")
-				}
-
-				Button {
-					vm.showAddInsurancePolicySheet()
-				} label: {
-					Label(
-						"Add Insurance Policy",
-						systemImage: "shield.fill"
-					)
-				}
+				ResidenceMenu(vm: vm, includeAddResidence: false)
 			} label: {
 				HStack {
 					Image(systemName: "plus.circle.fill")

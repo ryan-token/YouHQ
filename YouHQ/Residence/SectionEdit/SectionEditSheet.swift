@@ -12,6 +12,7 @@ enum EditableSection {
 	case residenceInfo(Residence)
 	case utility(Utility, isNew: Bool)
 	case insurancePolicy(InsurancePolicy, isNew: Bool)
+	case other(Other, isNew: Bool)
 
 	var isNew: Bool {
 		switch self {
@@ -20,6 +21,8 @@ enum EditableSection {
 		case .utility(_, let isNew):
 			isNew
 		case .insurancePolicy(_, let isNew):
+			isNew
+		case .other(_, let isNew):
 			isNew
 		}
 	}
@@ -43,6 +46,8 @@ struct SectionEditSheet: View {
 					UtilityEditSection(vm: vm)
 				case .insurancePolicy:
 					InsuranceEditSection(vm: vm)
+				case .other:
+					OtherEditSection(vm: vm)
 				}
 			}
 			.frame(minHeight: 350)
@@ -299,4 +304,42 @@ private struct InsuranceEditSection: View {
 	SectionEditSheet(
 		section: .insurancePolicy(InsurancePolicy.sampleData, isNew: false)
 	)
+}
+
+// MARK: - Other Edit Section
+
+private struct OtherEditSection: View {
+	@Bindable var vm: SectionEditSheet.ViewModel
+
+	var body: some View {
+		Section("Basic Info") {
+			TextField("Name", text: $vm.otherName)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+
+			TextField(
+				"Description",
+				text: $vm.otherDescription,
+				axis: .vertical
+			)
+			#if !os(macOS)
+				.textInputAutocapitalization(.sentences)
+			#endif
+			.lineLimit(3...6)
+		}
+
+		Section("Website") {
+			URLTextField(text: $vm.otherURL)
+		}
+
+		Section("Notes") {
+			TextEditor(text: $vm.otherNotes)
+				.frame(minHeight: 100)
+		}
+	}
+}
+
+#Preview("Other") {
+	SectionEditSheet(section: .other(Other.sampleData, isNew: false))
 }

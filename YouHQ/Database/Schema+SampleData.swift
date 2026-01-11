@@ -211,3 +211,15 @@ extension InsurancePolicy {
 		notes: "Covers personal property and liability"
 	)
 }
+
+extension Other {
+	static let sampleData = Other(
+		id: UUID(),
+		profileID: Profile.sampleData.id,
+		residenceID: Residence.sampleData.id,
+		name: "Pool",
+		otherDescription: "Saltwater pool with heater",
+		url: "https://poolmaintenance.com",
+		notes: "Weekly cleaning service every Friday"
+	)
+}

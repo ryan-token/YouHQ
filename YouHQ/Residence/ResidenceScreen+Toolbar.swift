@@ -25,30 +25,7 @@ extension ResidenceScreen {
 
 			ToolbarItem(placement: .primaryAction) {
 				Menu {
-					Button {
-						vm.showCreateResidenceSheet()
-					} label: {
-						Label("Add Residence", systemImage: "house.fill")
-					}
-
-					if vm.selectedResidence != nil {
-						Divider()
-
-						Button {
-							vm.showAddUtilitySheet()
-						} label: {
-							Label("Add Utility", systemImage: "bolt.fill")
-						}
-
-						Button {
-							vm.showAddInsurancePolicySheet()
-						} label: {
-							Label(
-								"Add Insurance Policy",
-								systemImage: "shield.fill"
-							)
-						}
-					}
+					ResidenceMenu(vm: vm, includeAddResidence: true)
 				} label: {
 					Label("Add", systemImage: "plus")
 				}

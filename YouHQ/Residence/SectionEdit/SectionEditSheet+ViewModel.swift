@@ -59,6 +59,15 @@ extension SectionEditSheet {
 		var insuranceURL: String = ""
 		var insuranceNotes: String = ""
 
+		// Other properties
+		var otherID: UUID?
+		var otherProfileID: UUID?
+		var otherResidenceID: UUID?
+		var otherName: String = ""
+		var otherDescription: String = ""
+		var otherURL: String = ""
+		var otherNotes: String = ""
+
 		var title: String {
 			switch section {
 			case .residenceInfo:
@@ -67,6 +76,8 @@ extension SectionEditSheet {
 				isNew ? "Add Utility" : "Edit Utility"
 			case .insurancePolicy(_, let isNew):
 				isNew ? "Add Insurance" : "Edit Insurance"
+			case .other(_, let isNew):
+				isNew ? "Add Other" : "Edit Other"
 			}
 		}
 
@@ -78,6 +89,8 @@ extension SectionEditSheet {
 				true
 			case .insurancePolicy:
 				true
+			case .other:
+				otherName.trimmingCharacters(in: .whitespaces).isNotEmpty
 			}
 		}
 
@@ -127,6 +140,15 @@ extension SectionEditSheet {
 				insuranceHasRenewalDate = policy.renewalDate != nil
 				insuranceURL = policy.url
 				insuranceNotes = policy.notes
+
+			case .other(let other, _):
+				otherID = other.id
+				otherProfileID = other.profileID
+				otherResidenceID = other.residenceID
+				otherName = other.name
+				otherDescription = other.otherDescription
+				otherURL = other.url
+				otherNotes = other.notes
 			}
 		}
 
@@ -138,6 +160,8 @@ extension SectionEditSheet {
 				saveUtility()
 			case .insurancePolicy:
 				saveInsurancePolicy()
+			case .other:
+				saveOther()
 			}
 		}
 
@@ -153,6 +177,10 @@ extension SectionEditSheet {
 			case .insurancePolicy(let policy, let isNew):
 				if isNew {
 					deleteInsurancePolicy(policy.id)
+				}
+			case .other(let other, let isNew):
+				if isNew {
+					deleteOther(other.id)
 				}
 			}
 		}
@@ -171,6 +199,16 @@ extension SectionEditSheet {
 			withErrorReporting {
 				try database.write { db in
 					try InsurancePolicy.find(policyID)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		private func deleteOther(_ otherID: UUID) {
+			withErrorReporting {
+				try database.write { db in
+					try Other.find(otherID)
 						.delete()
 						.execute(db)
 				}
@@ -243,6 +281,23 @@ extension SectionEditSheet {
 								? insuranceRenewalDate : nil
 							$0.url = insuranceURL
 							$0.notes = insuranceNotes
+						}
+						.execute(db)
+				}
+			}
+		}
+
+		private func saveOther() {
+			guard let otherID else { return }
+
+			withErrorReporting {
+				try database.write { db in
+					try Other.find(otherID)
+						.update {
+							$0.name = otherName
+							$0.otherDescription = otherDescription
+							$0.url = otherURL
+							$0.notes = otherNotes
 						}
 						.execute(db)
 				}
