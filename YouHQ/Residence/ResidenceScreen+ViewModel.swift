@@ -1,5 +1,5 @@
 //
-//  ResidenceViewModel.swift
+//  ResidenceScreen+ViewModel.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 12/30/25.

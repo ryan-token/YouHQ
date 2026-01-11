@@ -12,48 +12,13 @@ struct ResidenceInfo: View {
 
 	var body: some View {
 		if let residence = vm.selectedResidence {
-			InfoSection(
-				"Info",
-				backgroundColor: $vm.backgroundColor,
-				onColorChange: { newColor in
-					vm.updateResidenceBackgroundColor(newColor)
-				},
-				onTap: {
+			ResidenceInfoSection(
+				for: residence,
+				onTap: { residence in
 					vm.sectionToEdit = .residenceInfo(residence)
 					vm.isShowingSectionEditSheet = true
 				}
-			) {
-				Text(residence.address)
-					.sectionTitle()
-
-				if let moveInDate = residence.moveInDate {
-					InfoRow(
-						"Move in date:",
-						value: moveInDate.formatted(
-							date: .abbreviated,
-							time: .omitted
-						)
-					)
-				}
-
-				if let moveOutDate = residence.moveOutDate {
-					InfoRow(
-						"Move out date:",
-						value: moveOutDate.formatted(
-							date: .abbreviated,
-							time: .omitted
-						)
-					)
-				}
-
-				if let monthlyCost = residence.monthlyCost {
-					InfoRow("Monthly cost:", value: "\(monthlyCost.asCost)")
-				}
-
-				if residence.url.isNotEmpty {
-					LinkRow("Website:", url: residence.url)
-				}
-			}
+			)
 
 			ForEach(vm.utilities) { utility in
 				UtilitySection(

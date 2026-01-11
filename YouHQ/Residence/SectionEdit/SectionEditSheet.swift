@@ -38,7 +38,7 @@ struct SectionEditSheet: View {
 			List {
 				switch vm.section {
 				case .residenceInfo:
-					ResidenceInfoSection(vm: vm)
+					ResidenceInfoEditSection(vm: vm)
 				case .utility:
 					UtilityEditSection(vm: vm)
 				case .insurancePolicy:
@@ -74,9 +74,9 @@ struct SectionEditSheet: View {
 	}
 }
 
-// MARK: - Residence Info Section
+// MARK: - Residence Info Edit Section
 
-private struct ResidenceInfoSection: View {
+private struct ResidenceInfoEditSection: View {
 	@Bindable var vm: SectionEditSheet.ViewModel
 
 	var body: some View {
