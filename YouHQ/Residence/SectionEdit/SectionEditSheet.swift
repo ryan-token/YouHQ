@@ -45,6 +45,7 @@ struct SectionEditSheet: View {
 					InsuranceEditSection(vm: vm)
 				}
 			}
+			.frame(minHeight: 350)
 			.navigationTitle(vm.title)
 			#if !os(macOS)
 				.navigationBarTitleDisplayMode(.inline)
@@ -68,9 +69,11 @@ struct SectionEditSheet: View {
 					.disabled(!vm.isValid)
 				}
 			}
+			.presentationDetents(
+				vm.section.isNew ? [.large] : [.medium, .large]
+			)
+			.interactiveDismissDisabled(vm.section.isNew)
 		}
-		.presentationDetents(vm.section.isNew ? [.large] : [.medium, .large])
-		.interactiveDismissDisabled(vm.section.isNew)
 	}
 }
 
@@ -92,11 +95,29 @@ private struct ResidenceInfoEditSection: View {
 
 		Section("Address") {
 			TextField("Street", text: $vm.residenceStreet)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 			TextField("Unit", text: $vm.residenceUnit)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 			TextField("City", text: $vm.residenceCity)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 			TextField("State", text: $vm.residenceState)
+				#if !os(macOS)
+					.textInputAutocapitalization(.characters)
+				#endif
 			TextField("ZIP Code", text: $vm.residenceZipCode)
+				#if !os(macOS)
+					.keyboardType(.numberPad)
+				#endif
 			TextField("Country", text: $vm.residenceCountry)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 		}
 
 		Section("Dates") {
@@ -140,7 +161,7 @@ private struct ResidenceInfoEditSection: View {
 			#endif
 		}
 
-		Section("Additional") {
+		Section("Website") {
 			URLTextField(text: $vm.residenceURL)
 		}
 
@@ -165,6 +186,9 @@ private struct UtilityEditSection: View {
 			}
 
 			TextField("Provider", text: $vm.utilityProvider)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 			TextField("Account Number", text: $vm.utilityAccountNumber)
 
 			TextField(
@@ -177,7 +201,7 @@ private struct UtilityEditSection: View {
 			#endif
 		}
 
-		Section("Additional") {
+		Section("Website") {
 			URLTextField(text: $vm.utilityURL)
 		}
 
@@ -202,6 +226,9 @@ private struct InsuranceEditSection: View {
 			}
 
 			TextField("Provider", text: $vm.insuranceProvider)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 			TextField("Policy Number", text: $vm.insurancePolicyNumber)
 		}
 
@@ -249,7 +276,7 @@ private struct InsuranceEditSection: View {
 			}
 		}
 
-		Section("Additional") {
+		Section("Website") {
 			URLTextField(text: $vm.insuranceURL)
 		}
 

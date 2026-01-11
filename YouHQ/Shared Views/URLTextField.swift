@@ -15,6 +15,7 @@ struct URLTextField: View {
 			.textContentType(.URL)
 			#if !os(macOS)
 				.keyboardType(.URL)
+				.textInputAutocapitalization(.never)
 			#endif
 			.autocorrectionDisabled()
 	}
