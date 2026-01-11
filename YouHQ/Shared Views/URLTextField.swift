@@ -9,12 +9,13 @@ import SwiftUI
 
 struct URLTextField: View {
 	@Binding var text: String
-	
+
 	var body: some View {
 		TextField("URL", text: $text)
 			.textContentType(.URL)
-			.keyboardType(.URL)
-			.textInputAutocapitalization(.never)
+			#if !os(macOS)
+				.keyboardType(.URL)
+			#endif
 			.autocorrectionDisabled()
 	}
 }

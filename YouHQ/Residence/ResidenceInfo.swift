@@ -63,8 +63,7 @@ struct ResidenceInfo: View {
 				}
 			) {
 				TextEditor(text: $vm.residenceNotes)
-					.frame(minHeight: 100)
-					.foregroundStyle(.white)
+					.textEditorOnColor(minHeight: 100)
 			}
 		}
 	}

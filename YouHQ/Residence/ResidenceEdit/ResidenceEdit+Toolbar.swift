@@ -9,9 +9,9 @@ import SwiftUI
 
 extension ResidenceEdit {
 	struct Toolbar: ToolbarContent {
-		@Environment(\.dismiss) private var dismiss
 		@Bindable var vm: ResidenceEdit.ViewModel
 		@Binding var selectedResidence: Residence?
+		@Binding var isShowingEditSheet: Bool
 
 		var body: some ToolbarContent {
 			ToolbarItem(placement: .cancellationAction) {
@@ -19,7 +19,7 @@ extension ResidenceEdit {
 					if vm.isCreating {
 						_ = vm.delete()
 					}
-					dismiss()
+					isShowingEditSheet = false
 				} label: {
 					Image(systemName: "xmark")
 				}
@@ -39,7 +39,7 @@ extension ResidenceEdit {
 							Button(role: .destructive) {
 								if vm.delete() {
 									selectedResidence = nil
-									dismiss()
+									isShowingEditSheet = false
 								} else {
 									vm.isShowingDeletionError = true
 								}
@@ -68,7 +68,7 @@ extension ResidenceEdit {
 					if let saved = vm.save() {
 						selectedResidence = saved
 					}
-					dismiss()
+					isShowingEditSheet = false
 				} label: {
 					Image(systemName: "checkmark")
 				}
@@ -85,7 +85,8 @@ extension ResidenceEdit {
 	.toolbar {
 		ResidenceEdit.Toolbar(
 			vm: ResidenceEdit.ViewModel(residence: Residence.sampleData, profileID: UUID()),
-			selectedResidence: .constant(Residence.sampleData)
+			selectedResidence: .constant(Residence.sampleData),
+			isShowingEditSheet: .constant(true)
 		)
 	}
 }

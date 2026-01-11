@@ -28,11 +28,9 @@ extension ResidenceEdit {
 						),
 						format: .currency(code: "USD")
 					)
-					.apply {
-						#if !os(macOS)
-						$0.keyboardType(.decimalPad)
-						#endif
-					}
+					#if !os(macOS)
+						.keyboardType(.decimalPad)
+					#endif
 				}
 			}
 		}

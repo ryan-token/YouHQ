@@ -11,13 +11,16 @@ import SwiftUI
 struct ResidenceEdit: View {
 	@State private var vm: ViewModel
 	@Binding var selectedResidence: Residence?
+	@Binding var isShowingEditSheet: Bool
 
 	init(
 		residence: Residence?,
 		profileID: UUID,
-		selectedResidence: Binding<Residence?>
+		selectedResidence: Binding<Residence?>,
+		isShowingEditSheet: Binding<Bool>
 	) {
 		_selectedResidence = selectedResidence
+		_isShowingEditSheet = isShowingEditSheet
 		_vm = State(
 			wrappedValue: ViewModel(residence: residence, profileID: profileID)
 		)
@@ -25,7 +28,7 @@ struct ResidenceEdit: View {
 
 	var body: some View {
 		NavigationStack {
-			Form {
+			List {
 				BasicInfoSection(vm: vm)
 				AddressSection(vm: vm)
 				DatesSection(vm: vm)
@@ -34,18 +37,21 @@ struct ResidenceEdit: View {
 				URLSection(vm: vm)
 				NotesSection(vm: vm)
 			}
+			.frame(minHeight: 400)
 			.navigationTitle(vm.isEditing ? "Edit Residence" : "New Residence")
-			.apply {
-				#if !os(macOS)
-					$0.navigationBarTitleDisplayMode(.inline)
-				#endif
+			#if !os(macOS)
+				.navigationBarTitleDisplayMode(.inline)
+			#endif
+			#if !os(visionOS)
+				.scrollDismissesKeyboard(.immediately)
+			#endif
+			.toolbar {
+				Toolbar(
+					vm: vm,
+					selectedResidence: $selectedResidence,
+					isShowingEditSheet: $isShowingEditSheet
+				)
 			}
-			.apply {
-				#if !os(visionOS)
-					$0.scrollDismissesKeyboard(.immediately)
-				#endif
-			}
-			.toolbar { Toolbar(vm: vm, selectedResidence: $selectedResidence) }
 		}
 		.interactiveDismissDisabled()
 	}
@@ -60,7 +66,8 @@ struct ResidenceEdit: View {
 	ResidenceEdit(
 		residence: nil,
 		profileID: Profile.sampleData.id,
-		selectedResidence: $selected
+		selectedResidence: $selected,
+		isShowingEditSheet: .constant(true)
 	)
 }
 
@@ -73,6 +80,7 @@ struct ResidenceEdit: View {
 	ResidenceEdit(
 		residence: Residence.sampleData,
 		profileID: Profile.sampleData.id,
-		selectedResidence: $selected
+		selectedResidence: $selected,
+		isShowingEditSheet: .constant(true)
 	)
 }

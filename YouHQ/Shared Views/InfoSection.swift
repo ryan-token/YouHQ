@@ -70,6 +70,7 @@ struct InfoSection<Content: View>: View {
 			}
 			.clipShape(.rect(cornerRadius: 16))
 			.shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
+			.padding(.bottom)
 		}
 	}
 }

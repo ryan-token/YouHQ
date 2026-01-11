@@ -18,11 +18,9 @@ struct UtilityEditRow: View {
 	var body: some View {
 		Section(vm.utility.type.rawValue) {
 			TextField("Provider", text: $vm.provider)
-				.apply {
-					#if !os(macOS)
-						$0.textInputAutocapitalization(.words)
-					#endif
-				}
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
 			TextField("Account Number", text: $vm.accountNumber)
 			TextField(
 				"Monthly Cost",
@@ -32,11 +30,9 @@ struct UtilityEditRow: View {
 				),
 				format: .number
 			)
-			.apply {
-				#if !os(macOS)
-					$0.keyboardType(.decimalPad)
-				#endif
-			}
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
 
 			URLTextField(text: $vm.url)
 

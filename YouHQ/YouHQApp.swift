@@ -40,6 +40,17 @@ struct YouHQApp: App {
 	var body: some Scene {
 		WindowGroup {
 			AppEntryPoint()
+				#if os(macOS)
+					.frame(
+						minWidth: 600,
+						maxWidth: .infinity,
+						minHeight: 500,
+						maxHeight: .infinity
+					)
+				#endif
 		}
+		#if os(macOS)
+			.windowResizability(.contentSize)
+		#endif
 	}
 }

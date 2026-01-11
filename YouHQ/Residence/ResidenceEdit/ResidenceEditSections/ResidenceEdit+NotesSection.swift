@@ -15,6 +15,8 @@ extension ResidenceEdit {
 			Section("Notes") {
 				TextEditor(text: $vm.notes)
 					.frame(minHeight: 100)
+					.textSelection(.enabled)
+					.scrollContentBackground(.hidden)
 			}
 		}
 	}

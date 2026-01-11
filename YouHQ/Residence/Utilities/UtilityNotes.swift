@@ -16,8 +16,10 @@ struct UtilityNotes: View {
 				.fontWeight(.semibold)
 
 			TextEditor(text: $notes)
-				.textSelection(.enabled)
-				.frame(minHeight: 40)
+				.textEditorOnColor()
+				#if os(macOS)
+					.padding(.top, 8)
+				#endif
 		}
 		.foregroundStyle(.white)
 	}

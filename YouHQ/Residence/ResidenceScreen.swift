@@ -23,14 +23,34 @@ struct ResidenceScreen: View {
 						}
 					}
 				} else {
+					#if os(macOS)
+						if vm.residences.count > 1 {
+							Picker(
+								"Choose Home",
+								selection: $vm.selectedResidenceID
+							) {
+								ForEach(vm.residences) { residence in
+									Text(
+										residence.unitOrStreet
+											?? residence.street
+									)
+									.tag(residence.id.uuidString)
+								}
+							}
+							.labelsHidden()
+						}
+					#endif
+
 					ResidenceInfo(vm: vm)
 						.listRowSeparator(.hidden)
 				}
 			}
 			.listRowBackground(Color.clear)
 		}
-		.navigationBarTitleDisplayMode(.inline)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
+		#if !os(macOS)
+			.navigationBarTitleDisplayMode(.inline)
+		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
@@ -43,15 +63,14 @@ struct ResidenceScreen: View {
 				ResidenceEdit(
 					residence: vm.residenceToEdit,
 					profileID: profileID,
-					selectedResidence: $vm.selectedResidence
+					selectedResidence: $vm.selectedResidence,
+					isShowingEditSheet: $vm.isShowingEditSheet
 				)
 			}
 		}
-		.apply {
-			#if !os(visionOS)
-				$0.scrollDismissesKeyboard(.immediately)
-			#endif
-		}
+		#if !os(visionOS)
+			.scrollDismissesKeyboard(.immediately)
+		#endif
 	}
 }
 
@@ -63,6 +82,6 @@ struct ResidenceScreen: View {
 
 	NavigationStack {
 		ResidenceScreen()
-			//.preferredColorScheme(.dark)
+		//.preferredColorScheme(.dark)
 	}
 }

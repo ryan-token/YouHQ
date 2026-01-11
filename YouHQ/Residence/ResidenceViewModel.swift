@@ -18,7 +18,7 @@ extension ResidenceScreen {
 		@FetchAll var profiles: [Profile]
 
 		@ObservationIgnored
-		@FetchAll(Residence.none, animation: .default) var residences // start empty, load via getResidences
+		@FetchAll(Residence.none, animation: .default) var residences  // start empty, load via getResidences
 
 		@ObservationIgnored
 		@FetchAll(Utility.none, animation: .default) var utilities
@@ -59,6 +59,7 @@ extension ResidenceScreen {
 					databaseValue: selectedResidence?.backgroundColor
 						?? "indigo"
 				)
+				residenceNotes = selectedResidence?.notes ?? ""
 			}
 		}
 
@@ -83,7 +84,11 @@ extension ResidenceScreen {
 			setProfile(to: "Default")
 			await loadResidences()
 
-			if let selectedResidenceID, let selectedResidenceUUID = UUID(uuidString: selectedResidenceID) {
+			if let selectedResidenceID,
+				let selectedResidenceUUID = UUID(
+					uuidString: selectedResidenceID
+				)
+			{
 				setSelectedResidence(to: selectedResidenceUUID)
 			} else if selectedResidenceID == nil && !residences.isEmpty {
 				setSelectedResidence(to: residences.first!.id)
@@ -117,7 +122,14 @@ extension ResidenceScreen {
 		}
 
 		func showEditResidenceSheet() {
-			residenceToEdit = selectedResidence
+			// Reload the latest data from database before editing
+			if let selectedResidence {
+				withErrorReporting {
+					residenceToEdit = try database.write { db in
+						try Residence.find(selectedResidence.id).fetchOne(db)
+					}
+				}
+			}
 			isShowingEditSheet = true
 		}
 
