@@ -57,7 +57,7 @@ struct InfoSection<Content: View>: View {
 				LinearGradient(
 					colors: [
 						backgroundColor,
-						backgroundColor.opacity(0.8),
+						backgroundColor.opacity(0.6),
 					],
 					startPoint: .topLeading,
 					endPoint: .bottomTrailing
