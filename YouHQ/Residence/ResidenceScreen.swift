@@ -49,7 +49,9 @@ struct ResidenceScreen: View {
 		}
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
+		.if(vm.residences.count > 1) {
+			$0.navigationBarTitleDisplayMode(.inline)
+		}
 		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.contentMargins(.top, 0)

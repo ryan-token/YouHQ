@@ -38,7 +38,7 @@ struct SectionEditSheet: View {
 
 	var body: some View {
 		NavigationStack {
-			List {
+			Form {
 				switch vm.section {
 				case .residenceInfo:
 					ResidenceInfoEditSection(vm: vm)
@@ -50,7 +50,12 @@ struct SectionEditSheet: View {
 					OtherEditSection(vm: vm)
 				}
 			}
+			#if os(macOS)
+			.formStyle(.grouped)
+			.frame(minWidth: 500, minHeight: 350)
+			#else
 			.frame(minHeight: 350)
+			#endif
 			.navigationTitle(vm.title)
 			#if !os(macOS)
 				.navigationBarTitleDisplayMode(.inline)
@@ -89,9 +94,13 @@ private struct ResidenceInfoEditSection: View {
 
 	var body: some View {
 		Section("Basic Info") {
-			Picker("Type", selection: $vm.residenceType) {
-				ForEach(ResidenceType.allCases, id: \.self) { type in
-					Text(type.rawValue).tag(type)
+			LabeledField(label: "Type") {
+				Picker(selection: $vm.residenceType) {
+					ForEach(ResidenceType.allCases, id: \.self) { type in
+						Text(type.rawValue).tag(type)
+					}
+				} label: {
+					EmptyView()
 				}
 			}
 
@@ -150,20 +159,29 @@ private struct ResidenceInfoEditSection: View {
 		}
 
 		Section("Cost") {
-			Picker("Cost Type", selection: $vm.residenceCostType) {
-				ForEach(CostType.allCases, id: \.self) { type in
-					Text(type.rawValue).tag(type)
+			LabeledField(label: "Cost Type") {
+				Picker(selection: $vm.residenceCostType) {
+					ForEach(CostType.allCases, id: \.self) { type in
+						Text(type.rawValue).tag(type)
+					}
+				} label: {
+					EmptyView()
 				}
 			}
 
-			TextField(
-				"Monthly Cost",
-				value: $vm.residenceMonthlyCost,
-				format: .currency(code: "USD")
-			)
-			#if !os(macOS)
-				.keyboardType(.decimalPad)
-			#endif
+			if vm.residenceCostType != .owned {
+				LabeledField(label: "Monthly Cost") {
+					TextField(
+						"",
+						value: $vm.residenceMonthlyCost,
+						format: .currency(code: "USD")
+					)
+					.multilineTextAlignment(.trailing)
+				}
+				#if !os(macOS)
+					.keyboardType(.decimalPad)
+				#endif
+			}
 		}
 
 		Section("Website") {
@@ -173,6 +191,7 @@ private struct ResidenceInfoEditSection: View {
 		Section("Notes") {
 			TextEditor(text: $vm.residenceNotes)
 				.frame(minHeight: 100)
+				.scrollContentBackground(.hidden)
 		}
 	}
 }
@@ -184,23 +203,37 @@ private struct UtilityEditSection: View {
 
 	var body: some View {
 		Section("Utility Info") {
-			Picker("Type", selection: $vm.utilityType) {
-				ForEach(UtilityType.allCases, id: \.self) { type in
-					Text(type.rawValue).tag(type)
+			LabeledField(label: "Type") {
+				Picker(selection: $vm.utilityType) {
+					ForEach(UtilityType.allCases, id: \.self) { type in
+						Text(type.rawValue).tag(type)
+					}
+				} label: {
+					EmptyView()
 				}
 			}
 
-			TextField("Provider", text: $vm.utilityProvider)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
-			TextField("Account Number", text: $vm.utilityAccountNumber)
+			LabeledField(label: "Provider") {
+				TextField("", text: $vm.utilityProvider)
+					.multilineTextAlignment(.trailing)
+			}
+			#if !os(macOS)
+				.textInputAutocapitalization(.words)
+			#endif
 
-			TextField(
-				"Approximate Monthly Cost",
-				value: $vm.utilityMonthlyCost,
-				format: .currency(code: "USD")
-			)
+			LabeledField(label: "Account Number") {
+				TextField("", text: $vm.utilityAccountNumber)
+					.multilineTextAlignment(.trailing)
+			}
+
+			LabeledField(label: "Appx Monthly Cost"){
+				TextField(
+					"",
+					value: $vm.utilityMonthlyCost,
+					format: .currency(code: "USD")
+				)
+				.multilineTextAlignment(.trailing)
+			}
 			#if !os(macOS)
 				.keyboardType(.decimalPad)
 			#endif
@@ -213,6 +246,7 @@ private struct UtilityEditSection: View {
 		Section("Notes") {
 			TextEditor(text: $vm.utilityNotes)
 				.frame(minHeight: 100)
+				.scrollContentBackground(.hidden)
 		}
 	}
 }
@@ -224,43 +258,63 @@ private struct InsuranceEditSection: View {
 
 	var body: some View {
 		Section("Policy Info") {
-			Picker("Type", selection: $vm.insuranceType) {
-				ForEach(InsurancePolicyType.allCases, id: \.self) { type in
-					Text(type.rawValue).tag(type)
+			LabeledField(label: "Type") {
+				Picker(selection: $vm.insuranceType) {
+					ForEach(InsurancePolicyType.allCases, id: \.self) { type in
+						Text(type.rawValue).tag(type)
+					}
+				} label: {
+					EmptyView()
 				}
 			}
 
-			TextField("Provider", text: $vm.insuranceProvider)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
-			TextField("Policy Number", text: $vm.insurancePolicyNumber)
+			LabeledField(label: "Provider") {
+				TextField("", text: $vm.insuranceProvider)
+					.multilineTextAlignment(.trailing)
+			}
+			#if !os(macOS)
+				.textInputAutocapitalization(.words)
+			#endif
+
+			LabeledField(label: "Policy Number") {
+				TextField("", text: $vm.insurancePolicyNumber)
+					.multilineTextAlignment(.trailing)
+			}
 		}
 
 		Section("Cost") {
-			TextField(
-				"Monthly Cost",
-				value: $vm.insuranceMonthlyCost,
-				format: .currency(code: "USD")
-			)
+			LabeledField(label: "Monthly Cost") {
+				TextField(
+					"",
+					value: $vm.insuranceMonthlyCost,
+					format: .currency(code: "USD")
+				)
+				.multilineTextAlignment(.trailing)
+			}
 			#if !os(macOS)
 				.keyboardType(.decimalPad)
 			#endif
 
-			TextField(
-				"Deductible",
-				value: $vm.insuranceDeductible,
-				format: .currency(code: "USD")
-			)
+			LabeledField(label: "Deductible") {
+				TextField(
+					"",
+					value: $vm.insuranceDeductible,
+					format: .currency(code: "USD")
+				)
+				.multilineTextAlignment(.trailing)
+			}
 			#if !os(macOS)
 				.keyboardType(.decimalPad)
 			#endif
 
-			TextField(
-				"Coverage Amount",
-				value: $vm.insuranceCoverageAmount,
-				format: .currency(code: "USD")
-			)
+			LabeledField(label: "Coverage Amount") {
+				TextField(
+					"",
+					value: $vm.insuranceCoverageAmount,
+					format: .currency(code: "USD")
+				)
+				.multilineTextAlignment(.trailing)
+			}
 			#if !os(macOS)
 				.keyboardType(.decimalPad)
 			#endif
@@ -288,6 +342,7 @@ private struct InsuranceEditSection: View {
 		Section("Notes") {
 			TextEditor(text: $vm.insuranceNotes)
 				.frame(minHeight: 100)
+				.scrollContentBackground(.hidden)
 		}
 	}
 }
@@ -313,16 +368,22 @@ private struct OtherEditSection: View {
 
 	var body: some View {
 		Section("Basic Info") {
-			TextField("Name", text: $vm.otherName)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
+			LabeledField(label: "Name") {
+				TextField("", text: $vm.otherName)
+					.multilineTextAlignment(.trailing)
+			}
+			#if !os(macOS)
+				.textInputAutocapitalization(.words)
+			#endif
 
-			TextField(
-				"Description",
-				text: $vm.otherDescription,
-				axis: .vertical
-			)
+			LabeledField(label: "Description") {
+				TextField(
+					"",
+					text: $vm.otherDescription,
+					axis: .vertical
+				)
+				.multilineTextAlignment(.trailing)
+			}
 			#if !os(macOS)
 				.textInputAutocapitalization(.sentences)
 			#endif
@@ -330,11 +391,14 @@ private struct OtherEditSection: View {
 		}
 
 		Section("Cost") {
-			TextField(
-				"Monthly Cost",
-				value: $vm.otherMonthlyCost,
-				format: .currency(code: "USD")
-			)
+			LabeledField(label: "Monthly Cost") {
+				TextField(
+					"",
+					value: $vm.otherMonthlyCost,
+					format: .currency(code: "USD")
+				)
+				.multilineTextAlignment(.trailing)
+			}
 			#if !os(macOS)
 				.keyboardType(.decimalPad)
 			#endif
@@ -347,6 +411,7 @@ private struct OtherEditSection: View {
 		Section("Notes") {
 			TextEditor(text: $vm.otherNotes)
 				.frame(minHeight: 100)
+				.scrollContentBackground(.hidden)
 		}
 	}
 }

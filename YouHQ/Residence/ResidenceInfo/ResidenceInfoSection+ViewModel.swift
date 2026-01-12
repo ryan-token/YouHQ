@@ -32,8 +32,9 @@ extension ResidenceInfoSection {
 		var totalMonthlyCost: Double {
 			var total: Double = 0
 
-			// Add residence monthly cost (rent/mortgage)
-			if let residenceCost = residence?.monthlyCost {
+			// Add residence monthly cost (rent/mortgage) - but not if owned
+			if let residenceCost = residence?.monthlyCost,
+			   residence?.costType != .owned {
 				total += residenceCost
 			}
 

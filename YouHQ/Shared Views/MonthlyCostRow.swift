@@ -85,8 +85,8 @@ struct CostBreakdownView: View {
 					.padding(.bottom, 4)
 
 				VStack(alignment: .leading, spacing: 8) {
-					// Residence cost (rent/mortgage)
-					if let residenceCost {
+					// Residence cost (rent/mortgage) - but not if owned
+					if let residenceCost, residenceCostType != .owned {
 						HStack {
 							Text(residenceCostType.rawValue)
 							Spacer()

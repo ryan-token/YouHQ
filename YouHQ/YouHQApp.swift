@@ -31,7 +31,8 @@ struct YouHQApp: App {
 						Device.self,
 						Subscription.self,
 						Job.self,
-						InsurancePolicy.self
+						InsurancePolicy.self,
+						Other.self
 				)
 			}
 		}
