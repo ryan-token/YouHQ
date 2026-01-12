@@ -12,6 +12,7 @@ struct AddResidenceSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
 	@Binding var selectedResidence: Residence?
+	@FocusState private var focusedField: Bool
 
 	init(profileID: UUID, selectedResidence: Binding<Residence?>) {
 		_vm = State(wrappedValue: ViewModel(profileID: profileID))
@@ -34,8 +35,12 @@ struct AddResidenceSheet: View {
 					moveOutDate: $vm.moveOutDate,
 					hasMoveOutDate: $vm.hasMoveOutDate,
 					costType: $vm.costType,
-					monthlyCost: $vm.monthlyCost
+					monthlyCost: $vm.monthlyCost,
+					focusedField: $focusedField
 				)
+			}
+			.onAppear {
+				focusedField = true
 			}
 			#if os(macOS)
 				.formStyle(.grouped)

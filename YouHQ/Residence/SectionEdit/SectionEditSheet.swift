@@ -31,6 +31,10 @@ enum EditableSection {
 struct SectionEditSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
+	@FocusState private var residenceFieldFocused: Bool
+	@FocusState private var utilityFieldFocused: Bool
+	@FocusState private var insuranceFieldFocused: Bool
+	@FocusState private var otherFieldFocused: Bool
 
 	init(section: EditableSection) {
 		_vm = State(wrappedValue: ViewModel(section: section))
@@ -41,13 +45,39 @@ struct SectionEditSheet: View {
 			Form {
 				switch vm.section {
 				case .residenceInfo:
-					ResidenceInfoEditSection(vm: vm)
+					ResidenceInfoEditSection(
+						vm: vm,
+						focusedField: $residenceFieldFocused
+					)
 				case .utility:
-					UtilityEditSection(vm: vm)
+					UtilityEditSection(
+						vm: vm,
+						focusedField: $utilityFieldFocused
+					)
 				case .insurancePolicy:
-					InsuranceEditSection(vm: vm)
+					InsuranceEditSection(
+						vm: vm,
+						focusedField: $insuranceFieldFocused
+					)
 				case .other:
-					OtherEditSection(vm: vm)
+					OtherEditSection(
+						vm: vm,
+						focusedField: $otherFieldFocused
+					)
+				}
+			}
+			.onAppear {
+				if vm.section.isNew {
+					switch vm.section {
+					case .residenceInfo:
+						residenceFieldFocused = true
+					case .utility:
+						utilityFieldFocused = true
+					case .insurancePolicy:
+						insuranceFieldFocused = true
+					case .other:
+						otherFieldFocused = true
+					}
 				}
 			}
 			#if os(macOS)
@@ -91,6 +121,7 @@ struct SectionEditSheet: View {
 
 private struct ResidenceInfoEditSection: View {
 	@Bindable var vm: SectionEditSheet.ViewModel
+	var focusedField: FocusState<Bool>.Binding
 
 	var body: some View {
 		ResidenceFormFields(
@@ -109,7 +140,8 @@ private struct ResidenceInfoEditSection: View {
 			monthlyCost: $vm.residenceMonthlyCost,
 			showURLAndNotes: true,
 			url: $vm.residenceURL,
-			notes: $vm.residenceNotes
+			notes: $vm.residenceNotes,
+			focusedField: focusedField
 		)
 	}
 }
@@ -118,6 +150,7 @@ private struct ResidenceInfoEditSection: View {
 
 private struct UtilityEditSection: View {
 	@Bindable var vm: SectionEditSheet.ViewModel
+	var focusedField: FocusState<Bool>.Binding
 
 	var body: some View {
 		Section("Utility Info") {
@@ -133,6 +166,7 @@ private struct UtilityEditSection: View {
 
 			LabeledField(label: "Provider") {
 				TextField("", text: $vm.utilityProvider)
+					.focused(focusedField)
 					.multilineTextAlignment(.trailing)
 			}
 			#if !os(macOS)
@@ -173,6 +207,7 @@ private struct UtilityEditSection: View {
 
 private struct InsuranceEditSection: View {
 	@Bindable var vm: SectionEditSheet.ViewModel
+	var focusedField: FocusState<Bool>.Binding
 
 	var body: some View {
 		Section("Policy Info") {
@@ -188,6 +223,7 @@ private struct InsuranceEditSection: View {
 
 			LabeledField(label: "Provider") {
 				TextField("", text: $vm.insuranceProvider)
+					.focused(focusedField)
 					.multilineTextAlignment(.trailing)
 			}
 			#if !os(macOS)
@@ -283,11 +319,13 @@ private struct InsuranceEditSection: View {
 
 private struct OtherEditSection: View {
 	@Bindable var vm: SectionEditSheet.ViewModel
+	var focusedField: FocusState<Bool>.Binding
 
 	var body: some View {
 		Section("Basic Info") {
 			LabeledField(label: "Name") {
 				TextField("", text: $vm.otherName)
+					.focused(focusedField)
 					.multilineTextAlignment(.trailing)
 			}
 			#if !os(macOS)

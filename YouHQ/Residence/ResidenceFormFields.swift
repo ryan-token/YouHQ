@@ -25,6 +25,7 @@ struct ResidenceFormFields: View {
 	let showURLAndNotes: Bool
 	@Binding var url: String
 	@Binding var notes: String
+	var focusedField: FocusState<Bool>.Binding?
 	
 	init(
 		type: Binding<ResidenceType>,
@@ -42,7 +43,8 @@ struct ResidenceFormFields: View {
 		monthlyCost: Binding<Double?>,
 		showURLAndNotes: Bool = false,
 		url: Binding<String> = .constant(""),
-		notes: Binding<String> = .constant("")
+		notes: Binding<String> = .constant(""),
+		focusedField: FocusState<Bool>.Binding? = nil
 	) {
 		_type = type
 		_isCurrent = isCurrent
@@ -60,6 +62,7 @@ struct ResidenceFormFields: View {
 		self.showURLAndNotes = showURLAndNotes
 		_url = url
 		_notes = notes
+		self.focusedField = focusedField
 	}
 	
 	var body: some View {
@@ -79,6 +82,7 @@ struct ResidenceFormFields: View {
 		
 		Section("Address") {
 			TextField("Street", text: $street)
+				.focused(focusedField ?? FocusState<Bool>().projectedValue)
 				#if !os(macOS)
 					.textInputAutocapitalization(.words)
 				#endif
