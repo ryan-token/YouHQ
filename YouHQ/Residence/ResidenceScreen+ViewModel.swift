@@ -126,15 +126,14 @@ extension ResidenceScreen {
 			)
 		}
 
-		func updateBackgroundColorFromResidences() {
+		func updateSelectedResidence() {
 			guard let selectedResidence,
 				let updatedResidence = residences.first(where: {
 					$0.id == selectedResidence.id
 				})
 			else { return }
-			backgroundColor = Color(
-				databaseValue: updatedResidence.backgroundColor
-			)
+
+			self.selectedResidence = updatedResidence
 		}
 
 		func showCreateResidenceSheet() {

@@ -51,10 +51,10 @@ struct SectionEditSheet: View {
 				}
 			}
 			#if os(macOS)
-			.formStyle(.grouped)
-			.frame(minWidth: 500, minHeight: 350)
+				.formStyle(.grouped)
+				.frame(minWidth: 500, minHeight: 350)
 			#else
-			.frame(minHeight: 350)
+				.frame(minHeight: 350)
 			#endif
 			.navigationTitle(vm.title)
 			#if !os(macOS)
@@ -93,106 +93,24 @@ private struct ResidenceInfoEditSection: View {
 	@Bindable var vm: SectionEditSheet.ViewModel
 
 	var body: some View {
-		Section("Basic Info") {
-			LabeledField(label: "Type") {
-				Picker(selection: $vm.residenceType) {
-					ForEach(ResidenceType.allCases, id: \.self) { type in
-						Text(type.rawValue).tag(type)
-					}
-				} label: {
-					EmptyView()
-				}
-			}
-
-			Toggle("Current Residence", isOn: $vm.residenceIsCurrent)
-		}
-
-		Section("Address") {
-			TextField("Street", text: $vm.residenceStreet)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
-			TextField("Unit", text: $vm.residenceUnit)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
-			TextField("City", text: $vm.residenceCity)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
-			TextField("State", text: $vm.residenceState)
-				#if !os(macOS)
-					.textInputAutocapitalization(.characters)
-				#endif
-			TextField("ZIP Code", text: $vm.residenceZipCode)
-				#if !os(macOS)
-					.keyboardType(.numberPad)
-				#endif
-			TextField("Country", text: $vm.residenceCountry)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
-		}
-
-		Section("Dates") {
-			DatePicker(
-				"Move-in Date",
-				selection: Binding(
-					get: { vm.residenceMoveInDate ?? Date() },
-					set: { vm.residenceMoveInDate = $0 }
-				),
-				displayedComponents: .date
-			)
-
-			Toggle("Has Move-out Date", isOn: $vm.residenceHasMoveOutDate)
-
-			if vm.residenceHasMoveOutDate {
-				DatePicker(
-					"Move-out Date",
-					selection: Binding(
-						get: { vm.residenceMoveOutDate ?? Date() },
-						set: { vm.residenceMoveOutDate = $0 }
-					),
-					displayedComponents: .date
-				)
-			}
-		}
-
-		Section("Cost") {
-			LabeledField(label: "Cost Type") {
-				Picker(selection: $vm.residenceCostType) {
-					ForEach(CostType.allCases, id: \.self) { type in
-						Text(type.rawValue).tag(type)
-					}
-				} label: {
-					EmptyView()
-				}
-			}
-
-			if vm.residenceCostType != .owned {
-				LabeledField(label: "Monthly Cost") {
-					TextField(
-						"",
-						value: $vm.residenceMonthlyCost,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
-			}
-		}
-
-		Section("Website") {
-			URLTextField(text: $vm.residenceURL)
-		}
-
-		Section("Notes") {
-			TextEditor(text: $vm.residenceNotes)
-				.frame(minHeight: 100)
-				.scrollContentBackground(.hidden)
-		}
+		ResidenceFormFields(
+			type: $vm.residenceType,
+			isCurrent: $vm.residenceIsCurrent,
+			street: $vm.residenceStreet,
+			unit: $vm.residenceUnit,
+			city: $vm.residenceCity,
+			state: $vm.residenceState,
+			zipCode: $vm.residenceZipCode,
+			country: $vm.residenceCountry,
+			moveInDate: $vm.residenceMoveInDate,
+			moveOutDate: $vm.residenceMoveOutDate,
+			hasMoveOutDate: $vm.residenceHasMoveOutDate,
+			costType: $vm.residenceCostType,
+			monthlyCost: $vm.residenceMonthlyCost,
+			showURLAndNotes: true,
+			url: $vm.residenceURL,
+			notes: $vm.residenceNotes
+		)
 	}
 }
 
@@ -226,7 +144,7 @@ private struct UtilityEditSection: View {
 					.multilineTextAlignment(.trailing)
 			}
 
-			LabeledField(label: "Appx Monthly Cost"){
+			LabeledField(label: "Appx Monthly Cost") {
 				TextField(
 					"",
 					value: $vm.utilityMonthlyCost,
