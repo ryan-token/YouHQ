@@ -127,7 +127,7 @@ private struct ResidenceInfoEditSection: View {
 
 		Section("Dates") {
 			DatePicker(
-				"Move-In Date",
+				"Move-in Date",
 				selection: Binding(
 					get: { vm.residenceMoveInDate ?? Date() },
 					set: { vm.residenceMoveInDate = $0 }
@@ -135,11 +135,11 @@ private struct ResidenceInfoEditSection: View {
 				displayedComponents: .date
 			)
 
-			Toggle("Has Move-Out Date", isOn: $vm.residenceHasMoveOutDate)
+			Toggle("Has Move-out Date", isOn: $vm.residenceHasMoveOutDate)
 
 			if vm.residenceHasMoveOutDate {
 				DatePicker(
-					"Move-Out Date",
+					"Move-out Date",
 					selection: Binding(
 						get: { vm.residenceMoveOutDate ?? Date() },
 						set: { vm.residenceMoveOutDate = $0 }

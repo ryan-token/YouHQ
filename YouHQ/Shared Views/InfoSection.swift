@@ -97,7 +97,7 @@ struct InfoRow: View {
 
 	InfoSection("Info", backgroundColor: $backgroundColor) {
 		InfoRow("Full address:", value: "123 Main St, Springfield, IL 62701")
-		InfoRow("Move in date:", value: "Jan 1, 2024")
+		InfoRow("Move-in date:", value: "Jan 1, 2024")
 		InfoRow("Monthly cost:", value: "$1,500.00")
 	}
 	.padding()

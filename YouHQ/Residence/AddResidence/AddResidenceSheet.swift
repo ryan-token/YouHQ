@@ -42,7 +42,7 @@ struct AddResidenceSheet: View {
 				
 				Section("Dates") {
 					DatePicker(
-						"Move-In Date",
+						"Move-in Date",
 						selection: Binding(
 							get: { vm.moveInDate ?? Date() },
 							set: { vm.moveInDate = $0 }
@@ -50,11 +50,11 @@ struct AddResidenceSheet: View {
 						displayedComponents: .date
 					)
 					
-					Toggle("Has Move-Out Date", isOn: $vm.hasMoveOutDate)
-					
+					Toggle("Has Move-out Date", isOn: $vm.hasMoveOutDate)
+
 					if vm.hasMoveOutDate {
 						DatePicker(
-							"Move-Out Date",
+							"Move-out Date",
 							selection: Binding(
 								get: { vm.moveOutDate ?? Date() },
 								set: { vm.moveOutDate = $0 }

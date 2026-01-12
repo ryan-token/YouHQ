@@ -34,7 +34,7 @@ struct ResidenceInfoSection: View {
 
 				if let moveInDate = residence.moveInDate {
 					InfoRow(
-						"Move in date:",
+						"Move-in date:",
 						value: moveInDate.formatted(
 							date: .abbreviated,
 							time: .omitted
@@ -44,7 +44,7 @@ struct ResidenceInfoSection: View {
 
 				if let moveOutDate = residence.moveOutDate {
 					InfoRow(
-						"Move out date:",
+						"Move-out date:",
 						value: moveOutDate.formatted(
 							date: .abbreviated,
 							time: .omitted
@@ -53,7 +53,21 @@ struct ResidenceInfoSection: View {
 				}
 
 				if let monthlyCost = residence.monthlyCost {
-					InfoRow("Monthly cost:", value: "\(monthlyCost.asCost)")
+					InfoRow(
+						"Monthly \(residence.costType.rawValue.lowercased()):",
+						value: "\(monthlyCost.asCost)"
+					)
+				}
+
+				if vm.totalMonthlyCost > 0 {
+					MonthlyCostRow(
+						"Monthly TCO:",
+						totalCost: vm.totalMonthlyCost,
+						residenceCost: residence.monthlyCost,
+						residenceCostType: residence.costType,
+						utilities: vm.utilities,
+						insurancePolicies: vm.insurancePolicies
+					)
 				}
 
 				if residence.url.isNotEmpty {

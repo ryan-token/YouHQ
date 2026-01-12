@@ -17,8 +17,39 @@ extension ResidenceInfoSection {
 		@ObservationIgnored
 		@FetchOne(Residence.none) var residence: Residence?
 
+		@ObservationIgnored
+		@FetchAll(Utility.none, animation: .default) var utilities: [Utility]
+
+		@ObservationIgnored
+		@FetchAll(InsurancePolicy.none, animation: .default) var insurancePolicies: [InsurancePolicy]
+
 		let residenceID: UUID
 		var backgroundColor: Color = .indigo
+
+		var totalMonthlyCost: Double {
+			var total: Double = 0
+
+			// Add residence monthly cost (rent/mortgage)
+			if let residenceCost = residence?.monthlyCost {
+				total += residenceCost
+			}
+
+			// Add utility costs
+			for utility in utilities {
+				if let utilityCost = utility.approximateMonthlyCost {
+					total += utilityCost
+				}
+			}
+
+			// Add insurance policy costs
+			for policy in insurancePolicies {
+				if let policyCost = policy.monthlyCost {
+					total += policyCost
+				}
+			}
+
+			return total
+		}
 
 		init(residence: Residence) {
 			self.residenceID = residence.id
@@ -26,6 +57,8 @@ extension ResidenceInfoSection {
 
 		func loadResidenceData() async {
 			await loadResidence()
+			await loadUtilities()
+			await loadInsurancePolicies()
 			setInitialBackgroundColor()
 		}
 
@@ -35,6 +68,24 @@ extension ResidenceInfoSection {
 			_ = await withErrorReporting {
 				try await $residence.load(
 					Residence.where { $0.id.eq(residenceID) },
+					animation: .default
+				)
+			}
+		}
+
+		private func loadUtilities() async {
+			_ = await withErrorReporting {
+				try await $utilities.load(
+					Utility.where { $0.residenceID.eq(residenceID) },
+					animation: .default
+				)
+			}
+		}
+
+		private func loadInsurancePolicies() async {
+			_ = await withErrorReporting {
+				try await $insurancePolicies.load(
+					InsurancePolicy.where { $0.residenceID.eq(residenceID) },
 					animation: .default
 				)
 			}
