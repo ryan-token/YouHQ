@@ -213,7 +213,7 @@ private struct InsuranceEditSection: View {
 		Section("Policy Info") {
 			LabeledField(label: "Type") {
 				Picker(selection: $vm.insuranceType) {
-					ForEach(InsurancePolicyType.allCases, id: \.self) { type in
+					ForEach(InsurancePolicyType.allCases.filter { $0 == .home || $0 == .renters }, id: \.self) { type in
 						Text(type.rawValue).tag(type)
 					}
 				} label: {
