@@ -271,6 +271,7 @@ import SQLiteData
 	var residenceID: Residence.ID?
 	var name: String = ""
 	var otherDescription: String = ""
+	var monthlyCost: Double?
 	var backgroundColor: String = "gray"
 	var url: String = ""
 	var notes: String = ""

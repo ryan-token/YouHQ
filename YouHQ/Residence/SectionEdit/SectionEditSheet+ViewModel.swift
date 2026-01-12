@@ -65,6 +65,7 @@ extension SectionEditSheet {
 		var otherResidenceID: UUID?
 		var otherName: String = ""
 		var otherDescription: String = ""
+		var otherMonthlyCost: Double?
 		var otherURL: String = ""
 		var otherNotes: String = ""
 
@@ -147,6 +148,7 @@ extension SectionEditSheet {
 				otherResidenceID = other.residenceID
 				otherName = other.name
 				otherDescription = other.otherDescription
+				otherMonthlyCost = other.monthlyCost
 				otherURL = other.url
 				otherNotes = other.notes
 			}
@@ -296,6 +298,7 @@ extension SectionEditSheet {
 						.update {
 							$0.name = otherName
 							$0.otherDescription = otherDescription
+							$0.monthlyCost = otherMonthlyCost
 							$0.url = otherURL
 							$0.notes = otherNotes
 						}

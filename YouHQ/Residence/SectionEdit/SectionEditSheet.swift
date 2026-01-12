@@ -329,6 +329,17 @@ private struct OtherEditSection: View {
 			.lineLimit(3...6)
 		}
 
+		Section("Cost") {
+			TextField(
+				"Monthly Cost",
+				value: $vm.otherMonthlyCost,
+				format: .currency(code: "USD")
+			)
+			#if !os(macOS)
+				.keyboardType(.decimalPad)
+			#endif
+		}
+
 		Section("Website") {
 			URLTextField(text: $vm.otherURL)
 		}

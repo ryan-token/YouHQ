@@ -35,6 +35,10 @@ struct OtherSection: View {
 					InfoRow("Description:", value: other.otherDescription)
 				}
 
+				if let monthlyCost = other.monthlyCost {
+					InfoRow("Monthly cost:", value: monthlyCost.asCost)
+				}
+
 				if other.url.isNotEmpty {
 					LinkRow("Website:", url: other.url)
 				}

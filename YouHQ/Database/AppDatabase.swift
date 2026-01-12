@@ -285,6 +285,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
 				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"otherDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"monthlyCost" TEXT,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'gray',
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''

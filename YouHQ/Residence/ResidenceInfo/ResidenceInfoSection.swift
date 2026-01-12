@@ -66,7 +66,8 @@ struct ResidenceInfoSection: View {
 						residenceCost: residence.monthlyCost,
 						residenceCostType: residence.costType,
 						utilities: vm.utilities,
-						insurancePolicies: vm.insurancePolicies
+						insurancePolicies: vm.insurancePolicies,
+						others: vm.others
 					)
 				}
 

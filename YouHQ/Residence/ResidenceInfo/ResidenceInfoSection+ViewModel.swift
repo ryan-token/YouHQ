@@ -23,6 +23,9 @@ extension ResidenceInfoSection {
 		@ObservationIgnored
 		@FetchAll(InsurancePolicy.none, animation: .default) var insurancePolicies: [InsurancePolicy]
 
+		@ObservationIgnored
+		@FetchAll(Other.none, animation: .default) var others: [Other]
+
 		let residenceID: UUID
 		var backgroundColor: Color = .indigo
 
@@ -48,6 +51,13 @@ extension ResidenceInfoSection {
 				}
 			}
 
+			// Add other costs
+			for other in others {
+				if let otherCost = other.monthlyCost {
+					total += otherCost
+				}
+			}
+
 			return total
 		}
 
@@ -59,6 +69,7 @@ extension ResidenceInfoSection {
 			await loadResidence()
 			await loadUtilities()
 			await loadInsurancePolicies()
+			await loadOthers()
 			setInitialBackgroundColor()
 		}
 
@@ -86,6 +97,15 @@ extension ResidenceInfoSection {
 			_ = await withErrorReporting {
 				try await $insurancePolicies.load(
 					InsurancePolicy.where { $0.residenceID.eq(residenceID) },
+					animation: .default
+				)
+			}
+		}
+
+		private func loadOthers() async {
+			_ = await withErrorReporting {
+				try await $others.load(
+					Other.where { $0.residenceID.eq(residenceID) },
 					animation: .default
 				)
 			}

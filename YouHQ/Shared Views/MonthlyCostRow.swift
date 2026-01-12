@@ -14,6 +14,7 @@ struct MonthlyCostRow: View {
 	let residenceCostType: CostType
 	let utilities: [Utility]
 	let insurancePolicies: [InsurancePolicy]
+	let others: [Other]
 
 	@State private var showPopover = false
 
@@ -23,7 +24,8 @@ struct MonthlyCostRow: View {
 		residenceCost: Double?,
 		residenceCostType: CostType,
 		utilities: [Utility],
-		insurancePolicies: [InsurancePolicy]
+		insurancePolicies: [InsurancePolicy],
+		others: [Other]
 	) {
 		self.label = label
 		self.totalCost = totalCost
@@ -31,6 +33,7 @@ struct MonthlyCostRow: View {
 		self.residenceCostType = residenceCostType
 		self.utilities = utilities
 		self.insurancePolicies = insurancePolicies
+		self.others = others
 	}
 
 	var body: some View {
@@ -58,6 +61,7 @@ struct MonthlyCostRow: View {
 				residenceCostType: residenceCostType,
 				utilities: utilities,
 				insurancePolicies: insurancePolicies,
+				others: others,
 				totalCost: totalCost
 			)
 		}
@@ -69,6 +73,7 @@ struct CostBreakdownView: View {
 	let residenceCostType: CostType
 	let utilities: [Utility]
 	let insurancePolicies: [InsurancePolicy]
+	let others: [Other]
 	let totalCost: Double
 
 	var body: some View {
@@ -109,6 +114,19 @@ struct CostBreakdownView: View {
 						if let cost = policy.monthlyCost {
 							HStack {
 								Text("+ \(policy.type.rawValue) Insurance")
+								Spacer()
+								Text(cost.asCost)
+									.fontWeight(.medium)
+							}
+							.font(.body)
+						}
+					}
+
+					// Others
+					ForEach(others) { other in
+						if let cost = other.monthlyCost {
+							HStack {
+								Text("+ \(other.name)")
 								Spacer()
 								Text(cost.asCost)
 									.fontWeight(.medium)
@@ -166,7 +184,7 @@ struct CostBreakdownView: View {
 					backgroundColor: "blue",
 					url: "",
 					notes: ""
-				),
+				)
 			],
 			insurancePolicies: [
 				InsurancePolicy(
@@ -186,7 +204,8 @@ struct CostBreakdownView: View {
 					url: "",
 					notes: ""
 				)
-			]
+			],
+			others: []
 		)
 		.padding()
 		.background(.indigo)
