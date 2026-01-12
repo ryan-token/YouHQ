@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ResidenceScreen: View {
 	@State private var vm = ViewModel()
+	@AppStorage("hideCosts") private var hideCosts = false
 
 	var body: some View {
 		List {
@@ -41,7 +42,18 @@ struct ResidenceScreen: View {
 						}
 					#endif
 
-					ResidenceInfo(vm: vm)
+					Toggle(isOn: $hideCosts) {
+						Text("Hide Costs")
+							.foregroundStyle(.secondary)
+							.font(.headline)
+					}
+					.listRowBackground(Color.clear)
+					.listRowSeparator(.hidden)
+					#if os(macOS)
+						.padding(.vertical, 4)
+					#endif
+
+					ResidenceInfo(vm: vm, hideCosts: hideCosts)
 						.listRowSeparator(.hidden)
 				}
 			}
@@ -49,9 +61,9 @@ struct ResidenceScreen: View {
 		}
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		#if !os(macOS)
-		.if(vm.residences.count > 1) {
-			$0.navigationBarTitleDisplayMode(.inline)
-		}
+			.if(vm.residences.count > 1) {
+				$0.navigationBarTitleDisplayMode(.inline)
+			}
 		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.contentMargins(.top, 0)

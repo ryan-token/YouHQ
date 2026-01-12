@@ -10,10 +10,16 @@ import SwiftUI
 
 struct ResidenceInfoSection: View {
 	@State private var vm: ViewModel
+	let hideCosts: Bool
 	let onTap: ((Residence) -> Void)?
 
-	init(for residence: Residence, onTap: ((Residence) -> Void)? = nil) {
+	init(
+		for residence: Residence,
+		hideCosts: Bool = false,
+		onTap: ((Residence) -> Void)? = nil
+	) {
 		_vm = State(wrappedValue: ViewModel(residence: residence))
+		self.hideCosts = hideCosts
 		self.onTap = onTap
 	}
 
@@ -52,22 +58,26 @@ struct ResidenceInfoSection: View {
 					)
 				}
 
-				if let monthlyCost = residence.monthlyCost, residence.costType != .owned {
+				if let monthlyCost = residence.monthlyCost,
+					residence.costType != .owned
+				{
 					InfoRow(
 						"Monthly \(residence.costType.rawValue.lowercased()):",
-						value: "\(monthlyCost.asCost)"
+						value: "\(monthlyCost.asCost)",
+						blurred: hideCosts
 					)
 				}
 
 				if vm.totalMonthlyCost > 0 {
-					MonthlyCostRow(
+					MonthlyTCORow(
 						"Monthly TCO:",
 						totalCost: vm.totalMonthlyCost,
 						residenceCost: residence.monthlyCost,
 						residenceCostType: residence.costType,
 						utilities: vm.utilities,
 						insurancePolicies: vm.insurancePolicies,
-						others: vm.others
+						others: vm.others,
+						blurred: hideCosts
 					)
 				}
 

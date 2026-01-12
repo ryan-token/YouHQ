@@ -72,11 +72,18 @@ struct InfoRow: View {
 	let label: String
 	let value: String
 	let isSelectable: Bool
+	let blurred: Bool
 
-	init(_ label: String, value: String, isSelectable: Bool = true) {
+	init(
+		_ label: String,
+		value: String,
+		isSelectable: Bool = true,
+		blurred: Bool = false
+	) {
 		self.label = label
 		self.value = value
 		self.isSelectable = isSelectable
+		self.blurred = blurred
 	}
 
 	var body: some View {
@@ -87,6 +94,7 @@ struct InfoRow: View {
 				.if(isSelectable) {
 					$0.textSelection(.enabled)
 				}
+				.blur(radius: blurred ? 4 : 0)
 		}
 		.foregroundStyle(.white)
 	}

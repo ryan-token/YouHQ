@@ -9,10 +9,16 @@ import SwiftUI
 
 struct InsuranceSection: View {
 	@State private var vm: ViewModel
+	let hideCosts: Bool
 	let onTap: (() -> Void)?
 
-	init(for policy: InsurancePolicy, onTap: (() -> Void)? = nil) {
+	init(
+		for policy: InsurancePolicy,
+		hideCosts: Bool = false,
+		onTap: (() -> Void)? = nil
+	) {
 		_vm = State(wrappedValue: ViewModel(policy: policy))
+		self.hideCosts = hideCosts
 		self.onTap = onTap
 	}
 
@@ -36,17 +42,26 @@ struct InsuranceSection: View {
 				}
 
 				if let monthlyCost = policy.monthlyCost {
-					InfoRow("Monthly cost:", value: "\(monthlyCost.asCost)")
+					InfoRow(
+						"Monthly cost:",
+						value: "\(monthlyCost.asCost)",
+						blurred: hideCosts
+					)
 				}
 
 				if let deductible = policy.deductible {
-					InfoRow("Deductible:", value: "\(deductible.asCost)")
+					InfoRow(
+						"Deductible:",
+						value: "\(deductible.asCost)",
+						blurred: hideCosts
+					)
 				}
 
 				if let coverageAmount = policy.coverageAmount {
 					InfoRow(
 						"Coverage amount:",
-						value: "\(coverageAmount.asCost)"
+						value: "\(coverageAmount.asCost)",
+						blurred: hideCosts
 					)
 				}
 

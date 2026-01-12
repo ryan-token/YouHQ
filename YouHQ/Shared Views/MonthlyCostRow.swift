@@ -1,5 +1,5 @@
 //
-//  MonthlyCostRow.swift
+//  MonthlyTCORow.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/12/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MonthlyCostRow: View {
+struct MonthlyTCORow: View {
 	let label: String
 	let totalCost: Double
 	let residenceCost: Double?
@@ -15,6 +15,7 @@ struct MonthlyCostRow: View {
 	let utilities: [Utility]
 	let insurancePolicies: [InsurancePolicy]
 	let others: [Other]
+	let blurred: Bool
 
 	@State private var showPopover = false
 
@@ -25,7 +26,8 @@ struct MonthlyCostRow: View {
 		residenceCostType: CostType,
 		utilities: [Utility],
 		insurancePolicies: [InsurancePolicy],
-		others: [Other]
+		others: [Other],
+		blurred: Bool = false
 	) {
 		self.label = label
 		self.totalCost = totalCost
@@ -34,6 +36,7 @@ struct MonthlyCostRow: View {
 		self.utilities = utilities
 		self.insurancePolicies = insurancePolicies
 		self.others = others
+		self.blurred = blurred
 	}
 
 	var body: some View {
@@ -46,6 +49,7 @@ struct MonthlyCostRow: View {
 				} label: {
 					Text(totalCost.asCost)
 						.lineLimit(1)
+						.blur(radius: blurred ? 4 : 0)
 						.padding(.horizontal, 12)
 						.padding(.vertical, 4)
 						.background(.white.opacity(0.3))
@@ -157,7 +161,7 @@ struct CostBreakdownView: View {
 
 #Preview {
 	VStack(spacing: 20) {
-		MonthlyCostRow(
+		MonthlyTCORow(
 			"Monthly TCO:",
 			totalCost: 2500.00,
 			residenceCost: 2000.00,
@@ -184,7 +188,7 @@ struct CostBreakdownView: View {
 					backgroundColor: "blue",
 					url: "",
 					notes: ""
-				)
+				),
 			],
 			insurancePolicies: [
 				InsurancePolicy(

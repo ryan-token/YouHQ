@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ResidenceInfo: View {
 	@Bindable var vm: ResidenceScreen.ViewModel
+	let hideCosts: Bool
 
 	var body: some View {
 		if let residence = vm.selectedResidence {
 			ResidenceInfoSection(
 				for: residence,
+				hideCosts: hideCosts,
 				onTap: { residence in
 					vm.sectionToEdit = .residenceInfo(residence)
 					vm.isShowingSectionEditSheet = true
@@ -24,6 +26,7 @@ struct ResidenceInfo: View {
 			ForEach(vm.utilities) { utility in
 				UtilitySection(
 					for: utility,
+					hideCosts: hideCosts,
 					onTap: {
 						vm.sectionToEdit = .utility(utility, isNew: false)
 						vm.isShowingSectionEditSheet = true
@@ -41,6 +44,7 @@ struct ResidenceInfo: View {
 			ForEach(vm.insurancePolicies) { policy in
 				InsuranceSection(
 					for: policy,
+					hideCosts: hideCosts,
 					onTap: {
 						vm.sectionToEdit = .insurancePolicy(
 							policy,
@@ -61,6 +65,7 @@ struct ResidenceInfo: View {
 			ForEach(vm.others) { other in
 				OtherSection(
 					for: other,
+					hideCosts: hideCosts,
 					onTap: {
 						vm.sectionToEdit = .other(other, isNew: false)
 						vm.isShowingSectionEditSheet = true

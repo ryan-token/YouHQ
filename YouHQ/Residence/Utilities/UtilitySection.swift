@@ -9,10 +9,16 @@ import SwiftUI
 
 struct UtilitySection: View {
 	@State private var vm: ViewModel
+	let hideCosts: Bool
 	let onTap: (() -> Void)?
 
-	init(for utility: Utility, onTap: (() -> Void)? = nil) {
+	init(
+		for utility: Utility,
+		hideCosts: Bool = false,
+		onTap: (() -> Void)? = nil
+	) {
 		_vm = State(wrappedValue: ViewModel(utility: utility))
+		self.hideCosts = hideCosts
 		self.onTap = onTap
 	}
 
@@ -36,7 +42,11 @@ struct UtilitySection: View {
 				}
 
 				if let appxMonthlyCost = utility.approximateMonthlyCost {
-					InfoRow("Monthly cost:", value: "\(appxMonthlyCost.asCost)")
+					InfoRow(
+						"Monthly cost:",
+						value: "\(appxMonthlyCost.asCost)",
+						blurred: hideCosts
+					)
 				}
 
 				if utility.url.isNotEmpty {

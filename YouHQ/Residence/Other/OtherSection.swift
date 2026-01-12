@@ -9,10 +9,13 @@ import SwiftUI
 
 struct OtherSection: View {
 	@State private var vm: ViewModel
+	let hideCosts: Bool
 	let onTap: (() -> Void)?
 
-	init(for other: Other, onTap: (() -> Void)? = nil) {
+	init(for other: Other, hideCosts: Bool = false, onTap: (() -> Void)? = nil)
+	{
 		_vm = State(wrappedValue: ViewModel(other: other))
+		self.hideCosts = hideCosts
 		self.onTap = onTap
 	}
 
@@ -36,7 +39,11 @@ struct OtherSection: View {
 				}
 
 				if let monthlyCost = other.monthlyCost {
-					InfoRow("Monthly cost:", value: monthlyCost.asCost)
+					InfoRow(
+						"Monthly cost:",
+						value: monthlyCost.asCost,
+						blurred: hideCosts
+					)
 				}
 
 				if other.url.isNotEmpty {
