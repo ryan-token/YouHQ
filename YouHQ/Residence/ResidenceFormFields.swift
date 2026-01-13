@@ -21,12 +21,12 @@ struct ResidenceFormFields: View {
 	@Binding var hasMoveOutDate: Bool
 	@Binding var costType: CostType
 	@Binding var monthlyCost: Double?
-	
+
 	let showURLAndNotes: Bool
 	@Binding var url: String
 	@Binding var notes: String
 	var focusedField: FocusState<Bool>.Binding?
-	
+
 	init(
 		type: Binding<ResidenceType>,
 		isCurrent: Binding<Bool>,
@@ -64,7 +64,7 @@ struct ResidenceFormFields: View {
 		_notes = notes
 		self.focusedField = focusedField
 	}
-	
+
 	var body: some View {
 		Section("Basic Info") {
 			LabeledField(label: "Type") {
@@ -76,10 +76,10 @@ struct ResidenceFormFields: View {
 					EmptyView()
 				}
 			}
-			
+
 			Toggle("Current Residence", isOn: $isCurrent)
 		}
-		
+
 		Section("Address") {
 			TextField("Street", text: $street)
 				.focused(focusedField ?? FocusState<Bool>().projectedValue)
@@ -107,7 +107,7 @@ struct ResidenceFormFields: View {
 					.textInputAutocapitalization(.words)
 				#endif
 		}
-		
+
 		Section("Dates") {
 			DatePicker(
 				"Move-in Date",
@@ -117,9 +117,9 @@ struct ResidenceFormFields: View {
 				),
 				displayedComponents: .date
 			)
-			
+
 			Toggle("Has Move-out Date", isOn: $hasMoveOutDate)
-			
+
 			if hasMoveOutDate {
 				DatePicker(
 					"Move-out Date",
@@ -131,7 +131,7 @@ struct ResidenceFormFields: View {
 				)
 			}
 		}
-		
+
 		Section("Cost") {
 			LabeledField(label: "Cost Type") {
 				Picker(selection: $costType) {
@@ -142,7 +142,7 @@ struct ResidenceFormFields: View {
 					EmptyView()
 				}
 			}
-			
+
 			if costType != .owned {
 				LabeledField(label: "Monthly Cost") {
 					TextField(
@@ -157,12 +157,12 @@ struct ResidenceFormFields: View {
 				#endif
 			}
 		}
-		
+
 		if showURLAndNotes {
 			Section("Website") {
 				URLTextField(text: $url)
 			}
-			
+
 			Section("Notes") {
 				TextEditor(text: $notes)
 					.frame(minHeight: 100)

@@ -12,8 +12,7 @@ struct OtherSection: View {
 	let hideCosts: Bool
 	let onTap: (() -> Void)?
 
-	init(for other: Other, hideCosts: Bool = false, onTap: (() -> Void)? = nil)
-	{
+	init(for other: Other, hideCosts: Bool = false, onTap: (() -> Void)? = nil) {
 		_vm = State(wrappedValue: ViewModel(other: other))
 		self.hideCosts = hideCosts
 		self.onTap = onTap

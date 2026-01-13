@@ -59,8 +59,7 @@ struct ResidenceInfoSection: View {
 				}
 
 				if let monthlyCost = residence.monthlyCost,
-					residence.costType != .owned
-				{
+					residence.costType != .owned {
 					InfoRow(
 						"Monthly \(residence.costType.rawValue.lowercased()):",
 						value: "\(monthlyCost.asCost)",

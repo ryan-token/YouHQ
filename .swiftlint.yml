@@ -1,0 +1,36 @@
+included: # paths to include during linting
+  - YouHQ
+disabled_rules:
+  - todo
+  - multiple_closures_with_trailing_closure
+  - function_body_length
+  - for_where
+  - large_tuple
+  - trailing_comma
+  - opening_brace
+type_body_length:
+  warning: 350
+file_length:
+  warning: 600
+identifier_name:
+  excluded:
+    - id
+    - db
+    - vm
+    - cd
+    - tv
+  allowed_symbols: "_"
+line_length:
+  warning: 140
+  error: 500
+opt_in_rules:
+  weak_delegate: true
+cyclomatic_complexity:
+  ignores_case_statements: true
+excluded:
+  - Pods
+  - Carthage
+  - .build
+  - DerivedData
+  - Packages  # If you're using local Swift packages
+  - Tests/Generated

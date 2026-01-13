@@ -78,9 +78,9 @@ struct AddResidenceSheet: View {
 
 #Preview {
 	@Previewable @State var selected: Residence?
-	let _ = prepareDependencies {
-		try! $0.bootstrapDatabase()
-		try! $0.defaultDatabase.seed()
+	let _ = prepareDependencies { // swiftlint:disable:this redundant_discardable_let
+		try? $0.bootstrapDatabase()
+		try? $0.defaultDatabase.seed()
 	}
 	AddResidenceSheet(
 		profileID: Profile.sampleData.id,
