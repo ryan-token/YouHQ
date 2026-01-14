@@ -1,5 +1,5 @@
 //
-//  MaintenanceItemEditSection.swift
+//  MaintenanceItemEdit.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/14/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MaintenanceItemEditSection: View {
+struct MaintenanceItemEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
 

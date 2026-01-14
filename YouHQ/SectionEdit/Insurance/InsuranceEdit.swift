@@ -1,5 +1,5 @@
 //
-//  InsuranceEditSection.swift
+//  InsuranceEdit.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/14/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct InsuranceEditSection: View {
+struct InsuranceEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
 

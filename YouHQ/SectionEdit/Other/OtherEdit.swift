@@ -1,5 +1,5 @@
 //
-//  OtherEditSection.swift
+//  OtherEdit.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/14/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct OtherEditSection: View {
+struct OtherEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
 

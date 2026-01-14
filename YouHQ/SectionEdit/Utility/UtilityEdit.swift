@@ -1,5 +1,5 @@
 //
-//  UtilityEditSection.swift
+//  UtilityEdit.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/14/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UtilityEditSection: View {
+struct UtilityEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
 

@@ -1,5 +1,5 @@
 //
-//  ResidenceInfoEditSection.swift
+//  ResidenceInfoEdit.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/14/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ResidenceInfoEditSection: View {
+struct ResidenceInfoEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
 

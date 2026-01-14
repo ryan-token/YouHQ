@@ -25,27 +25,27 @@ struct SectionEditSheet: View {
 			Form {
 				switch vm.section {
 				case .residenceInfo:
-					ResidenceInfoEditSection(
+					ResidenceInfoEdit(
 						coordinator: vm,
 						focusedField: $residenceFieldFocused
 					)
 				case .utility:
-					UtilityEditSection(
+					UtilityEdit(
 						coordinator: vm,
 						focusedField: $utilityFieldFocused
 					)
 				case .insurancePolicy:
-					InsuranceEditSection(
+					InsuranceEdit(
 						coordinator: vm,
 						focusedField: $insuranceFieldFocused
 					)
 				case .maintenanceItem:
-					MaintenanceItemEditSection(
+					MaintenanceItemEdit(
 						coordinator: vm,
 						focusedField: $maintenanceFieldFocused
 					)
 				case .other:
-					OtherEditSection(
+					OtherEdit(
 						coordinator: vm,
 						focusedField: $otherFieldFocused
 					)
