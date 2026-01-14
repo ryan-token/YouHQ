@@ -54,7 +54,7 @@ struct MaintenanceItemEdit: View {
 				LabeledField(label: "Unit") {
 					Picker(selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
-							Text(type.rawValue).tag(type)
+							Text(vm.intervalValue == 1 ? type.rawValue : "\(type.rawValue)s").tag(type)
 						}
 					} label: {
 						EmptyView()
@@ -84,7 +84,7 @@ struct MaintenanceItemEdit: View {
 				}
 
 				if vm.isUsingManualDueDate {
-					Button("Reset to Automatic Date") {
+					Button("Reset Due Date") {
 						vm.resetToAutomaticDueDate()
 					}
 					.buttonStyle(.bordered)

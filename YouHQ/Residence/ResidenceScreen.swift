@@ -66,6 +66,12 @@ struct ResidenceScreen: View {
 			}
 		#endif
 		.toolbar { Toolbar(vm: vm) }
+		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
+			if let residenceIDString = vm.selectedResidenceID,
+				let residenceID = UUID(uuidString: residenceIDString) {
+				MaintenanceItemsScreen(residenceID: residenceID)
+			}
+		}
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
 		.task { await vm.loadResidenceData() }

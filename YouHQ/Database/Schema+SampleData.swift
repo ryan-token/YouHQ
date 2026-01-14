@@ -219,7 +219,7 @@ extension MaintenanceItem {
 		vehicleID: nil,
 		name: "HVAC Filter Replacement",
 		itemDescription: "Replace air filter for heating and cooling system",
-		intervalType: .months,
+		intervalType: .month,
 		intervalValue: 3,
 		lastCompletedAt: Calendar.current.date(
 			byAdding: .month,
@@ -243,7 +243,7 @@ extension MaintenanceItem {
 		vehicleID: Vehicle.sampleData.id,
 		name: "Tire Rotation",
 		itemDescription: "Rotate tires for even wear",
-		intervalType: .months,
+		intervalType: .month,
 		intervalValue: 6,
 		lastCompletedAt: Calendar.current.date(
 			byAdding: .month,
@@ -258,7 +258,7 @@ extension MaintenanceItem {
 		shouldNotify: true,
 		backgroundColor: "orange",
 		url: "",
-		notes: "Rotate every 7,500 miles or 6 months"
+		notes: "Rotate every 7,500 miles or 6 month"
 	)
 }
 

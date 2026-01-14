@@ -62,13 +62,6 @@ struct ResidenceInfo: View {
 				}
 			}
 
-			if !vm.maintenanceItems.isEmpty {
-				MaintenanceItemsNavigationLink(
-					residenceID: residence.id,
-					maintenanceItems: vm.maintenanceItems
-				)
-			}
-
 			ForEach(vm.others) { other in
 				OtherSection(
 					for: other,
@@ -96,6 +89,14 @@ struct ResidenceInfo: View {
 			) {
 				TextEditor(text: $vm.residenceNotes)
 					.textEditorOnColor(minHeight: 100)
+			}
+
+			if !vm.maintenanceItems.isEmpty {
+				MaintenanceItemsNavButton(
+					isNavigating: $vm.isNavigatingToMaintenanceItems,
+					residenceID: residence.id,
+					maintenanceItems: vm.maintenanceItems
+				)
 			}
 
 			AddMoreButton(vm: vm)

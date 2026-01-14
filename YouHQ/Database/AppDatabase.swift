@@ -304,7 +304,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"vehicleID" TEXT REFERENCES "vehicles"("id") ON DELETE CASCADE,
 				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"itemDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
-				"intervalType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'months',
+				"intervalType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'month',
 				"intervalValue" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"lastCompletedAt" TEXT,
 				"nextDueDate" TEXT,

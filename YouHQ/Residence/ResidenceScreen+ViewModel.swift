@@ -76,6 +76,7 @@ extension ResidenceScreen {
 
 		var isShowingAddResidenceSheet = false
 		var isShowingSectionEditSheet = false
+		var isNavigatingToMaintenanceItems = false
 		var sectionToEdit: EditableSection?
 		var showingAddMoreDialog = false
 		var backgroundColor: Color = .indigo

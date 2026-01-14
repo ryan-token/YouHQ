@@ -135,7 +135,7 @@ import SQLiteData
 	let vehicleID: Vehicle.ID?
 	var name: String = ""
 	var itemDescription: String = ""
-	var intervalType: MaintenanceIntervalType = .months
+	var intervalType: MaintenanceIntervalType = .month
 	var intervalValue: Int = 1
 	var lastCompletedAt: Date?
 	var nextDueDate: Date?
@@ -449,17 +449,17 @@ enum InsurancePolicyType: String, Codable, CaseIterable, QueryBindable {
 }
 
 enum MaintenanceIntervalType: String, Codable, CaseIterable, QueryBindable {
-	case days = "Days"
-	case weeks = "Weeks"
-	case months = "Months"
-	case years = "Years"
+	case day = "Day"
+	case week = "Week"
+	case month = "Month"
+	case year = "Year"
 
 	var calendarComponent: Calendar.Component {
 		switch self {
-		case .days: .day
-		case .weeks: .weekOfYear
-		case .months: .month
-		case .years: .year
+		case .day: .day
+		case .week: .weekOfYear
+		case .month: .month
+		case .year: .year
 		}
 	}
 }
