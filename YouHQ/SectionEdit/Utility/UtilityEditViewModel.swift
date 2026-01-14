@@ -1,0 +1,77 @@
+//
+//  UtilityEditViewModel.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 1/14/26.
+//
+
+import SQLiteData
+import SwiftUI
+
+@Observable
+final class UtilityEditViewModel: SectionEditViewModel {
+	@ObservationIgnored
+	@Dependency(\.defaultDatabase) var database
+
+	let utility: Utility
+	let isNew: Bool
+
+	var type: UtilityType
+	var provider: String
+	var accountNumber: String
+	var monthlyCost: Double?
+	var url: String
+	var notes: String
+
+	var title: String {
+		isNew ? "Add Utility" : "Edit Utility"
+	}
+
+	var isValid: Bool {
+		true
+	}
+
+	init(utility: Utility, isNew: Bool) {
+		self.utility = utility
+		self.isNew = isNew
+		self.type = utility.type
+		self.provider = utility.provider
+		self.accountNumber = utility.accountNumber
+		self.monthlyCost = utility.approximateMonthlyCost
+		self.url = utility.url
+		self.notes = utility.notes
+	}
+
+	func save() {
+		withErrorReporting {
+			try database.write { db in
+				try Utility.find(utility.id)
+					.update {
+						$0.type = type
+						$0.provider = provider
+						$0.accountNumber = accountNumber
+						$0.approximateMonthlyCost = monthlyCost
+						$0.url = url
+						$0.notes = notes
+					}
+					.execute(db)
+			}
+		}
+	}
+
+	func cancel() {
+		if isNew {
+			deleteUtility()
+		}
+	}
+
+	private func deleteUtility() {
+		withErrorReporting {
+			try database.write { db in
+				try Utility.find(utility.id)
+					.delete()
+					.execute(db)
+			}
+		}
+	}
+}

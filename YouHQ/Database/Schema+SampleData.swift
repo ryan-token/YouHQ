@@ -212,6 +212,56 @@ extension InsurancePolicy {
 	)
 }
 
+extension MaintenanceItem {
+	static let residenceSampleData = MaintenanceItem(
+		id: UUID(),
+		residenceID: Residence.sampleData.id,
+		vehicleID: nil,
+		name: "HVAC Filter Replacement",
+		itemDescription: "Replace air filter for heating and cooling system",
+		intervalType: .months,
+		intervalValue: 3,
+		lastCompletedAt: Calendar.current.date(
+			byAdding: .month,
+			value: -2,
+			to: Date()
+		),
+		nextDueDate: Calendar.current.date(
+			byAdding: .month,
+			value: 1,
+			to: Date()
+		),
+		shouldNotify: true,
+		backgroundColor: "yellow",
+		url: "https://hvac.example.com",
+		notes: "Use 16x25x1 MERV 11 filter"
+	)
+
+	static let vehicleSampleData = MaintenanceItem(
+		id: UUID(),
+		residenceID: nil,
+		vehicleID: Vehicle.sampleData.id,
+		name: "Tire Rotation",
+		itemDescription: "Rotate tires for even wear",
+		intervalType: .months,
+		intervalValue: 6,
+		lastCompletedAt: Calendar.current.date(
+			byAdding: .month,
+			value: -4,
+			to: Date()
+		),
+		nextDueDate: Calendar.current.date(
+			byAdding: .month,
+			value: 2,
+			to: Date()
+		),
+		shouldNotify: true,
+		backgroundColor: "orange",
+		url: "",
+		notes: "Rotate every 7,500 miles or 6 months"
+	)
+}
+
 extension Other {
 	static let sampleData = Other(
 		id: UUID(),
