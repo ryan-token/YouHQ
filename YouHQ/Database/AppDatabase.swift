@@ -5,6 +5,8 @@
 //  Created by Ryan Token on 12/29/25.
 //
 
+// swiftlint:disable file_length
+
 import SQLiteData
 
 func appDatabase() throws -> any DatabaseWriter {
@@ -292,6 +294,45 @@ func appDatabase() throws -> any DatabaseWriter {
 			"""
 		)
 		.execute(db)
+
+		// Maintenance Item table
+		try #sql(
+			"""
+			CREATE TABLE "maintenanceItems" (
+				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
+				"vehicleID" TEXT REFERENCES "vehicles"("id") ON DELETE CASCADE,
+				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"itemDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"intervalType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'months',
+				"intervalValue" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+				"lastCompletedAt" TEXT,
+				"nextDueDate" TEXT,
+				"shouldNotify" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'yellow',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				CHECK (
+					("residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+					("residenceID" IS NULL AND "vehicleID" IS NOT NULL)
+				)
+			) STRICT
+			"""
+		)
+		.execute(db)
+
+		// Maintenance Completion table
+		try #sql(
+			"""
+			CREATE TABLE "maintenanceCompletions" (
+				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+				"maintenanceItemID" TEXT NOT NULL REFERENCES "maintenanceItems"("id") ON DELETE CASCADE,
+				"completedAt" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT (datetime('now')),
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+			) STRICT
+			"""
+		)
+		.execute(db)
 	}
 
 	// MARK: - Foreign Key Indexes
@@ -391,6 +432,27 @@ func appDatabase() throws -> any DatabaseWriter {
 		try #sql(
 			"""
 			CREATE INDEX "idx_others_residenceID" ON "others"("residenceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_maintenanceItems_residenceID" ON "maintenanceItems"("residenceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_maintenanceItems_vehicleID" ON "maintenanceItems"("vehicleID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_maintenanceCompletions_maintenanceItemID" ON "maintenanceCompletions"("maintenanceItemID")
 			"""
 		)
 		.execute(db)

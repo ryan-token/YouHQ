@@ -12,6 +12,7 @@ enum EditableSection {
 	case residenceInfo(Residence)
 	case utility(Utility, isNew: Bool)
 	case insurancePolicy(InsurancePolicy, isNew: Bool)
+	case maintenanceItem(MaintenanceItem, isNew: Bool)
 	case other(Other, isNew: Bool)
 
 	var isNew: Bool {
@@ -21,6 +22,8 @@ enum EditableSection {
 		case .utility(_, let isNew):
 			isNew
 		case .insurancePolicy(_, let isNew):
+			isNew
+		case .maintenanceItem(_, let isNew):
 			isNew
 		case .other(_, let isNew):
 			isNew
@@ -34,6 +37,7 @@ struct SectionEditSheet: View {
 	@FocusState private var residenceFieldFocused: Bool
 	@FocusState private var utilityFieldFocused: Bool
 	@FocusState private var insuranceFieldFocused: Bool
+	@FocusState private var maintenanceFieldFocused: Bool
 	@FocusState private var otherFieldFocused: Bool
 
 	init(section: EditableSection) {
@@ -59,6 +63,11 @@ struct SectionEditSheet: View {
 						vm: vm,
 						focusedField: $insuranceFieldFocused
 					)
+				case .maintenanceItem:
+					MaintenanceItemEditSection(
+						vm: vm,
+						focusedField: $maintenanceFieldFocused
+					)
 				case .other:
 					OtherEditSection(
 						vm: vm,
@@ -75,6 +84,8 @@ struct SectionEditSheet: View {
 						utilityFieldFocused = true
 					case .insurancePolicy:
 						insuranceFieldFocused = true
+					case .maintenanceItem:
+						maintenanceFieldFocused = true
 					case .other:
 						otherFieldFocused = true
 					}
@@ -213,7 +224,12 @@ private struct InsuranceEditSection: View {
 		Section("Policy Info") {
 			LabeledField(label: "Type") {
 				Picker(selection: $vm.insuranceType) {
-					ForEach(InsurancePolicyType.allCases.filter { $0 == .home || $0 == .renters }, id: \.self) { type in
+					ForEach(
+						InsurancePolicyType.allCases.filter {
+							$0 == .home || $0 == .renters
+						},
+						id: \.self
+					) { type in
 						Text(type.rawValue).tag(type)
 					}
 				} label: {
@@ -374,4 +390,113 @@ private struct OtherEditSection: View {
 
 #Preview("Other") {
 	SectionEditSheet(section: .other(Other.sampleData, isNew: false))
+}
+
+// MARK: - Maintenance Item Edit Section
+
+private struct MaintenanceItemEditSection: View {
+	@Bindable var vm: SectionEditSheet.ViewModel
+	var focusedField: FocusState<Bool>.Binding
+
+	var body: some View {
+		Section("Maintenance Info") {
+			LabeledField(label: "Name") {
+				TextField("", text: $vm.maintenanceName)
+					.focused(focusedField)
+					.multilineTextAlignment(.trailing)
+			}
+			#if !os(macOS)
+				.textInputAutocapitalization(.words)
+			#endif
+
+			LabeledField(label: "Description") {
+				TextField(
+					"",
+					text: $vm.maintenanceDescription,
+					axis: .vertical
+				)
+				.multilineTextAlignment(.trailing)
+			}
+			#if !os(macOS)
+				.textInputAutocapitalization(.sentences)
+			#endif
+			.lineLimit(3...6)
+		}
+
+		Section {
+			LabeledField(label: "Every") {
+				TextField(
+					"",
+					value: $vm.maintenanceIntervalValue,
+					format: .number
+				)
+				.multilineTextAlignment(.trailing)
+			}
+			#if !os(macOS)
+				.keyboardType(.numberPad)
+			#endif
+
+			LabeledField(label: "Unit") {
+				Picker(selection: $vm.maintenanceIntervalType) {
+					ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
+						Text(type.rawValue).tag(type)
+					}
+				} label: {
+					EmptyView()
+				}
+			}
+
+			LabeledField(label: "Next Due Date"){
+				DatePicker(
+					"",
+					selection: Binding(
+						get: {
+							if vm.isUsingManualDueDate {
+								return vm.maintenanceNextDueDate
+									?? vm.calculatedNextDueDate
+							} else {
+								return vm.calculatedNextDueDate
+							}
+						},
+						set: {
+							vm.maintenanceNextDueDate = $0
+							vm.isUsingManualDueDate = true
+						}
+					),
+					displayedComponents: .date
+				)
+				.labelsHidden()
+			}
+
+			if vm.isUsingManualDueDate {
+				Button("Reset to Automatic Date") {
+					vm.resetToAutomaticDueDate()
+				}
+				.buttonStyle(.bordered)
+			}
+
+			LabeledField(label: "Notify When Due") {
+				Toggle("", isOn: $vm.maintenanceShouldNotify)
+					.labelsHidden()
+			}
+		} header: {
+			Text("Maintenance Interval")
+		} footer: {
+			if !vm.isUsingManualDueDate {
+				Text(
+					"Automatically set to \(vm.calculatedNextDueDate.formatted(date: .abbreviated, time: .omitted)) based on your interval"
+				)
+			}
+		}
+
+		Section("Website") {
+			URLTextField(text: $vm.maintenanceURL)
+		}
+
+		Section("Notes") {
+			TextEditor(text: $vm.maintenanceNotes)
+				.frame(minHeight: 100)
+				.scrollContentBackground(.hidden)
+		}
+	}
 }

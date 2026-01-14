@@ -28,6 +28,10 @@ extension ResidenceScreen {
 		var insurancePolicies
 
 		@ObservationIgnored
+		@FetchAll(MaintenanceItem.none, animation: .default)
+		var maintenanceItems
+
+		@ObservationIgnored
 		@FetchAll(Other.none, animation: .default) var others
 
 		init() {
@@ -105,6 +109,7 @@ extension ResidenceScreen {
 
 			await loadUtilities()
 			await loadInsurancePolicies()
+			await loadMaintenanceItems()
 			await loadOthers()
 			residenceNotes = selectedResidence?.notes ?? ""
 		}
@@ -259,6 +264,82 @@ extension ResidenceScreen {
 				try database.write { db in
 					try InsurancePolicy.find(policy.id)
 						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		// MARK: MAINTENANCE ITEM FUNCTIONS
+
+		private func loadMaintenanceItems() async {
+			guard let selectedResidence else { return }
+			_ = await withErrorReporting {
+				try await $maintenanceItems.load(
+					MaintenanceItem
+						.where { $0.residenceID.eq(selectedResidence.id) }
+						.order { $0.name },
+					animation: .default
+				)
+			}
+		}
+
+		func showAddMaintenanceItemSheet() {
+			guard let selectedResidence else { return }
+			// Create a temporary maintenance item in the database that will be deleted if cancelled
+			var createdItem: MaintenanceItem?
+			withErrorReporting {
+				try database.write { db in
+					let itemID = UUID()
+					try MaintenanceItem.insert {
+						MaintenanceItem.Draft(
+							id: itemID,
+							residenceID: selectedResidence.id,
+							vehicleID: nil
+						)
+					}
+					.execute(db)
+					createdItem = try MaintenanceItem.find(itemID).fetchOne(db)
+				}
+			}
+			if let createdItem {
+				sectionToEdit = .maintenanceItem(createdItem, isNew: true)
+				isShowingSectionEditSheet = true
+			}
+		}
+
+		func deleteMaintenanceItem(_ item: MaintenanceItem) {
+			withErrorReporting {
+				try database.write { db in
+					try MaintenanceItem.find(item.id)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		func completeMaintenanceItem(_ item: MaintenanceItem) {
+			withErrorReporting {
+				try database.write { db in
+					let completedAt = Date()
+					let nextDue = item.calculateNextDueDate(from: completedAt)
+
+					// Create completion record
+					try MaintenanceCompletion.insert {
+						MaintenanceCompletion.Draft(
+							id: UUID(),
+							maintenanceItemID: item.id,
+							completedAt: completedAt,
+							notes: ""
+						)
+					}
+					.execute(db)
+
+					// Update item
+					try MaintenanceItem.find(item.id)
+						.update {
+							$0.lastCompletedAt = completedAt
+							$0.nextDueDate = nextDue
+						}
 						.execute(db)
 				}
 			}

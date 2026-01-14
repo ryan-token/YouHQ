@@ -41,6 +41,12 @@ struct ResidenceMenu: View {
 			}
 
 			Button {
+				vm.showAddMaintenanceItemSheet()
+			} label: {
+				Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
+			}
+
+			Button {
 				vm.showAddOtherSheet()
 			} label: {
 				Label("Add Other", systemImage: "ellipsis.circle.fill")

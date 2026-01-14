@@ -59,6 +59,31 @@ extension SectionEditSheet {
 		var insuranceURL: String = ""
 		var insuranceNotes: String = ""
 
+		// Maintenance Item properties
+		var maintenanceItemID: UUID?
+		var maintenanceResidenceID: UUID?
+		var maintenanceVehicleID: UUID?
+		var maintenanceName: String = ""
+		var maintenanceDescription: String = ""
+		var maintenanceIntervalType: MaintenanceIntervalType = .months
+		var maintenanceIntervalValue: Int = 1
+		var maintenanceLastCompletedAt: Date?
+		var maintenanceNextDueDate: Date?
+		var maintenanceShouldNotify: Bool = false
+		var isUsingManualDueDate: Bool = false
+		var maintenanceURL: String = ""
+		var maintenanceNotes: String = ""
+
+		var calculatedNextDueDate: Date {
+			let calendar = Calendar.current
+			let component = maintenanceIntervalType.calendarComponent
+			return calendar.date(
+				byAdding: component,
+				value: maintenanceIntervalValue,
+				to: Date()
+			) ?? Date()
+		}
+
 		// Other properties
 		var otherID: UUID?
 		var otherProfileID: UUID?
@@ -77,6 +102,8 @@ extension SectionEditSheet {
 				isNew ? "Add Utility" : "Edit Utility"
 			case .insurancePolicy(_, let isNew):
 				isNew ? "Add Insurance" : "Edit Insurance"
+			case .maintenanceItem(_, let isNew):
+				isNew ? "Add Maintenance Item" : "Edit Maintenance Item"
 			case .other(_, let isNew):
 				isNew ? "Add Other" : "Edit Other"
 			}
@@ -90,6 +117,8 @@ extension SectionEditSheet {
 				true
 			case .insurancePolicy:
 				true
+			case .maintenanceItem:
+				maintenanceName.trimmingCharacters(in: .whitespaces).isNotEmpty
 			case .other:
 				otherName.trimmingCharacters(in: .whitespaces).isNotEmpty
 			}
@@ -142,6 +171,32 @@ extension SectionEditSheet {
 				insuranceURL = policy.url
 				insuranceNotes = policy.notes
 
+			case .maintenanceItem(let item, _):
+				maintenanceItemID = item.id
+				maintenanceResidenceID = item.residenceID
+				maintenanceVehicleID = item.vehicleID
+				maintenanceName = item.name
+				maintenanceDescription = item.itemDescription
+				maintenanceIntervalType = item.intervalType
+				maintenanceIntervalValue = item.intervalValue
+				maintenanceLastCompletedAt = item.lastCompletedAt
+				maintenanceNextDueDate =
+					item.nextDueDate ?? calculatedNextDueDate
+				maintenanceShouldNotify = item.shouldNotify
+				// Check if the stored due date differs from calculated, meaning it's manual
+				if let nextDue = item.nextDueDate {
+					let calculated = calculatedNextDueDate
+					let calendar = Calendar.current
+					isUsingManualDueDate = !calendar.isDate(
+						nextDue,
+						inSameDayAs: calculated
+					)
+				} else {
+					isUsingManualDueDate = false
+				}
+				maintenanceURL = item.url
+				maintenanceNotes = item.notes
+
 			case .other(let other, _):
 				otherID = other.id
 				otherProfileID = other.profileID
@@ -162,6 +217,8 @@ extension SectionEditSheet {
 				saveUtility()
 			case .insurancePolicy:
 				saveInsurancePolicy()
+			case .maintenanceItem:
+				saveMaintenanceItem()
 			case .other:
 				saveOther()
 			}
@@ -179,6 +236,10 @@ extension SectionEditSheet {
 			case .insurancePolicy(let policy, let isNew):
 				if isNew {
 					deleteInsurancePolicy(policy.id)
+				}
+			case .maintenanceItem(let item, let isNew):
+				if isNew {
+					deleteMaintenanceItem(item.id)
 				}
 			case .other(let other, let isNew):
 				if isNew {
@@ -305,6 +366,44 @@ extension SectionEditSheet {
 						.execute(db)
 				}
 			}
+		}
+
+		private func deleteMaintenanceItem(_ itemID: UUID) {
+			withErrorReporting {
+				try database.write { db in
+					try MaintenanceItem.find(itemID)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		private func saveMaintenanceItem() {
+			guard let maintenanceItemID else { return }
+
+			withErrorReporting {
+				try database.write { db in
+					try MaintenanceItem.find(maintenanceItemID)
+						.update {
+							$0.name = maintenanceName
+							$0.itemDescription = maintenanceDescription
+							$0.intervalType = maintenanceIntervalType
+							$0.intervalValue = maintenanceIntervalValue
+							$0.nextDueDate =
+								isUsingManualDueDate
+								? maintenanceNextDueDate : calculatedNextDueDate
+							$0.shouldNotify = maintenanceShouldNotify
+							$0.url = maintenanceURL
+							$0.notes = maintenanceNotes
+						}
+						.execute(db)
+				}
+			}
+		}
+
+		func resetToAutomaticDueDate() {
+			maintenanceNextDueDate = calculatedNextDueDate
+			isUsingManualDueDate = false
 		}
 	}
 }

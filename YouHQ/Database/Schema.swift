@@ -129,6 +129,55 @@ import SQLiteData
 	var notes: String = ""
 }
 
+@Table struct MaintenanceItem: Identifiable {
+	let id: UUID
+	let residenceID: Residence.ID?
+	let vehicleID: Vehicle.ID?
+	var name: String = ""
+	var itemDescription: String = ""
+	var intervalType: MaintenanceIntervalType = .months
+	var intervalValue: Int = 1
+	var lastCompletedAt: Date?
+	var nextDueDate: Date?
+	var shouldNotify: Bool = false
+	var backgroundColor: String = "yellow"
+	var url: String = ""
+	var notes: String = ""
+
+	/// Calculate if this item is past due
+	var isPastDue: Bool {
+		guard let nextDueDate else { return false }
+		return nextDueDate < Date()
+	}
+
+	/// Calculate if this item is upcoming (due within 30 days)
+	var isUpcoming: Bool {
+		guard let nextDueDate else { return false }
+		let thirtyDaysFromNow =
+			Calendar.current.date(byAdding: .day, value: 30, to: Date())
+			?? Date()
+		return nextDueDate >= Date() && nextDueDate <= thirtyDaysFromNow
+	}
+
+	/// Calculate the next due date based on completed date and interval
+	func calculateNextDueDate(from completedDate: Date) -> Date {
+		let calendar = Calendar.current
+		let component = intervalType.calendarComponent
+		return calendar.date(
+			byAdding: component,
+			value: intervalValue,
+			to: completedDate
+		) ?? completedDate
+	}
+}
+
+@Table struct MaintenanceCompletion: Identifiable {
+	let id: UUID
+	let maintenanceItemID: MaintenanceItem.ID
+	var completedAt: Date = Date()
+	var notes: String = ""
+}
+
 // MARK: - Vehicle Section
 
 @Table struct Vehicle: Identifiable {
@@ -397,4 +446,20 @@ enum InsurancePolicyType: String, Codable, CaseIterable, QueryBindable {
 	case umbrella = "Umbrella"
 	case pet = "Pet"
 	case other = "Other"
+}
+
+enum MaintenanceIntervalType: String, Codable, CaseIterable, QueryBindable {
+	case days = "Days"
+	case weeks = "Weeks"
+	case months = "Months"
+	case years = "Years"
+
+	var calendarComponent: Calendar.Component {
+		switch self {
+		case .days: .day
+		case .weeks: .weekOfYear
+		case .months: .month
+		case .years: .year
+		}
+	}
 }

@@ -1,0 +1,129 @@
+//
+//  MaintenanceItemsScreen+ViewModel.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 1/14/26.
+//
+
+import SQLiteData
+import SwiftUI
+
+extension MaintenanceItemsScreen {
+	@Observable
+	class ViewModel {
+		@ObservationIgnored
+		@Dependency(\.defaultDatabase) private var database
+
+		@ObservationIgnored
+		@FetchAll(MaintenanceItem.none, animation: .default)
+		var maintenanceItems
+
+		let residenceID: UUID
+		var isShowingEditSheet = false
+		var isShowingCompleteAlert = false
+		var itemToEdit: MaintenanceItem?
+		var itemToComplete: MaintenanceItem?
+		var isNewItem = false
+
+		init(residenceID: UUID) {
+			self.residenceID = residenceID
+		}
+
+		var pastDueItems: [MaintenanceItem] {
+			maintenanceItems.filter { $0.isPastDue }
+		}
+
+		var upcomingItems: [MaintenanceItem] {
+			maintenanceItems.filter { $0.isUpcoming && !$0.isPastDue }
+		}
+
+		var otherItems: [MaintenanceItem] {
+			maintenanceItems.filter { !$0.isPastDue && !$0.isUpcoming }
+		}
+
+		func loadData() async {
+			_ = await withErrorReporting {
+				try await $maintenanceItems.load(
+					MaintenanceItem
+						.where { $0.residenceID.eq(residenceID) }
+						.order { $0.nextDueDate },
+					animation: .default
+				)
+			}
+		}
+
+		func showAddMaintenanceItemSheet() {
+			// Create a temporary maintenance item in the database that will be deleted if cancelled
+			var createdItem: MaintenanceItem?
+			withErrorReporting {
+				try database.write { db in
+					let itemID = UUID()
+					try MaintenanceItem.insert {
+						MaintenanceItem.Draft(
+							id: itemID,
+							residenceID: residenceID,
+							vehicleID: nil
+						)
+					}
+					.execute(db)
+					createdItem = try MaintenanceItem.find(itemID).fetchOne(db)
+				}
+			}
+			if let createdItem {
+				itemToEdit = createdItem
+				isNewItem = true
+				isShowingEditSheet = true
+			}
+		}
+
+		func editMaintenanceItem(_ item: MaintenanceItem) {
+			itemToEdit = item
+			isNewItem = false
+			isShowingEditSheet = true
+		}
+
+		func showCompleteAlert(for item: MaintenanceItem) {
+			itemToComplete = item
+			isShowingCompleteAlert = true
+		}
+
+		func deleteMaintenanceItem(_ item: MaintenanceItem) {
+			withErrorReporting {
+				try database.write { db in
+					try MaintenanceItem.find(item.id)
+						.delete()
+						.execute(db)
+				}
+			}
+		}
+
+		func completeMaintenanceItem(_ item: MaintenanceItem) {
+			withErrorReporting {
+				try database.write { db in
+					let completedAt = Date()
+					let nextDue = item.calculateNextDueDate(from: completedAt)
+
+					// Create completion record
+					try MaintenanceCompletion.insert {
+						MaintenanceCompletion.Draft(
+							id: UUID(),
+							maintenanceItemID: item.id,
+							completedAt: completedAt,
+							notes: ""
+						)
+					}
+					.execute(db)
+
+					// Update item
+					try MaintenanceItem.find(item.id)
+						.update {
+							$0.lastCompletedAt = completedAt
+							$0.nextDueDate = nextDue
+						}
+						.execute(db)
+				}
+			}
+			isShowingCompleteAlert = false
+		}
+	}
+}

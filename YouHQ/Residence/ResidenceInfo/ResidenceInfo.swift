@@ -62,6 +62,13 @@ struct ResidenceInfo: View {
 				}
 			}
 
+			if !vm.maintenanceItems.isEmpty {
+				MaintenanceItemsNavigationLink(
+					residenceID: residence.id,
+					maintenanceItems: vm.maintenanceItems
+				)
+			}
+
 			ForEach(vm.others) { other in
 				OtherSection(
 					for: other,
