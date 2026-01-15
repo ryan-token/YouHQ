@@ -330,7 +330,7 @@ import SQLiteData
 // These are raw representable structs instead of enums to support backwards compatibility
 // when syncing via iCloud. New cases can be added without breaking old app versions.
 
-nonisolated struct ResidenceType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct ResidenceType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let house = Self(rawValue: "House")
@@ -344,7 +344,7 @@ nonisolated struct ResidenceType: RawRepresentable, Hashable, Codable, QueryBind
 	]
 }
 
-nonisolated struct CostType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct CostType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let rent = Self(rawValue: "Rent")
@@ -354,7 +354,7 @@ nonisolated struct CostType: RawRepresentable, Hashable, Codable, QueryBindable 
 	static let allCases: [Self] = [.rent, .mortgage, .owned]
 }
 
-nonisolated struct UtilityType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct UtilityType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let electric = Self(rawValue: "Electric")
@@ -370,7 +370,7 @@ nonisolated struct UtilityType: RawRepresentable, Hashable, Codable, QueryBindab
 	]
 }
 
-nonisolated struct VehicleType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct VehicleType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let car = Self(rawValue: "Car")
@@ -381,7 +381,7 @@ nonisolated struct VehicleType: RawRepresentable, Hashable, Codable, QueryBindab
 	static let allCases: [Self] = [.car, .truck, .suv, .other]
 }
 
-nonisolated struct VehicleSubType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct VehicleSubType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let gas = Self(rawValue: "Gas")
@@ -395,7 +395,7 @@ nonisolated struct VehicleSubType: RawRepresentable, Hashable, Codable, QueryBin
 	]
 }
 
-nonisolated struct BankAccountType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct BankAccountType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let checking = Self(rawValue: "Checking")
@@ -409,7 +409,7 @@ nonisolated struct BankAccountType: RawRepresentable, Hashable, Codable, QueryBi
 	]
 }
 
-nonisolated struct InvestmentAccountType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct InvestmentAccountType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let traditional401k = Self(rawValue: "401(k)")
@@ -427,7 +427,7 @@ nonisolated struct InvestmentAccountType: RawRepresentable, Hashable, Codable, Q
 	]
 }
 
-nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let hsa = Self(rawValue: "HSA")
@@ -436,7 +436,7 @@ nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable, Codable
 	static let allCases: [Self] = [.hsa, .fsa]
 }
 
-nonisolated struct ServiceProviderType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct ServiceProviderType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let internet = Self(rawValue: "Internet")
@@ -446,7 +446,7 @@ nonisolated struct ServiceProviderType: RawRepresentable, Hashable, Codable, Que
 	static let allCases: [Self] = [.internet, .tv, .cell]
 }
 
-nonisolated struct DeviceType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct DeviceType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let tv = Self(rawValue: "TV")
@@ -466,7 +466,7 @@ nonisolated struct DeviceType: RawRepresentable, Hashable, Codable, QueryBindabl
 	]
 }
 
-nonisolated struct SubscriptionCategory: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct SubscriptionCategory: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let streaming = Self(rawValue: "Streaming")
@@ -482,7 +482,7 @@ nonisolated struct SubscriptionCategory: RawRepresentable, Hashable, Codable, Qu
 	]
 }
 
-nonisolated struct BillingCycle: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct BillingCycle: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let monthly = Self(rawValue: "Monthly")
@@ -492,7 +492,7 @@ nonisolated struct BillingCycle: RawRepresentable, Hashable, Codable, QueryBinda
 	static let allCases: [Self] = [.monthly, .annual, .other]
 }
 
-nonisolated struct EmploymentType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct EmploymentType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let fullTime = Self(rawValue: "Full-Time")
@@ -506,7 +506,7 @@ nonisolated struct EmploymentType: RawRepresentable, Hashable, Codable, QueryBin
 	]
 }
 
-nonisolated struct InsurancePolicyType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct InsurancePolicyType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let health = Self(rawValue: "Health")
@@ -527,7 +527,7 @@ nonisolated struct InsurancePolicyType: RawRepresentable, Hashable, Codable, Que
 	]
 }
 
-nonisolated struct MaintenanceIntervalType: RawRepresentable, Hashable, Codable, QueryBindable {
+nonisolated struct MaintenanceIntervalType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let day = Self(rawValue: "Day")
