@@ -41,30 +41,30 @@ extension SectionEditSheet {
 
 			switch section {
 			case .residenceInfo(let residence):
-				sectionViewModel = ResidenceInfoEditViewModel(
+				sectionViewModel = ResidenceInfoEdit.ViewModel(
 					residence: residence
 				)
 				sectionString = "Residence"
 			case .utility(let utility, let isNew):
-				sectionViewModel = UtilityEditViewModel(
+				sectionViewModel = UtilityEdit.ViewModel(
 					utility: utility,
 					isNew: isNew
 				)
 				sectionString = "Utility"
 			case .insurancePolicy(let policy, let isNew):
-				sectionViewModel = InsuranceEditViewModel(
+				sectionViewModel = InsuranceEdit.ViewModel(
 					policy: policy,
 					isNew: isNew
 				)
 				sectionString = "Policy"
 			case .maintenanceItem(let item, let isNew):
-				sectionViewModel = MaintenanceItemEditViewModel(
+				sectionViewModel = MaintenanceItemEdit.ViewModel(
 					item: item,
 					isNew: isNew
 				)
 				sectionString = "Maintenance Item"
 			case .other(let other, let isNew):
-				sectionViewModel = OtherEditViewModel(
+				sectionViewModel = OtherEdit.ViewModel(
 					other: other,
 					isNew: isNew
 				)
@@ -85,24 +85,24 @@ extension SectionEditSheet {
 		}
 
 		// Type-safe accessors for specific view models
-		var residenceViewModel: ResidenceInfoEditViewModel? {
-			sectionViewModel as? ResidenceInfoEditViewModel
+		var residenceViewModel: ResidenceInfoEdit.ViewModel? {
+			sectionViewModel as? ResidenceInfoEdit.ViewModel
 		}
 
-		var utilityViewModel: UtilityEditViewModel? {
-			sectionViewModel as? UtilityEditViewModel
+		var utilityViewModel: UtilityEdit.ViewModel? {
+			sectionViewModel as? UtilityEdit.ViewModel
 		}
 
-		var insuranceViewModel: InsuranceEditViewModel? {
-			sectionViewModel as? InsuranceEditViewModel
+		var insuranceViewModel: InsuranceEdit.ViewModel? {
+			sectionViewModel as? InsuranceEdit.ViewModel
 		}
 
-		var maintenanceViewModel: MaintenanceItemEditViewModel? {
-			sectionViewModel as? MaintenanceItemEditViewModel
+		var maintenanceViewModel: MaintenanceItemEdit.ViewModel? {
+			sectionViewModel as? MaintenanceItemEdit.ViewModel
 		}
 
-		var otherViewModel: OtherEditViewModel? {
-			sectionViewModel as? OtherEditViewModel
+		var otherViewModel: OtherEdit.ViewModel? {
+			sectionViewModel as? OtherEdit.ViewModel
 		}
 	}
 }
