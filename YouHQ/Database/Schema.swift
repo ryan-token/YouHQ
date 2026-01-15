@@ -326,140 +326,224 @@ import SQLiteData
 	var notes: String = ""
 }
 
-// MARK: - Enums
+// MARK: - Raw Representable Structs
+// These are raw representable structs instead of enums to support backwards compatibility
+// when syncing via iCloud. New cases can be added without breaking old app versions.
 
-enum ResidenceType: String, Codable, CaseIterable, QueryBindable {
-	case house = "House"
-	case apartment = "Apartment"
-	case condo = "Condo"
-	case townhouse = "Townhouse"
-	case other = "Other"
+nonisolated struct ResidenceType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let house = Self(rawValue: "House")
+	static let apartment = Self(rawValue: "Apartment")
+	static let condo = Self(rawValue: "Condo")
+	static let townhouse = Self(rawValue: "Townhouse")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.house, .apartment, .condo, .townhouse, .other,
+	]
 }
 
-enum CostType: String, Codable, CaseIterable, QueryBindable {
-	case rent = "Rent"
-	case mortgage = "Mortgage"
-	case owned = "Owned (No Payment)"
+nonisolated struct CostType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let rent = Self(rawValue: "Rent")
+	static let mortgage = Self(rawValue: "Mortgage")
+	static let owned = Self(rawValue: "Owned (No Payment)")
+
+	static let allCases: [Self] = [.rent, .mortgage, .owned]
 }
 
-enum UtilityType: String, Codable, CaseIterable, QueryBindable {
-	case electric = "Electric"
-	case gas = "Gas"
-	case water = "Water"
-	case trash = "Trash"
-	case sewage = "Sewage"
-	case internet = "Internet"
-	case other = "Other"
+nonisolated struct UtilityType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let electric = Self(rawValue: "Electric")
+	static let gas = Self(rawValue: "Gas")
+	static let water = Self(rawValue: "Water")
+	static let trash = Self(rawValue: "Trash")
+	static let sewage = Self(rawValue: "Sewage")
+	static let internet = Self(rawValue: "Internet")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.electric, .gas, .water, .trash, .sewage, .internet, .other,
+	]
 }
 
-enum VehicleType: String, Codable, CaseIterable, QueryBindable {
-	case car = "Car"
-	case truck = "Truck"
-	case suv = "SUV"
-	case other = "Other"
+nonisolated struct VehicleType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let car = Self(rawValue: "Car")
+	static let truck = Self(rawValue: "Truck")
+	static let suv = Self(rawValue: "SUV")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [.car, .truck, .suv, .other]
 }
 
-enum VehicleSubType: String, Codable, CaseIterable, QueryBindable {
-	case gas = "Gas"
-	case electric = "Electric"
-	case hybrid = "Hybrid"
-	case pluginHybrid = "Plug-In Hybrid"
-	case other = "Other"
+nonisolated struct VehicleSubType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let gas = Self(rawValue: "Gas")
+	static let electric = Self(rawValue: "Electric")
+	static let hybrid = Self(rawValue: "Hybrid")
+	static let pluginHybrid = Self(rawValue: "Plug-In Hybrid")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.gas, .electric, .hybrid, .pluginHybrid, .other,
+	]
 }
 
-enum BankAccountType: String, Codable, CaseIterable, QueryBindable {
-	case checking = "Checking"
-	case savings = "Savings"
-	case moneyMarket = "Money Market"
-	case cd = "CD"
-	case other = "Other"
+nonisolated struct BankAccountType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let checking = Self(rawValue: "Checking")
+	static let savings = Self(rawValue: "Savings")
+	static let moneyMarket = Self(rawValue: "Money Market")
+	static let cd = Self(rawValue: "CD")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.checking, .savings, .moneyMarket, .cd, .other,
+	]
 }
 
-enum InvestmentAccountType: String, Codable, CaseIterable, QueryBindable {
-	case traditional401k = "401(k)"
-	case roth401k = "Roth 401(k)"
-	case traditionalIRA = "Traditional IRA"
-	case rothIRA = "Roth IRA"
-	case brokerage = "Brokerage"
-	case sep = "SEP IRA"
-	case simple = "SIMPLE IRA"
-	case other = "Other"
+nonisolated struct InvestmentAccountType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let traditional401k = Self(rawValue: "401(k)")
+	static let roth401k = Self(rawValue: "Roth 401(k)")
+	static let traditionalIRA = Self(rawValue: "Traditional IRA")
+	static let rothIRA = Self(rawValue: "Roth IRA")
+	static let brokerage = Self(rawValue: "Brokerage")
+	static let sep = Self(rawValue: "SEP IRA")
+	static let simple = Self(rawValue: "SIMPLE IRA")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.traditional401k, .roth401k, .traditionalIRA, .rothIRA,
+		.brokerage, .sep, .simple, .other,
+	]
 }
 
-enum HealthSavingsAccountType: String, Codable, CaseIterable, QueryBindable {
-	case hsa = "HSA"
-	case fsa = "FSA"
+nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let hsa = Self(rawValue: "HSA")
+	static let fsa = Self(rawValue: "FSA")
+
+	static let allCases: [Self] = [.hsa, .fsa]
 }
 
-enum ServiceProviderType: String, Codable, CaseIterable, QueryBindable {
-	case internet = "Internet"
-	case tv = "TV"
-	case cell = "Cell"
+nonisolated struct ServiceProviderType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let internet = Self(rawValue: "Internet")
+	static let tv = Self(rawValue: "TV")
+	static let cell = Self(rawValue: "Cell")
+
+	static let allCases: [Self] = [.internet, .tv, .cell]
 }
 
-enum DeviceType: String, Codable, CaseIterable, QueryBindable {
-	case tv = "TV"
-	case computer = "Computer"
-	case monitor = "Monitor"
-	case tablet = "Tablet"
-	case phone = "Phone"
-	case speaker = "Speaker"
-	case webcam = "Webcam"
-	case router = "Router"
-	case gamingConsole = "Gaming Console"
-	case other = "Other"
+nonisolated struct DeviceType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let tv = Self(rawValue: "TV")
+	static let computer = Self(rawValue: "Computer")
+	static let monitor = Self(rawValue: "Monitor")
+	static let tablet = Self(rawValue: "Tablet")
+	static let phone = Self(rawValue: "Phone")
+	static let speaker = Self(rawValue: "Speaker")
+	static let webcam = Self(rawValue: "Webcam")
+	static let router = Self(rawValue: "Router")
+	static let gamingConsole = Self(rawValue: "Gaming Console")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.tv, .computer, .monitor, .tablet, .phone,
+		.speaker, .webcam, .router, .gamingConsole, .other,
+	]
 }
 
-enum SubscriptionCategory: String, Codable, CaseIterable, QueryBindable {
-	case streaming = "Streaming"
-	case music = "Music"
-	case news = "News"
-	case software = "Software"
-	case gaming = "Gaming"
-	case cloud = "Cloud Storage"
-	case other = "Other"
+nonisolated struct SubscriptionCategory: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let streaming = Self(rawValue: "Streaming")
+	static let music = Self(rawValue: "Music")
+	static let news = Self(rawValue: "News")
+	static let software = Self(rawValue: "Software")
+	static let gaming = Self(rawValue: "Gaming")
+	static let cloud = Self(rawValue: "Cloud Storage")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.streaming, .music, .news, .software, .gaming, .cloud, .other,
+	]
 }
 
-enum BillingCycle: String, Codable, CaseIterable, QueryBindable {
-	case monthly = "Monthly"
-	case annual = "Annual"
-	case other = "Other"
+nonisolated struct BillingCycle: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let monthly = Self(rawValue: "Monthly")
+	static let annual = Self(rawValue: "Annual")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [.monthly, .annual, .other]
 }
 
-enum EmploymentType: String, Codable, CaseIterable, QueryBindable {
-	case fullTime = "Full-Time"
-	case partTime = "Part-Time"
-	case contract = "Contract"
-	case freelance = "Freelance"
-	case internship = "Internship"
+nonisolated struct EmploymentType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let fullTime = Self(rawValue: "Full-Time")
+	static let partTime = Self(rawValue: "Part-Time")
+	static let contract = Self(rawValue: "Contract")
+	static let freelance = Self(rawValue: "Freelance")
+	static let internship = Self(rawValue: "Internship")
+
+	static let allCases: [Self] = [
+		.fullTime, .partTime, .contract, .freelance, .internship,
+	]
 }
 
-enum InsurancePolicyType: String, Codable, CaseIterable, QueryBindable {
-	case health = "Health"
-	case dental = "Dental"
-	case vision = "Vision"
-	case life = "Life"
-	case auto = "Auto"
-	case home = "Home"
-	case renters = "Renters"
-	case disability = "Disability"
-	case umbrella = "Umbrella"
-	case pet = "Pet"
-	case other = "Other"
+nonisolated struct InsurancePolicyType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let health = Self(rawValue: "Health")
+	static let dental = Self(rawValue: "Dental")
+	static let vision = Self(rawValue: "Vision")
+	static let life = Self(rawValue: "Life")
+	static let auto = Self(rawValue: "Auto")
+	static let home = Self(rawValue: "Home")
+	static let renters = Self(rawValue: "Renters")
+	static let disability = Self(rawValue: "Disability")
+	static let umbrella = Self(rawValue: "Umbrella")
+	static let pet = Self(rawValue: "Pet")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.health, .dental, .vision, .life, .auto,
+		.home, .renters, .disability, .umbrella, .pet, .other,
+	]
 }
 
-enum MaintenanceIntervalType: String, Codable, CaseIterable, QueryBindable {
-	case day = "Day"
-	case week = "Week"
-	case month = "Month"
-	case year = "Year"
+nonisolated struct MaintenanceIntervalType: RawRepresentable, Hashable, Codable, QueryBindable {
+	let rawValue: String
+
+	static let day = Self(rawValue: "Day")
+	static let week = Self(rawValue: "Week")
+	static let month = Self(rawValue: "Month")
+	static let year = Self(rawValue: "Year")
+
+	static let allCases: [Self] = [.day, .week, .month, .year]
 
 	var calendarComponent: Calendar.Component {
-		switch self {
-		case .day: .day
-		case .week: .weekOfYear
-		case .month: .month
-		case .year: .year
+		switch rawValue {
+		case Self.day.rawValue: .day
+		case Self.week.rawValue: .weekOfYear
+		case Self.month.rawValue: .month
+		case Self.year.rawValue: .year
+		default: .day
 		}
 	}
 }
