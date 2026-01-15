@@ -39,6 +39,10 @@ final class ResidenceInfoEditViewModel: SectionEditViewModel {
 		street.trimmingCharacters(in: .whitespaces).isNotEmpty
 	}
 
+	let deleteConfirmationMessage = """
+	Deleting this residence will also delete all utilities, insurance policies, maintenance items, and other items tied to it.
+	"""
+
 	init(residence: Residence) {
 		self.residence = residence
 		self.residenceType = residence.type
@@ -85,5 +89,15 @@ final class ResidenceInfoEditViewModel: SectionEditViewModel {
 
 	func cancel() {
 		// Don't delete residences on cancel
+	}
+
+	func delete() {
+		withErrorReporting {
+			try database.write { db in
+				try Residence.find(residence.id)
+					.delete()
+					.execute(db)
+			}
+		}
 	}
 }

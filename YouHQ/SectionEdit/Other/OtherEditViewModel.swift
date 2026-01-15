@@ -30,6 +30,8 @@ final class OtherEditViewModel: SectionEditViewModel {
 		name.trimmingCharacters(in: .whitespaces).isNotEmpty
 	}
 
+	let deleteConfirmationMessage = "Are you sure you want to delete this?"
+
 	init(other: Other, isNew: Bool) {
 		self.other = other
 		self.isNew = isNew
@@ -58,11 +60,11 @@ final class OtherEditViewModel: SectionEditViewModel {
 
 	func cancel() {
 		if isNew {
-			deleteOther()
+			delete()
 		}
 	}
 
-	private func deleteOther() {
+	func delete() {
 		withErrorReporting {
 			try database.write { db in
 				try Other.find(other.id)

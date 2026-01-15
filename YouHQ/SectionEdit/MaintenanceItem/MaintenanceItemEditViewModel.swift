@@ -38,11 +38,15 @@ final class MaintenanceItemEditViewModel: SectionEditViewModel {
 	}
 
 	var title: String {
-		isNew ? "Add Maintenance Item" : "Edit Maintenance Item"
+		isNew ? "Add Maintenance Item" : "Edit Item"
 	}
 
 	var isValid: Bool {
 		name.trimmingCharacters(in: .whitespaces).isNotEmpty
+	}
+
+	var deleteConfirmationMessage: String {
+		"Are you sure you want to delete \(name)?"
 	}
 
 	init(item: MaintenanceItem, isNew: Bool) {
@@ -105,7 +109,7 @@ final class MaintenanceItemEditViewModel: SectionEditViewModel {
 
 	func cancel() {
 		if isNew {
-			deleteItem()
+			delete()
 		}
 	}
 
@@ -114,7 +118,7 @@ final class MaintenanceItemEditViewModel: SectionEditViewModel {
 		isUsingManualDueDate = false
 	}
 
-	private func deleteItem() {
+	func delete() {
 		withErrorReporting {
 			try database.write { db in
 				try MaintenanceItem.find(item.id)

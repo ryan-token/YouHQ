@@ -28,11 +28,15 @@ final class InsuranceEditViewModel: SectionEditViewModel {
 	var notes: String
 
 	var title: String {
-		isNew ? "Add Insurance" : "Edit Insurance"
+		isNew ? "Add Policy" : "Edit Policy"
 	}
 
 	var isValid: Bool {
 		true
+	}
+
+	var deleteConfirmationMessage: String {
+		"Are you sure you want to delete this \(type) policy?"
 	}
 
 	init(policy: InsurancePolicy, isNew: Bool) {
@@ -72,11 +76,11 @@ final class InsuranceEditViewModel: SectionEditViewModel {
 
 	func cancel() {
 		if isNew {
-			deletePolicy()
+			delete()
 		}
 	}
 
-	private func deletePolicy() {
+	func delete() {
 		withErrorReporting {
 			try database.write { db in
 				try InsurancePolicy.find(policy.id)

@@ -10,6 +10,7 @@ import SwiftUI
 struct SectionEditSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
+	@State private var isShowingDeleteConfirmation = false
 	@FocusState private var residenceFieldFocused: Bool
 	@FocusState private var utilityFieldFocused: Bool
 	@FocusState private var insuranceFieldFocused: Bool
@@ -85,6 +86,29 @@ struct SectionEditSheet: View {
 					Button("Cancel") {
 						vm.cancel()
 						dismiss()
+					}
+				}
+
+				if !vm.section.isNew {
+					ToolbarItem(placement: .destructiveAction) {
+						Button(role: .destructive) {
+							isShowingDeleteConfirmation = true
+						} label: {
+							Image(systemName: "trash")
+						}
+						.confirmationDialog(
+							"Delete \(vm.sectionString)?",
+							isPresented: $isShowingDeleteConfirmation,
+							titleVisibility: .visible
+						) {
+							Button("Delete", role: .destructive) {
+								vm.delete()
+								dismiss()
+							}
+							Button("Cancel", role: .cancel) {}
+						} message: {
+							Text(vm.deleteConfirmationMessage)
+						}
 					}
 				}
 

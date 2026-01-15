@@ -31,6 +31,10 @@ final class UtilityEditViewModel: SectionEditViewModel {
 		true
 	}
 
+	var deleteConfirmationMessage: String {
+		"Are you sure you want to delete this \(utility.type) utility?"
+	}
+
 	init(utility: Utility, isNew: Bool) {
 		self.utility = utility
 		self.isNew = isNew
@@ -61,11 +65,11 @@ final class UtilityEditViewModel: SectionEditViewModel {
 
 	func cancel() {
 		if isNew {
-			deleteUtility()
+			delete()
 		}
 	}
 
-	private func deleteUtility() {
+	func delete() {
 		withErrorReporting {
 			try database.write { db in
 				try Utility.find(utility.id)

@@ -133,13 +133,22 @@ extension ResidenceScreen {
 		}
 
 		func updateSelectedResidence() {
-			guard let selectedResidence,
-				let updatedResidence = residences.first(where: {
-					$0.id == selectedResidence.id
-				})
-			else { return }
+			guard let selectedResidence else { return }
 
-			self.selectedResidence = updatedResidence
+			if let updatedResidence = residences.first(where: {
+				$0.id == selectedResidence.id
+			}) {
+				// Residence still exists, update with latest data
+				self.selectedResidence = updatedResidence
+			} else {
+				// Residence was deleted, select another one
+				if let firstResidence = residences.first {
+					self.selectedResidence = firstResidence
+				} else {
+					// No residences left
+					self.selectedResidence = nil
+				}
+			}
 		}
 
 		func showCreateResidenceSheet() {
