@@ -28,7 +28,6 @@ struct ResidenceInfoEdit: View {
 				hasMoveOutDate: $vm.hasMoveOutDate,
 				costType: $vm.costType,
 				monthlyCost: $vm.monthlyCost,
-				showURLAndNotes: true,
 				url: $vm.url,
 				notes: $vm.notes,
 				focusedField: focusedField

@@ -21,8 +21,6 @@ struct ResidenceFormFields: View {
 	@Binding var hasMoveOutDate: Bool
 	@Binding var costType: CostType
 	@Binding var monthlyCost: Double?
-
-	let showURLAndNotes: Bool
 	@Binding var url: String
 	@Binding var notes: String
 	var focusedField: FocusState<Bool>.Binding?
@@ -41,9 +39,8 @@ struct ResidenceFormFields: View {
 		hasMoveOutDate: Binding<Bool>,
 		costType: Binding<CostType>,
 		monthlyCost: Binding<Double?>,
-		showURLAndNotes: Bool = false,
-		url: Binding<String> = .constant(""),
-		notes: Binding<String> = .constant(""),
+		url: Binding<String>,
+		notes: Binding<String>,
 		focusedField: FocusState<Bool>.Binding? = nil
 	) {
 		_type = type
@@ -59,7 +56,6 @@ struct ResidenceFormFields: View {
 		_hasMoveOutDate = hasMoveOutDate
 		_costType = costType
 		_monthlyCost = monthlyCost
-		self.showURLAndNotes = showURLAndNotes
 		_url = url
 		_notes = notes
 		self.focusedField = focusedField
@@ -158,16 +154,14 @@ struct ResidenceFormFields: View {
 			}
 		}
 
-		if showURLAndNotes {
-			Section("Website") {
-				URLTextField(text: $url)
-			}
+		Section("Website") {
+			URLTextField(text: $url)
+		}
 
-			Section("Notes") {
-				TextEditor(text: $notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
-			}
+		Section("Notes") {
+			TextEditor(text: $notes)
+				.frame(minHeight: 100)
+				.scrollContentBackground(.hidden)
 		}
 	}
 }

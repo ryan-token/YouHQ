@@ -28,6 +28,8 @@ extension AddResidenceSheet {
 		var hasMoveOutDate: Bool = false
 		var costType: CostType = .rent
 		var monthlyCost: Double?
+		var url: String = ""
+		var notes: String = ""
 
 		var isValid: Bool {
 			street.trimmingCharacters(in: .whitespaces).isNotEmpty
@@ -58,12 +60,14 @@ extension AddResidenceSheet {
 							isCurrent: isCurrent,
 							monthlyCost: monthlyCost,
 							costType: costType,
-							url: "",
-							notes: ""
+							url: url,
+							notes: notes
 						)
 					}
 					.execute(db)
-					savedResidence = try Residence.find(residenceID).fetchOne(db)
+					savedResidence = try Residence.find(residenceID).fetchOne(
+						db
+					)
 				}
 			}
 			return savedResidence
