@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct SectionEditSheet: View {
+	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
+	@State private var photoViewerPayload: PhotoViewerPayload?
 	@State private var isShowingDeleteConfirmation = false
+
 	@FocusState private var residenceFieldFocused: Bool
 	@FocusState private var utilityFieldFocused: Bool
 	@FocusState private var insuranceFieldFocused: Bool
@@ -27,7 +30,8 @@ struct SectionEditSheet: View {
 				case .residenceInfo:
 					ResidenceInfoEdit(
 						coordinator: vm,
-						focusedField: $residenceFieldFocused
+						focusedField: $residenceFieldFocused,
+						photoViewerPayload: $photoViewerPayload
 					)
 				case .utility:
 					UtilityEdit(
@@ -37,17 +41,20 @@ struct SectionEditSheet: View {
 				case .insurancePolicy:
 					InsuranceEdit(
 						coordinator: vm,
-						focusedField: $insuranceFieldFocused
+						focusedField: $insuranceFieldFocused,
+						photoViewerPayload: $photoViewerPayload
 					)
 				case .maintenanceItem:
 					MaintenanceItemEdit(
 						coordinator: vm,
-						focusedField: $maintenanceFieldFocused
+						focusedField: $maintenanceFieldFocused,
+						photoViewerPayload: $photoViewerPayload
 					)
 				case .other:
 					OtherEdit(
 						coordinator: vm,
-						focusedField: $otherFieldFocused
+						focusedField: $otherFieldFocused,
+						photoViewerPayload: $photoViewerPayload
 					)
 				}
 			}
@@ -81,12 +88,20 @@ struct SectionEditSheet: View {
 				.scrollDismissesKeyboard(.immediately)
 			#endif
 			.toolbar {
-				Toolbar(vm: vm, isShowingDeleteConfirmation: $isShowingDeleteConfirmation)
+				Toolbar(
+					vm: vm,
+					isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
+					photoViewerPayload: $photoViewerPayload,
+					onDismiss: { dismiss() }
+				)
 			}
 			.presentationDetents(
 				vm.section.isNew ? [.large] : [.medium, .large]
 			)
 			.interactiveDismissDisabled(vm.section.isNew)
+		}
+		.sheet(item: $photoViewerPayload) { payload in
+			PhotoViewer(data: payload.data)
 		}
 	}
 }

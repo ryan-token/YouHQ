@@ -11,6 +11,7 @@ import SwiftUI
 struct AddResidenceSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
+	@State private var photoViewerPayload: PhotoViewerPayload?
 	@Binding var selectedResidence: Residence?
 	@FocusState private var focusedField: Bool
 
@@ -38,6 +39,15 @@ struct AddResidenceSheet: View {
 					monthlyCost: $vm.monthlyCost,
 					url: $vm.url,
 					notes: $vm.notes,
+					photoData: $vm.photoData,
+					photoItem: $vm.photoItem,
+					viewerPayload: $photoViewerPayload,
+					onPhotoItemChange: { newItem in
+						vm.handlePhotoItemChange(newItem)
+					},
+					onRemovePhoto: {
+						vm.clearPhoto()
+					},
 					focusedField: $focusedField
 				)
 			}
@@ -74,6 +84,9 @@ struct AddResidenceSheet: View {
 					.disabled(!vm.isValid)
 				}
 			}
+		}
+		.sheet(item: $photoViewerPayload) { payload in
+			PhotoViewer(data: payload.data)
 		}
 	}
 }

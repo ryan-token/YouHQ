@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/11/26.
 //
 
+import PhotosUI
 import SQLiteData
 import SwiftUI
 
@@ -30,6 +31,8 @@ extension AddResidenceSheet {
 		var monthlyCost: Double?
 		var url: String = ""
 		var notes: String = ""
+		var photoData: Data?
+		var photoItem: PhotosPickerItem?
 
 		var isValid: Bool {
 			street.trimmingCharacters(in: .whitespaces).isNotEmpty
@@ -65,12 +68,47 @@ extension AddResidenceSheet {
 						)
 					}
 					.execute(db)
+
+					if let photoData {
+						try Asset.insert {
+							Asset.Draft(
+								id: UUID(),
+								profileID: profileID,
+								residenceID: residenceID,
+								vehicleID: nil,
+								insurancePolicyID: nil,
+								maintenanceItemID: nil,
+								deviceID: nil,
+								otherID: nil,
+								imageData: photoData
+							)
+						}
+						.execute(db)
+					}
 					savedResidence = try Residence.find(residenceID).fetchOne(
 						db
 					)
 				}
 			}
 			return savedResidence
+		}
+
+		func handlePhotoItemChange(_ newItem: PhotosPickerItem?) {
+			guard let newItem else { return }
+			Task {
+				if let data = try? await newItem.loadTransferable(
+					type: Data.self
+				) {
+					await MainActor.run {
+						self.photoData = data
+					}
+				}
+			}
+		}
+
+		func clearPhoto() {
+			photoData = nil
+			photoItem = nil
 		}
 	}
 }

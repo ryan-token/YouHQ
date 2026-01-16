@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/14/26.
 //
 
+import PhotosUI
 import SQLiteData
 import SwiftUI
 
@@ -31,6 +32,8 @@ extension ResidenceInfoEdit {
 		var monthlyCost: Double?
 		var url: String
 		var notes: String
+		var photoData: Data?
+		var photoItem: PhotosPickerItem?
 
 		var title: String {
 			"Edit Residence"
@@ -41,8 +44,8 @@ extension ResidenceInfoEdit {
 		}
 
 		let deleteConfirmationMessage = """
-		Deleting this residence will also delete all utilities, insurance policies, maintenance items, and other items tied to it.
-		"""
+			Deleting this residence will also delete all utilities, insurance policies, maintenance items, and other items tied to it.
+			"""
 
 		init(residence: Residence) {
 			self.residence = residence
@@ -61,6 +64,9 @@ extension ResidenceInfoEdit {
 			self.monthlyCost = residence.monthlyCost
 			self.url = residence.url
 			self.notes = residence.notes
+			self.photoData = nil
+			self.photoItem = nil
+			loadExistingPhotoData()
 		}
 
 		func save() {
@@ -84,6 +90,8 @@ extension ResidenceInfoEdit {
 							$0.notes = notes
 						}
 						.execute(db)
+
+					try updateAsset(in: db)
 				}
 			}
 		}
@@ -99,6 +107,61 @@ extension ResidenceInfoEdit {
 						.delete()
 						.execute(db)
 				}
+			}
+		}
+
+		func handlePhotoItemChange(_ newItem: PhotosPickerItem?) {
+			guard let newItem else { return }
+			Task {
+				if let data = try? await newItem.loadTransferable(
+					type: Data.self
+				) {
+					await MainActor.run {
+						self.photoData = data
+					}
+				}
+			}
+		}
+
+		func clearPhoto() {
+			photoData = nil
+			photoItem = nil
+		}
+
+		private func loadExistingPhotoData() {
+			var existingAsset: Asset?
+			withErrorReporting {
+				try database.read { db in
+					existingAsset =
+						try Asset
+						.where { $0.residenceID.eq(residence.id) }
+						.fetchOne(db)
+				}
+			}
+			photoData = existingAsset?.imageData
+		}
+
+		private func updateAsset(in db: Database) throws {
+			try Asset
+				.where { $0.residenceID.eq(residence.id) }
+				.delete()
+				.execute(db)
+
+			if let photoData {
+				try Asset.insert {
+					Asset.Draft(
+						id: UUID(),
+						profileID: residence.profileID,
+						residenceID: residence.id,
+						vehicleID: nil,
+						insurancePolicyID: nil,
+						maintenanceItemID: nil,
+						deviceID: nil,
+						otherID: nil,
+						imageData: photoData
+					)
+				}
+				.execute(db)
 			}
 		}
 	}

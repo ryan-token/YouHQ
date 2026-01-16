@@ -1,5 +1,5 @@
 //
-//  UtilityViewModel.swift
+//  UtilitySection+ViewModel.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/2/26.

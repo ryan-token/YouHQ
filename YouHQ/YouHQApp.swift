@@ -34,7 +34,8 @@ struct YouHQApp: App {
 						InsurancePolicy.self,
 						MaintenanceItem.self,
 						MaintenanceCompletion.self,
-						Other.self
+						Other.self,
+						Asset.self
 				)
 			}
 		}

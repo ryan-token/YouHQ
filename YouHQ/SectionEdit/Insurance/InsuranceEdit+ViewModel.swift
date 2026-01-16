@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/14/26.
 //
 
+import PhotosUI
 import SQLiteData
 import SwiftUI
 
@@ -27,6 +28,8 @@ extension InsuranceEdit {
 		var hasRenewalDate: Bool
 		var url: String
 		var notes: String
+		var photoData: Data?
+		var photoItem: PhotosPickerItem?
 
 		var title: String {
 			isNew ? "Add Policy" : "Edit Policy"
@@ -53,6 +56,9 @@ extension InsuranceEdit {
 			self.hasRenewalDate = policy.renewalDate != nil
 			self.url = policy.url
 			self.notes = policy.notes
+			self.photoData = nil
+			self.photoItem = nil
+			loadExistingPhotoData()
 		}
 
 		func save() {
@@ -71,6 +77,7 @@ extension InsuranceEdit {
 							$0.notes = notes
 						}
 						.execute(db)
+					try updateAsset(in: db)
 				}
 			}
 		}
@@ -88,6 +95,61 @@ extension InsuranceEdit {
 						.delete()
 						.execute(db)
 				}
+			}
+		}
+
+		func handlePhotoItemChange(_ newItem: PhotosPickerItem?) {
+			guard let newItem else { return }
+			Task {
+				if let data = try? await newItem.loadTransferable(
+					type: Data.self
+				) {
+					await MainActor.run {
+						self.photoData = data
+					}
+				}
+			}
+		}
+
+		func clearPhoto() {
+			photoData = nil
+			photoItem = nil
+		}
+
+		private func loadExistingPhotoData() {
+			var existingAsset: Asset?
+			withErrorReporting {
+				try database.read { db in
+					existingAsset =
+						try Asset
+						.where { $0.insurancePolicyID.eq(policy.id) }
+						.fetchOne(db)
+				}
+			}
+			photoData = existingAsset?.imageData
+		}
+
+		private func updateAsset(in db: Database) throws {
+			try Asset
+				.where { $0.insurancePolicyID.eq(policy.id) }
+				.delete()
+				.execute(db)
+
+			if let photoData {
+				try Asset.insert {
+					Asset.Draft(
+						id: UUID(),
+						profileID: policy.profileID,
+						residenceID: nil,
+						vehicleID: nil,
+						insurancePolicyID: policy.id,
+						maintenanceItemID: nil,
+						deviceID: nil,
+						otherID: nil,
+						imageData: photoData
+					)
+				}
+				.execute(db)
 			}
 		}
 	}

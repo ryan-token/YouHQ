@@ -10,6 +10,7 @@ import SwiftUI
 struct MaintenanceItemEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
+	var photoViewerPayload: Binding<PhotoViewerPayload?>
 
 	var body: some View {
 		if let maintenanceVM = coordinator.maintenanceViewModel {
@@ -107,6 +108,19 @@ struct MaintenanceItemEdit: View {
 			Section("Website") {
 				URLTextField(text: $vm.url)
 			}
+
+			PhotoPickerSection(
+				title: "Photo",
+				photoData: $vm.photoData,
+				photoItem: $vm.photoItem,
+				viewerPayload: photoViewerPayload,
+				onPhotoItemChange: { newItem in
+					vm.handlePhotoItemChange(newItem)
+				},
+				onRemove: {
+					vm.clearPhoto()
+				}
+			)
 
 			Section("Notes") {
 				TextEditor(text: $vm.notes)

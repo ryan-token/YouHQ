@@ -9,15 +9,17 @@ import SwiftUI
 
 extension SectionEditSheet {
 	struct Toolbar: ToolbarContent {
-		@Environment(\.dismiss) private var dismiss
 		let vm: SectionEditSheet.ViewModel
 		@Binding var isShowingDeleteConfirmation: Bool
+		@Binding var photoViewerPayload: PhotoViewerPayload?
+		let onDismiss: () -> Void
 
 		var body: some ToolbarContent {
 			ToolbarItem(placement: .cancellationAction) {
 				Button("Cancel") {
 					vm.cancel()
-					dismiss()
+					photoViewerPayload = nil
+					onDismiss()
 				}
 			}
 
@@ -35,7 +37,8 @@ extension SectionEditSheet {
 					) {
 						Button("Delete", role: .destructive) {
 							vm.delete()
-							dismiss()
+							photoViewerPayload = nil
+							onDismiss()
 						}
 						Button("Cancel", role: .cancel) {}
 					} message: {
@@ -47,7 +50,8 @@ extension SectionEditSheet {
 			ToolbarItem(placement: .confirmationAction) {
 				Button("Save") {
 					vm.save()
-					dismiss()
+					photoViewerPayload = nil
+					onDismiss()
 				}
 				.disabled(!vm.isValid)
 			}

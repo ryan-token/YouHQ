@@ -321,6 +321,33 @@ func appDatabase() throws -> any DatabaseWriter {
 		)
 		.execute(db)
 
+		// Asset table
+		try #sql(
+			"""
+			CREATE TABLE "assets" (
+				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+				"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
+				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
+				"vehicleID" TEXT REFERENCES "vehicles"("id") ON DELETE CASCADE,
+				"insurancePolicyID" TEXT REFERENCES "insurancePolicies"("id") ON DELETE CASCADE,
+				"maintenanceItemID" TEXT REFERENCES "maintenanceItems"("id") ON DELETE CASCADE,
+				"deviceID" TEXT REFERENCES "devices"("id") ON DELETE CASCADE,
+				"otherID" TEXT REFERENCES "others"("id") ON DELETE CASCADE,
+				"imageData" BLOB NOT NULL,
+				CHECK (
+					("residenceID" IS NOT NULL) +
+					("vehicleID" IS NOT NULL) +
+					("insurancePolicyID" IS NOT NULL) +
+					("maintenanceItemID" IS NOT NULL) +
+					("deviceID" IS NOT NULL) +
+					("otherID" IS NOT NULL)
+					= 1
+				)
+			) STRICT
+			"""
+		)
+		.execute(db)
+
 		// Maintenance Completion table
 		try #sql(
 			"""
@@ -446,6 +473,54 @@ func appDatabase() throws -> any DatabaseWriter {
 		try #sql(
 			"""
 			CREATE INDEX "idx_maintenanceItems_vehicleID" ON "maintenanceItems"("vehicleID")
+			"""
+		)
+		.execute(db)
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_profileID" ON "assets"("profileID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_residenceID" ON "assets"("residenceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_vehicleID" ON "assets"("vehicleID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_insurancePolicyID" ON "assets"("insurancePolicyID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_maintenanceItemID" ON "assets"("maintenanceItemID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_deviceID" ON "assets"("deviceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_assets_otherID" ON "assets"("otherID")
 			"""
 		)
 		.execute(db)
@@ -578,11 +653,13 @@ func appDatabase() throws -> any DatabaseWriter {
 			"investmentAccounts",
 			"healthSavingsAccounts",
 			"serviceProviders",
+			"vehicles",
 			"devices",
 			"subscriptions",
 			"jobs",
 			"insurancePolicies",
 			"others",
+			"assets",
 		]
 
 		for table in tables {

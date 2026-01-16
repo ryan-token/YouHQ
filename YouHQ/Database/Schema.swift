@@ -326,6 +326,20 @@ import SQLiteData
 	var notes: String = ""
 }
 
+// MARK: - Assets
+
+@Table struct Asset: Identifiable {
+	let id: UUID
+	let profileID: Profile.ID
+	let residenceID: Residence.ID?
+	let vehicleID: Vehicle.ID?
+	let insurancePolicyID: InsurancePolicy.ID?
+	let maintenanceItemID: MaintenanceItem.ID?
+	let deviceID: Device.ID?
+	let otherID: Other.ID?
+	let imageData: Data
+}
+
 // MARK: - Raw Representable Structs
 // These are raw representable structs instead of enums to support backwards compatibility
 // when syncing via iCloud. New cases can be added without breaking old app versions.

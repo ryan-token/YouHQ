@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/12/26.
 //
 
+import PhotosUI
 import SwiftUI
 
 struct ResidenceFormFields: View {
@@ -23,6 +24,11 @@ struct ResidenceFormFields: View {
 	@Binding var monthlyCost: Double?
 	@Binding var url: String
 	@Binding var notes: String
+	@Binding var photoData: Data?
+	@Binding var photoItem: PhotosPickerItem?
+	@Binding var viewerPayload: PhotoViewerPayload?
+	let onPhotoItemChange: (PhotosPickerItem?) -> Void
+	let onRemovePhoto: () -> Void
 	var focusedField: FocusState<Bool>.Binding?
 
 	init(
@@ -41,6 +47,11 @@ struct ResidenceFormFields: View {
 		monthlyCost: Binding<Double?>,
 		url: Binding<String>,
 		notes: Binding<String>,
+		photoData: Binding<Data?>,
+		photoItem: Binding<PhotosPickerItem?>,
+		viewerPayload: Binding<PhotoViewerPayload?>,
+		onPhotoItemChange: @escaping (PhotosPickerItem?) -> Void,
+		onRemovePhoto: @escaping () -> Void,
 		focusedField: FocusState<Bool>.Binding? = nil
 	) {
 		_type = type
@@ -58,6 +69,11 @@ struct ResidenceFormFields: View {
 		_monthlyCost = monthlyCost
 		_url = url
 		_notes = notes
+		_photoData = photoData
+		_photoItem = photoItem
+		_viewerPayload = viewerPayload
+		self.onPhotoItemChange = onPhotoItemChange
+		self.onRemovePhoto = onRemovePhoto
 		self.focusedField = focusedField
 	}
 
@@ -157,6 +173,15 @@ struct ResidenceFormFields: View {
 		Section("Website") {
 			URLTextField(text: $url)
 		}
+
+		PhotoPickerSection(
+			title: "Photo",
+			photoData: $photoData,
+			photoItem: $photoItem,
+			viewerPayload: $viewerPayload,
+			onPhotoItemChange: onPhotoItemChange,
+			onRemove: onRemovePhoto
+		)
 
 		Section("Notes") {
 			TextEditor(text: $notes)
