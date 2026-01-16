@@ -95,9 +95,13 @@ struct SectionEditSheet: View {
 					onDismiss: { dismiss() }
 				)
 			}
+			#if os(iOS)
 			.presentationDetents(
-				vm.section.isNew ? [.large] : [.medium, .large]
+				UIDevice.current.userInterfaceIdiom == .pad
+				? [.large]
+				: (vm.section.isNew ? [.large] : [.medium, .large])
 			)
+			#endif
 			.interactiveDismissDisabled(vm.section.isNew)
 		}
 		.sheet(item: $photoViewerPayload) { payload in
