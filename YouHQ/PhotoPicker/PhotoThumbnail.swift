@@ -1,5 +1,5 @@
 //
-//  PhotoPreview.swift
+//  PhotoThumbnail.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/16/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PhotoPreview: View {
+struct PhotoThumbnail: View {
 	let data: Data
 
 	var body: some View {
@@ -16,9 +16,9 @@ struct PhotoPreview: View {
 				.resizable()
 				.scaledToFit()
 				.clipShape(.rect(cornerRadius: 12))
-				.accessibilityLabel(Text("Selected photo"))
+				.accessibilityLabel(Text("Selected image"))
 		} else {
-			ContentUnavailableView("Photo Unavailable", systemImage: "photo")
+			ContentUnavailableView("Image Unavailable", systemImage: "photo")
 		}
 	}
 

@@ -10,7 +10,6 @@ import SwiftUI
 struct SectionEditSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
-	@State private var photoViewerPayload: PhotoViewerPayload?
 	@State private var isShowingDeleteConfirmation = false
 
 	@FocusState private var residenceFieldFocused: Bool
@@ -30,8 +29,7 @@ struct SectionEditSheet: View {
 				case .residenceInfo:
 					ResidenceInfoEdit(
 						coordinator: vm,
-						focusedField: $residenceFieldFocused,
-						photoViewerPayload: $photoViewerPayload
+						focusedField: $residenceFieldFocused
 					)
 				case .utility:
 					UtilityEdit(
@@ -41,20 +39,17 @@ struct SectionEditSheet: View {
 				case .insurancePolicy:
 					InsuranceEdit(
 						coordinator: vm,
-						focusedField: $insuranceFieldFocused,
-						photoViewerPayload: $photoViewerPayload
+						focusedField: $insuranceFieldFocused
 					)
 				case .maintenanceItem:
 					MaintenanceItemEdit(
 						coordinator: vm,
-						focusedField: $maintenanceFieldFocused,
-						photoViewerPayload: $photoViewerPayload
+						focusedField: $maintenanceFieldFocused
 					)
 				case .other:
 					OtherEdit(
 						coordinator: vm,
-						focusedField: $otherFieldFocused,
-						photoViewerPayload: $photoViewerPayload
+						focusedField: $otherFieldFocused
 					)
 				}
 			}
@@ -91,21 +86,21 @@ struct SectionEditSheet: View {
 				Toolbar(
 					vm: vm,
 					isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
-					photoViewerPayload: $photoViewerPayload,
 					onDismiss: { dismiss() }
 				)
 			}
 			#if os(iOS)
-			.presentationDetents(
-				UIDevice.current.userInterfaceIdiom == .pad
-				? [.large]
-				: (vm.section.isNew ? [.large] : [.medium, .large])
-			)
+				.presentationDetents(
+					UIDevice.current.userInterfaceIdiom == .pad
+						? [.large]
+						: (vm.section.isNew ? [.large] : [.medium, .large])
+				)
 			#endif
 			.interactiveDismissDisabled(vm.section.isNew)
 		}
-		.sheet(item: $photoViewerPayload) { payload in
-			PhotoViewer(data: payload.data)
-		}
+		.photoViewerOverlayHost()
+		#if os(iOS)
+			.cameraOverlayHost()
+		#endif
 	}
 }

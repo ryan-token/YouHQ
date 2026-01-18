@@ -11,14 +11,24 @@ extension SectionEditSheet {
 	struct Toolbar: ToolbarContent {
 		let vm: SectionEditSheet.ViewModel
 		@Binding var isShowingDeleteConfirmation: Bool
-		@Binding var photoViewerPayload: PhotoViewerPayload?
 		let onDismiss: () -> Void
+		@Environment(\.isPhotoViewerVisible) private var isPhotoViewerVisible
 
 		var body: some ToolbarContent {
+			#if os(macOS)
+				if !isPhotoViewerVisible {
+					toolbarItems
+				}
+			#else
+				toolbarItems
+			#endif
+		}
+
+		@ToolbarContentBuilder
+		private var toolbarItems: some ToolbarContent {
 			ToolbarItem(placement: .cancellationAction) {
 				Button("Cancel") {
 					vm.cancel()
-					photoViewerPayload = nil
 					onDismiss()
 				}
 			}
@@ -37,7 +47,6 @@ extension SectionEditSheet {
 					) {
 						Button("Delete", role: .destructive) {
 							vm.delete()
-							photoViewerPayload = nil
 							onDismiss()
 						}
 						Button("Cancel", role: .cancel) {}
@@ -50,7 +59,6 @@ extension SectionEditSheet {
 			ToolbarItem(placement: .confirmationAction) {
 				Button("Save") {
 					vm.save()
-					photoViewerPayload = nil
 					onDismiss()
 				}
 				.disabled(!vm.isValid)

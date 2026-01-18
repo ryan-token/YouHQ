@@ -5,7 +5,6 @@
 //  Created by Ryan Token on 1/14/26.
 //
 
-import PhotosUI
 import SQLiteData
 import SwiftUI
 
@@ -28,8 +27,7 @@ extension MaintenanceItemEdit {
 		var isUsingManualDueDate: Bool
 		var url: String
 		var notes: String
-		var photoData: Data?
-		var photoItem: PhotosPickerItem?
+		var photoPicker = PhotoPickerViewModel()
 
 		var calculatedNextDueDate: Date {
 			let calendar = Calendar.current
@@ -64,8 +62,6 @@ extension MaintenanceItemEdit {
 			self.shouldNotify = item.shouldNotify
 			self.url = item.url
 			self.notes = item.notes
-			self.photoData = nil
-			self.photoItem = nil
 
 			// Calculate initial next due date
 			let calculated = {
@@ -112,7 +108,10 @@ extension MaintenanceItemEdit {
 						}
 						.execute(db)
 
-					try updateAsset(in: db)
+					try photoPicker.updateAsset(
+						in: db,
+						link: .maintenanceItem(item)
+					)
 				}
 			}
 		}
@@ -138,70 +137,15 @@ extension MaintenanceItemEdit {
 			}
 		}
 
-		func handlePhotoItemChange(_ newItem: PhotosPickerItem?) {
-			guard let newItem else { return }
-			Task {
-				if let data = try? await newItem.loadTransferable(
-					type: Data.self
-				) {
-					await MainActor.run {
-						self.photoData = data
-					}
-				}
-			}
-		}
-
-		func clearPhoto() {
-			photoData = nil
-			photoItem = nil
-		}
-
 		private func loadExistingPhotoData() {
-			var existingAsset: Asset?
 			withErrorReporting {
 				try database.read { db in
-					existingAsset =
-						try Asset
-						.where { $0.maintenanceItemID.eq(item.id) }
-						.fetchOne(db)
+					try photoPicker.loadExistingPhotoData(
+						in: db,
+						link: .maintenanceItem(item)
+					)
 				}
 			}
-			photoData = existingAsset?.imageData
-		}
-
-		private func updateAsset(in db: Database) throws {
-			try Asset
-				.where { $0.maintenanceItemID.eq(item.id) }
-				.delete()
-				.execute(db)
-
-			guard let photoData else { return }
-			guard let profileID = try resolveProfileID(in: db) else { return }
-
-			try Asset.insert {
-				Asset.Draft(
-					id: UUID(),
-					profileID: profileID,
-					residenceID: nil,
-					vehicleID: nil,
-					insurancePolicyID: nil,
-					maintenanceItemID: item.id,
-					deviceID: nil,
-					otherID: nil,
-					imageData: photoData
-				)
-			}
-			.execute(db)
-		}
-
-		private func resolveProfileID(in db: Database) throws -> UUID? {
-			if let residenceID = item.residenceID {
-				return try Residence.find(residenceID).fetchOne(db)?.profileID
-			}
-			if let vehicleID = item.vehicleID {
-				return try Vehicle.find(vehicleID).fetchOne(db)?.profileID
-			}
-			return nil
 		}
 	}
 }

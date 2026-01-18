@@ -5,8 +5,8 @@
 //  Created by Ryan Token on 1/16/26.
 //
 
-import ImageIO
 import Foundation
+import ImageIO
 
 func orientedCGImage(from data: Data) -> CGImage? {
 	guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
@@ -22,7 +22,11 @@ func orientedCGImage(from data: Data) -> CGImage? {
 		options[kCGImageSourceThumbnailMaxPixelSize] = maxPixelSize
 	}
 
-	return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
+	return CGImageSourceCreateThumbnailAtIndex(
+		source,
+		0,
+		options as CFDictionary
+	)
 		?? CGImageSourceCreateImageAtIndex(source, 0, nil)
 }
 

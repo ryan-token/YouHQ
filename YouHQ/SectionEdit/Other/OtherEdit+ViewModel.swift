@@ -5,7 +5,6 @@
 //  Created by Ryan Token on 1/14/26.
 //
 
-import PhotosUI
 import SQLiteData
 import SwiftUI
 
@@ -23,8 +22,7 @@ extension OtherEdit {
 		var monthlyCost: Double?
 		var url: String
 		var notes: String
-		var photoData: Data?
-		var photoItem: PhotosPickerItem?
+		var photoPicker = PhotoPickerViewModel()
 
 		var title: String {
 			isNew ? "Add Other" : "Edit Other"
@@ -44,8 +42,6 @@ extension OtherEdit {
 			self.monthlyCost = other.monthlyCost
 			self.url = other.url
 			self.notes = other.notes
-			self.photoData = nil
-			self.photoItem = nil
 			loadExistingPhotoData()
 		}
 
@@ -62,7 +58,7 @@ extension OtherEdit {
 						}
 						.execute(db)
 
-					try updateAsset(in: db)
+					try photoPicker.updateAsset(in: db, link: .other(other))
 				}
 			}
 		}
@@ -83,55 +79,14 @@ extension OtherEdit {
 			}
 		}
 
-		func handlePhotoItemChange(_ newItem: PhotosPickerItem?) {
-			guard let newItem else { return }
-			Task {
-				if let data = try? await newItem.loadTransferable(type: Data.self) {
-					await MainActor.run {
-						self.photoData = data
-					}
-				}
-			}
-		}
-
-		func clearPhoto() {
-			photoData = nil
-			photoItem = nil
-		}
-
 		private func loadExistingPhotoData() {
-			var existingAsset: Asset?
 			withErrorReporting {
 				try database.read { db in
-					existingAsset = try Asset
-						.where { $0.otherID.eq(other.id) }
-						.fetchOne(db)
-				}
-			}
-			photoData = existingAsset?.imageData
-		}
-
-		private func updateAsset(in db: Database) throws {
-			try Asset
-				.where { $0.otherID.eq(other.id) }
-				.delete()
-				.execute(db)
-
-			if let photoData {
-				try Asset.insert {
-					Asset.Draft(
-						id: UUID(),
-						profileID: other.profileID,
-						residenceID: nil,
-						vehicleID: nil,
-						insurancePolicyID: nil,
-						maintenanceItemID: nil,
-						deviceID: nil,
-						otherID: other.id,
-						imageData: photoData
+					try photoPicker.loadExistingPhotoData(
+						in: db,
+						link: .other(other)
 					)
 				}
-				.execute(db)
 			}
 		}
 	}

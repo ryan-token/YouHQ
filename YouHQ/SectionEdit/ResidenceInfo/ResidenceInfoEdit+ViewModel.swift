@@ -5,7 +5,6 @@
 //  Created by Ryan Token on 1/14/26.
 //
 
-import PhotosUI
 import SQLiteData
 import SwiftUI
 
@@ -32,8 +31,7 @@ extension ResidenceInfoEdit {
 		var monthlyCost: Double?
 		var url: String
 		var notes: String
-		var photoData: Data?
-		var photoItem: PhotosPickerItem?
+		var photoPicker = PhotoPickerViewModel()
 
 		var title: String {
 			"Edit Residence"
@@ -64,8 +62,6 @@ extension ResidenceInfoEdit {
 			self.monthlyCost = residence.monthlyCost
 			self.url = residence.url
 			self.notes = residence.notes
-			self.photoData = nil
-			self.photoItem = nil
 			loadExistingPhotoData()
 		}
 
@@ -91,7 +87,10 @@ extension ResidenceInfoEdit {
 						}
 						.execute(db)
 
-					try updateAsset(in: db)
+					try photoPicker.updateAsset(
+						in: db,
+						link: .residence(residence)
+					)
 				}
 			}
 		}
@@ -110,58 +109,14 @@ extension ResidenceInfoEdit {
 			}
 		}
 
-		func handlePhotoItemChange(_ newItem: PhotosPickerItem?) {
-			guard let newItem else { return }
-			Task {
-				if let data = try? await newItem.loadTransferable(
-					type: Data.self
-				) {
-					await MainActor.run {
-						self.photoData = data
-					}
-				}
-			}
-		}
-
-		func clearPhoto() {
-			photoData = nil
-			photoItem = nil
-		}
-
 		private func loadExistingPhotoData() {
-			var existingAsset: Asset?
 			withErrorReporting {
 				try database.read { db in
-					existingAsset =
-						try Asset
-						.where { $0.residenceID.eq(residence.id) }
-						.fetchOne(db)
-				}
-			}
-			photoData = existingAsset?.imageData
-		}
-
-		private func updateAsset(in db: Database) throws {
-			try Asset
-				.where { $0.residenceID.eq(residence.id) }
-				.delete()
-				.execute(db)
-
-			if let photoData {
-				try Asset.insert {
-					Asset.Draft(
-						id: UUID(),
-						profileID: residence.profileID,
-						residenceID: residence.id,
-						vehicleID: nil,
-						insurancePolicyID: nil,
-						maintenanceItemID: nil,
-						deviceID: nil,
-						otherID: nil,
-						imageData: photoData
+					try photoPicker.loadExistingPhotoData(
+						in: db,
+						link: .residence(residence)
 					)
 				}
-				.execute(db)
 			}
 		}
 	}

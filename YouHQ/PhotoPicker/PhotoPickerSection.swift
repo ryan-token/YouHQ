@@ -8,59 +8,114 @@
 import PhotosUI
 import SwiftUI
 
+/// A form section that provides photo selection from library and camera (iOS).
+/// Shows a thumbnail when a photo is selected, with options to view, change, or remove it.
 struct PhotoPickerSection: View {
 	let title: String
-	@Binding var photoData: Data?
-	@Binding var photoItem: PhotosPickerItem?
-	@Binding var viewerPayload: PhotoViewerPayload?
-	let onPhotoItemChange: (PhotosPickerItem?) -> Void
-	let onRemove: () -> Void
+	@Bindable var viewModel: PhotoPickerViewModel
 
-	init(
-		title: String,
-		photoData: Binding<Data?>,
-		photoItem: Binding<PhotosPickerItem?>,
-		viewerPayload: Binding<PhotoViewerPayload?>,
-		onPhotoItemChange: @escaping (PhotosPickerItem?) -> Void,
-		onRemove: @escaping () -> Void
-	) {
-		self.title = title
-		self._photoData = photoData
-		self._photoItem = photoItem
-		self._viewerPayload = viewerPayload
-		self.onPhotoItemChange = onPhotoItemChange
-		self.onRemove = onRemove
+	#if os(iOS)
+		@State private var cameraPresentation: CameraPresentation?
+	#endif
+
+	private var hasPhoto: Bool {
+		viewModel.photoData != nil
 	}
 
 	var body: some View {
-		let hasPhoto = photoData != nil
 		Section(title) {
-			if let photoData {
-				Button {
-					viewerPayload = PhotoViewerPayload(data: photoData)
-				} label: {
-					PhotoPreview(data: photoData)
+			thumbnailButton
+			libraryPicker
+			#if os(iOS)
+				cameraButton
+			#endif
+			removeButton
+		}
+		#if os(iOS)
+			.preference(
+				key: CameraPresentationPreferenceKey.self,
+				value: cameraPresentation
+			)
+		#endif
+		.preference(
+			key: PhotoViewerPresentationPreferenceKey.self,
+			value: photoViewerPresentation
+		)
+		.onChange(of: viewModel.photoItem) { _, newItem in
+			viewModel.handlePhotoItemChange(newItem)
+		}
+	}
+
+	// MARK: - Subviews
+
+	@ViewBuilder
+	private var thumbnailButton: some View {
+		if let photoData = viewModel.photoData {
+			Button {
+				withAnimation {
+					viewModel.viewerPayload = PhotoViewerPayload(
+						data: photoData
+					)
 				}
-				.buttonStyle(.plain)
+			} label: {
+				PhotoThumbnail(data: photoData)
 			}
+			.buttonStyle(.plain)
+		}
+	}
 
-			PhotosPicker(selection: $photoItem, matching: .not(.videos)) {
-				Label(
-					hasPhoto ? "Change Photo" : "Choose Photo",
-					systemImage: "photo"
-				)
-			}
+	private var libraryPicker: some View {
+		let labelText =
+			hasPhoto ? "Choose Different Image" : "Choose from Library"
+		return PhotosPicker(
+			selection: $viewModel.photoItem,
+			matching: .not(.videos)
+		) {
+			Label(labelText, systemImage: "photo.on.rectangle")
+		}
+	}
 
-			if photoData != nil {
-				Button("Remove Photo", role: .destructive) {
-					withAnimation {
-						onRemove()
+	#if os(iOS)
+		private var cameraButton: some View {
+			Button {
+				cameraPresentation = CameraPresentation(
+					id: UUID(),
+					onImageCaptured: { imageData in
+						viewModel.photoData = imageData
+					},
+					onDismiss: {
+						cameraPresentation = nil
 					}
+				)
+			} label: {
+				Label("Take Photo", systemImage: "camera")
+			}
+		}
+	#endif
+
+	@ViewBuilder
+	private var removeButton: some View {
+		if hasPhoto {
+			Button("Remove Image", role: .destructive) {
+				withAnimation {
+					viewModel.clearPhoto()
 				}
 			}
 		}
-		.onChange(of: photoItem) { _, newItem in
-			onPhotoItemChange(newItem)
+	}
+
+	// MARK: - Preferences
+
+	private var photoViewerPresentation: PhotoViewerPresentation? {
+		viewModel.viewerPayload.map { payload in
+			PhotoViewerPresentation(
+				payload: payload,
+				onClose: {
+					withAnimation(.snappy) {
+						viewModel.viewerPayload = nil
+					}
+				}
+			)
 		}
 	}
 }

@@ -10,7 +10,6 @@ import SwiftUI
 struct ResidenceInfoEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
-	var photoViewerPayload: Binding<PhotoViewerPayload?>
 
 	var body: some View {
 		if let residenceVM = coordinator.residenceViewModel {
@@ -31,15 +30,7 @@ struct ResidenceInfoEdit: View {
 				monthlyCost: $vm.monthlyCost,
 				url: $vm.url,
 				notes: $vm.notes,
-				photoData: $vm.photoData,
-				photoItem: $vm.photoItem,
-				viewerPayload: photoViewerPayload,
-				onPhotoItemChange: { newItem in
-					vm.handlePhotoItemChange(newItem)
-				},
-				onRemovePhoto: {
-					vm.clearPhoto()
-				},
+				photoPicker: vm.photoPicker,
 				focusedField: focusedField
 			)
 		}

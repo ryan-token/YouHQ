@@ -10,7 +10,6 @@ import SwiftUI
 struct MaintenanceItemEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
 	var focusedField: FocusState<Bool>.Binding
-	var photoViewerPayload: Binding<PhotoViewerPayload?>
 
 	var body: some View {
 		if let maintenanceVM = coordinator.maintenanceViewModel {
@@ -55,7 +54,9 @@ struct MaintenanceItemEdit: View {
 				LabeledField(label: "Unit") {
 					Picker(selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
-							Text(vm.intervalValue == 1 ? type.rawValue : "\(type.rawValue)s").tag(type)
+							Text(
+								vm.intervalValue == 1 ? type.rawValue : "\(type.rawValue)s"
+							).tag(type)
 						}
 					} label: {
 						EmptyView()
@@ -110,16 +111,8 @@ struct MaintenanceItemEdit: View {
 			}
 
 			PhotoPickerSection(
-				title: "Photo",
-				photoData: $vm.photoData,
-				photoItem: $vm.photoItem,
-				viewerPayload: photoViewerPayload,
-				onPhotoItemChange: { newItem in
-					vm.handlePhotoItemChange(newItem)
-				},
-				onRemove: {
-					vm.clearPhoto()
-				}
+				title: "Image",
+				viewModel: vm.photoPicker
 			)
 
 			Section("Notes") {
