@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 12/30/25.
 //
 
+import CloudKit
 import SQLiteData
 import SwiftUI
 
@@ -15,10 +16,20 @@ extension ResidenceScreen {
 		@Dependency(\.defaultDatabase) private var database
 
 		@ObservationIgnored
-		@FetchAll var profiles: [Profile]
+		@Dependency(\.defaultSyncEngine) var syncEngine
+
+		// Join: Get all profiles and whether they are shared or not
+		@Selection
+		struct ProfileShare { // swiftlint:disable:this nesting
+			let profile: Profile
+			let isShared: Bool
+		}
 
 		@ObservationIgnored
-		@FetchAll(Residence.none, animation: .default) var residences  // start empty, load via getResidences
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
+
+		@ObservationIgnored
+		@FetchAll(Residence.none, animation: .default) var residences
 
 		@ObservationIgnored
 		@FetchAll(Utility.none, animation: .default) var utilities
@@ -34,26 +45,6 @@ extension ResidenceScreen {
 		@ObservationIgnored
 		@FetchAll(Other.none, animation: .default) var others
 
-		init() {
-			residenceNotes = ""
-		}
-
-		// MARK: EXAMPLE JOIN - for each profile, how many residences are there?
-		//		@Selection struct Row {
-		//			let profile: Profile
-		//			let residenceCount: Int
-		//		}
-		//
-		//		@ObservationIgnored
-		//		@FetchAll(
-		//			Profile
-		//				.group(by: \.id)
-		//				.leftJoin(Residence.all) { $0.id.eq($1.profileID) }
-		//				.select { Row.Columns.init(profile: $0, residenceCount: $1.count()) }
-		//		) var rows
-
-		var profileID: UUID?
-
 		@ObservationIgnored
 		@AppStorage("selectedResidenceID") var selectedResidenceID: String? {
 			didSet {
@@ -62,6 +53,15 @@ extension ResidenceScreen {
 				}
 			}
 		}
+
+		init() {
+			residenceNotes = ""
+		}
+
+		// Sharable CloudKit data that can also drive a sheet to present a share interface
+		var sharedRecord: SharedRecord?
+
+		var selectedProfile: ProfileShare?
 
 		var selectedResidence: Residence? {
 			didSet {
@@ -76,9 +76,8 @@ extension ResidenceScreen {
 
 		var isShowingAddResidenceSheet = false
 		var isShowingSectionEditSheet = false
-		var isNavigatingToMaintenanceItems = false
 		var sectionToEdit: EditableSection?
-		var showingAddMoreDialog = false
+		var isNavigatingToMaintenanceItems = false
 		var backgroundColor: Color = .indigo
 		var residenceNotes: String {
 			didSet {
@@ -88,20 +87,49 @@ extension ResidenceScreen {
 
 		// MARK: PROFILE FUNCTIONS
 
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(
+					Profile
+						.group(by: \.id)
+						.leftJoin(SyncMetadata.all) { $0.syncMetadataID.eq($1.id) }
+						.select {
+							ProfileShare.Columns(
+								profile: $0,
+								isShared: $1.isShared.ifnull(false)
+							)
+						},
+					animation: .default
+				)
+			}
+		}
+
 		private func setProfile(to profileName: String) {
-			profileID = profiles.first(where: { $0.name == profileName })?.id
+			selectedProfile = profiles.first(where: { $0.profile.name == profileName })
 		}
 
 		// MARK: RESIDENCE FUNCTIONS
+
+		private func loadResidences() async {
+			guard let profileID = selectedProfile?.profile.id else { return }
+			_ = await withErrorReporting {
+				try await $residences.load(
+					Residence
+						.where { $0.profileID.eq(profileID) }
+						.order { $0.street },
+					animation: .default
+				)
+			}
+		}
 
 		func loadResidenceData() async {
 			setProfile(to: "Default")
 			await loadResidences()
 
 			if let selectedResidenceID,
-				let selectedResidenceUUID = UUID(
-					uuidString: selectedResidenceID
-				)
+			   let selectedResidenceUUID = UUID(
+				uuidString: selectedResidenceID
+			   )
 			{
 				setSelectedResidence(to: selectedResidenceUUID)
 			} else if selectedResidenceID == nil && !residences.isEmpty {
@@ -115,21 +143,20 @@ extension ResidenceScreen {
 			residenceNotes = selectedResidence?.notes ?? ""
 		}
 
-		private func loadResidences() async {
-			guard let profileID else { return }
-			_ = await withErrorReporting {
-				try await $residences.load(
-					Residence
-						.where { $0.profileID.eq(profileID) }
-						.order { $0.street },
-					animation: .default
-				)
-			}
-		}
-
 		private func setSelectedResidence(to residenceID: UUID) {
 			selectedResidence = residences.first(where: { $0.id == residenceID }
 			)
+		}
+
+		func shareResidenceTapped() async {
+			if let selectedProfile {
+				await withErrorReporting {
+					sharedRecord = try await syncEngine.share(record: selectedProfile.profile) {
+						$0[CKShare.SystemFieldKey.title] = selectedProfile.profile.name
+						$0[CKShare.SystemFieldKey.thumbnailImageData] = nil
+					}
+				}
+			}
 		}
 
 		func updateSelectedResidence() {
@@ -232,7 +259,7 @@ extension ResidenceScreen {
 		}
 
 		func showAddInsurancePolicySheet() {
-			guard let selectedResidence, let profileID else { return }
+			guard let selectedResidence, let profileID = selectedProfile?.profile.id else { return }
 			// Create a temporary policy in the database that will be deleted if cancelled
 			var createdPolicy: InsurancePolicy?
 			withErrorReporting {
@@ -370,7 +397,7 @@ extension ResidenceScreen {
 		}
 
 		func showAddOtherSheet() {
-			guard let selectedResidence, let profileID else { return }
+			guard let selectedResidence, let profileID = selectedProfile?.profile.id else { return }
 			// Create a temporary other in the database that will be deleted if cancelled
 			var createdOther: Other?
 			withErrorReporting {

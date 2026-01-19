@@ -38,7 +38,9 @@ struct PhotoViewerControls: View {
 					.foregroundStyle(.white)
 			}
 		}
+		#if !os(visionOS)
 		.buttonStyle(.glassProminent)
+		#endif
 		.tint(.gray)
 		.padding()
 	}

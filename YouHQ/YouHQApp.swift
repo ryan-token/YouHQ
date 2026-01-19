@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 12/29/25.
 //
 
+import CloudKit
 import Dependencies
 import SQLiteData
 import SwiftUI
@@ -12,6 +13,9 @@ import SwiftUI
 @main
 struct YouHQApp: App {
 	@Dependency(\.context) var context
+	#if !os(macOS)
+	@UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+	#endif
 
 	init() {
 		if context == .live {

@@ -16,8 +16,10 @@ struct ResidenceScreen: View {
 		List {
 			Group {
 				#if DEBUG
-					ProfileIDView(profileID: vm.profileID)
+				ProfileIDView(profileID: vm.selectedProfile?.profile.id)
 				#endif
+
+				SharingStatus(vm: vm)
 
 				if vm.residences.isEmpty {
 					ContentUnavailableView {
@@ -81,7 +83,10 @@ struct ResidenceScreen: View {
 		}
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
-		.task { await vm.loadResidenceData() }
+		.task {
+			await vm.loadProfiles()
+			await vm.loadResidenceData()
+		}
 		.onChange(of: vm.profiles.count) {
 			Task { await vm.loadResidenceData() }
 		}
@@ -89,7 +94,7 @@ struct ResidenceScreen: View {
 			vm.updateSelectedResidence()
 		}
 		.sheet(isPresented: $vm.isShowingAddResidenceSheet) {
-			if let profileID = vm.profileID {
+			if let profileID = vm.selectedProfile?.profile.id {
 				AddResidenceSheet(
 					profileID: profileID,
 					selectedResidence: $vm.selectedResidence

@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/3/26.
 //
 
+import SQLiteData
 import SwiftUI
 
 extension ResidenceScreen {
@@ -22,6 +23,19 @@ extension ResidenceScreen {
 					}
 				}
 			}
+
+			#if !os(macOS)
+			ToolbarItem(placement: .primaryAction) {
+				Button {
+					Task { await vm.shareResidenceTapped() }
+				} label: {
+					Image(systemName: "square.and.arrow.up")
+				}
+				.sheet(item: $vm.sharedRecord) { sharedRecord in
+					CloudSharingView(sharedRecord: sharedRecord)
+				}
+			}
+			#endif
 
 			ToolbarItem(placement: .primaryAction) {
 				Menu {
