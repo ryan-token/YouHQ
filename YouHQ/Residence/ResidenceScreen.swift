@@ -15,16 +15,9 @@ struct ResidenceScreen: View {
 	var body: some View {
 		List {
 			Group {
-				Group {
-					if let profileID = vm.profileID {
-						Text("Profile ID: \(profileID)")
-					} else {
-						Text("Profile ID: nil")
-					}
-				}
-				.font(.caption)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.listRowSeparator(.hidden)
+				#if DEBUG
+					ProfileIDView(profileID: vm.profileID)
+				#endif
 
 				if vm.residences.isEmpty {
 					ContentUnavailableView {
@@ -78,9 +71,11 @@ struct ResidenceScreen: View {
 			}
 		#endif
 		.toolbar { Toolbar(vm: vm) }
-		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
+		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems)
+		{
 			if let residenceIDString = vm.selectedResidenceID,
-				let residenceID = UUID(uuidString: residenceIDString) {
+				let residenceID = UUID(uuidString: residenceIDString)
+			{
 				MaintenanceItemsScreen(residenceID: residenceID)
 			}
 		}
@@ -113,7 +108,7 @@ struct ResidenceScreen: View {
 }
 
 #Preview {
-	let _ = prepareDependencies { // swiftlint:disable:this redundant_discardable_let
+	let _ = prepareDependencies {  // swiftlint:disable:this redundant_discardable_let
 		try? $0.bootstrapDatabase()
 		try? $0.defaultDatabase.seed()
 	}
