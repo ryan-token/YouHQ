@@ -71,5 +71,11 @@ struct OtherEdit: View {
 }
 
 #Preview("Other") {
-	SectionEditSheet(section: .other(Other.sampleData, isNew: false))
+	SectionEditSheet(
+		section: .other(Other.sampleData),
+		draftUtility: .constant(nil),
+		draftInsurancePolicy: .constant(nil),
+		draftMaintenanceItem: .constant(nil),
+		draftOther: .constant(nil)
+	)
 }

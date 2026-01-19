@@ -118,6 +118,10 @@ struct InsuranceEdit: View {
 
 #Preview("Insurance") {
 	SectionEditSheet(
-		section: .insurancePolicy(InsurancePolicy.sampleData, isNew: false)
+		section: .insurancePolicy(InsurancePolicy.sampleData),
+		draftUtility: .constant(nil),
+		draftInsurancePolicy: .constant(nil),
+		draftMaintenanceItem: .constant(nil),
+		draftOther: .constant(nil)
 	)
 }

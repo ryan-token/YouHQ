@@ -38,5 +38,11 @@ struct ResidenceInfoEdit: View {
 }
 
 #Preview("Residence Info") {
-	SectionEditSheet(section: .residenceInfo(Residence.sampleData))
+	SectionEditSheet(
+		section: .residenceInfo(Residence.sampleData),
+		draftUtility: .constant(nil),
+		draftInsurancePolicy: .constant(nil),
+		draftMaintenanceItem: .constant(nil),
+		draftOther: .constant(nil)
+	)
 }

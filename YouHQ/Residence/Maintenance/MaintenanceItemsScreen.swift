@@ -111,7 +111,12 @@ struct MaintenanceItemsScreen: View {
 		.sheet(isPresented: $vm.isShowingEditSheet) {
 			if let itemToEdit = vm.itemToEdit {
 				SectionEditSheet(
-					section: .maintenanceItem(itemToEdit, isNew: vm.isNewItem)
+					section: vm.isNewItem
+						? .maintenanceItemDraft : .maintenanceItem(itemToEdit),
+					draftUtility: .constant(nil),
+					draftInsurancePolicy: .constant(nil),
+					draftMaintenanceItem: .constant(itemToEdit),
+					draftOther: .constant(nil)
 				)
 			}
 		}

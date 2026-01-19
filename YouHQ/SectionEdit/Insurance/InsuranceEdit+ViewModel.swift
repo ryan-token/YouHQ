@@ -60,19 +60,45 @@ extension InsuranceEdit {
 		func save() {
 			withErrorReporting {
 				try database.write { db in
-					try InsurancePolicy.find(policy.id)
-						.update {
-							$0.type = type
-							$0.provider = provider
-							$0.policyNumber = policyNumber
-							$0.monthlyCost = monthlyCost
-							$0.deductible = deductible
-							$0.coverageAmount = coverageAmount
-							$0.renewalDate = hasRenewalDate ? renewalDate : nil
-							$0.url = url
-							$0.notes = notes
+					if isNew {
+						// Insert new record
+						try InsurancePolicy.insert {
+							InsurancePolicy.Draft(
+								id: policy.id,
+								profileID: policy.profileID,
+								residenceID: policy.residenceID,
+								type: type,
+								provider: provider,
+								policyNumber: policyNumber,
+								monthlyCost: monthlyCost,
+								deductible: deductible,
+								coverageAmount: coverageAmount,
+								startDate: nil,
+								renewalDate: hasRenewalDate ? renewalDate : nil,
+								isActive: policy.isActive,
+								backgroundColor: policy.backgroundColor,
+								url: url,
+								notes: notes
+							)
 						}
 						.execute(db)
+					} else {
+						// Update existing record
+						try InsurancePolicy.find(policy.id)
+							.update {
+								$0.type = type
+								$0.provider = provider
+								$0.policyNumber = policyNumber
+								$0.monthlyCost = monthlyCost
+								$0.deductible = deductible
+								$0.coverageAmount = coverageAmount
+								$0.renewalDate =
+									hasRenewalDate ? renewalDate : nil
+								$0.url = url
+								$0.notes = notes
+							}
+							.execute(db)
+					}
 
 					try photoPicker.updateAsset(
 						in: db,
@@ -83,9 +109,7 @@ extension InsuranceEdit {
 		}
 
 		func cancel() {
-			if isNew {
-				delete()
-			}
+			// Draft items don't need cleanup since they're never in DB
 		}
 
 		func delete() {

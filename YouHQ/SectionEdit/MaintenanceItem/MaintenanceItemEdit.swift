@@ -55,7 +55,8 @@ struct MaintenanceItemEdit: View {
 					Picker(selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
 							Text(
-								vm.intervalValue == 1 ? type.rawValue : "\(type.rawValue)s"
+								vm.intervalValue == 1
+									? type.rawValue : "\(type.rawValue)s"
 							).tag(type)
 						}
 					} label: {
@@ -126,18 +127,20 @@ struct MaintenanceItemEdit: View {
 
 #Preview("Residence Maintenance Item") {
 	SectionEditSheet(
-		section: .maintenanceItem(
-			MaintenanceItem.residenceSampleData,
-			isNew: false
-		)
+		section: .maintenanceItem(MaintenanceItem.residenceSampleData),
+		draftUtility: .constant(nil),
+		draftInsurancePolicy: .constant(nil),
+		draftMaintenanceItem: .constant(nil),
+		draftOther: .constant(nil)
 	)
 }
 
 #Preview("Vehicle Maintenance Item") {
 	SectionEditSheet(
-		section: .maintenanceItem(
-			MaintenanceItem.vehicleSampleData,
-			isNew: false
-		)
+		section: .maintenanceItem(MaintenanceItem.vehicleSampleData),
+		draftUtility: .constant(nil),
+		draftInsurancePolicy: .constant(nil),
+		draftMaintenanceItem: .constant(nil),
+		draftOther: .constant(nil)
 	)
 }

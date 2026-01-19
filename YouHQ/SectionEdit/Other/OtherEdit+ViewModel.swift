@@ -48,15 +48,34 @@ extension OtherEdit {
 		func save() {
 			withErrorReporting {
 				try database.write { db in
-					try Other.find(other.id)
-						.update {
-							$0.name = name
-							$0.otherDescription = otherDescription
-							$0.monthlyCost = monthlyCost
-							$0.url = url
-							$0.notes = notes
+					if isNew {
+						// Insert new record
+						try Other.insert {
+							Other.Draft(
+								id: other.id,
+								profileID: other.profileID,
+								residenceID: other.residenceID,
+								name: name,
+								otherDescription: otherDescription,
+								monthlyCost: monthlyCost,
+								backgroundColor: other.backgroundColor,
+								url: url,
+								notes: notes
+							)
 						}
 						.execute(db)
+					} else {
+						// Update existing record
+						try Other.find(other.id)
+							.update {
+								$0.name = name
+								$0.otherDescription = otherDescription
+								$0.monthlyCost = monthlyCost
+								$0.url = url
+								$0.notes = notes
+							}
+							.execute(db)
+					}
 
 					try photoPicker.updateAsset(in: db, link: .other(other))
 				}
@@ -64,9 +83,7 @@ extension OtherEdit {
 		}
 
 		func cancel() {
-			if isNew {
-				delete()
-			}
+			// Draft items don't need cleanup since they're never in DB
 		}
 
 		func delete() {

@@ -36,7 +36,13 @@ extension SectionEditSheet {
 
 		let sectionString: String
 
-		init(section: EditableSection) {
+		init(
+			section: EditableSection,
+			draftUtility: Binding<Utility?>,
+			draftInsurancePolicy: Binding<InsurancePolicy?>,
+			draftMaintenanceItem: Binding<MaintenanceItem?>,
+			draftOther: Binding<Other?>
+		) {
 			self.section = section
 
 			switch section {
@@ -45,28 +51,70 @@ extension SectionEditSheet {
 					residence: residence
 				)
 				sectionString = "Residence"
-			case .utility(let utility, let isNew):
+			case .utility(let utility):
 				sectionViewModel = UtilityEdit.ViewModel(
 					utility: utility,
-					isNew: isNew
+					isNew: false
 				)
 				sectionString = "Utility"
-			case .insurancePolicy(let policy, let isNew):
+			case .utilityDraft:
+				guard let utility = draftUtility.wrappedValue else {
+					fatalError(
+						"Draft utility must exist for .utilityDraft case"
+					)
+				}
+				sectionViewModel = UtilityEdit.ViewModel(
+					utility: utility,
+					isNew: true
+				)
+				sectionString = "Utility"
+			case .insurancePolicy(let policy):
 				sectionViewModel = InsuranceEdit.ViewModel(
 					policy: policy,
-					isNew: isNew
+					isNew: false
 				)
 				sectionString = "Policy"
-			case .maintenanceItem(let item, let isNew):
+			case .insurancePolicyDraft:
+				guard let policy = draftInsurancePolicy.wrappedValue else {
+					fatalError(
+						"Draft policy must exist for .insurancePolicyDraft case"
+					)
+				}
+				sectionViewModel = InsuranceEdit.ViewModel(
+					policy: policy,
+					isNew: true
+				)
+				sectionString = "Policy"
+			case .maintenanceItem(let item):
 				sectionViewModel = MaintenanceItemEdit.ViewModel(
 					item: item,
-					isNew: isNew
+					isNew: false
 				)
 				sectionString = "Maintenance Item"
-			case .other(let other, let isNew):
+			case .maintenanceItemDraft:
+				guard let item = draftMaintenanceItem.wrappedValue else {
+					fatalError(
+						"Draft maintenance item must exist for .maintenanceItemDraft case"
+					)
+				}
+				sectionViewModel = MaintenanceItemEdit.ViewModel(
+					item: item,
+					isNew: true
+				)
+				sectionString = "Maintenance Item"
+			case .other(let other):
 				sectionViewModel = OtherEdit.ViewModel(
 					other: other,
-					isNew: isNew
+					isNew: false
+				)
+				sectionString = other.name
+			case .otherDraft:
+				guard let other = draftOther.wrappedValue else {
+					fatalError("Draft other must exist for .otherDraft case")
+				}
+				sectionViewModel = OtherEdit.ViewModel(
+					other: other,
+					isNew: true
 				)
 				sectionString = other.name
 			}

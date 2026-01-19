@@ -33,7 +33,7 @@ extension SectionEditSheet {
 				}
 			}
 
-			if !vm.section.isNew {
+			if !vm.section.isDraft {
 				ToolbarItem(placement: .destructiveAction) {
 					Button(role: .destructive) {
 						isShowingDeleteConfirmation = true

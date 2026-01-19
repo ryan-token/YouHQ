@@ -20,7 +20,7 @@ extension ResidenceScreen {
 
 		// Join: Get all profiles and whether they are shared or not
 		@Selection
-		struct ProfileShare { // swiftlint:disable:this nesting
+		struct ProfileShare {  // swiftlint:disable:this nesting
 			let profile: Profile
 			let isShared: Bool
 		}
@@ -31,25 +31,20 @@ extension ResidenceScreen {
 		@ObservationIgnored
 		@FetchAll(Residence.none, animation: .default) var residences
 
-		@ObservationIgnored
-		@FetchAll(Utility.none, animation: .default) var utilities
-
-		@ObservationIgnored
-		@FetchAll(InsurancePolicy.none, animation: .default)
-		var insurancePolicies
-
-		@ObservationIgnored
-		@FetchAll(MaintenanceItem.none, animation: .default)
-		var maintenanceItems
-
-		@ObservationIgnored
-		@FetchAll(Other.none, animation: .default) var others
+		// Child view models for entity-specific operations
+		var utilityViewModel = UtilityViewModel()
+		var insuranceViewModel = InsurancePolicyViewModel()
+		var maintenanceViewModel = MaintenanceItemViewModel()
+		var otherViewModel = OtherItemViewModel()
 
 		@ObservationIgnored
 		@AppStorage("selectedResidenceID") var selectedResidenceID: String? {
 			didSet {
 				if selectedResidenceID != oldValue {
-					Task { await loadResidenceData() }
+					Task {
+						restoreSelection()
+						await loadAllData()
+					}
 				}
 			}
 		}
@@ -65,25 +60,28 @@ extension ResidenceScreen {
 
 		var selectedResidence: Residence? {
 			didSet {
-				selectedResidenceID = selectedResidence?.id.uuidString
-				backgroundColor = Color(
-					databaseValue: selectedResidence?.backgroundColor
-						?? "indigo"
-				)
+				// Only persist to AppStorage if actually changed (prevent cycle)
+				let newID = selectedResidence?.id.uuidString
+				if newID != selectedResidenceID {
+					selectedResidenceID = newID
+				}
 				residenceNotes = selectedResidence?.notes ?? ""
 			}
+		}
+
+		// Computed property for background color
+		var backgroundColor: Color {
+			Color(databaseValue: selectedResidence?.backgroundColor ?? "indigo")
 		}
 
 		var isShowingAddResidenceSheet = false
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 		var isNavigatingToMaintenanceItems = false
-		var backgroundColor: Color = .indigo
-		var residenceNotes: String {
-			didSet {
-				updateResidenceNotes()
-			}
-		}
+		var residenceNotes: String
+
+		// Task for debouncing notes updates
+		private var notesDebounceTask: Task<Void, Never>?
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -92,7 +90,9 @@ extension ResidenceScreen {
 				try await $profiles.load(
 					Profile
 						.group(by: \.id)
-						.leftJoin(SyncMetadata.all) { $0.syncMetadataID.eq($1.id) }
+						.leftJoin(SyncMetadata.all) {
+							$0.syncMetadataID.eq($1.id)
+						}
 						.select {
 							ProfileShare.Columns(
 								profile: $0,
@@ -105,7 +105,9 @@ extension ResidenceScreen {
 		}
 
 		private func setProfile(to profileName: String) {
-			selectedProfile = profiles.first(where: { $0.profile.name == profileName })
+			selectedProfile = profiles.first(where: {
+				$0.profile.name == profileName
+			})
 		}
 
 		// MARK: RESIDENCE FUNCTIONS
@@ -125,22 +127,29 @@ extension ResidenceScreen {
 		func loadResidenceData() async {
 			setProfile(to: "Default")
 			await loadResidences()
+			restoreSelection()
+			await loadAllData()
+		}
 
+		private func loadAllData() async {
+			guard let residenceID = selectedResidence?.id else { return }
+			await utilityViewModel.load(for: residenceID)
+			await insuranceViewModel.load(for: residenceID)
+			await maintenanceViewModel.load(for: residenceID)
+			await otherViewModel.load(for: residenceID)
+		}
+
+		func restoreSelection() {
+			// Restore from AppStorage once
 			if let selectedResidenceID,
-			   let selectedResidenceUUID = UUID(
-				uuidString: selectedResidenceID
-			   )
+				let selectedResidenceUUID = UUID(
+					uuidString: selectedResidenceID
+				)
 			{
 				setSelectedResidence(to: selectedResidenceUUID)
-			} else if selectedResidenceID == nil && !residences.isEmpty {
+			} else if selectedResidenceID == nil, !residences.isEmpty {
 				setSelectedResidence(to: residences.first!.id)
 			}
-
-			await loadUtilities()
-			await loadInsurancePolicies()
-			await loadMaintenanceItems()
-			await loadOthers()
-			residenceNotes = selectedResidence?.notes ?? ""
 		}
 
 		private func setSelectedResidence(to residenceID: UUID) {
@@ -151,8 +160,11 @@ extension ResidenceScreen {
 		func shareResidenceTapped() async {
 			if let selectedProfile {
 				await withErrorReporting {
-					sharedRecord = try await syncEngine.share(record: selectedProfile.profile) {
-						$0[CKShare.SystemFieldKey.title] = selectedProfile.profile.name
+					sharedRecord = try await syncEngine.share(
+						record: selectedProfile.profile
+					) {
+						$0[CKShare.SystemFieldKey.title] =
+							selectedProfile.profile.name
 						$0[CKShare.SystemFieldKey.thumbnailImageData] = nil
 					}
 				}
@@ -183,37 +195,26 @@ extension ResidenceScreen {
 			isShowingAddResidenceSheet = true
 		}
 
-		// MARK: UTILITY FUNCTIONS
+		// MARK: RESIDENCE NOTES & COLOR
 
-		private func loadUtilities() async {
-			guard let selectedResidence else { return }
-			_ = await withErrorReporting {
-				try await $utilities.load(
-					Utility
-						.where { $0.residenceID.eq(selectedResidence.id) }
-						.order { $0.type },
-					animation: .default
-				)
+		func updateResidenceNotesDebounced() {
+			// Cancel any pending update
+			notesDebounceTask?.cancel()
+
+			// Create new debounced task
+			notesDebounceTask = Task {
+				try? await Task.sleep(for: .seconds(0.5))
+
+				// Check if task was cancelled
+				guard !Task.isCancelled else { return }
+
+				// Perform the update
+				await updateResidenceNotes()
 			}
 		}
 
-		// MARK: INSURANCE FUNCTIONS
-
-		private func loadInsurancePolicies() async {
+		private func updateResidenceNotes() async {
 			guard let selectedResidence else { return }
-			_ = await withErrorReporting {
-				try await $insurancePolicies.load(
-					InsurancePolicy
-						.where { $0.residenceID.eq(selectedResidence.id) }
-						.order { $0.type },
-					animation: .default
-				)
-			}
-		}
-
-		private func updateResidenceNotes() {
-			guard let selectedResidence else { return }
-			print("setting db notes to \(residenceNotes)")
 			withErrorReporting {
 				try database.write { db in
 					try Residence.find(selectedResidence.id)
@@ -234,200 +235,53 @@ extension ResidenceScreen {
 			}
 		}
 
+		// MARK: SHEET PRESENTATION
+
 		func showAddUtilitySheet() {
-			guard let selectedResidence else { return }
-			// Create a temporary utility in the database that will be deleted if cancelled
-			var createdUtility: Utility?
-			withErrorReporting {
-				try database.write { db in
-					let utilityID = UUID()
-					try Utility.insert {
-						Utility.Draft(
-							id: utilityID,
-							residenceID: selectedResidence.id,
-							type: .electric
-						)
-					}
-					.execute(db)
-					createdUtility = try Utility.find(utilityID).fetchOne(db)
-				}
-			}
-			if let createdUtility {
-				sectionToEdit = .utility(createdUtility, isNew: true)
-				isShowingSectionEditSheet = true
-			}
+			guard let residenceID = selectedResidence?.id else { return }
+			utilityViewModel.draftUtility = utilityViewModel.createDraft(
+				for: residenceID
+			)
+			sectionToEdit = .utilityDraft
+			isShowingSectionEditSheet = true
 		}
 
 		func showAddInsurancePolicySheet() {
-			guard let selectedResidence, let profileID = selectedProfile?.profile.id else { return }
-			// Create a temporary policy in the database that will be deleted if cancelled
-			var createdPolicy: InsurancePolicy?
-			withErrorReporting {
-				try database.write { db in
-					let policyID = UUID()
-					// Use .renters as default since it requires residenceID
-					try InsurancePolicy.insert {
-						InsurancePolicy.Draft(
-							id: policyID,
-							profileID: profileID,
-							residenceID: selectedResidence.id,
-							type: .renters
-						)
-					}
-					.execute(db)
-					createdPolicy = try InsurancePolicy.find(policyID).fetchOne(
-						db
-					)
-				}
-			}
-			if let createdPolicy {
-				sectionToEdit = .insurancePolicy(createdPolicy, isNew: true)
-				isShowingSectionEditSheet = true
-			}
-		}
-
-		func deleteUtility(_ utility: Utility) {
-			withErrorReporting {
-				try database.write { db in
-					try Utility.find(utility.id)
-						.delete()
-						.execute(db)
-				}
-			}
-		}
-
-		func deleteInsurancePolicy(_ policy: InsurancePolicy) {
-			withErrorReporting {
-				try database.write { db in
-					try InsurancePolicy.find(policy.id)
-						.delete()
-						.execute(db)
-				}
-			}
-		}
-
-		// MARK: MAINTENANCE ITEM FUNCTIONS
-
-		private func loadMaintenanceItems() async {
-			guard let selectedResidence else { return }
-			_ = await withErrorReporting {
-				try await $maintenanceItems.load(
-					MaintenanceItem
-						.where { $0.residenceID.eq(selectedResidence.id) }
-						.order { $0.name },
-					animation: .default
+			guard let residenceID = selectedResidence?.id,
+				let profileID = selectedProfile?.profile.id
+			else { return }
+			insuranceViewModel.draftInsurancePolicy =
+				insuranceViewModel.createDraft(
+					for: residenceID,
+					profileID: profileID
 				)
-			}
+			sectionToEdit = .insurancePolicyDraft
+			isShowingSectionEditSheet = true
 		}
 
 		func showAddMaintenanceItemSheet() {
-			guard let selectedResidence else { return }
-			// Create a temporary maintenance item in the database that will be deleted if cancelled
-			var createdItem: MaintenanceItem?
-			withErrorReporting {
-				try database.write { db in
-					let itemID = UUID()
-					try MaintenanceItem.insert {
-						MaintenanceItem.Draft(
-							id: itemID,
-							residenceID: selectedResidence.id,
-							vehicleID: nil
-						)
-					}
-					.execute(db)
-					createdItem = try MaintenanceItem.find(itemID).fetchOne(db)
-				}
-			}
-			if let createdItem {
-				sectionToEdit = .maintenanceItem(createdItem, isNew: true)
-				isShowingSectionEditSheet = true
-			}
-		}
-
-		func deleteMaintenanceItem(_ item: MaintenanceItem) {
-			withErrorReporting {
-				try database.write { db in
-					try MaintenanceItem.find(item.id)
-						.delete()
-						.execute(db)
-				}
-			}
+			guard let residenceID = selectedResidence?.id else { return }
+			maintenanceViewModel.draftMaintenanceItem =
+				maintenanceViewModel.createDraft(for: residenceID)
+			sectionToEdit = .maintenanceItemDraft
+			isShowingSectionEditSheet = true
 		}
 
 		func completeMaintenanceItem(_ item: MaintenanceItem) {
-			withErrorReporting {
-				try database.write { db in
-					let completedAt = Date()
-					let nextDue = item.calculateNextDueDate(from: completedAt)
-
-					// Create completion record
-					try MaintenanceCompletion.insert {
-						MaintenanceCompletion.Draft(
-							id: UUID(),
-							maintenanceItemID: item.id,
-							completedAt: completedAt,
-							notes: ""
-						)
-					}
-					.execute(db)
-
-					// Update item
-					try MaintenanceItem.find(item.id)
-						.update {
-							$0.lastCompletedAt = completedAt
-							$0.nextDueDate = nextDue
-						}
-						.execute(db)
-				}
-			}
-		}
-
-		// MARK: OTHER FUNCTIONS
-
-		private func loadOthers() async {
-			guard let selectedResidence else { return }
-			_ = await withErrorReporting {
-				try await $others.load(
-					Other
-						.where { $0.residenceID.eq(selectedResidence.id) }
-						.order { $0.name },
-					animation: .default
-				)
-			}
+			maintenanceViewModel.complete(item)
 		}
 
 		func showAddOtherSheet() {
-			guard let selectedResidence, let profileID = selectedProfile?.profile.id else { return }
-			// Create a temporary other in the database that will be deleted if cancelled
-			var createdOther: Other?
-			withErrorReporting {
-				try database.write { db in
-					let otherID = UUID()
-					try Other.insert {
-						Other.Draft(
-							id: otherID,
-							profileID: profileID,
-							residenceID: selectedResidence.id
-						)
-					}
-					.execute(db)
-					createdOther = try Other.find(otherID).fetchOne(db)
-				}
-			}
-			if let createdOther {
-				sectionToEdit = .other(createdOther, isNew: true)
-				isShowingSectionEditSheet = true
-			}
+			guard let residenceID = selectedResidence?.id,
+				let profileID = selectedProfile?.profile.id
+			else { return }
+			otherViewModel.draftOther = otherViewModel.createDraft(
+				for: residenceID,
+				profileID: profileID
+			)
+			sectionToEdit = .otherDraft
+			isShowingSectionEditSheet = true
 		}
 
-		func deleteOther(_ other: Other) {
-			withErrorReporting {
-				try database.write { db in
-					try Other.find(other.id)
-						.delete()
-						.execute(db)
-				}
-			}
-		}
 	}
 }

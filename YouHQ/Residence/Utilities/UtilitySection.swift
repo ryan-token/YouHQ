@@ -8,68 +8,53 @@
 import SwiftUI
 
 struct UtilitySection: View {
-	@State private var vm: ViewModel
+	let utility: Utility
 	let hideCosts: Bool
 	let onTap: (() -> Void)?
 
-	init(
-		for utility: Utility,
-		hideCosts: Bool = false,
-		onTap: (() -> Void)? = nil
-	) {
-		_vm = State(wrappedValue: ViewModel(utility: utility))
-		self.hideCosts = hideCosts
-		self.onTap = onTap
-	}
-
 	var body: some View {
-		if let utility = vm.utility {
-			InfoSection(
-				vm.utilityTitle,
-				backgroundColor: $vm.backgroundColor,
-				onColorChange: { newColor in
-					vm.updateUtilityBackgroundColor(newColor)
-				},
-				onTap: onTap
-			) {
-				if utility.provider.isNotEmpty {
-					Text(utility.provider)
-						.sectionTitle()
-				}
+		InfoSection(
+			utility.type.rawValue,
+			backgroundColor: .constant(
+				Color(databaseValue: utility.backgroundColor)
+			),
+			onColorChange: { _ in },
+			onTap: onTap
+		) {
+			if utility.provider.isNotEmpty {
+				Text(utility.provider)
+					.sectionTitle()
+			}
 
-				if utility.accountNumber.isNotEmpty {
-					InfoRow("Account number:", value: utility.accountNumber)
-				}
+			if utility.accountNumber.isNotEmpty {
+				InfoRow("Account number:", value: utility.accountNumber)
+			}
 
-				if let appxMonthlyCost = utility.approximateMonthlyCost {
-					InfoRow(
-						"Monthly cost:",
-						value: "\(appxMonthlyCost.asCost)",
-						blurred: hideCosts
-					)
-				}
+			if let appxMonthlyCost = utility.approximateMonthlyCost {
+				InfoRow(
+					"Monthly cost:",
+					value: "\(appxMonthlyCost.asCost)",
+					blurred: hideCosts
+				)
+			}
 
-				if utility.url.isNotEmpty {
-					LinkRow("Website:", url: utility.url)
-				}
+			if utility.url.isNotEmpty {
+				LinkRow("Website:", url: utility.url)
+			}
 
-				if utility.notes.isNotEmpty {
-					VStack(alignment: .leading, spacing: 4) {
-						Text("Notes:")
-							.font(.headline)
-							.foregroundStyle(.white)
-						Text(utility.notes)
-							.foregroundStyle(.white)
-					}
+			if utility.notes.isNotEmpty {
+				VStack(alignment: .leading, spacing: 4) {
+					Text("Notes:")
+						.font(.headline)
+						.foregroundStyle(.white)
+					Text(utility.notes)
+						.foregroundStyle(.white)
 				}
 			}
-		} else {
-			Color.clear
-				.task { await vm.loadUtilityData() }
 		}
 	}
 }
 
 #Preview {
-	UtilitySection(for: Utility.sampleData)
+	UtilitySection(utility: Utility.sampleData, hideCosts: false, onTap: nil)
 }

@@ -93,20 +93,45 @@ extension MaintenanceItemEdit {
 		func save() {
 			withErrorReporting {
 				try database.write { db in
-					try MaintenanceItem.find(item.id)
-						.update {
-							$0.name = name
-							$0.itemDescription = itemDescription
-							$0.intervalType = intervalType
-							$0.intervalValue = intervalValue
-							$0.nextDueDate =
-								isUsingManualDueDate
-								? nextDueDate : calculatedNextDueDate
-							$0.shouldNotify = shouldNotify
-							$0.url = url
-							$0.notes = notes
+					if isNew {
+						// Insert new record
+						try MaintenanceItem.insert {
+							MaintenanceItem.Draft(
+								id: item.id,
+								residenceID: item.residenceID,
+								vehicleID: item.vehicleID,
+								name: name,
+								itemDescription: itemDescription,
+								intervalType: intervalType,
+								intervalValue: intervalValue,
+								lastCompletedAt: lastCompletedAt,
+								nextDueDate:
+									isUsingManualDueDate
+									? nextDueDate : calculatedNextDueDate,
+								shouldNotify: shouldNotify,
+								backgroundColor: item.backgroundColor,
+								url: url,
+								notes: notes
+							)
 						}
 						.execute(db)
+					} else {
+						// Update existing record
+						try MaintenanceItem.find(item.id)
+							.update {
+								$0.name = name
+								$0.itemDescription = itemDescription
+								$0.intervalType = intervalType
+								$0.intervalValue = intervalValue
+								$0.nextDueDate =
+									isUsingManualDueDate
+									? nextDueDate : calculatedNextDueDate
+								$0.shouldNotify = shouldNotify
+								$0.url = url
+								$0.notes = notes
+							}
+							.execute(db)
+					}
 
 					try photoPicker.updateAsset(
 						in: db,
@@ -117,9 +142,7 @@ extension MaintenanceItemEdit {
 		}
 
 		func cancel() {
-			if isNew {
-				delete()
-			}
+			// Draft items don't need cleanup since they're never in DB
 		}
 
 		func resetToAutomaticDueDate() {

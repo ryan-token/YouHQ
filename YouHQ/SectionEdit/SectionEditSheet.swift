@@ -18,8 +18,22 @@ struct SectionEditSheet: View {
 	@FocusState private var maintenanceFieldFocused: Bool
 	@FocusState private var otherFieldFocused: Bool
 
-	init(section: EditableSection) {
-		_vm = State(wrappedValue: ViewModel(section: section))
+	init(
+		section: EditableSection,
+		draftUtility: Binding<Utility?>,
+		draftInsurancePolicy: Binding<InsurancePolicy?>,
+		draftMaintenanceItem: Binding<MaintenanceItem?>,
+		draftOther: Binding<Other?>
+	) {
+		_vm = State(
+			wrappedValue: ViewModel(
+				section: section,
+				draftUtility: draftUtility,
+				draftInsurancePolicy: draftInsurancePolicy,
+				draftMaintenanceItem: draftMaintenanceItem,
+				draftOther: draftOther
+			)
+		)
 	}
 
 	var body: some View {
@@ -31,22 +45,22 @@ struct SectionEditSheet: View {
 						coordinator: vm,
 						focusedField: $residenceFieldFocused
 					)
-				case .utility:
+				case .utility, .utilityDraft:
 					UtilityEdit(
 						coordinator: vm,
 						focusedField: $utilityFieldFocused
 					)
-				case .insurancePolicy:
+				case .insurancePolicy, .insurancePolicyDraft:
 					InsuranceEdit(
 						coordinator: vm,
 						focusedField: $insuranceFieldFocused
 					)
-				case .maintenanceItem:
+				case .maintenanceItem, .maintenanceItemDraft:
 					MaintenanceItemEdit(
 						coordinator: vm,
 						focusedField: $maintenanceFieldFocused
 					)
-				case .other:
+				case .other, .otherDraft:
 					OtherEdit(
 						coordinator: vm,
 						focusedField: $otherFieldFocused
@@ -54,17 +68,17 @@ struct SectionEditSheet: View {
 				}
 			}
 			.onAppear {
-				if vm.section.isNew {
+				if vm.section.isDraft {
 					switch vm.section {
 					case .residenceInfo:
 						residenceFieldFocused = true
-					case .utility:
+					case .utility, .utilityDraft:
 						utilityFieldFocused = true
-					case .insurancePolicy:
+					case .insurancePolicy, .insurancePolicyDraft:
 						insuranceFieldFocused = true
-					case .maintenanceItem:
+					case .maintenanceItem, .maintenanceItemDraft:
 						maintenanceFieldFocused = true
-					case .other:
+					case .other, .otherDraft:
 						otherFieldFocused = true
 					}
 				}
@@ -93,10 +107,10 @@ struct SectionEditSheet: View {
 				.presentationDetents(
 					UIDevice.current.userInterfaceIdiom == .pad
 						? [.large]
-						: (vm.section.isNew ? [.large] : [.medium, .large])
+						: (vm.section.isDraft ? [.large] : [.medium, .large])
 				)
 			#endif
-			.interactiveDismissDisabled(vm.section.isNew)
+			.interactiveDismissDisabled(vm.section.isDraft)
 		}
 		.photoViewerOverlayHost()
 		#if os(iOS)

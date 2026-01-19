@@ -9,23 +9,23 @@ import Foundation
 
 enum EditableSection {
 	case residenceInfo(Residence)
-	case utility(Utility, isNew: Bool)
-	case insurancePolicy(InsurancePolicy, isNew: Bool)
-	case maintenanceItem(MaintenanceItem, isNew: Bool)
-	case other(Other, isNew: Bool)
+	case utility(Utility)
+	case utilityDraft
+	case insurancePolicy(InsurancePolicy)
+	case insurancePolicyDraft
+	case maintenanceItem(MaintenanceItem)
+	case maintenanceItemDraft
+	case other(Other)
+	case otherDraft
 
-	var isNew: Bool {
+	var isDraft: Bool {
 		switch self {
-		case .residenceInfo:
+		case .residenceInfo, .utility, .insurancePolicy, .maintenanceItem,
+			.other:
 			false
-		case .utility(_, let isNew):
-			isNew
-		case .insurancePolicy(_, let isNew):
-			isNew
-		case .maintenanceItem(_, let isNew):
-			isNew
-		case .other(_, let isNew):
-			isNew
+		case .utilityDraft, .insurancePolicyDraft, .maintenanceItemDraft,
+			.otherDraft:
+			true
 		}
 	}
 }

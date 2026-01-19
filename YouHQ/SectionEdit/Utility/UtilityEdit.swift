@@ -66,5 +66,11 @@ struct UtilityEdit: View {
 }
 
 #Preview("Utility") {
-	SectionEditSheet(section: .utility(Utility.sampleData, isNew: false))
+	SectionEditSheet(
+		section: .utility(Utility.sampleData),
+		draftUtility: .constant(nil),
+		draftInsurancePolicy: .constant(nil),
+		draftMaintenanceItem: .constant(nil),
+		draftOther: .constant(nil)
+	)
 }

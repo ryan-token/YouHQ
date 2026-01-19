@@ -16,7 +16,7 @@ struct ResidenceScreen: View {
 		List {
 			Group {
 				#if DEBUG
-				ProfileIDView(profileID: vm.selectedProfile?.profile.id)
+					ProfileIDView(profileID: vm.selectedProfile?.profile.id)
 				#endif
 
 				SharingStatus(vm: vm)
@@ -64,6 +64,7 @@ struct ResidenceScreen: View {
 						.listRowSeparator(.hidden)
 				}
 			}
+			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)
 		}
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
@@ -103,7 +104,15 @@ struct ResidenceScreen: View {
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
 			if let sectionToEdit = vm.sectionToEdit {
-				SectionEditSheet(section: sectionToEdit)
+				SectionEditSheet(
+					section: sectionToEdit,
+					draftUtility: $vm.utilityViewModel.draftUtility,
+					draftInsurancePolicy: $vm.insuranceViewModel
+						.draftInsurancePolicy,
+					draftMaintenanceItem: $vm.maintenanceViewModel
+						.draftMaintenanceItem,
+					draftOther: $vm.otherViewModel.draftOther
+				)
 			}
 		}
 		#if !os(visionOS)

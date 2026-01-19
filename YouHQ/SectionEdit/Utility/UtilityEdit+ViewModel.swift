@@ -50,24 +50,41 @@ extension UtilityEdit {
 		func save() {
 			withErrorReporting {
 				try database.write { db in
-					try Utility.find(utility.id)
-						.update {
-							$0.type = type
-							$0.provider = provider
-							$0.accountNumber = accountNumber
-							$0.approximateMonthlyCost = monthlyCost
-							$0.url = url
-							$0.notes = notes
+					if isNew {
+						// Insert new record
+						try Utility.insert {
+							Utility.Draft(
+								id: utility.id,
+								residenceID: utility.residenceID,
+								type: type,
+								provider: provider,
+								accountNumber: accountNumber,
+								approximateMonthlyCost: monthlyCost,
+								backgroundColor: utility.backgroundColor,
+								url: url,
+								notes: notes
+							)
 						}
 						.execute(db)
+					} else {
+						// Update existing record
+						try Utility.find(utility.id)
+							.update {
+								$0.type = type
+								$0.provider = provider
+								$0.accountNumber = accountNumber
+								$0.approximateMonthlyCost = monthlyCost
+								$0.url = url
+								$0.notes = notes
+							}
+							.execute(db)
+					}
 				}
 			}
 		}
 
 		func cancel() {
-			if isNew {
-				delete()
-			}
+			// Draft items don't need cleanup since they're never in DB
 		}
 
 		func delete() {

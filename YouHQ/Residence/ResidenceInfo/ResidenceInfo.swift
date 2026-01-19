@@ -14,66 +14,69 @@ struct ResidenceInfo: View {
 	var body: some View {
 		if let residence = vm.selectedResidence {
 			ResidenceInfoSection(
-				for: residence,
+				residence: residence,
+				utilities: vm.utilityViewModel.utilities,
+				insurancePolicies: vm.insuranceViewModel.insurancePolicies,
+				others: vm.otherViewModel.others,
 				hideCosts: hideCosts,
+				backgroundColor: vm.backgroundColor,
 				onTap: { residence in
 					vm.sectionToEdit = .residenceInfo(residence)
 					vm.isShowingSectionEditSheet = true
+				},
+				onColorChange: { newColor in
+					vm.updateResidenceBackgroundColor(newColor)
 				}
 			)
-			.id(residence.id)
 
-			ForEach(vm.utilities) { utility in
+			ForEach(vm.utilityViewModel.utilities) { utility in
 				UtilitySection(
-					for: utility,
+					utility: utility,
 					hideCosts: hideCosts,
 					onTap: {
-						vm.sectionToEdit = .utility(utility, isNew: false)
+						vm.sectionToEdit = .utility(utility)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
-						vm.deleteUtility(utility)
+						vm.utilityViewModel.delete(utility)
 					} label: {
 						Label("Delete", systemImage: "trash")
 					}
 				}
 			}
 
-			ForEach(vm.insurancePolicies) { policy in
+			ForEach(vm.insuranceViewModel.insurancePolicies) { policy in
 				InsuranceSection(
-					for: policy,
+					policy: policy,
 					hideCosts: hideCosts,
 					onTap: {
-						vm.sectionToEdit = .insurancePolicy(
-							policy,
-							isNew: false
-						)
+						vm.sectionToEdit = .insurancePolicy(policy)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
-						vm.deleteInsurancePolicy(policy)
+						vm.insuranceViewModel.delete(policy)
 					} label: {
 						Label("Delete", systemImage: "trash")
 					}
 				}
 			}
 
-			ForEach(vm.others) { other in
+			ForEach(vm.otherViewModel.others) { other in
 				OtherSection(
-					for: other,
+					other: other,
 					hideCosts: hideCosts,
 					onTap: {
-						vm.sectionToEdit = .other(other, isNew: false)
+						vm.sectionToEdit = .other(other)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
-						vm.deleteOther(other)
+						vm.otherViewModel.delete(other)
 					} label: {
 						Label("Delete", systemImage: "trash")
 					}
@@ -82,20 +85,23 @@ struct ResidenceInfo: View {
 
 			InfoSection(
 				"Notes",
-				backgroundColor: $vm.backgroundColor,
+				backgroundColor: .constant(vm.backgroundColor),
 				onColorChange: { newColor in
 					vm.updateResidenceBackgroundColor(newColor)
 				}
 			) {
 				TextEditor(text: $vm.residenceNotes)
 					.textEditorOnColor(minHeight: 100)
+					.onChange(of: vm.residenceNotes) {
+						vm.updateResidenceNotesDebounced()
+					}
 			}
 
-			if !vm.maintenanceItems.isEmpty {
+			if !vm.maintenanceViewModel.maintenanceItems.isEmpty {
 				MaintenanceItemsNavButton(
 					isNavigating: $vm.isNavigatingToMaintenanceItems,
 					residenceID: residence.id,
-					maintenanceItems: vm.maintenanceItems
+					maintenanceItems: vm.maintenanceViewModel.maintenanceItems
 				)
 			}
 
