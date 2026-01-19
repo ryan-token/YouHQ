@@ -15,7 +15,18 @@ struct ResidenceScreen: View {
 	var body: some View {
 		List {
 			Group {
-				if vm.$residences.isLoading, vm.residences.isEmpty {
+				Group {
+					if let profileID = vm.profileID {
+						Text("Profile ID: \(profileID)")
+					} else {
+						Text("Profile ID: nil")
+					}
+				}
+				.font(.caption)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.listRowSeparator(.hidden)
+
+				if vm.residences.isEmpty {
 					ContentUnavailableView {
 						Label("No residences", systemImage: "house")
 					} description: {
@@ -23,6 +34,7 @@ struct ResidenceScreen: View {
 							vm.showCreateResidenceSheet()
 						}
 					}
+					.frame(maxWidth: .infinity, alignment: .center)
 				} else {
 					#if os(macOS)
 						if vm.residences.count > 1 {
