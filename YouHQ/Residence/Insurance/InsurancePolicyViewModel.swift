@@ -59,4 +59,14 @@ class InsurancePolicyViewModel {
 			}
 		}
 	}
+
+	func updateBackgroundColor(_ color: Color, for policy: InsurancePolicy) {
+		withErrorReporting {
+			try database.write { db in
+				try InsurancePolicy.find(policy.id)
+					.update { $0.backgroundColor = color.databaseValue }
+					.execute(db)
+			}
+		}
+	}
 }

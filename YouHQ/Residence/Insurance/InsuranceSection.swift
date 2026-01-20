@@ -10,15 +10,14 @@ import SwiftUI
 struct InsuranceSection: View {
 	let policy: InsurancePolicy
 	let hideCosts: Bool
+	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
 
 	var body: some View {
 		InfoSection(
 			"\(policy.type.rawValue) Insurance",
-			backgroundColor: .constant(
-				Color(databaseValue: policy.backgroundColor)
-			),
-			onColorChange: { _ in },
+			backgroundColor: Color(databaseValue: policy.backgroundColor),
+			onColorChange: onColorChange,
 			onTap: onTap
 		) {
 			if policy.provider.isNotEmpty {
@@ -85,6 +84,7 @@ struct InsuranceSection: View {
 	InsuranceSection(
 		policy: InsurancePolicy.sampleData,
 		hideCosts: false,
+		onColorChange: { _ in },
 		onTap: nil
 	)
 }

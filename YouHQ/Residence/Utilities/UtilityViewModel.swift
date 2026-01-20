@@ -52,4 +52,14 @@ class UtilityViewModel {
 			}
 		}
 	}
+
+	func updateBackgroundColor(_ color: Color, for utility: Utility) {
+		withErrorReporting {
+			try database.write { db in
+				try Utility.find(utility.id)
+					.update { $0.backgroundColor = color.databaseValue }
+					.execute(db)
+			}
+		}
+	}
 }

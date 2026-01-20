@@ -10,15 +10,14 @@ import SwiftUI
 struct OtherSection: View {
 	let other: Other
 	let hideCosts: Bool
+	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
 
 	var body: some View {
 		InfoSection(
 			other.name.isNotEmpty ? other.name : "Other",
-			backgroundColor: .constant(
-				Color(databaseValue: other.backgroundColor)
-			),
-			onColorChange: { _ in },
+			backgroundColor: Color(databaseValue: other.backgroundColor),
+			onColorChange: onColorChange,
 			onTap: onTap
 		) {
 			if other.name.isNotEmpty {
@@ -56,5 +55,10 @@ struct OtherSection: View {
 }
 
 #Preview {
-	OtherSection(other: Other.sampleData, hideCosts: false, onTap: nil)
+	OtherSection(
+		other: Other.sampleData,
+		hideCosts: false,
+		onColorChange: { _ in },
+		onTap: nil
+	)
 }

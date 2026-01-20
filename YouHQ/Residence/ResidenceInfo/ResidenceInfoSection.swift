@@ -76,7 +76,7 @@ struct ResidenceInfoSection: View {
 	var body: some View {
 		InfoSection(
 			"Info",
-			backgroundColor: .constant(backgroundColor),
+			backgroundColor: backgroundColor,
 			onColorChange: onColorChange,
 			onTap: {
 				onTap?(residence)

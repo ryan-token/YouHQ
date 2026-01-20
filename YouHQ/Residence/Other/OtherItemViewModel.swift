@@ -52,4 +52,14 @@ class OtherItemViewModel {
 			}
 		}
 	}
+
+	func updateBackgroundColor(_ color: Color, for other: Other) {
+		withErrorReporting {
+			try database.write { db in
+				try Other.find(other.id)
+					.update { $0.backgroundColor = color.databaseValue }
+					.execute(db)
+			}
+		}
+	}
 }

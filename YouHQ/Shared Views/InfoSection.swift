@@ -9,21 +9,22 @@ import SwiftUI
 
 struct InfoSection<Content: View>: View {
 	let title: String
-	@Binding var backgroundColor: Color
+	let initialColor: Color
 	let onColorChange: ((Color) -> Void)?
 	let onTap: (() -> Void)?
 	@ViewBuilder let content: Content
-	@State private var showColorPicker = false
+	@State private var backgroundColor: Color
 
 	init(
 		_ title: String,
-		backgroundColor: Binding<Color>,
+		backgroundColor: Color,
 		onColorChange: ((Color) -> Void)? = nil,
 		onTap: (() -> Void)? = nil,
 		@ViewBuilder content: () -> Content
 	) {
 		self.title = title
-		self._backgroundColor = backgroundColor
+		self.initialColor = backgroundColor
+		self._backgroundColor = State(initialValue: backgroundColor)
 		self.onColorChange = onColorChange
 		self.onTap = onTap
 		self.content = content()
@@ -65,6 +66,9 @@ struct InfoSection<Content: View>: View {
 			}
 			.cardStyle(backgroundColor: backgroundColor)
 		}
+		.onChange(of: initialColor) { _, newColor in
+			backgroundColor = newColor
+		}
 	}
 }
 
@@ -101,9 +105,7 @@ struct InfoRow: View {
 }
 
 #Preview("Info Section") {
-	@Previewable @State var backgroundColor: Color = .indigo
-
-	InfoSection("Info", backgroundColor: $backgroundColor) {
+	InfoSection("Info", backgroundColor: .indigo) {
 		InfoRow("Full address:", value: "123 Main St, Springfield, IL 62701")
 		InfoRow("Move-in date:", value: "Jan 1, 2024")
 		InfoRow("Monthly cost:", value: "$1,500.00")
@@ -112,9 +114,7 @@ struct InfoRow: View {
 }
 
 #Preview("Custom Color") {
-	@Previewable @State var backgroundColor: Color = .blue
-
-	InfoSection("Utility", backgroundColor: $backgroundColor) {
+	InfoSection("Utility", backgroundColor: .blue) {
 		InfoRow("Provider:", value: "Springfield Electric")
 		InfoRow("Account number:", value: "12345678")
 		InfoRow("Monthly cost:", value: "$150.00")

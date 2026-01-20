@@ -33,6 +33,12 @@ struct ResidenceInfo: View {
 				UtilitySection(
 					utility: utility,
 					hideCosts: hideCosts,
+					onColorChange: { newColor in
+						vm.utilityViewModel.updateBackgroundColor(
+							newColor,
+							for: utility
+						)
+					},
 					onTap: {
 						vm.sectionToEdit = .utility(utility)
 						vm.isShowingSectionEditSheet = true
@@ -51,6 +57,12 @@ struct ResidenceInfo: View {
 				InsuranceSection(
 					policy: policy,
 					hideCosts: hideCosts,
+					onColorChange: { newColor in
+						vm.insuranceViewModel.updateBackgroundColor(
+							newColor,
+							for: policy
+						)
+					},
 					onTap: {
 						vm.sectionToEdit = .insurancePolicy(policy)
 						vm.isShowingSectionEditSheet = true
@@ -69,6 +81,12 @@ struct ResidenceInfo: View {
 				OtherSection(
 					other: other,
 					hideCosts: hideCosts,
+					onColorChange: { newColor in
+						vm.otherViewModel.updateBackgroundColor(
+							newColor,
+							for: other
+						)
+					},
 					onTap: {
 						vm.sectionToEdit = .other(other)
 						vm.isShowingSectionEditSheet = true
@@ -85,7 +103,7 @@ struct ResidenceInfo: View {
 
 			InfoSection(
 				"Notes",
-				backgroundColor: .constant(vm.backgroundColor),
+				backgroundColor: vm.backgroundColor,
 				onColorChange: { newColor in
 					vm.updateResidenceBackgroundColor(newColor)
 				}

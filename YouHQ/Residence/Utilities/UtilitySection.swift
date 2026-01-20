@@ -10,15 +10,14 @@ import SwiftUI
 struct UtilitySection: View {
 	let utility: Utility
 	let hideCosts: Bool
+	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
 
 	var body: some View {
 		InfoSection(
 			utility.type.rawValue,
-			backgroundColor: .constant(
-				Color(databaseValue: utility.backgroundColor)
-			),
-			onColorChange: { _ in },
+			backgroundColor: Color(databaseValue: utility.backgroundColor),
+			onColorChange: onColorChange,
 			onTap: onTap
 		) {
 			if utility.provider.isNotEmpty {
@@ -56,5 +55,10 @@ struct UtilitySection: View {
 }
 
 #Preview {
-	UtilitySection(utility: Utility.sampleData, hideCosts: false, onTap: nil)
+	UtilitySection(
+		utility: Utility.sampleData,
+		hideCosts: false,
+		onColorChange: { _ in },
+		onTap: nil
+	)
 }
