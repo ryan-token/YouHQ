@@ -16,6 +16,10 @@ struct ResidenceScreen: View {
 		List {
 			Group {
 				#if DEBUG
+					ForEach(vm.profiles, id: \.profile.id) { profile in
+						Text("Profile: \(profile.profile.name) (id: \(profile.profile.id)")
+							.font(.caption)
+					}
 					ProfileIDView(profileID: vm.selectedProfile?.profile.id)
 				#endif
 

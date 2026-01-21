@@ -10,18 +10,18 @@ import SwiftUI
 struct ProfileIDView: View {
 	let profileID: UUID?
 
-    var body: some View {
+	var body: some View {
 		Group {
 			if let profileID {
-				Text("Profile ID: \(profileID)")
+				Text("Selected Profile ID: \(profileID)")
 			} else {
-				Text("Profile ID: nil")
+				Text("Selected Profile ID: nil")
 			}
 		}
 		.font(.caption)
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.listRowSeparator(.hidden)
-    }
+	}
 }
 
 #Preview {

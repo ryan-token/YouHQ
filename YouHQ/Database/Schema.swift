@@ -140,6 +140,7 @@ import SQLiteData
 	var lastCompletedAt: Date?
 	var nextDueDate: Date?
 	var shouldNotify: Bool = false
+	var notificationIdentifier: String = ""
 	var backgroundColor: String = "yellow"
 	var url: String = ""
 	var notes: String = ""
@@ -423,7 +424,9 @@ nonisolated struct BankAccountType: RawRepresentable, Hashable, QueryBindable {
 	]
 }
 
-nonisolated struct InvestmentAccountType: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct InvestmentAccountType: RawRepresentable, Hashable,
+	QueryBindable
+{
 	let rawValue: String
 
 	static let traditional401k = Self(rawValue: "401(k)")
@@ -441,7 +444,9 @@ nonisolated struct InvestmentAccountType: RawRepresentable, Hashable, QueryBinda
 	]
 }
 
-nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable,
+	QueryBindable
+{
 	let rawValue: String
 
 	static let hsa = Self(rawValue: "HSA")
@@ -450,7 +455,9 @@ nonisolated struct HealthSavingsAccountType: RawRepresentable, Hashable, QueryBi
 	static let allCases: [Self] = [.hsa, .fsa]
 }
 
-nonisolated struct ServiceProviderType: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct ServiceProviderType: RawRepresentable, Hashable,
+	QueryBindable
+{
 	let rawValue: String
 
 	static let internet = Self(rawValue: "Internet")
@@ -480,7 +487,9 @@ nonisolated struct DeviceType: RawRepresentable, Hashable, QueryBindable {
 	]
 }
 
-nonisolated struct SubscriptionCategory: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct SubscriptionCategory: RawRepresentable, Hashable,
+	QueryBindable
+{
 	let rawValue: String
 
 	static let streaming = Self(rawValue: "Streaming")
@@ -520,7 +529,9 @@ nonisolated struct EmploymentType: RawRepresentable, Hashable, QueryBindable {
 	]
 }
 
-nonisolated struct InsurancePolicyType: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct InsurancePolicyType: RawRepresentable, Hashable,
+	QueryBindable
+{
 	let rawValue: String
 
 	static let health = Self(rawValue: "Health")
@@ -541,7 +552,9 @@ nonisolated struct InsurancePolicyType: RawRepresentable, Hashable, QueryBindabl
 	]
 }
 
-nonisolated struct MaintenanceIntervalType: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct MaintenanceIntervalType: RawRepresentable, Hashable,
+	QueryBindable
+{
 	let rawValue: String
 
 	static let day = Self(rawValue: "Day")

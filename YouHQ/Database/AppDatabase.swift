@@ -309,6 +309,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"lastCompletedAt" TEXT,
 				"nextDueDate" TEXT,
 				"shouldNotify" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
+				"notificationIdentifier" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'yellow',
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',

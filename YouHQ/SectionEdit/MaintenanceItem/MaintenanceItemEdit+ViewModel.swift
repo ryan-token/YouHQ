@@ -7,6 +7,13 @@
 
 import SQLiteData
 import SwiftUI
+import UserNotifications
+
+#if canImport(UIKit)
+	import UIKit
+#elseif canImport(AppKit)
+	import AppKit
+#endif
 
 extension MaintenanceItemEdit {
 	@Observable
@@ -28,6 +35,9 @@ extension MaintenanceItemEdit {
 		var url: String
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
+
+		var isShowingPermissionAlert = false
+		private var previousShouldNotify: Bool
 
 		var calculatedNextDueDate: Date {
 			let calendar = Calendar.current
@@ -60,6 +70,7 @@ extension MaintenanceItemEdit {
 			self.intervalValue = item.intervalValue
 			self.lastCompletedAt = item.lastCompletedAt
 			self.shouldNotify = item.shouldNotify
+			self.previousShouldNotify = item.shouldNotify
 			self.url = item.url
 			self.notes = item.notes
 
@@ -109,6 +120,8 @@ extension MaintenanceItemEdit {
 									isUsingManualDueDate
 									? nextDueDate : calculatedNextDueDate,
 								shouldNotify: shouldNotify,
+								notificationIdentifier: item
+									.notificationIdentifier,
 								backgroundColor: item.backgroundColor,
 								url: url,
 								notes: notes
@@ -138,6 +151,20 @@ extension MaintenanceItemEdit {
 						link: .maintenanceItem(item)
 					)
 				}
+
+				// Schedule or cancel notification based on the saved item
+				withErrorReporting {
+					let savedItem = try database.read { db in
+						try MaintenanceItem.find(item.id).fetchOne(db)
+					}
+
+					if let savedItem {
+						Task {
+							_ = try await NotificationManager.shared
+								.scheduleNotification(for: savedItem)
+						}
+					}
+				}
 			}
 		}
 
@@ -157,7 +184,76 @@ extension MaintenanceItemEdit {
 						.delete()
 						.execute(db)
 				}
+
+				// Cancel notification when deleting item
+				Task {
+					await NotificationManager.shared.cancelNotification(
+						for: item
+					)
+				}
 			}
+		}
+
+		func handleNotifyToggle() {
+			// If user is enabling notifications for the first time
+			if shouldNotify && !previousShouldNotify {
+				Task {
+					let status = await NotificationManager.shared
+						.checkAuthorizationStatus()
+
+					switch status {
+					case .notDetermined:
+						// Request permission for the first time
+						do {
+							try await NotificationManager.shared
+								.requestAuthorization()
+							let newStatus = await NotificationManager.shared
+								.checkAuthorizationStatus()
+							if newStatus != .authorized {
+								// User denied permission
+								await MainActor.run {
+									isShowingPermissionAlert = true
+									shouldNotify = false
+								}
+							}
+						} catch {
+							// Error requesting permission
+							await MainActor.run {
+								shouldNotify = false
+							}
+						}
+
+					case .denied:
+						// Show alert to go to settings
+						await MainActor.run {
+							isShowingPermissionAlert = true
+							shouldNotify = false
+						}
+
+					case .authorized, .provisional, .ephemeral:
+						// Permission already granted
+						break
+
+					@unknown default:
+						break
+					}
+				}
+			}
+		}
+
+		func openNotificationSettings() {
+			#if os(iOS)
+				if let url = URL(string: UIApplication.openSettingsURLString) {
+					UIApplication.shared.open(url)
+				}
+			#elseif os(macOS)
+				if let url = URL(
+					string:
+						"x-apple.systempreferences:com.apple.preference.notifications"
+				) {
+					NSWorkspace.shared.open(url)
+				}
+			#endif
 		}
 
 		private func loadExistingPhotoData() {

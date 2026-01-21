@@ -96,6 +96,9 @@ struct MaintenanceItemEdit: View {
 				LabeledField(label: "Notify When Due") {
 					Toggle("", isOn: $vm.shouldNotify)
 						.labelsHidden()
+						.onChange(of: vm.shouldNotify) {
+							vm.handleNotifyToggle()
+						}
 				}
 			} header: {
 				Text("Maintenance Interval")
@@ -105,6 +108,19 @@ struct MaintenanceItemEdit: View {
 						"Automatically set to \(vm.calculatedNextDueDate.formatted(date: .abbreviated, time: .omitted)) based on your interval"
 					)
 				}
+			}
+			.alert(
+				"Notifications Disabled",
+				isPresented: $vm.isShowingPermissionAlert
+			) {
+				Button("Open Settings") {
+					vm.openNotificationSettings()
+				}
+				Button("Cancel", role: .cancel) {}
+			} message: {
+				Text(
+					"To receive maintenance reminders, please enable notifications in System Settings."
+				)
 			}
 
 			Section("Website") {
