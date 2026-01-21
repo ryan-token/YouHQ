@@ -57,17 +57,38 @@ You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, S
 
 Persistence should be done via SQLiteData from PointFreeCo.
 
+- Using `@FetchAll` or `@FetchOne` from an `@Observable` View Model should always be marked with `@ObservationIgnored`
+- You can use the `@Selection` macro to mark a custom struct as a way to join multiple tables into one `@FetchAll` request. That could might look like this:
+```
+@Selection
+struct ProfileShare { // swiftlint:disable:this nesting
+	let profile: Profile
+	let isShared: Bool
+}
+
+func loadProfiles() async {
+	_ = await withErrorReporting {
+		try await $profiles.load(
+			Profile
+				.group(by: \.id)
+				.leftJoin(SyncMetadata.all) {
+					$0.syncMetadataID.eq($1.id)
+				}
+				.select {
+					ProfileShare.Columns(
+						profile: $0,
+						isShared: $1.isShared.ifnull(false)
+					)
+				},
+			animation: .default
+		)
+	}
+}
+```
+
 Refer to the SQLiteData README on GitHub here: https://github.com/pointfreeco/sqlite-data?tab=readme-ov-file#Documentation
 
 And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/sqlite-data/main/documentation/sqlitedata/
-
-## SwiftData instructions
-
-If SwiftData is configured to use CloudKit:
-
-- Never use `@Attribute(.unique)`.
-- Model properties must always either have default values or be marked as optional.
-- All relationships must be marked optional.
 
 
 ## Project structure
