@@ -74,12 +74,12 @@ final class NotificationManager: Sendable {
 		content.body = item.name
 		content.sound = .default
 
-		// Schedule for 9 AM on the due date
+		// Schedule for 7 AM on the due date
 		var dateComponents = Calendar.current.dateComponents(
 			[.year, .month, .day],
 			from: dueDate
 		)
-		dateComponents.hour = 9
+		dateComponents.hour = 7
 		dateComponents.minute = 0
 
 		let trigger = UNCalendarNotificationTrigger(
