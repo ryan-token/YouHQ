@@ -21,7 +21,7 @@ struct YouHQApp: App {
 
 	init() {
 		if context == .live {
-			try! prepareDependencies {  // swiftlint:disable:this force_try
+			try! prepareDependencies { // swiftlint:disable:this force_try
 				try $0.bootstrapDatabase()
 				$0.defaultSyncEngine = try SyncEngine(
 					for: $0.defaultDatabase,

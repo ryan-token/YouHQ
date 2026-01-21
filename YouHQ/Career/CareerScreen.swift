@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CareerScreen: View {
-    var body: some View {
-        Text("Career")
-    }
+	var body: some View {
+		Text("Career")
+	}
 }
 
 #Preview {
-    CareerScreen()
+	CareerScreen()
 }

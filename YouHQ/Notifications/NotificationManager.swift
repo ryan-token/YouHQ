@@ -22,7 +22,7 @@ final class NotificationManager: Sendable {
 	/// Request notification permissions from the user
 	func requestAuthorization() async throws {
 		_ = try await center.requestAuthorization(options: [
-			.alert, .sound, .badge,
+			.alert, .sound, .badge
 		])
 	}
 

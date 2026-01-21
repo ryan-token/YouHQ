@@ -203,7 +203,7 @@ import SQLiteData
 	let profileID: Profile.ID
 	var bankName: String = ""
 	var accountType: BankAccountType = .checking
-	var accountNumber: String = ""  // Last 4 digits
+	var accountNumber: String = "" // Last 4 digits
 	var routingNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "green"
@@ -216,7 +216,7 @@ import SQLiteData
 	let profileID: Profile.ID
 	var institution: String = ""
 	var accountType: InvestmentAccountType = .brokerage
-	var accountNumber: String = ""  // Last 4 digits
+	var accountNumber: String = "" // Last 4 digits
 	var isActive: Bool = true
 	var backgroundColor: String = "mint"
 	var url: String = ""
@@ -355,7 +355,7 @@ nonisolated struct ResidenceType: RawRepresentable, Hashable, QueryBindable {
 	static let other = Self(rawValue: "Other")
 
 	static let allCases: [Self] = [
-		.house, .apartment, .condo, .townhouse, .other,
+		.house, .apartment, .condo, .townhouse, .other
 	]
 }
 
@@ -381,7 +381,7 @@ nonisolated struct UtilityType: RawRepresentable, Hashable, QueryBindable {
 	static let other = Self(rawValue: "Other")
 
 	static let allCases: [Self] = [
-		.electric, .gas, .water, .trash, .sewage, .internet, .other,
+		.electric, .gas, .water, .trash, .sewage, .internet, .other
 	]
 }
 
@@ -406,7 +406,7 @@ nonisolated struct VehicleSubType: RawRepresentable, Hashable, QueryBindable {
 	static let other = Self(rawValue: "Other")
 
 	static let allCases: [Self] = [
-		.gas, .electric, .hybrid, .pluginHybrid, .other,
+		.gas, .electric, .hybrid, .pluginHybrid, .other
 	]
 }
 
@@ -420,7 +420,7 @@ nonisolated struct BankAccountType: RawRepresentable, Hashable, QueryBindable {
 	static let other = Self(rawValue: "Other")
 
 	static let allCases: [Self] = [
-		.checking, .savings, .moneyMarket, .cd, .other,
+		.checking, .savings, .moneyMarket, .cd, .other
 	]
 }
 
@@ -440,7 +440,7 @@ nonisolated struct InvestmentAccountType: RawRepresentable, Hashable,
 
 	static let allCases: [Self] = [
 		.traditional401k, .roth401k, .traditionalIRA, .rothIRA,
-		.brokerage, .sep, .simple, .other,
+		.brokerage, .sep, .simple, .other
 	]
 }
 
@@ -483,7 +483,7 @@ nonisolated struct DeviceType: RawRepresentable, Hashable, QueryBindable {
 
 	static let allCases: [Self] = [
 		.tv, .computer, .monitor, .tablet, .phone,
-		.speaker, .webcam, .router, .gamingConsole, .other,
+		.speaker, .webcam, .router, .gamingConsole, .other
 	]
 }
 
@@ -501,7 +501,7 @@ nonisolated struct SubscriptionCategory: RawRepresentable, Hashable,
 	static let other = Self(rawValue: "Other")
 
 	static let allCases: [Self] = [
-		.streaming, .music, .news, .software, .gaming, .cloud, .other,
+		.streaming, .music, .news, .software, .gaming, .cloud, .other
 	]
 }
 
@@ -525,7 +525,7 @@ nonisolated struct EmploymentType: RawRepresentable, Hashable, QueryBindable {
 	static let internship = Self(rawValue: "Internship")
 
 	static let allCases: [Self] = [
-		.fullTime, .partTime, .contract, .freelance, .internship,
+		.fullTime, .partTime, .contract, .freelance, .internship
 	]
 }
 
@@ -548,7 +548,7 @@ nonisolated struct InsurancePolicyType: RawRepresentable, Hashable,
 
 	static let allCases: [Self] = [
 		.health, .dental, .vision, .life, .auto,
-		.home, .renters, .disability, .umbrella, .pet, .other,
+		.home, .renters, .disability, .umbrella, .pet, .other
 	]
 }
 

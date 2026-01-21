@@ -10,7 +10,7 @@ import SwiftUI
 struct SharingStatus: View {
 	let vm: ResidenceScreen.ViewModel
 
-    var body: some View {
+	var body: some View {
 		ForEach(vm.profiles, id: \.profile.id) { profile in
 			if profile.profile.id == vm.selectedProfile?.profile.id {
 				if profile.isShared {
@@ -33,7 +33,7 @@ struct SharingStatus: View {
 				}
 			}
 		}
-    }
+	}
 }
 
 #Preview {

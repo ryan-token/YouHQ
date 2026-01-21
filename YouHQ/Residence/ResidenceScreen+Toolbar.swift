@@ -25,16 +25,16 @@ extension ResidenceScreen {
 			}
 
 			#if !os(macOS)
-			ToolbarItem(placement: .primaryAction) {
-				Button {
-					Task { await vm.shareResidenceTapped() }
-				} label: {
-					Image(systemName: "square.and.arrow.up")
+				ToolbarItem(placement: .primaryAction) {
+					Button {
+						Task { await vm.shareResidenceTapped() }
+					} label: {
+						Image(systemName: "square.and.arrow.up")
+					}
+					.sheet(item: $vm.sharedRecord) { sharedRecord in
+						CloudSharingView(sharedRecord: sharedRecord)
+					}
 				}
-				.sheet(item: $vm.sharedRecord) { sharedRecord in
-					CloudSharingView(sharedRecord: sharedRecord)
-				}
-			}
 			#endif
 
 			ToolbarItem(placement: .primaryAction) {

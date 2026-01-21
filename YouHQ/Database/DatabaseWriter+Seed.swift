@@ -48,7 +48,7 @@ extension DatabaseWriter {
 					state: "CA",
 					zipCode: "94102",
 					country: "USA",
-					moveInDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 2),  // 2 years ago
+					moveInDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 2), // 2 years ago
 					moveOutDate: nil,
 					isCurrent: true,
 					monthlyCost: 2500,
@@ -111,7 +111,7 @@ extension DatabaseWriter {
 					profileID: defaultProfile.id,
 					company: "Tech Corp",
 					title: "Senior iOS Developer",
-					startDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 3),  // 3 years ago
+					startDate: now.addingTimeInterval(-60 * 60 * 24 * 365 * 3), // 3 years ago
 					endDate: nil,
 					isCurrent: true,
 					salary: 150_000,
@@ -145,7 +145,7 @@ extension DatabaseWriter {
 					category: .streaming,
 					monthlyCost: 15.99,
 					billingCycle: .monthly,
-					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30),  // 1 month from now
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30), // 1 month from now
 					isActive: true,
 					notes: "Premium plan"
 				)
@@ -156,7 +156,7 @@ extension DatabaseWriter {
 					category: .music,
 					monthlyCost: 9.99,
 					billingCycle: .monthly,
-					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30),  // 1 month from now
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 30), // 1 month from now
 					isActive: true,
 					notes: "Individual plan"
 				)
@@ -172,7 +172,7 @@ extension DatabaseWriter {
 					deductible: 2000,
 					coverageAmount: 1_000_000,
 					startDate: now,
-					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 365),  // 1 year from now
+					renewalDate: now.addingTimeInterval(60 * 60 * 24 * 365), // 1 year from now
 					isActive: true,
 					notes: "PPO plan through employer"
 				)
@@ -200,7 +200,7 @@ extension DatabaseWriter {
 					brand: "Apple",
 					model: "MacBook Pro 16\" M3 Max",
 					serialNumber: "C02ABC123XYZ",
-					purchaseDate: now.addingTimeInterval(-60 * 60 * 24 * 365),  // 1 year ago
+					purchaseDate: now.addingTimeInterval(-60 * 60 * 24 * 365), // 1 year ago
 					notes: "Work computer"
 				)
 			}

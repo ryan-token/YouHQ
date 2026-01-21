@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct VehicleScreen: View {
-    var body: some View {
-        Text("Vehicles")
-    }
+	var body: some View {
+		Text("Vehicles")
+	}
 }
 
 #Preview {
-    VehicleScreen()
+	VehicleScreen()
 }

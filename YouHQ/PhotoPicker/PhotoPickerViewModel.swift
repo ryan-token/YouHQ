@@ -38,7 +38,9 @@ final class PhotoPickerViewModel {
 		photoItem = nil
 	}
 
-	func loadExistingPhotoData(in database: Database, link: PhotoAssetLink)
+	func loadExistingPhotoData(
+		in database: Database, link: PhotoAssetLink
+	)
 		throws
 	{
 		photoData = try link.fetchImageData(in: database)

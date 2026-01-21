@@ -29,8 +29,7 @@ class InsurancePolicyViewModel {
 		}
 	}
 
-	func createDraft(for residenceID: UUID, profileID: UUID) -> InsurancePolicy
-	{
+	func createDraft(for residenceID: UUID, profileID: UUID) -> InsurancePolicy {
 		InsurancePolicy(
 			id: UUID(),
 			profileID: profileID,

@@ -17,8 +17,10 @@ struct ResidenceScreen: View {
 			Group {
 				#if DEBUG
 					ForEach(vm.profiles, id: \.profile.id) { profile in
-						Text("Profile: \(profile.profile.name) (id: \(profile.profile.id)")
-							.font(.caption)
+						Text(
+							"Profile: \(profile.profile.name) (id: \(profile.profile.id)"
+						)
+						.font(.caption)
 					}
 					ProfileIDView(profileID: vm.selectedProfile?.profile.id)
 				#endif
@@ -78,8 +80,7 @@ struct ResidenceScreen: View {
 			}
 		#endif
 		.toolbar { Toolbar(vm: vm) }
-		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems)
-		{
+		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
 			if let residenceIDString = vm.selectedResidenceID,
 				let residenceID = UUID(uuidString: residenceIDString)
 			{
@@ -126,7 +127,7 @@ struct ResidenceScreen: View {
 }
 
 #Preview {
-	let _ = prepareDependencies {  // swiftlint:disable:this redundant_discardable_let
+	let _ = prepareDependencies { // swiftlint:disable:this redundant_discardable_let
 		try? $0.bootstrapDatabase()
 		try? $0.defaultDatabase.seed()
 	}

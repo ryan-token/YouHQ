@@ -65,7 +65,7 @@ struct MaintenanceItemRow: View {
 		.contentShape(.rect)
 		.foregroundStyle(.primary)
 		#if os(macOS)
-		.listRowSeparator(.hidden)
+			.listRowSeparator(.hidden)
 		#endif
 	}
 }

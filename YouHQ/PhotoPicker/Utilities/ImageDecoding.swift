@@ -16,7 +16,7 @@ func orientedCGImage(from data: Data) -> CGImage? {
 	let maxPixelSize = maxPixelSize(from: source)
 	var options: [CFString: Any] = [
 		kCGImageSourceCreateThumbnailFromImageAlways: true,
-		kCGImageSourceCreateThumbnailWithTransform: true,
+		kCGImageSourceCreateThumbnailWithTransform: true
 	]
 	if let maxPixelSize {
 		options[kCGImageSourceThumbnailMaxPixelSize] = maxPixelSize

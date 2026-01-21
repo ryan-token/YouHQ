@@ -660,7 +660,7 @@ func appDatabase() throws -> any DatabaseWriter {
 			"jobs",
 			"insurancePolicies",
 			"others",
-			"assets",
+			"assets"
 		]
 
 		for table in tables {

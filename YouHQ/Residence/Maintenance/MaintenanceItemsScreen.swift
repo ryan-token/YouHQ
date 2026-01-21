@@ -143,7 +143,7 @@ struct MaintenanceItemsScreen: View {
 }
 
 #Preview {
-	let _ = prepareDependencies {  // swiftlint:disable:this redundant_discardable_let
+	let _ = prepareDependencies { // swiftlint:disable:this redundant_discardable_let
 		try? $0.bootstrapDatabase()
 		try? $0.defaultDatabase.seed()
 	}

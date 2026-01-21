@@ -25,6 +25,6 @@ extension View {
 }
 
 #Preview {
-    Text("Xcel")
+	Text("Xcel")
 		.sectionTitle()
 }

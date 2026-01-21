@@ -99,8 +99,7 @@ enum PhotoAssetLink {
 		}
 	}
 
-	private func makeAssetDraft(profileID: UUID, imageData: Data) -> Asset.Draft
-	{
+	private func makeAssetDraft(profileID: UUID, imageData: Data) -> Asset.Draft {
 		let residenceID: UUID? =
 			if case .residence = self { entityID } else { nil }
 		let insurancePolicyID: UUID? =

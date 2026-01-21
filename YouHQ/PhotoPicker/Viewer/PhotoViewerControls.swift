@@ -39,7 +39,7 @@ struct PhotoViewerControls: View {
 			}
 		}
 		#if !os(visionOS)
-		.buttonStyle(.glassProminent)
+			.buttonStyle(.glassProminent)
 		#endif
 		.tint(.gray)
 		.padding()

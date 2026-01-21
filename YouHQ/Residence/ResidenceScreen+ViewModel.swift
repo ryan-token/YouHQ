@@ -20,7 +20,7 @@ extension ResidenceScreen {
 
 		// Join: Get all profiles and whether they are shared or not
 		@Selection
-		struct ProfileShare {  // swiftlint:disable:this nesting
+		struct ProfileShare { // swiftlint:disable:this nesting
 			let profile: Profile
 			let isShared: Bool
 		}

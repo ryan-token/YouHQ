@@ -87,62 +87,62 @@ extension MaintenanceItemsScreen {
 			isShowingCompleteAlert = true
 		}
 
-	func deleteMaintenanceItem(_ item: MaintenanceItem) {
-		withErrorReporting {
-			try database.write { db in
-				try MaintenanceItem.find(item.id)
-					.delete()
-					.execute(db)
-			}
+		func deleteMaintenanceItem(_ item: MaintenanceItem) {
+			withErrorReporting {
+				try database.write { db in
+					try MaintenanceItem.find(item.id)
+						.delete()
+						.execute(db)
+				}
 
-			// Cancel notification when deleting item
-			Task {
-				await NotificationManager.shared.cancelNotification(
-					for: item
-				)
-			}
-		}
-	}
-
-	func completeMaintenanceItem(_ item: MaintenanceItem) {
-		withErrorReporting {
-			try database.write { db in
-				let completedAt = Date()
-				let nextDue = item.calculateNextDueDate(from: completedAt)
-
-				// Create completion record
-				try MaintenanceCompletion.insert {
-					MaintenanceCompletion.Draft(
-						id: UUID(),
-						maintenanceItemID: item.id,
-						completedAt: completedAt,
-						notes: ""
+				// Cancel notification when deleting item
+				Task {
+					await NotificationManager.shared.cancelNotification(
+						for: item
 					)
 				}
-				.execute(db)
-
-				// Update item
-				try MaintenanceItem.find(item.id)
-					.update {
-						$0.lastCompletedAt = completedAt
-						$0.nextDueDate = nextDue
-					}
-					.execute(db)
-			}
-
-			// Reschedule notification with the new due date
-			let updatedItem = try database.read { db in
-				try MaintenanceItem.find(item.id).fetchOne(db)
-			}
-
-			if let updatedItem {
-				Task {
-					_ = try await NotificationManager.shared
-						.scheduleNotification(for: updatedItem)
-				}
 			}
 		}
-		isShowingCompleteAlert = false
-	}
+
+		func completeMaintenanceItem(_ item: MaintenanceItem) {
+			withErrorReporting {
+				try database.write { db in
+					let completedAt = Date()
+					let nextDue = item.calculateNextDueDate(from: completedAt)
+
+					// Create completion record
+					try MaintenanceCompletion.insert {
+						MaintenanceCompletion.Draft(
+							id: UUID(),
+							maintenanceItemID: item.id,
+							completedAt: completedAt,
+							notes: ""
+						)
+					}
+					.execute(db)
+
+					// Update item
+					try MaintenanceItem.find(item.id)
+						.update {
+							$0.lastCompletedAt = completedAt
+							$0.nextDueDate = nextDue
+						}
+						.execute(db)
+				}
+
+				// Reschedule notification with the new due date
+				let updatedItem = try database.read { db in
+					try MaintenanceItem.find(item.id).fetchOne(db)
+				}
+
+				if let updatedItem {
+					Task {
+						_ = try await NotificationManager.shared
+							.scheduleNotification(for: updatedItem)
+					}
+				}
+			}
+			isShowingCompleteAlert = false
+		}
 	}
 }

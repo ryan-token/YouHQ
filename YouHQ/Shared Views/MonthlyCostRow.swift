@@ -188,7 +188,7 @@ struct CostBreakdownView: View {
 					backgroundColor: "blue",
 					url: "",
 					notes: ""
-				),
+				)
 			],
 			insurancePolicies: [
 				InsurancePolicy(

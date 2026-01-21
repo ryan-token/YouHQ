@@ -19,7 +19,9 @@
 		let onImageCaptured: (Data) -> Void
 		let onDismiss: () -> Void
 
-		static func == (lhs: CameraPresentation, rhs: CameraPresentation)
+		static func == (
+			lhs: CameraPresentation, rhs: CameraPresentation
+		)
 			-> Bool
 		{
 			lhs.id == rhs.id

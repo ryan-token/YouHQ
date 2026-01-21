@@ -17,7 +17,7 @@ struct CardStyle: ViewModifier {
 				LinearGradient(
 					colors: [
 						backgroundColor,
-						backgroundColor.opacity(0.6),
+						backgroundColor.opacity(0.6)
 					],
 					startPoint: .topLeading,
 					endPoint: .bottomTrailing

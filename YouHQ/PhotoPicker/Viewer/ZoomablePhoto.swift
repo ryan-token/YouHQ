@@ -283,7 +283,9 @@ struct ZoomablePhoto: View {
 		return CGSize(width: maxX, height: maxY)
 	}
 
-	private func fittedImageSize(imageSize: CGSize, in containerSize: CGSize)
+	private func fittedImageSize(
+		imageSize: CGSize, in containerSize: CGSize
+	)
 		-> CGSize
 	{
 		guard imageSize.width > 0, imageSize.height > 0 else { return .zero }

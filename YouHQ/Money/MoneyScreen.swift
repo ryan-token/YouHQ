@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct MoneyScreen: View {
-    var body: some View {
-        Text("Money")
-    }
+	var body: some View {
+		Text("Money")
+	}
 }
 
 #Preview {
-    MoneyScreen()
+	MoneyScreen()
 }

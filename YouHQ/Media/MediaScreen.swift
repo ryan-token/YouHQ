@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct MediaScreen: View {
-    var body: some View {
-        Text("Media")
-    }
+	var body: some View {
+		Text("Media")
+	}
 }
 
 #Preview {
-    MediaScreen()
+	MediaScreen()
 }
