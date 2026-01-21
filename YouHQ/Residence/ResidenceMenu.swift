@@ -47,6 +47,12 @@ struct ResidenceMenu: View {
 			}
 
 			Button {
+				vm.showAddPaintColorSheet()
+			} label: {
+				Label("Add Paint Color", systemImage: "paintbrush.fill")
+			}
+
+			Button {
 				vm.showAddOtherSheet()
 			} label: {
 				Label("Add Other", systemImage: "ellipsis.circle.fill")

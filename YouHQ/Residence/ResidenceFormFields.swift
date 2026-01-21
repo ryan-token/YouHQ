@@ -76,7 +76,10 @@ struct ResidenceFormFields: View {
 				}
 			}
 
-			Toggle("Current Residence", isOn: $isCurrent)
+			LabeledField(label: "Current Residence") {
+				Toggle("", isOn: $isCurrent)
+					.labelsHidden()
+			}
 		}
 
 		Section("Address") {
@@ -108,26 +111,35 @@ struct ResidenceFormFields: View {
 		}
 
 		Section("Dates") {
-			DatePicker(
-				"Move-in Date",
-				selection: Binding(
-					get: { moveInDate ?? Date() },
-					set: { moveInDate = $0 }
-				),
-				displayedComponents: .date
-			)
-
-			Toggle("Has Move-out Date", isOn: $hasMoveOutDate)
-
-			if hasMoveOutDate {
+			LabeledField(label: "Move-in Date") {
 				DatePicker(
-					"Move-out Date",
+					"",
 					selection: Binding(
-						get: { moveOutDate ?? Date() },
-						set: { moveOutDate = $0 }
+						get: { moveInDate ?? Date() },
+						set: { moveInDate = $0 }
 					),
 					displayedComponents: .date
 				)
+				.labelsHidden()
+			}
+
+			LabeledField(label: "Has Move-out Date") {
+				Toggle("", isOn: $hasMoveOutDate)
+					.labelsHidden()
+			}
+
+			if hasMoveOutDate {
+				LabeledField(label: "Move-out Date") {
+					DatePicker(
+						"",
+						selection: Binding(
+							get: { moveOutDate ?? Date() },
+							set: { moveOutDate = $0 }
+						),
+						displayedComponents: .date
+					)
+					.labelsHidden()
+				}
 			}
 		}
 

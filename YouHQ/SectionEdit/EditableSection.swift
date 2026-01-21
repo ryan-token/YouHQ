@@ -15,16 +15,18 @@ enum EditableSection {
 	case insurancePolicyDraft
 	case maintenanceItem(MaintenanceItem)
 	case maintenanceItemDraft
+	case paintColor(RoomPaintColor)
+	case paintColorDraft
 	case other(Other)
 	case otherDraft
 
 	var isDraft: Bool {
 		switch self {
 		case .residenceInfo, .utility, .insurancePolicy, .maintenanceItem,
-			.other:
+			.paintColor, .other:
 			false
 		case .utilityDraft, .insurancePolicyDraft, .maintenanceItemDraft,
-			.otherDraft:
+			.paintColorDraft, .otherDraft:
 			true
 		}
 	}

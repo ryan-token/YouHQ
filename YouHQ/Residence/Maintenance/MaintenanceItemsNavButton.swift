@@ -29,22 +29,24 @@ struct MaintenanceItemsNavButton: View {
 					let pastDue = maintenanceItems.filter { $0.isPastDue }.count
 					let upcoming = maintenanceItems.filter { $0.isUpcoming }.count
 
-					if pastDue > 0 || upcoming > 0 {
-						HStack(spacing: 8) {
-							if pastDue > 0 {
-								Text("\(pastDue) past due")
-									.font(.subheadline)
-									.badgeStyle(type: .alert)
-							}
-							if upcoming > 0 {
+					VStack(alignment: .leading) {
+						Text("^[\(maintenanceItems.count) item](inflect: true)")
+							.font(.subheadline)
+							.opacity(0.8)
+
+						if pastDue > 0 || upcoming > 0 {
+							HStack(spacing: 8) {
 								if pastDue > 0 {
-									Text("•")
+									Text("\(pastDue) past due")
 										.font(.subheadline)
-										.opacity(0.8)
+										.badgeStyle(type: .alert)
 								}
-								Text("\(upcoming) upcoming")
-									.font(.subheadline)
-									.badgeStyle(type: .warning)
+
+								if upcoming > 0 {
+									Text("\(upcoming) upcoming")
+										.font(.subheadline)
+										.badgeStyle(type: .warning)
+								}
 							}
 						}
 					}

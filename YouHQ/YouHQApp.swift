@@ -40,6 +40,7 @@ struct YouHQApp: App {
 					InsurancePolicy.self,
 					MaintenanceItem.self,
 					MaintenanceCompletion.self,
+					RoomPaintColor.self,
 					Other.self,
 					Asset.self
 				)

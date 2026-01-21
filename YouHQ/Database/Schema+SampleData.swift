@@ -262,6 +262,83 @@ extension MaintenanceItem {
 	)
 }
 
+extension RoomPaintColor {
+	static let sampleData = RoomPaintColor(
+		id: UUID(),
+		residenceID: Residence.sampleData.id,
+		manufacturer: "Sherwin-Williams",
+		colorName: "Agreeable Gray",
+		colorCode: "SW 7029",
+		room: "Living Room",
+		finish: .eggshell,
+		purchaseDate: Calendar.current.date(
+			byAdding: .month,
+			value: -6,
+			to: Date()
+		),
+		surfaceType: "Walls",
+		storePurchasedFrom: "Home Depot",
+		applicationDate: Calendar.current.date(
+			byAdding: .month,
+			value: -5,
+			to: Date()
+		),
+		backgroundColor: "brown",
+		url: "https://www.sherwin-williams.com/homeowners/color/find-and-explore-colors/paint-colors-by-family/SW7029-agreeable-gray",
+		notes: "Needed 2 coats, goes well with white trim"
+	)
+
+	static let kitchenSampleData = RoomPaintColor(
+		id: UUID(),
+		residenceID: Residence.sampleData.id,
+		manufacturer: "Benjamin Moore",
+		colorName: "Simply White",
+		colorCode: "OC-117",
+		room: "Kitchen",
+		finish: .semiGloss,
+		purchaseDate: Calendar.current.date(
+			byAdding: .month,
+			value: -3,
+			to: Date()
+		),
+		surfaceType: "Walls",
+		storePurchasedFrom: "Lowe's",
+		applicationDate: Calendar.current.date(
+			byAdding: .month,
+			value: -2,
+			to: Date()
+		),
+		backgroundColor: "gray",
+		url: "",
+		notes: "Semi-gloss for easy cleaning, bright and clean look"
+	)
+
+	static let bedroomSampleData = RoomPaintColor(
+		id: UUID(),
+		residenceID: Residence.sampleData.id,
+		manufacturer: "Sherwin-Williams",
+		colorName: "Naval",
+		colorCode: "SW 6244",
+		room: "Master Bedroom",
+		finish: .matte,
+		purchaseDate: Calendar.current.date(
+			byAdding: .year,
+			value: -1,
+			to: Date()
+		),
+		surfaceType: "Accent Wall",
+		storePurchasedFrom: "Sherwin-Williams Store",
+		applicationDate: Calendar.current.date(
+			byAdding: .year,
+			value: -1,
+			to: Date()
+		),
+		backgroundColor: "blue",
+		url: "https://www.sherwin-williams.com/homeowners/color/find-and-explore-colors/paint-colors-by-family/SW6244-naval",
+		notes: "Deep blue accent wall, pairs well with light gray on other walls"
+	)
+}
+
 extension Other {
 	static let sampleData = Other(
 		id: UUID(),

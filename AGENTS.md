@@ -100,6 +100,8 @@ And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/s
 - Only write UI tests if unit tests are not possible.
 - Add code comments and documentation comments as needed.
 - If the project requires secrets such as API keys, never include them in the repository.
+- Follow the SwiftLint and swift-format rules defined in the project at `.swiftlint.yml` and `.swift-format`
+- Format the entire project via the following command: `swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ`
 
 
 ## PR instructions

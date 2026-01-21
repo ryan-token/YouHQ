@@ -43,6 +43,7 @@ struct ResidenceInfoEdit: View {
 		draftUtility: .constant(nil),
 		draftInsurancePolicy: .constant(nil),
 		draftMaintenanceItem: .constant(nil),
+		draftPaintColor: .constant(nil),
 		draftOther: .constant(nil)
 	)
 }

@@ -8,6 +8,8 @@
 import Foundation
 import SQLiteData
 
+// swiftlint:disable file_length
+
 // MARK: - Table Models
 
 @Table struct Profile: Identifiable {
@@ -176,6 +178,23 @@ import SQLiteData
 	let id: UUID
 	let maintenanceItemID: MaintenanceItem.ID
 	var completedAt: Date = Date()
+	var notes: String = ""
+}
+
+@Table struct RoomPaintColor: Identifiable {
+	let id: UUID
+	let residenceID: Residence.ID
+	var manufacturer: String = ""
+	var colorName: String = ""
+	var colorCode: String = ""
+	var room: String = ""
+	var finish: PaintFinish = .eggshell
+	var purchaseDate: Date?
+	var surfaceType: String = ""
+	var storePurchasedFrom: String = ""
+	var applicationDate: Date?
+	var backgroundColor: String = "purple"
+	var url: String = ""
 	var notes: String = ""
 }
 
@@ -573,4 +592,18 @@ nonisolated struct MaintenanceIntervalType: RawRepresentable, Hashable,
 		default: .day
 		}
 	}
+}
+
+nonisolated struct PaintFinish: RawRepresentable, Hashable, QueryBindable {
+	let rawValue: String
+
+	static let matte = Self(rawValue: "Matte")
+	static let eggshell = Self(rawValue: "Eggshell")
+	static let satin = Self(rawValue: "Satin")
+	static let semiGloss = Self(rawValue: "Semi-Gloss")
+	static let gloss = Self(rawValue: "Gloss")
+
+	static let allCases: [Self] = [
+		.matte, .eggshell, .satin, .semiGloss, .gloss
+	]
 }

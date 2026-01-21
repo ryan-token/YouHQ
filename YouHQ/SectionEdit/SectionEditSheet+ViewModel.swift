@@ -41,7 +41,8 @@ extension SectionEditSheet {
 			draftUtility: Binding<Utility?>,
 			draftInsurancePolicy: Binding<InsurancePolicy?>,
 			draftMaintenanceItem: Binding<MaintenanceItem?>,
-			draftOther: Binding<Other?>
+			draftOther: Binding<Other?>,
+			draftPaintColor: Binding<RoomPaintColor?>
 		) {
 			self.section = section
 
@@ -102,6 +103,23 @@ extension SectionEditSheet {
 					isNew: true
 				)
 				sectionString = "Maintenance Item"
+			case .paintColor(let paintColor):
+				sectionViewModel = PaintColorEdit.ViewModel(
+					paintColor: paintColor,
+					isNew: false
+				)
+				sectionString = "Paint Color"
+			case .paintColorDraft:
+				guard let paintColor = draftPaintColor.wrappedValue else {
+					fatalError(
+						"Draft paint color must exist for .paintColorDraft case"
+					)
+				}
+				sectionViewModel = PaintColorEdit.ViewModel(
+					paintColor: paintColor,
+					isNew: true
+				)
+				sectionString = "Paint Color"
 			case .other(let other):
 				sectionViewModel = OtherEdit.ViewModel(
 					other: other,
@@ -147,6 +165,10 @@ extension SectionEditSheet {
 
 		var maintenanceViewModel: MaintenanceItemEdit.ViewModel? {
 			sectionViewModel as? MaintenanceItemEdit.ViewModel
+		}
+
+		var paintColorViewModel: PaintColorEdit.ViewModel? {
+			sectionViewModel as? PaintColorEdit.ViewModel
 		}
 
 		var otherViewModel: OtherEdit.ViewModel? {

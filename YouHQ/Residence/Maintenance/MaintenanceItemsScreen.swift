@@ -116,6 +116,7 @@ struct MaintenanceItemsScreen: View {
 					draftUtility: .constant(nil),
 					draftInsurancePolicy: .constant(nil),
 					draftMaintenanceItem: .constant(itemToEdit),
+					draftPaintColor: .constant(nil),
 					draftOther: .constant(nil)
 				)
 			}

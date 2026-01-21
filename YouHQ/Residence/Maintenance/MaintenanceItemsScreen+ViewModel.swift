@@ -53,27 +53,26 @@ extension MaintenanceItemsScreen {
 		}
 
 		func showAddMaintenanceItemSheet() {
-			// Create a temporary maintenance item in the database that will be deleted if cancelled
-			var createdItem: MaintenanceItem?
-			withErrorReporting {
-				try database.write { db in
-					let itemID = UUID()
-					try MaintenanceItem.insert {
-						MaintenanceItem.Draft(
-							id: itemID,
-							residenceID: residenceID,
-							vehicleID: nil
-						)
-					}
-					.execute(db)
-					createdItem = try MaintenanceItem.find(itemID).fetchOne(db)
-				}
-			}
-			if let createdItem {
-				itemToEdit = createdItem
-				isNewItem = true
-				isShowingEditSheet = true
-			}
+			// Create a draft maintenance item in memory (not in database)
+			let draftItem = MaintenanceItem(
+				id: UUID(),
+				residenceID: residenceID,
+				vehicleID: nil,
+				name: "",
+				itemDescription: "",
+				intervalType: .month,
+				intervalValue: 1,
+				lastCompletedAt: nil,
+				nextDueDate: nil,
+				shouldNotify: false,
+				notificationIdentifier: "",
+				backgroundColor: "yellow",
+				url: "",
+				notes: ""
+			)
+			itemToEdit = draftItem
+			isNewItem = true
+			isShowingEditSheet = true
 		}
 
 		func editMaintenanceItem(_ item: MaintenanceItem) {

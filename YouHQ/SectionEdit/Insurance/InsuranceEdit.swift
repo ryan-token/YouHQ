@@ -84,17 +84,23 @@ struct InsuranceEdit: View {
 			}
 
 			Section("Dates") {
-				Toggle("Has Renewal Date", isOn: $vm.hasRenewalDate)
+				LabeledField(label: "Has Renewal Date") {
+					Toggle("", isOn: $vm.hasRenewalDate)
+						.labelsHidden()
+				}
 
 				if vm.hasRenewalDate {
-					DatePicker(
-						"Renewal Date",
-						selection: Binding(
-							get: { vm.renewalDate ?? Date() },
-							set: { vm.renewalDate = $0 }
-						),
-						displayedComponents: .date
-					)
+					LabeledField(label: "Renewal Date") {
+						DatePicker(
+							"",
+							selection: Binding(
+								get: { vm.renewalDate ?? Date() },
+								set: { vm.renewalDate = $0 }
+							),
+							displayedComponents: .date
+						)
+						.labelsHidden()
+					}
 				}
 			}
 
@@ -122,6 +128,7 @@ struct InsuranceEdit: View {
 		draftUtility: .constant(nil),
 		draftInsurancePolicy: .constant(nil),
 		draftMaintenanceItem: .constant(nil),
+		draftPaintColor: .constant(nil),
 		draftOther: .constant(nil)
 	)
 }

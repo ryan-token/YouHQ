@@ -87,6 +87,13 @@ struct ResidenceScreen: View {
 				MaintenanceItemsScreen(residenceID: residenceID)
 			}
 		}
+		.navigationDestination(isPresented: $vm.isNavigatingToPaintColors) {
+			if let residenceIDString = vm.selectedResidenceID,
+				let residenceID = UUID(uuidString: residenceIDString)
+			{
+				PaintColorsScreen(residenceID: residenceID)
+			}
+		}
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
 		.task {
@@ -116,6 +123,7 @@ struct ResidenceScreen: View {
 						.draftInsurancePolicy,
 					draftMaintenanceItem: $vm.maintenanceViewModel
 						.draftMaintenanceItem,
+					draftPaintColor: $vm.paintColorViewModel.draftPaintColor,
 					draftOther: $vm.otherViewModel.draftOther
 				)
 			}

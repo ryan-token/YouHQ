@@ -16,6 +16,7 @@ struct SectionEditSheet: View {
 	@FocusState private var utilityFieldFocused: Bool
 	@FocusState private var insuranceFieldFocused: Bool
 	@FocusState private var maintenanceFieldFocused: Bool
+	@FocusState private var paintColorFieldFocused: Bool
 	@FocusState private var otherFieldFocused: Bool
 
 	init(
@@ -23,6 +24,7 @@ struct SectionEditSheet: View {
 		draftUtility: Binding<Utility?>,
 		draftInsurancePolicy: Binding<InsurancePolicy?>,
 		draftMaintenanceItem: Binding<MaintenanceItem?>,
+		draftPaintColor: Binding<RoomPaintColor?>,
 		draftOther: Binding<Other?>
 	) {
 		_vm = State(
@@ -31,7 +33,8 @@ struct SectionEditSheet: View {
 				draftUtility: draftUtility,
 				draftInsurancePolicy: draftInsurancePolicy,
 				draftMaintenanceItem: draftMaintenanceItem,
-				draftOther: draftOther
+				draftOther: draftOther,
+				draftPaintColor: draftPaintColor
 			)
 		)
 	}
@@ -60,6 +63,11 @@ struct SectionEditSheet: View {
 						coordinator: vm,
 						focusedField: $maintenanceFieldFocused
 					)
+				case .paintColor, .paintColorDraft:
+					PaintColorEdit(
+						coordinator: vm,
+						focusedField: $paintColorFieldFocused
+					)
 				case .other, .otherDraft:
 					OtherEdit(
 						coordinator: vm,
@@ -78,6 +86,8 @@ struct SectionEditSheet: View {
 						insuranceFieldFocused = true
 					case .maintenanceItem, .maintenanceItemDraft:
 						maintenanceFieldFocused = true
+					case .paintColor, .paintColorDraft:
+						paintColorFieldFocused = true
 					case .other, .otherDraft:
 						otherFieldFocused = true
 					}

@@ -5,9 +5,9 @@
 //  Created by Ryan Token on 12/29/25.
 //
 
-// swiftlint:disable file_length
-
 import SQLiteData
+
+// swiftlint:disable file_length
 
 func appDatabase() throws -> any DatabaseWriter {
 	var configuration = Configuration()
@@ -361,6 +361,29 @@ func appDatabase() throws -> any DatabaseWriter {
 			"""
 		)
 		.execute(db)
+
+		// Room Paint Color table
+		try #sql(
+			"""
+			CREATE TABLE "roomPaintColors" (
+				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+				"residenceID" TEXT NOT NULL REFERENCES "residences"("id") ON DELETE CASCADE,
+				"manufacturer" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"colorName" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"colorCode" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"room" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"finish" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'Eggshell',
+				"purchaseDate" TEXT,
+				"surfaceType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"storePurchasedFrom" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"applicationDate" TEXT,
+				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'purple',
+				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+			) STRICT
+			"""
+		)
+		.execute(db)
 	}
 
 	// MARK: - Foreign Key Indexes
@@ -532,6 +555,13 @@ func appDatabase() throws -> any DatabaseWriter {
 			"""
 		)
 		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_roomPaintColors_residenceID" ON "roomPaintColors"("residenceID")
+			"""
+		)
+		.execute(db)
 	}
 
 	// MARK: - Additional Indexes for Common Queries
@@ -648,7 +678,7 @@ func appDatabase() throws -> any DatabaseWriter {
 		)
 		.execute(db)
 
-		// Create triggers for all other tables
+		// Create triggers for tables with direct profileID
 		let tables = [
 			"bankAccounts",
 			"investmentAccounts",
@@ -703,6 +733,46 @@ func appDatabase() throws -> any DatabaseWriter {
 			)
 			.execute(db)
 		}
+
+		// Create triggers for roomPaintColors (references profileID through residences)
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_roomPaintColors_insert"
+			AFTER INSERT ON "roomPaintColors"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_roomPaintColors_update"
+			AFTER UPDATE ON "roomPaintColors"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_roomPaintColors_delete"
+			AFTER DELETE ON "roomPaintColors"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID");
+			END
+			"""
+		)
+		.execute(db)
 	}
 
 	try migrator.migrate(database)

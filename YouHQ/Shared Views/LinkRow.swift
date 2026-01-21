@@ -10,12 +10,14 @@ import SwiftUI
 struct LinkRow: View {
 	@Environment(\.openURL) private var openURL
 
-	let label: String
+	let label: String?
 	let url: String
+	let showOnPlainBackground: Bool
 
-	init(_ label: String, url: String) {
+	init(_ label: String? = nil, url: String, showOnPlainBackground: Bool = false) {
 		self.label = label
 		self.url = url
+		self.showOnPlainBackground = showOnPlainBackground
 	}
 
 	private var normalizedURL: URL? {
@@ -32,8 +34,10 @@ struct LinkRow: View {
 
 	var body: some View {
 		HStack(alignment: .center) {
-			Text(label)
-				.font(.headline)
+			if let label {
+				Text(label)
+					.font(.headline)
+			}
 			if let parsedURL = normalizedURL {
 				Button {
 					openURL(parsedURL)
@@ -43,11 +47,16 @@ struct LinkRow: View {
 						.truncationMode(.middle)
 						.padding(.horizontal, 12)
 						.padding(.vertical, 4)
-						.background(.white.opacity(0.3))
+						.background(
+							showOnPlainBackground
+								? Color.blue.opacity(0.6)
+								: .white.opacity(0.3)
+						)
 						.clipShape(.rect(cornerRadius: 8))
 				}
 				.buttonStyle(.plain)
-			} else {
+			} else if label != nil {
+				// Invalid URL with label
 				Text(url)
 					.font(.body)
 					.lineLimit(1)

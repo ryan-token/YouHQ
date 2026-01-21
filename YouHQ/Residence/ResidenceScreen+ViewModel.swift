@@ -35,6 +35,7 @@ extension ResidenceScreen {
 		var utilityViewModel = UtilityViewModel()
 		var insuranceViewModel = InsurancePolicyViewModel()
 		var maintenanceViewModel = MaintenanceItemViewModel()
+		var paintColorViewModel = PaintColorViewModel()
 		var otherViewModel = OtherItemViewModel()
 
 		@ObservationIgnored
@@ -78,6 +79,7 @@ extension ResidenceScreen {
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 		var isNavigatingToMaintenanceItems = false
+		var isNavigatingToPaintColors = false
 		var residenceNotes: String
 
 		// Task for debouncing notes updates
@@ -136,6 +138,7 @@ extension ResidenceScreen {
 			await utilityViewModel.load(for: residenceID)
 			await insuranceViewModel.load(for: residenceID)
 			await maintenanceViewModel.load(for: residenceID)
+			await paintColorViewModel.load(for: residenceID)
 			await otherViewModel.load(for: residenceID)
 		}
 
@@ -269,6 +272,14 @@ extension ResidenceScreen {
 
 		func completeMaintenanceItem(_ item: MaintenanceItem) {
 			maintenanceViewModel.complete(item)
+		}
+
+		func showAddPaintColorSheet() {
+			guard let residenceID = selectedResidence?.id else { return }
+			paintColorViewModel.draftPaintColor =
+				paintColorViewModel.createDraft(for: residenceID)
+			sectionToEdit = .paintColorDraft
+			isShowingSectionEditSheet = true
 		}
 
 		func showAddOtherSheet() {
