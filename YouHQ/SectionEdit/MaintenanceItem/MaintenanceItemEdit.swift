@@ -119,7 +119,7 @@ struct MaintenanceItemEdit: View {
 				Button("Cancel", role: .cancel) {}
 			} message: {
 				Text(
-					"To receive maintenance reminders, please enable notifications in System Settings."
+					"To receive maintenance reminders, please enable notifications in Settings."
 				)
 			}
 
