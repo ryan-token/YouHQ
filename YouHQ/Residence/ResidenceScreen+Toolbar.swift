@@ -10,6 +10,7 @@ import SwiftUI
 
 extension ResidenceScreen {
 	struct Toolbar: ToolbarContent {
+		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: ResidenceScreen.ViewModel
 
 		var body: some ToolbarContent {
@@ -37,11 +38,17 @@ extension ResidenceScreen {
 				}
 			#endif
 
-			ToolbarItem(placement: .primaryAction) {
-				Menu {
-					ResidenceMenu(vm: vm, includeAddResidence: true)
-				} label: {
-					Label("Add", systemImage: "plus")
+			if vm.residences.isEmpty && syncEngine.isSynchronizing {
+				ToolbarItem(placement: .primaryAction) {
+					ProgressView()
+				}
+			} else {
+				ToolbarItem(placement: .primaryAction) {
+					Menu {
+						ResidenceMenu(vm: vm, includeAddResidence: true)
+					} label: {
+						Label("Add", systemImage: "plus")
+					}
 				}
 			}
 		}

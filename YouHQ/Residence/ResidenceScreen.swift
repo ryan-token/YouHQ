@@ -16,65 +16,29 @@ struct ResidenceScreen: View {
 		List {
 			Group {
 				#if DEBUG
-					ForEach(vm.profiles, id: \.profile.id) { profile in
-						HStack {
-							Text("Profile: \(profile.profile.name) -")
-							Text("\(profile.profile.id)")
-								.textSelection(.enabled)
-						}
-						.font(.caption)
-					}
-					ProfileIDView(profileID: vm.selectedProfile?.profile.id)
+					AvailableProfilesView(for: vm.profiles)
+					SelectedProfileIDView(for: vm.selectedProfile?.profile.id)
 				#endif
 
 				SharingStatus(vm: vm)
 
 				if vm.residences.isEmpty {
-					ContentUnavailableView {
-						Label("No residences", systemImage: "house")
-					} description: {
-						Button("Add residence") {
-							vm.showCreateResidenceSheet()
-						}
-					}
-					.frame(maxWidth: .infinity, alignment: .center)
+					NoResidencesView(
+						isSynchronizing: vm.syncEngine.isSynchronizing,
+						onAddResidenceTapped: vm.showCreateResidenceSheet
+					)
 				} else {
-					#if os(macOS)
-						if vm.residences.count > 1 {
-							Picker(
-								"Choose Home",
-								selection: $vm.selectedResidenceID
-							) {
-								ForEach(vm.residences) { residence in
-									Text(
-										residence.unitOrStreet
-											?? residence.street
-									)
-									.tag(residence.id.uuidString)
-								}
-							}
-							.labelsHidden()
-						}
-					#endif
+					MacOSResidencePicker(residences: vm.residences, selectedResidenceID: $vm.selectedResidenceID)
 
-					Toggle(isOn: $hideCosts) {
-						Text("Hide Costs")
-							.foregroundStyle(.secondary)
-							.font(.headline)
-					}
-					.listRowBackground(Color.clear)
-					.listRowSeparator(.hidden)
-					#if os(macOS)
-						.padding(.vertical, 4)
-					#endif
+					HideCostsToggle(hideCosts: $hideCosts)
 
 					ResidenceInfo(vm: vm, hideCosts: hideCosts)
-						.listRowSeparator(.hidden)
 				}
 			}
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)
 		}
+		.animation(.default, value: vm.residences)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		#if !os(macOS)
 			.if(vm.residences.count > 1) {
