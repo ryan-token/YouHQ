@@ -286,12 +286,19 @@ func appDatabase() throws -> any DatabaseWriter {
 				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
 				"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
 				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
+				"vehicleID" TEXT REFERENCES "vehicles"("id") ON DELETE CASCADE,
+				"category" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'Homes',
 				"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"otherDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"monthlyCost" TEXT,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'gray',
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
-				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				CHECK (
+					("category" = 'Homes' AND "residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+					("category" = 'Vehicles' AND "vehicleID" IS NOT NULL AND "residenceID" IS NULL) OR
+					("category" IN ('Money', 'Media', 'Career') AND "residenceID" IS NULL AND "vehicleID" IS NULL)
+				)
 			) STRICT
 			"""
 		)
@@ -497,6 +504,20 @@ func appDatabase() throws -> any DatabaseWriter {
 		try #sql(
 			"""
 			CREATE INDEX "idx_others_residenceID" ON "others"("residenceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_others_vehicleID" ON "others"("vehicleID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_others_category" ON "others"("category")
 			"""
 		)
 		.execute(db)

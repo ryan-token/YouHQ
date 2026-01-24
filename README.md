@@ -18,11 +18,11 @@ YouHQ is a personal life management app built with [Swift](https://www.swift.org
 
 **Finances**:
 - Keep track of where all of your money is
-- Log your bank accounts, investment accounts, retirement accounts, HSAs, and more so you don't lose track of your money
+- Log your bank accounts, investment accounts, retirement accounts, HSAs, other insurance policies, and more so you don't lose track of your money
 
 **Media**:
 - Keep track of all of your devices (brands, models, purchase dates, etc)
-- Keep track of all your core subscriptions (TV service, cell carrier, etc)
+- Keep track of all your service providers, like your TV service and cell carrier, and any of your subscriptions
 
 **Career**:
 - Log your jobs and career moves over time

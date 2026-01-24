@@ -55,6 +55,8 @@ extension OtherEdit {
 								id: other.id,
 								profileID: other.profileID,
 								residenceID: other.residenceID,
+								vehicleID: other.vehicleID,
+								category: other.category,
 								name: name,
 								otherDescription: otherDescription,
 								monthlyCost: monthlyCost,

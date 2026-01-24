@@ -139,7 +139,7 @@ extension ResidenceScreen {
 			await insuranceViewModel.load(for: residenceID)
 			await maintenanceViewModel.load(for: residenceID)
 			await paintColorViewModel.load(for: residenceID)
-			await otherViewModel.load(for: residenceID)
+			await otherViewModel.loadResidence(for: residenceID)
 		}
 
 		func restoreSelection() {
@@ -270,7 +270,7 @@ extension ResidenceScreen {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			otherViewModel.draftOther = otherViewModel.createDraft(
+			otherViewModel.draftOther = otherViewModel.createResidenceDraft(
 				for: residenceID,
 				profileID: profileID
 			)

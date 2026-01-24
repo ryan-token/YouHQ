@@ -347,8 +347,12 @@ extension Other {
 		id: UUID(),
 		profileID: Profile.sampleData.id,
 		residenceID: Residence.sampleData.id,
+		vehicleID: nil,
+		category: .homes,
 		name: "Pool",
 		otherDescription: "Saltwater pool with heater",
+		monthlyCost: 150.0,
+		backgroundColor: "gray",
 		url: "https://poolmaintenance.com",
 		notes: "Weekly cleaning service every Friday"
 	)

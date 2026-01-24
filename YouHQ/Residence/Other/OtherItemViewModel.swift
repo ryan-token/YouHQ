@@ -18,7 +18,7 @@ class OtherItemViewModel {
 
 	var draftOther: Other?
 
-	func load(for residenceID: UUID) async {
+	func loadResidence(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $others.load(
 				Other
@@ -29,11 +29,70 @@ class OtherItemViewModel {
 		}
 	}
 
-	func createDraft(for residenceID: UUID, profileID: UUID) -> Other {
+	func loadVehicle(for vehicleID: UUID) async {
+		_ = await withErrorReporting {
+			try await $others.load(
+				Other
+					.where { $0.vehicleID.eq(vehicleID) }
+					.order { $0.name },
+				animation: .default
+			)
+		}
+	}
+
+	func loadCategory(for category: OtherCategory, profileID: UUID) async {
+		_ = await withErrorReporting {
+			try await $others.load(
+				Other
+					.where {
+						$0.category.eq(category)
+							.and($0.profileID.eq(profileID))
+					}
+					.order { $0.name },
+				animation: .default
+			)
+		}
+	}
+
+	func createResidenceDraft(for residenceID: UUID, profileID: UUID) -> Other {
 		Other(
 			id: UUID(),
 			profileID: profileID,
 			residenceID: residenceID,
+			vehicleID: nil,
+			category: .homes,
+			name: "",
+			otherDescription: "",
+			monthlyCost: nil,
+			backgroundColor: "gray",
+			url: "",
+			notes: ""
+		)
+	}
+
+	func createVehicleDraft(for vehicleID: UUID, profileID: UUID) -> Other {
+		Other(
+			id: UUID(),
+			profileID: profileID,
+			residenceID: nil,
+			vehicleID: vehicleID,
+			category: .vehicles,
+			name: "",
+			otherDescription: "",
+			monthlyCost: nil,
+			backgroundColor: "gray",
+			url: "",
+			notes: ""
+		)
+	}
+
+	func createCategoryDraft(for category: OtherCategory, profileID: UUID) -> Other {
+		Other(
+			id: UUID(),
+			profileID: profileID,
+			residenceID: nil,
+			vehicleID: nil,
+			category: category,
 			name: "",
 			otherDescription: "",
 			monthlyCost: nil,

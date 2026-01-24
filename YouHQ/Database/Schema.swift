@@ -342,6 +342,8 @@ extension MaintenanceItem {
 	let id: UUID
 	let profileID: Profile.ID
 	var residenceID: Residence.ID?
+	var vehicleID: Vehicle.ID?
+	var category: OtherCategory = .homes
 	var name: String = ""
 	var otherDescription: String = ""
 	var monthlyCost: Double?
@@ -609,5 +611,19 @@ nonisolated struct PaintFinish: RawRepresentable, Hashable, QueryBindable {
 
 	static let allCases: [Self] = [
 		.matte, .eggshell, .satin, .semiGloss, .gloss
+	]
+}
+
+nonisolated struct OtherCategory: RawRepresentable, Hashable, QueryBindable {
+	let rawValue: String
+
+	static let homes = Self(rawValue: "Homes")
+	static let vehicles = Self(rawValue: "Vehicles")
+	static let money = Self(rawValue: "Money")
+	static let media = Self(rawValue: "Media")
+	static let career = Self(rawValue: "Career")
+
+	static let allCases: [Self] = [
+		.homes, .vehicles, .money, .media, .career
 	]
 }
