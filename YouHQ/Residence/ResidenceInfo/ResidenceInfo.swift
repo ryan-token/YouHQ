@@ -101,20 +101,6 @@ struct ResidenceInfo: View {
 				}
 			}
 
-			InfoSection(
-				"Notes",
-				backgroundColor: vm.backgroundColor,
-				onColorChange: { newColor in
-					vm.updateResidenceBackgroundColor(newColor)
-				}
-			) {
-				TextEditor(text: $vm.residenceNotes)
-					.textEditorOnColor(minHeight: 100)
-					.onChange(of: vm.residenceNotes) {
-						vm.updateResidenceNotesDebounced()
-					}
-			}
-
 			if !vm.paintColorViewModel.paintColors.isEmpty {
 				PaintColorsNavButton(
 					isNavigating: $vm.isNavigatingToPaintColors,

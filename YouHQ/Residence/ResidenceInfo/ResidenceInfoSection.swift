@@ -131,6 +131,16 @@ struct ResidenceInfoSection: View {
 			if residence.url.isNotEmpty {
 				LinkRow("Website:", url: residence.url)
 			}
+
+			if residence.notes.isNotEmpty {
+				VStack(alignment: .leading, spacing: 4) {
+					Text("Notes:")
+						.font(.headline)
+						.foregroundStyle(.white)
+					Text(residence.notes)
+						.foregroundStyle(.white)
+				}
+			}
 		}
 	}
 }
