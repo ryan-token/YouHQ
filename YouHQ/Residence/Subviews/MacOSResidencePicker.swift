@@ -9,21 +9,21 @@ import SwiftUI
 
 struct MacOSResidencePicker: View {
 	let residences: [Residence]
-	@Binding var selectedResidenceID: String?
+	@Binding var selectedResidence: Residence?
 
 	var body: some View {
 		#if os(macOS)
-		if residences.count > 1 {
+			if residences.count > 1 {
 				Picker(
 					"Choose Home",
-					selection: $selectedResidenceID
+					selection: $selectedResidence
 				) {
 					ForEach(residences) { residence in
 						Text(
 							residence.unitOrStreet
 								?? residence.street
 						)
-						.tag(residence.id.uuidString)
+						.tag(residence as Residence?)
 					}
 				}
 				.labelsHidden()
@@ -33,5 +33,5 @@ struct MacOSResidencePicker: View {
 }
 
 #Preview {
-	MacOSResidencePicker(residences: [], selectedResidenceID: .constant(UUID().uuidString))
+	MacOSResidencePicker(residences: [], selectedResidence: .constant(nil))
 }

@@ -28,7 +28,7 @@ struct ResidenceScreen: View {
 						onAddResidenceTapped: vm.showCreateResidenceSheet
 					)
 				} else {
-					MacOSResidencePicker(residences: vm.residences, selectedResidenceID: $vm.selectedResidenceID)
+					MacOSResidencePicker(residences: vm.residences, selectedResidence: $vm.selectedResidence)
 
 					HideCostsToggle(hideCosts: $hideCosts)
 

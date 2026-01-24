@@ -39,16 +39,7 @@ extension ResidenceScreen {
 		var maintenanceViewModel = MaintenanceItemViewModel()
 
 		@ObservationIgnored
-		@AppStorage("selectedResidenceID") var selectedResidenceID: String? {
-			didSet {
-				if selectedResidenceID != oldValue {
-					Task {
-						restoreSelection()
-						await loadAllData()
-					}
-				}
-			}
-		}
+		@AppStorage("selectedResidenceID") var selectedResidenceID: String?
 
 		init() {
 			residenceNotes = ""
@@ -70,6 +61,13 @@ extension ResidenceScreen {
 					}
 				}
 				residenceNotes = selectedResidence?.notes ?? ""
+
+				// Load data for the new residence
+				if selectedResidence != nil && selectedResidence?.id != oldValue?.id {
+					Task {
+						await loadAllData()
+					}
+				}
 			}
 		}
 
@@ -133,7 +131,6 @@ extension ResidenceScreen {
 			setProfile(to: "Default")
 			await loadResidences()
 			restoreSelection()
-			await loadAllData()
 		}
 
 		private func loadAllData() async {
@@ -198,8 +195,14 @@ extension ResidenceScreen {
 					}
 				}
 			} else {
-				// No residence selected - select first available if any
-				if let firstResidence = residences.first {
+				// No residence selected - try to restore from AppStorage first
+				if let selectedResidenceID,
+					let uuid = UUID(uuidString: selectedResidenceID),
+					let residence = residences.first(where: { $0.id == uuid })
+				{
+					self.selectedResidence = residence
+				} else if let firstResidence = residences.first {
+					// Fall back to first residence if no AppStorage value
 					self.selectedResidence = firstResidence
 				}
 			}
