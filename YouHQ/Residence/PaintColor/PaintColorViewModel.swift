@@ -11,9 +11,6 @@ import SwiftUI
 @Observable
 class PaintColorViewModel {
 	@ObservationIgnored
-	@Dependency(\.defaultDatabase) private var database
-
-	@ObservationIgnored
 	@FetchAll(RoomPaintColor.none, animation: .default) var paintColors
 
 	var draftPaintColor: RoomPaintColor?
@@ -46,25 +43,5 @@ class PaintColorViewModel {
 			url: "",
 			notes: ""
 		)
-	}
-
-	func delete(_ paintColor: RoomPaintColor) {
-		withErrorReporting {
-			try database.write { db in
-				try RoomPaintColor.find(paintColor.id)
-					.delete()
-					.execute(db)
-			}
-		}
-	}
-
-	func updateBackgroundColor(_ color: Color, for paintColor: RoomPaintColor) {
-		withErrorReporting {
-			try database.write { db in
-				try RoomPaintColor.find(paintColor.id)
-					.update { $0.backgroundColor = color.databaseValue }
-					.execute(db)
-			}
-		}
 	}
 }

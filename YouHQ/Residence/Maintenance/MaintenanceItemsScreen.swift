@@ -10,10 +10,8 @@ import SwiftUI
 
 struct MaintenanceItemsScreen: View {
 	@State private var vm: ViewModel
-	let residenceID: UUID
 
 	init(residenceID: UUID) {
-		self.residenceID = residenceID
 		_vm = State(wrappedValue: ViewModel(residenceID: residenceID))
 	}
 

@@ -9,9 +9,8 @@ import SwiftUI
 
 struct MaintenanceItemsNavButton: View {
 	@Environment(\.colorScheme) var colorScheme
-	@Binding var isNavigating: Bool
 
-	let residenceID: UUID
+	@Binding var isNavigating: Bool
 	let maintenanceItems: [MaintenanceItem]
 
 	var body: some View {
@@ -75,7 +74,6 @@ struct MaintenanceItemsNavButton: View {
 #Preview {
 	MaintenanceItemsNavButton(
 		isNavigating: .constant(false),
-		residenceID: UUID(),
 		maintenanceItems: [MaintenanceItem.residenceSampleData, MaintenanceItem.residenceSampleData]
 	)
 }

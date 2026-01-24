@@ -116,16 +116,4 @@ final class NotificationManager: Sendable {
 			}
 		}
 	}
-
-	/// Refresh notifications for specific maintenance items
-	func refreshNotifications(for items: [MaintenanceItem]) async {
-		for item in items {
-			_ = try? await scheduleNotification(for: item)
-		}
-	}
-
-	/// Remove all pending notifications
-	func removeAllNotifications() {
-		center.removeAllPendingNotificationRequests()
-	}
 }

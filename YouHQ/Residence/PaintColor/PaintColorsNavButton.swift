@@ -9,8 +9,6 @@ import SwiftUI
 
 struct PaintColorsNavButton: View {
 	@Binding var isNavigating: Bool
-
-	let residenceID: UUID
 	let paintColors: [RoomPaintColor]
 
 	var body: some View {

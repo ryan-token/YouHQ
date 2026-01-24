@@ -307,10 +307,10 @@ func appDatabase() throws -> any DatabaseWriter {
 				"intervalType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'month',
 				"intervalValue" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"lastCompletedAt" TEXT,
+				"dueDate" TEXT,
 				"shouldNotify" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
 				"notificationIdentifier" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'yellow',
-				"dueDate" TEXT,
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				CHECK (

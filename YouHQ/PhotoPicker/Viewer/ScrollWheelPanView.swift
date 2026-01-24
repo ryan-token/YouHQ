@@ -33,7 +33,6 @@
 		var onMagnifyChanged: ((CGFloat) -> Void)?
 		var onMagnifyEnded: (() -> Void)?
 		var isScrollEnabled: Bool = true
-		private var magnifyRecognizer: NSMagnificationGestureRecognizer?
 
 		override init(frame frameRect: NSRect) {
 			super.init(frame: frameRect)
@@ -51,7 +50,6 @@
 				action: #selector(handleMagnify(_:))
 			)
 			addGestureRecognizer(recognizer)
-			magnifyRecognizer = recognizer
 		}
 
 		override func scrollWheel(with event: NSEvent) {

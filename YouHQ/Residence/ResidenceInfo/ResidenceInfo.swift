@@ -118,7 +118,6 @@ struct ResidenceInfo: View {
 			if !vm.paintColorViewModel.paintColors.isEmpty {
 				PaintColorsNavButton(
 					isNavigating: $vm.isNavigatingToPaintColors,
-					residenceID: residence.id,
 					paintColors: vm.paintColorViewModel.paintColors
 				)
 			}
@@ -126,7 +125,6 @@ struct ResidenceInfo: View {
 			if !vm.maintenanceViewModel.maintenanceItems.isEmpty {
 				MaintenanceItemsNavButton(
 					isNavigating: $vm.isNavigatingToMaintenanceItems,
-					residenceID: residence.id,
 					maintenanceItems: vm.maintenanceViewModel.maintenanceItems
 				)
 			}
