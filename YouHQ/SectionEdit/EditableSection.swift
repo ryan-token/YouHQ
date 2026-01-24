@@ -15,7 +15,7 @@ enum EditableSection {
 	case insurancePolicyDraft
 	case maintenanceItem(MaintenanceItem)
 	case maintenanceItemDraft
-	case paintColor(RoomPaintColor)
+	case paintColor(PaintColor)
 	case paintColorDraft
 	case other(Other)
 	case otherDraft

@@ -15,12 +15,12 @@ extension PaintColorsScreen {
 		@Dependency(\.defaultDatabase) private var database
 
 		@ObservationIgnored
-		@FetchAll(RoomPaintColor.none, animation: .default)
+		@FetchAll(PaintColor.none, animation: .default)
 		var paintColors
 
 		let residenceID: UUID
 		var isShowingEditSheet = false
-		var itemToEdit: RoomPaintColor?
+		var itemToEdit: PaintColor?
 		var isNewItem = false
 
 		init(residenceID: UUID) {
@@ -30,7 +30,7 @@ extension PaintColorsScreen {
 		func loadData() async {
 			_ = await withErrorReporting {
 				try await $paintColors.load(
-					RoomPaintColor
+					PaintColor
 						.where { $0.residenceID.eq(residenceID) }
 						.order { $0.room },
 					animation: .default
@@ -40,9 +40,10 @@ extension PaintColorsScreen {
 
 		func showAddPaintColorSheet() {
 			// Create a draft paint color in memory (not in database)
-			let draftItem = RoomPaintColor(
+			let draftItem = PaintColor(
 				id: UUID(),
 				residenceID: residenceID,
+				vehicleID: nil,
 				manufacturer: "",
 				colorName: "",
 				colorCode: "",
@@ -61,16 +62,16 @@ extension PaintColorsScreen {
 			isShowingEditSheet = true
 		}
 
-		func editPaintColor(_ item: RoomPaintColor) {
+		func editPaintColor(_ item: PaintColor) {
 			itemToEdit = item
 			isNewItem = false
 			isShowingEditSheet = true
 		}
 
-		func deletePaintColor(_ item: RoomPaintColor) {
+		func deletePaintColor(_ item: PaintColor) {
 			do {
 				try database.write { db in
-					try RoomPaintColor.find(item.id)
+					try PaintColor.find(item.id)
 						.delete()
 						.execute(db)
 				}

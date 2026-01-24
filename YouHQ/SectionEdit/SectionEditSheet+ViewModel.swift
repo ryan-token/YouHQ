@@ -42,7 +42,7 @@ extension SectionEditSheet {
 			draftInsurancePolicy: Binding<InsurancePolicy?>,
 			draftMaintenanceItem: Binding<MaintenanceItem?>,
 			draftOther: Binding<Other?>,
-			draftPaintColor: Binding<RoomPaintColor?>
+			draftPaintColor: Binding<PaintColor?>
 		) {
 			self.section = section
 

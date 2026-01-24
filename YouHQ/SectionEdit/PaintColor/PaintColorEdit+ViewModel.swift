@@ -14,7 +14,7 @@ extension PaintColorEdit {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) var database
 
-		let paintColor: RoomPaintColor
+		let paintColor: PaintColor
 		let isNew: Bool
 
 		var manufacturer: String
@@ -43,7 +43,7 @@ extension PaintColorEdit {
 			return "Are you sure you want to delete \(roomText)?"
 		}
 
-		init(paintColor: RoomPaintColor, isNew: Bool) {
+		init(paintColor: PaintColor, isNew: Bool) {
 			self.paintColor = paintColor
 			self.isNew = isNew
 			self.manufacturer = paintColor.manufacturer
@@ -65,10 +65,11 @@ extension PaintColorEdit {
 				try database.write { db in
 					if isNew {
 						// Insert new record
-						try RoomPaintColor.insert {
-							RoomPaintColor.Draft(
+						try PaintColor.insert {
+							PaintColor.Draft(
 								id: paintColor.id,
 								residenceID: paintColor.residenceID,
+								vehicleID: paintColor.vehicleID,
 								manufacturer: manufacturer,
 								colorName: colorName,
 								colorCode: colorCode,
@@ -87,7 +88,7 @@ extension PaintColorEdit {
 						Analytics.sendSignal(.residencePaintColorCreated)
 					} else {
 						// Update existing record
-						try RoomPaintColor.find(paintColor.id)
+						try PaintColor.find(paintColor.id)
 							.update {
 								$0.manufacturer = manufacturer
 								$0.colorName = colorName
@@ -118,7 +119,7 @@ extension PaintColorEdit {
 		func delete() {
 			do {
 				try database.write { db in
-					try RoomPaintColor.find(paintColor.id)
+					try PaintColor.find(paintColor.id)
 						.delete()
 						.execute(db)
 				}

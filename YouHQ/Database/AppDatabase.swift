@@ -256,6 +256,7 @@ func appDatabase() throws -> any DatabaseWriter {
 				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
 				"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
 				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
+				"vehicleID" TEXT REFERENCES "vehicles"("id") ON DELETE CASCADE,
 				"type" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'health',
 				"provider" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"policyNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
@@ -269,8 +270,9 @@ func appDatabase() throws -> any DatabaseWriter {
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				CHECK (
-					("type" IN ('Home', 'Renters') AND "residenceID" IS NOT NULL) OR
-					("type" NOT IN ('Home', 'Renters') AND "residenceID" IS NULL)
+					("type" IN ('Home', 'Renters') AND "residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+					("type" = 'Auto' AND "vehicleID" IS NOT NULL AND "residenceID" IS NULL) OR
+					("type" NOT IN ('Home', 'Renters', 'Auto') AND "residenceID" IS NULL AND "vehicleID" IS NULL)
 				)
 			) STRICT
 			"""
@@ -362,12 +364,13 @@ func appDatabase() throws -> any DatabaseWriter {
 		)
 		.execute(db)
 
-		// Room Paint Color table
+		// Paint Color table
 		try #sql(
 			"""
-			CREATE TABLE "roomPaintColors" (
+			CREATE TABLE "paintColors" (
 				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
-				"residenceID" TEXT NOT NULL REFERENCES "residences"("id") ON DELETE CASCADE,
+				"residenceID" TEXT REFERENCES "residences"("id") ON DELETE CASCADE,
+				"vehicleID" TEXT REFERENCES "vehicles"("id") ON DELETE CASCADE,
 				"manufacturer" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"colorName" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"colorCode" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
@@ -379,7 +382,11 @@ func appDatabase() throws -> any DatabaseWriter {
 				"applicationDate" TEXT,
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'purple',
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
-				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+				CHECK (
+					("residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+					("residenceID" IS NULL AND "vehicleID" IS NOT NULL)
+				)
 			) STRICT
 			"""
 		)
@@ -475,6 +482,13 @@ func appDatabase() throws -> any DatabaseWriter {
 
 		try #sql(
 			"""
+			CREATE INDEX "idx_insurancePolicies_vehicleID" ON "insurancePolicies"("vehicleID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
 			CREATE INDEX "idx_others_profileID" ON "others"("profileID")
 			"""
 		)
@@ -558,7 +572,14 @@ func appDatabase() throws -> any DatabaseWriter {
 
 		try #sql(
 			"""
-			CREATE INDEX "idx_roomPaintColors_residenceID" ON "roomPaintColors"("residenceID")
+			CREATE INDEX "idx_paintColors_residenceID" ON "paintColors"("residenceID")
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE INDEX "idx_paintColors_vehicleID" ON "paintColors"("vehicleID")
 			"""
 		)
 		.execute(db)
@@ -734,15 +755,19 @@ func appDatabase() throws -> any DatabaseWriter {
 			.execute(db)
 		}
 
-		// Create triggers for roomPaintColors (references profileID through residences)
+		// Create triggers for paintColors (references profileID through residences or vehicles)
 		try #sql(
 			"""
-			CREATE TRIGGER "update_profile_on_roomPaintColors_insert"
-			AFTER INSERT ON "roomPaintColors"
+			CREATE TRIGGER "update_profile_on_paintColors_insert"
+			AFTER INSERT ON "paintColors"
 			BEGIN
 				UPDATE "profiles"
 				SET "updatedAt" = datetime('now')
-				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+				WHERE "id" IN (
+					SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"
+					UNION
+					SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID"
+				);
 			END
 			"""
 		)
@@ -750,12 +775,16 @@ func appDatabase() throws -> any DatabaseWriter {
 
 		try #sql(
 			"""
-			CREATE TRIGGER "update_profile_on_roomPaintColors_update"
-			AFTER UPDATE ON "roomPaintColors"
+			CREATE TRIGGER "update_profile_on_paintColors_update"
+			AFTER UPDATE ON "paintColors"
 			BEGIN
 				UPDATE "profiles"
 				SET "updatedAt" = datetime('now')
-				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+				WHERE "id" IN (
+					SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"
+					UNION
+					SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID"
+				);
 			END
 			"""
 		)
@@ -763,12 +792,16 @@ func appDatabase() throws -> any DatabaseWriter {
 
 		try #sql(
 			"""
-			CREATE TRIGGER "update_profile_on_roomPaintColors_delete"
-			AFTER DELETE ON "roomPaintColors"
+			CREATE TRIGGER "update_profile_on_paintColors_delete"
+			AFTER DELETE ON "paintColors"
 			BEGIN
 				UPDATE "profiles"
 				SET "updatedAt" = datetime('now')
-				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID");
+				WHERE "id" IN (
+					SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID"
+					UNION
+					SELECT "profileID" FROM "vehicles" WHERE "id" = OLD."vehicleID"
+				);
 			END
 			"""
 		)

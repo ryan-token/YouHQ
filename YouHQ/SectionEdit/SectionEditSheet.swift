@@ -24,7 +24,7 @@ struct SectionEditSheet: View {
 		draftUtility: Binding<Utility?>,
 		draftInsurancePolicy: Binding<InsurancePolicy?>,
 		draftMaintenanceItem: Binding<MaintenanceItem?>,
-		draftPaintColor: Binding<RoomPaintColor?>,
+		draftPaintColor: Binding<PaintColor?>,
 		draftOther: Binding<Other?>
 	) {
 		_vm = State(

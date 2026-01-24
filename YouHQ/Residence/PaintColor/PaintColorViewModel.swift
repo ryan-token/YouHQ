@@ -11,14 +11,14 @@ import SwiftUI
 @Observable
 class PaintColorViewModel {
 	@ObservationIgnored
-	@FetchAll(RoomPaintColor.none, animation: .default) var paintColors
+	@FetchAll(PaintColor.none, animation: .default) var paintColors
 
-	var draftPaintColor: RoomPaintColor?
+	var draftPaintColor: PaintColor?
 
 	func load(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $paintColors.load(
-				RoomPaintColor
+				PaintColor
 					.where { $0.residenceID.eq(residenceID) }
 					.order { $0.room },
 				animation: .default
@@ -26,10 +26,11 @@ class PaintColorViewModel {
 		}
 	}
 
-	func createDraft(for residenceID: UUID) -> RoomPaintColor {
-		RoomPaintColor(
+	func createDraft(for residenceID: UUID) -> PaintColor {
+		PaintColor(
 			id: UUID(),
 			residenceID: residenceID,
+			vehicleID: nil,
 			manufacturer: "",
 			colorName: "",
 			colorCode: "",

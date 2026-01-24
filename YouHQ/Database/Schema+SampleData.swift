@@ -262,10 +262,11 @@ extension MaintenanceItem {
 	)
 }
 
-extension RoomPaintColor {
-	static let sampleData = RoomPaintColor(
+extension PaintColor {
+	static let sampleData = PaintColor(
 		id: UUID(),
 		residenceID: Residence.sampleData.id,
+		vehicleID: nil,
 		manufacturer: "Sherwin-Williams",
 		colorName: "Agreeable Gray",
 		colorCode: "SW 7029",
@@ -288,9 +289,10 @@ extension RoomPaintColor {
 		notes: "Needed 2 coats, goes well with white trim"
 	)
 
-	static let kitchenSampleData = RoomPaintColor(
+	static let kitchenSampleData = PaintColor(
 		id: UUID(),
 		residenceID: Residence.sampleData.id,
+		vehicleID: nil,
 		manufacturer: "Benjamin Moore",
 		colorName: "Simply White",
 		colorCode: "OC-117",
@@ -313,9 +315,10 @@ extension RoomPaintColor {
 		notes: "Semi-gloss for easy cleaning, bright and clean look"
 	)
 
-	static let bedroomSampleData = RoomPaintColor(
+	static let bedroomSampleData = PaintColor(
 		id: UUID(),
 		residenceID: Residence.sampleData.id,
+		vehicleID: nil,
 		manufacturer: "Sherwin-Williams",
 		colorName: "Naval",
 		colorCode: "SW 6244",

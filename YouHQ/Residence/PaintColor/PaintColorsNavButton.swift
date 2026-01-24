@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PaintColorsNavButton: View {
 	@Binding var isNavigating: Bool
-	let paintColors: [RoomPaintColor]
+	let paintColors: [PaintColor]
 
 	var body: some View {
 		Button {

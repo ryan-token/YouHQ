@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PaintColorRow: View {
-	let paintColor: RoomPaintColor
+	let paintColor: PaintColor
 	let onTap: () -> Void
 
 	var body: some View {

@@ -75,7 +75,7 @@ struct YouHQApp: App {
 				InsurancePolicy.self,
 				MaintenanceItem.self,
 				MaintenanceCompletion.self,
-				RoomPaintColor.self,
+				PaintColor.self,
 				Other.self,
 				Asset.self
 			)

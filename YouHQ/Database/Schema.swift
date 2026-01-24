@@ -183,9 +183,10 @@ extension MaintenanceItem {
 	var notes: String = ""
 }
 
-@Table struct RoomPaintColor: Identifiable {
+@Table struct PaintColor: Identifiable {
 	let id: UUID
-	let residenceID: Residence.ID
+	let residenceID: Residence.ID?
+	let vehicleID: Vehicle.ID?
 	var manufacturer: String = ""
 	var colorName: String = ""
 	var colorCode: String = ""
@@ -320,6 +321,7 @@ extension MaintenanceItem {
 	let id: UUID
 	let profileID: Profile.ID
 	var residenceID: Residence.ID?
+	var vehicleID: Vehicle.ID?
 	var type: InsurancePolicyType = .health
 	var provider: String = ""
 	var policyNumber: String = ""
