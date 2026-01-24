@@ -29,7 +29,7 @@ extension MaintenanceItemEdit {
 		var intervalType: MaintenanceIntervalType
 		var intervalValue: Int
 		var lastCompletedAt: Date?
-		var nextDueDate: Date?
+		var dueDate: Date?
 		var shouldNotify: Bool
 		var isUsingManualDueDate: Bool
 		var url: String
@@ -42,11 +42,13 @@ extension MaintenanceItemEdit {
 		var calculatedNextDueDate: Date {
 			let calendar = Calendar.current
 			let component = intervalType.calendarComponent
+			// Use lastCompletedAt if available, otherwise use current date
+			let baseDate = lastCompletedAt ?? Date()
 			return calendar.date(
 				byAdding: component,
 				value: intervalValue,
-				to: Date()
-			) ?? Date()
+				to: baseDate
+			) ?? baseDate
 		}
 
 		var title: String {
@@ -78,17 +80,19 @@ extension MaintenanceItemEdit {
 			let calculated = {
 				let calendar = Calendar.current
 				let component = item.intervalType.calendarComponent
+				// Use lastCompletedAt if available, otherwise use current date
+				let baseDate = item.lastCompletedAt ?? Date()
 				return calendar.date(
 					byAdding: component,
 					value: item.intervalValue,
-					to: Date()
-				) ?? Date()
+					to: baseDate
+				) ?? baseDate
 			}()
 
-			self.nextDueDate = item.nextDueDate ?? calculated
+			self.dueDate = item.dueDate ?? calculated
 
 			// Check if the stored due date differs from calculated, meaning it's manual
-			if let nextDue = item.nextDueDate {
+			if let nextDue = item.dueDate {
 				let calendar = Calendar.current
 				isUsingManualDueDate = !calendar.isDate(
 					nextDue,
@@ -116,12 +120,11 @@ extension MaintenanceItemEdit {
 								intervalType: intervalType,
 								intervalValue: intervalValue,
 								lastCompletedAt: lastCompletedAt,
-								nextDueDate:
+								dueDate:
 									isUsingManualDueDate
-									? nextDueDate : calculatedNextDueDate,
+									? dueDate : calculatedNextDueDate,
 								shouldNotify: shouldNotify,
-								notificationIdentifier: item
-									.notificationIdentifier,
+								notificationIdentifier: item.notificationIdentifier,
 								backgroundColor: item.backgroundColor,
 								url: url,
 								notes: notes
@@ -130,20 +133,22 @@ extension MaintenanceItemEdit {
 						.execute(db)
 					} else {
 						// Update existing record
+						let newDueDate = isUsingManualDueDate ? dueDate : calculatedNextDueDate
+
 						try MaintenanceItem.find(item.id)
 							.update {
 								$0.name = name
 								$0.itemDescription = itemDescription
 								$0.intervalType = intervalType
 								$0.intervalValue = intervalValue
-								$0.nextDueDate =
-									isUsingManualDueDate
-									? nextDueDate : calculatedNextDueDate
+								$0.lastCompletedAt = lastCompletedAt
+								$0.dueDate = newDueDate
 								$0.shouldNotify = shouldNotify
 								$0.url = url
 								$0.notes = notes
 							}
 							.execute(db)
+						print("[DB] Database update completed")
 					}
 
 					try photoPicker.updateAsset(
@@ -173,7 +178,7 @@ extension MaintenanceItemEdit {
 		}
 
 		func resetToAutomaticDueDate() {
-			nextDueDate = calculatedNextDueDate
+			dueDate = calculatedNextDueDate
 			isUsingManualDueDate = false
 		}
 

@@ -37,7 +37,7 @@ struct MaintenanceItemRow: View {
 							.font(.caption)
 							.foregroundStyle(.secondary)
 
-						if let nextDue = item.nextDueDate {
+						if let nextDue = item.dueDate {
 							Text("Due \(nextDue, style: .date)")
 								.font(.caption)
 								.foregroundStyle(

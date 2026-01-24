@@ -140,26 +140,28 @@ import SQLiteData
 	var intervalType: MaintenanceIntervalType = .month
 	var intervalValue: Int = 1
 	var lastCompletedAt: Date?
-	var nextDueDate: Date?
+	var dueDate: Date?
 	var shouldNotify: Bool = false
 	var notificationIdentifier: String = ""
 	var backgroundColor: String = "yellow"
 	var url: String = ""
 	var notes: String = ""
+}
 
+extension MaintenanceItem {
 	/// Calculate if this item is past due
 	var isPastDue: Bool {
-		guard let nextDueDate else { return false }
-		return nextDueDate < Date()
+		guard let dueDate else { return false }
+		return dueDate < Date()
 	}
 
 	/// Calculate if this item is upcoming (due within 30 days)
 	var isUpcoming: Bool {
-		guard let nextDueDate else { return false }
+		guard let dueDate else { return false }
 		let thirtyDaysFromNow =
 			Calendar.current.date(byAdding: .day, value: 30, to: Date())
 			?? Date()
-		return nextDueDate >= Date() && nextDueDate <= thirtyDaysFromNow
+		return dueDate >= Date() && dueDate <= thirtyDaysFromNow
 	}
 
 	/// Calculate the next due date based on completed date and interval

@@ -70,14 +70,14 @@ struct MaintenanceItemEdit: View {
 						selection: Binding(
 							get: {
 								if vm.isUsingManualDueDate {
-									return vm.nextDueDate
+									return vm.dueDate
 										?? vm.calculatedNextDueDate
 								} else {
 									return vm.calculatedNextDueDate
 								}
 							},
 							set: {
-								vm.nextDueDate = $0
+								vm.dueDate = $0
 								vm.isUsingManualDueDate = true
 							}
 						),

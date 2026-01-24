@@ -35,7 +35,7 @@ final class NotificationManager: Sendable {
 	/// Returns true if scheduled successfully, false if permission denied
 	func scheduleNotification(for item: MaintenanceItem) async throws -> Bool {
 		// Only schedule if shouldNotify is true and there's a due date
-		guard item.shouldNotify, let dueDate = item.nextDueDate else {
+		guard item.shouldNotify, let dueDate = item.dueDate else {
 			// If notification shouldn't be scheduled, cancel any existing one
 			await cancelNotification(for: item)
 			return true
@@ -43,9 +43,7 @@ final class NotificationManager: Sendable {
 
 		// Check authorization status
 		let status = await checkAuthorizationStatus()
-		guard status == .authorized else {
-			return false
-		}
+		guard status == .authorized else { return false }
 
 		// Ensure we have a notification identifier
 		let identifier =

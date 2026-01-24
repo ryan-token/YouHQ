@@ -46,7 +46,7 @@ extension MaintenanceItemsScreen {
 				try await $maintenanceItems.load(
 					MaintenanceItem
 						.where { $0.residenceID.eq(residenceID) }
-						.order { $0.nextDueDate },
+						.order { $0.dueDate },
 					animation: .default
 				)
 			}
@@ -63,7 +63,7 @@ extension MaintenanceItemsScreen {
 				intervalType: .month,
 				intervalValue: 1,
 				lastCompletedAt: nil,
-				nextDueDate: nil,
+				dueDate: nil,
 				shouldNotify: false,
 				notificationIdentifier: "",
 				backgroundColor: "yellow",
@@ -124,7 +124,7 @@ extension MaintenanceItemsScreen {
 					try MaintenanceItem.find(item.id)
 						.update {
 							$0.lastCompletedAt = completedAt
-							$0.nextDueDate = nextDue
+							$0.dueDate = nextDue
 						}
 						.execute(db)
 				}

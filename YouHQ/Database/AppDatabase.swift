@@ -307,10 +307,10 @@ func appDatabase() throws -> any DatabaseWriter {
 				"intervalType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'month',
 				"intervalValue" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
 				"lastCompletedAt" TEXT,
-				"nextDueDate" TEXT,
 				"shouldNotify" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
 				"notificationIdentifier" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'yellow',
+				"dueDate" TEXT,
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				CHECK (
@@ -769,6 +769,98 @@ func appDatabase() throws -> any DatabaseWriter {
 				UPDATE "profiles"
 				SET "updatedAt" = datetime('now')
 				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+
+		// Create triggers for utilities (references profileID through residences)
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_utilities_insert"
+			AFTER INSERT ON "utilities"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_utilities_update"
+			AFTER UPDATE ON "utilities"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_utilities_delete"
+			AFTER DELETE ON "utilities"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+
+		// Create triggers for maintenanceItems (references profileID through residences or vehicles)
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_maintenanceItems_insert"
+			AFTER INSERT ON "maintenanceItems"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" IN (
+					SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"
+					UNION
+					SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID"
+				);
+			END
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_maintenanceItems_update"
+			AFTER UPDATE ON "maintenanceItems"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" IN (
+					SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"
+					UNION
+					SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID"
+				);
+			END
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_maintenanceItems_delete"
+			AFTER DELETE ON "maintenanceItems"
+			BEGIN
+				UPDATE "profiles"
+				SET "updatedAt" = datetime('now')
+				WHERE "id" IN (
+					SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID"
+					UNION
+					SELECT "profileID" FROM "vehicles" WHERE "id" = OLD."vehicleID"
+				);
 			END
 			"""
 		)

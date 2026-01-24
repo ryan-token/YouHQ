@@ -226,7 +226,7 @@ extension MaintenanceItem {
 			value: -2,
 			to: Date()
 		),
-		nextDueDate: Calendar.current.date(
+		dueDate: Calendar.current.date(
 			byAdding: .month,
 			value: 1,
 			to: Date()
@@ -250,9 +250,9 @@ extension MaintenanceItem {
 			value: -4,
 			to: Date()
 		),
-		nextDueDate: Calendar.current.date(
+		dueDate: Calendar.current.date(
 			byAdding: .month,
-			value: 2,
+			value: 1,
 			to: Date()
 		),
 		shouldNotify: true,

@@ -270,10 +270,6 @@ extension ResidenceScreen {
 			isShowingSectionEditSheet = true
 		}
 
-		func completeMaintenanceItem(_ item: MaintenanceItem) {
-			maintenanceViewModel.complete(item)
-		}
-
 		func showAddPaintColorSheet() {
 			guard let residenceID = selectedResidence?.id else { return }
 			paintColorViewModel.draftPaintColor =
