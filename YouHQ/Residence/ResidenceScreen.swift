@@ -17,9 +17,11 @@ struct ResidenceScreen: View {
 			Group {
 				#if DEBUG
 					ForEach(vm.profiles, id: \.profile.id) { profile in
-						Text(
-							"Profile: \(profile.profile.name) (id: \(profile.profile.id)"
-						)
+						HStack {
+							Text("Profile: \(profile.profile.name) -")
+							Text("\(profile.profile.id)")
+								.textSelection(.enabled)
+						}
 						.font(.caption)
 					}
 					ProfileIDView(profileID: vm.selectedProfile?.profile.id)

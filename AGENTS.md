@@ -55,9 +55,11 @@ You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, S
 
 ## SQLiteData instructions
 
-Persistence should be done via SQLiteData from PointFreeCo.
+Persistence, CloudKit Sync, and CloudKit Sharing is handled by SQLiteData from PointFreeCo.
 
 - Using `@FetchAll` or `@FetchOne` from an `@Observable` View Model should always be marked with `@ObservationIgnored`
+- CloudKit Sync is configured via the SyncEngine at YouHQApp.swift
+- CloudKit Sharing is configured via CKShare Shared Records, managed via AppDelegate.swift and SQLiteData's CloudSharingView
 - You can use the `@Selection` macro to mark a custom struct as a way to join multiple tables into one `@FetchAll` request. That could might look like this:
 ```
 @Selection
@@ -86,6 +88,7 @@ func loadProfiles() async {
 }
 ```
 
+
 Refer to the SQLiteData README on GitHub here: https://github.com/pointfreeco/sqlite-data?tab=readme-ov-file#Documentation
 
 And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/sqlite-data/main/documentation/sqlitedata/
@@ -102,6 +105,7 @@ And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/s
 - If the project requires secrets such as API keys, never include them in the repository.
 - Follow the SwiftLint and swift-format rules defined in the project at `.swiftlint.yml` and `.swift-format`
 - Format the entire project via the following command: `swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ`
+- Check for unused code via the following command: `periphery scan`
 
 
 ## PR instructions

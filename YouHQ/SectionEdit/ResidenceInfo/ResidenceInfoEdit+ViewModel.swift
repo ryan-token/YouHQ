@@ -101,10 +101,27 @@ extension ResidenceInfoEdit {
 
 		func delete() {
 			withErrorReporting {
+				// Get all maintenance items for this residence before deletion
+				let maintenanceItems = try database.read { db in
+					try MaintenanceItem
+						.where { $0.residenceID.eq(residence.id) }
+						.fetchAll(db)
+				}
+
+				// Delete the residence (CASCADE will delete maintenance items)
 				try database.write { db in
 					try Residence.find(residence.id)
 						.delete()
 						.execute(db)
+				}
+
+				// Cancel notifications for all maintenance items
+				Task {
+					for item in maintenanceItems {
+						await NotificationManager.shared.cancelNotification(
+							for: item
+						)
+					}
 				}
 			}
 		}
