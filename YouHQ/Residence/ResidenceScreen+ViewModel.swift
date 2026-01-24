@@ -34,9 +34,9 @@ extension ResidenceScreen {
 		// Child view models for entity-specific operations
 		var utilityViewModel = UtilityViewModel()
 		var insuranceViewModel = InsurancePolicyViewModel()
-		var maintenanceViewModel = MaintenanceItemViewModel()
-		var paintColorViewModel = PaintColorViewModel()
 		var otherViewModel = OtherItemViewModel()
+		var paintColorViewModel = PaintColorViewModel()
+		var maintenanceViewModel = MaintenanceItemViewModel()
 
 		@ObservationIgnored
 		@AppStorage("selectedResidenceID") var selectedResidenceID: String? {
@@ -175,20 +175,26 @@ extension ResidenceScreen {
 		}
 
 		func updateSelectedResidence() {
-			guard let selectedResidence else { return }
-
-			if let updatedResidence = residences.first(where: {
-				$0.id == selectedResidence.id
-			}) {
-				// Residence still exists, update with latest data
-				self.selectedResidence = updatedResidence
+			if let selectedResidence {
+				// We have a selected residence - update or replace it
+				if let updatedResidence = residences.first(where: {
+					$0.id == selectedResidence.id
+				}) {
+					// Residence still exists, update with latest data
+					self.selectedResidence = updatedResidence
+				} else {
+					// Residence was deleted, select another one
+					if let firstResidence = residences.first {
+						self.selectedResidence = firstResidence
+					} else {
+						// No residences left
+						self.selectedResidence = nil
+					}
+				}
 			} else {
-				// Residence was deleted, select another one
+				// No residence selected - select first available if any
 				if let firstResidence = residences.first {
 					self.selectedResidence = firstResidence
-				} else {
-					// No residences left
-					self.selectedResidence = nil
 				}
 			}
 		}
@@ -196,35 +202,6 @@ extension ResidenceScreen {
 		func showCreateResidenceSheet() {
 			try? database.ensureDefaultProfile()
 			isShowingAddResidenceSheet = true
-		}
-
-		// MARK: RESIDENCE NOTES & COLOR
-
-		func updateResidenceNotesDebounced() {
-			// Cancel any pending update
-			notesDebounceTask?.cancel()
-
-			// Create new debounced task
-			notesDebounceTask = Task {
-				try? await Task.sleep(for: .seconds(0.5))
-
-				// Check if task was cancelled
-				guard !Task.isCancelled else { return }
-
-				// Perform the update
-				await updateResidenceNotes()
-			}
-		}
-
-		private func updateResidenceNotes() async {
-			guard let selectedResidence else { return }
-			withErrorReporting {
-				try database.write { db in
-					try Residence.find(selectedResidence.id)
-						.update { $0.notes = residenceNotes }
-						.execute(db)
-				}
-			}
 		}
 
 		func updateResidenceBackgroundColor(_ color: Color) {
