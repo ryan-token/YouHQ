@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F4851D642F248EB5002E4AFF /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = F4851D632F248EB5002E4AFF /* TelemetryDeck */; };
 		F489E7EB2F034B7600EB50D4 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = F489E7EA2F034B7600EB50D4 /* SQLiteData */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F489E7EB2F034B7600EB50D4 /* SQLiteData in Frameworks */,
+				F4851D642F248EB5002E4AFF /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +87,7 @@
 			name = YouHQ;
 			packageProductDependencies = (
 				F489E7EA2F034B7600EB50D4 /* SQLiteData */,
+				F4851D632F248EB5002E4AFF /* TelemetryDeck */,
 			);
 			productName = YouHQ;
 			productReference = F489E7DB2F034A8E00EB50D4 /* YouHQ.app */;
@@ -116,6 +119,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F489E7E92F034B7600EB50D4 /* XCRemoteSwiftPackageReference "sqlite-data" */,
+				F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F489E7DC2F034A8E00EB50D4 /* Products */;
@@ -441,6 +445,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.11.0;
+			};
+		};
 		F489E7E92F034B7600EB50D4 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
@@ -452,6 +464,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F4851D632F248EB5002E4AFF /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
+		};
 		F489E7EA2F034B7600EB50D4 /* SQLiteData */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F489E7E92F034B7600EB50D4 /* XCRemoteSwiftPackageReference "sqlite-data" */;

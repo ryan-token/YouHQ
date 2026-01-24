@@ -44,12 +44,17 @@ class OtherItemViewModel {
 	}
 
 	func delete(_ other: Other) {
-		withErrorReporting {
+		do {
 			try database.write { db in
 				try Other.find(other.id)
 					.delete()
 					.execute(db)
 			}
+
+			Analytics.sendSignal(.residenceOtherDeleted)
+		} catch {
+			Analytics.logError(id: .otherDeleteFailed, message: error.localizedDescription)
+			reportIssue(error)
 		}
 	}
 
@@ -60,6 +65,8 @@ class OtherItemViewModel {
 					.update { $0.backgroundColor = color.databaseValue }
 					.execute(db)
 			}
+
+			Analytics.sendSignal(.itemBackgroundColorChanged)
 		}
 	}
 }

@@ -9,6 +9,7 @@ import CloudKit
 import Dependencies
 import SQLiteData
 import SwiftUI
+import TelemetryDeck
 import UserNotifications
 
 @main
@@ -21,30 +22,8 @@ struct YouHQApp: App {
 
 	init() {
 		if context == .live {
-			try! prepareDependencies { // swiftlint:disable:this force_try
-				try $0.bootstrapDatabase()
-				$0.defaultSyncEngine = try SyncEngine(
-					for: $0.defaultDatabase,
-					tables:
-						Profile.self,
-					Residence.self,
-					Utility.self,
-					Vehicle.self,
-					BankAccount.self,
-					InvestmentAccount.self,
-					HealthSavingsAccount.self,
-					ServiceProvider.self,
-					Device.self,
-					Subscription.self,
-					Job.self,
-					InsurancePolicy.self,
-					MaintenanceItem.self,
-					MaintenanceCompletion.self,
-					RoomPaintColor.self,
-					Other.self,
-					Asset.self
-				)
-			}
+			initializeSQLiteData()
+			TelemetryDeck.initialize(config: .init(appID: Constants.telemetryDeckAPIKey))
 		}
 	}
 
@@ -74,5 +53,32 @@ struct YouHQApp: App {
 		#if os(macOS)
 			.windowResizability(.contentSize)
 		#endif
+	}
+
+	private func initializeSQLiteData() {
+		try! prepareDependencies { // swiftlint:disable:this force_try
+			try $0.bootstrapDatabase()
+			$0.defaultSyncEngine = try SyncEngine(
+				for: $0.defaultDatabase,
+				tables:
+					Profile.self,
+				Residence.self,
+				Utility.self,
+				Vehicle.self,
+				BankAccount.self,
+				InvestmentAccount.self,
+				HealthSavingsAccount.self,
+				ServiceProvider.self,
+				Device.self,
+				Subscription.self,
+				Job.self,
+				InsurancePolicy.self,
+				MaintenanceItem.self,
+				MaintenanceCompletion.self,
+				RoomPaintColor.self,
+				Other.self,
+				Asset.self
+			)
+		}
 	}
 }

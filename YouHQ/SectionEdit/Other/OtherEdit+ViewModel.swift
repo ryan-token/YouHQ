@@ -46,7 +46,7 @@ extension OtherEdit {
 		}
 
 		func save() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					if isNew {
 						// Insert new record
@@ -64,6 +64,9 @@ extension OtherEdit {
 							)
 						}
 						.execute(db)
+						if other.residenceID != nil {
+							Analytics.sendSignal(.residenceOtherCreated)
+						}
 					} else {
 						// Update existing record
 						try Other.find(other.id)
@@ -79,6 +82,9 @@ extension OtherEdit {
 
 					try photoPicker.updateAsset(in: db, link: .other(other))
 				}
+			} catch {
+				Analytics.logError(id: .otherSaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 
@@ -87,12 +93,18 @@ extension OtherEdit {
 		}
 
 		func delete() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try Other.find(other.id)
 						.delete()
 						.execute(db)
 				}
+				if other.residenceID != nil {
+					Analytics.sendSignal(.residenceOtherDeleted)
+				}
+			} catch {
+				Analytics.logError(id: .otherDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 

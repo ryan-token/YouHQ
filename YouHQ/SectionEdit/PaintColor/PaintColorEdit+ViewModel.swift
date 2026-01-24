@@ -61,7 +61,7 @@ extension PaintColorEdit {
 		}
 
 		func save() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					if isNew {
 						// Insert new record
@@ -84,6 +84,7 @@ extension PaintColorEdit {
 							)
 						}
 						.execute(db)
+						Analytics.sendSignal(.residencePaintColorCreated)
 					} else {
 						// Update existing record
 						try RoomPaintColor.find(paintColor.id)
@@ -104,6 +105,9 @@ extension PaintColorEdit {
 							.execute(db)
 					}
 				}
+			} catch {
+				Analytics.logError(id: .paintColorSaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 
@@ -112,12 +116,16 @@ extension PaintColorEdit {
 		}
 
 		func delete() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try RoomPaintColor.find(paintColor.id)
 						.delete()
 						.execute(db)
 				}
+				Analytics.sendSignal(.residencePaintColorDeleted)
+			} catch {
+				Analytics.logError(id: .paintColorDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 	}

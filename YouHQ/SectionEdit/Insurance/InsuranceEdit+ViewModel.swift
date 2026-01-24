@@ -58,7 +58,7 @@ extension InsuranceEdit {
 		}
 
 		func save() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					if isNew {
 						// Insert new record
@@ -82,6 +82,10 @@ extension InsuranceEdit {
 							)
 						}
 						.execute(db)
+
+						if policy.residenceID != nil {
+							Analytics.sendSignal(.residenceInsurancePolicyCreated)
+						}
 					} else {
 						// Update existing record
 						try InsurancePolicy.find(policy.id)
@@ -105,6 +109,9 @@ extension InsuranceEdit {
 						link: .insurancePolicy(policy)
 					)
 				}
+			} catch {
+				Analytics.logError(id: .insurancePolicySaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 
@@ -113,12 +120,18 @@ extension InsuranceEdit {
 		}
 
 		func delete() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try InsurancePolicy.find(policy.id)
 						.delete()
 						.execute(db)
 				}
+				if policy.residenceID != nil {
+					Analytics.sendSignal(.residenceInsurancePolicyDeleted)
+				}
+			} catch {
+				Analytics.logError(id: .insurancePolicyDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 

@@ -48,7 +48,7 @@ extension UtilityEdit {
 		}
 
 		func save() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					if isNew {
 						// Insert new record
@@ -66,6 +66,7 @@ extension UtilityEdit {
 							)
 						}
 						.execute(db)
+						Analytics.sendSignal(.residenceUtilityCreated)
 					} else {
 						// Update existing record
 						try Utility.find(utility.id)
@@ -80,6 +81,9 @@ extension UtilityEdit {
 							.execute(db)
 					}
 				}
+			} catch {
+				Analytics.logError(id: .utilitySaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 
@@ -88,12 +92,16 @@ extension UtilityEdit {
 		}
 
 		func delete() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try Utility.find(utility.id)
 						.delete()
 						.execute(db)
 				}
+				Analytics.sendSignal(.residenceUtilityDeleted)
+			} catch {
+				Analytics.logError(id: .utilityDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 	}

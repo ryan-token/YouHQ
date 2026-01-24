@@ -87,12 +87,14 @@ extension MaintenanceItemsScreen {
 		}
 
 		func deleteMaintenanceItem(_ item: MaintenanceItem) {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try MaintenanceItem.find(item.id)
 						.delete()
 						.execute(db)
 				}
+
+				Analytics.sendSignal(.residenceMaintenanceItemCreated)
 
 				// Cancel notification when deleting item
 				Task {
@@ -100,6 +102,9 @@ extension MaintenanceItemsScreen {
 						for: item
 					)
 				}
+			} catch {
+				Analytics.logError(id: .maintenanceItemDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 

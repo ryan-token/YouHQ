@@ -131,6 +131,7 @@ struct PhotoViewer: View {
 			isShowingSaveSuccess = true
 		} catch {
 			downloadErrorMessage = error.localizedDescription
+			Analytics.logError(id: .photoSaveFailed, message: error.localizedDescription)
 		}
 	}
 }

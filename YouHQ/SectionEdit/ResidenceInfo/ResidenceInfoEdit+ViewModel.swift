@@ -100,7 +100,7 @@ extension ResidenceInfoEdit {
 		}
 
 		func delete() {
-			withErrorReporting {
+			do {
 				// Get all maintenance items for this residence before deletion
 				let maintenanceItems = try database.read { db in
 					try MaintenanceItem
@@ -123,6 +123,11 @@ extension ResidenceInfoEdit {
 						)
 					}
 				}
+
+				Analytics.sendSignal(.residenceDeleted)
+			} catch {
+				Analytics.logError(id: .residenceDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 

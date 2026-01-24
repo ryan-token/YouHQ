@@ -50,12 +50,15 @@ class InsurancePolicyViewModel {
 	}
 
 	func delete(_ policy: InsurancePolicy) {
-		withErrorReporting {
+		do {
 			try database.write { db in
 				try InsurancePolicy.find(policy.id)
 					.delete()
 					.execute(db)
 			}
+		} catch {
+			Analytics.logError(id: .insurancePolicyDeleteFailed, message: error.localizedDescription)
+			reportIssue(error)
 		}
 	}
 
@@ -66,6 +69,8 @@ class InsurancePolicyViewModel {
 					.update { $0.backgroundColor = color.databaseValue }
 					.execute(db)
 			}
+
+			Analytics.sendSignal(.itemBackgroundColorChanged)
 		}
 	}
 }

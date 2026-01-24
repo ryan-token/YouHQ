@@ -65,6 +65,9 @@ extension ResidenceScreen {
 				let newID = selectedResidence?.id.uuidString
 				if newID != selectedResidenceID {
 					selectedResidenceID = newID
+					if oldValue != nil && selectedResidence != nil {
+						Analytics.sendSignal(.residenceSwitched)
+					}
 				}
 				residenceNotes = selectedResidence?.notes ?? ""
 			}
@@ -162,7 +165,7 @@ extension ResidenceScreen {
 
 		func shareResidenceTapped() async {
 			if let selectedProfile {
-				await withErrorReporting {
+				do {
 					sharedRecord = try await syncEngine.share(
 						record: selectedProfile.profile
 					) {
@@ -170,6 +173,9 @@ extension ResidenceScreen {
 							selectedProfile.profile.name
 						$0[CKShare.SystemFieldKey.thumbnailImageData] = nil
 					}
+				} catch {
+					Analytics.logError(id: .profileShareFailed, message: error.localizedDescription)
+					reportIssue(error)
 				}
 			}
 		}
@@ -212,6 +218,8 @@ extension ResidenceScreen {
 						.update { $0.backgroundColor = color.databaseValue }
 						.execute(db)
 				}
+
+				Analytics.sendSignal(.itemBackgroundColorChanged)
 			}
 		}
 

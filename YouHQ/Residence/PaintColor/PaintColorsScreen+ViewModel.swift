@@ -68,12 +68,17 @@ extension PaintColorsScreen {
 		}
 
 		func deletePaintColor(_ item: RoomPaintColor) {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try RoomPaintColor.find(item.id)
 						.delete()
 						.execute(db)
 				}
+
+				Analytics.sendSignal(.residencePaintColorDeleted)
+			} catch {
+				Analytics.logError(id: .paintColorDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 	}

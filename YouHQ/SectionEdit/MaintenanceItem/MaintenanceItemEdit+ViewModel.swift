@@ -106,7 +106,7 @@ extension MaintenanceItemEdit {
 		}
 
 		func save() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					if isNew {
 						// Insert new record
@@ -131,6 +131,9 @@ extension MaintenanceItemEdit {
 							)
 						}
 						.execute(db)
+						if item.residenceID != nil {
+							Analytics.sendSignal(.residenceMaintenanceItemCreated)
+						}
 					} else {
 						// Update existing record
 						let newDueDate = isUsingManualDueDate ? dueDate : calculatedNextDueDate
@@ -170,6 +173,9 @@ extension MaintenanceItemEdit {
 						}
 					}
 				}
+			} catch {
+				Analytics.logError(id: .maintenanceItemSaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 
@@ -183,7 +189,7 @@ extension MaintenanceItemEdit {
 		}
 
 		func delete() {
-			withErrorReporting {
+			do {
 				try database.write { db in
 					try MaintenanceItem.find(item.id)
 						.delete()
@@ -196,6 +202,12 @@ extension MaintenanceItemEdit {
 						for: item
 					)
 				}
+				if item.residenceID != nil {
+					Analytics.sendSignal(.residenceMaintenanceItemDeleted)
+				}
+			} catch {
+				Analytics.logError(id: .maintenanceItemDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 
@@ -226,6 +238,7 @@ extension MaintenanceItemEdit {
 							await MainActor.run {
 								shouldNotify = false
 							}
+							Analytics.logError(id: .notificationsRequestFailed, message: error.localizedDescription)
 						}
 
 					case .denied:

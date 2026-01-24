@@ -42,7 +42,7 @@ extension AddResidenceSheet {
 
 		func save() -> Residence? {
 			var savedResidence: Residence?
-			withErrorReporting {
+			do {
 				try database.write { db in
 					let residenceID = UUID()
 					try Residence.insert {
@@ -83,10 +83,12 @@ extension AddResidenceSheet {
 						}
 						.execute(db)
 					}
-					savedResidence = try Residence.find(residenceID).fetchOne(
-						db
-					)
+					savedResidence = try Residence.find(residenceID).fetchOne(db)
 				}
+				Analytics.sendSignal(.residenceCreated)
+			} catch {
+				Analytics.logError(id: .residenceSaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 			return savedResidence
 		}

@@ -44,12 +44,17 @@ class UtilityViewModel {
 	}
 
 	func delete(_ utility: Utility) {
-		withErrorReporting {
+		do {
 			try database.write { db in
 				try Utility.find(utility.id)
 					.delete()
 					.execute(db)
 			}
+
+			Analytics.sendSignal(.residenceUtilityDeleted)
+		} catch {
+			Analytics.logError(id: .utilityDeleteFailed, message: error.localizedDescription)
+			reportIssue(error)
 		}
 	}
 
@@ -60,6 +65,8 @@ class UtilityViewModel {
 					.update { $0.backgroundColor = color.databaseValue }
 					.execute(db)
 			}
+
+			Analytics.sendSignal(.itemBackgroundColorChanged)
 		}
 	}
 }
