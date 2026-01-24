@@ -86,26 +86,32 @@ struct ResidenceFormFields: View {
 			TextField("Street", text: $street)
 				.focused(focusedField ?? FocusState<Bool>().projectedValue)
 				#if !os(macOS)
+					.textContentType(.streetAddressLine1)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("Unit", text: $unit)
 				#if !os(macOS)
+					.textContentType(.streetAddressLine2)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("City", text: $city)
 				#if !os(macOS)
+					.textContentType(.addressCity)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("State", text: $state)
 				#if !os(macOS)
+					.textContentType(.addressState)
 					.textInputAutocapitalization(.characters)
 				#endif
 			TextField("ZIP Code", text: $zipCode)
 				#if !os(macOS)
+					.textContentType(.postalCode)
 					.keyboardType(.numberPad)
 				#endif
 			TextField("Country", text: $country)
 				#if !os(macOS)
+					.textContentType(.countryName)
 					.textInputAutocapitalization(.words)
 				#endif
 		}
