@@ -15,7 +15,7 @@ struct PaintColorEdit: View {
 		if let paintColorVM = coordinator.paintColorViewModel {
 			@Bindable var vm = paintColorVM
 			Section("Paint Info") {
-				LabeledField(label: "Room") {
+				LabeledField(label: vm.paintColor.residenceID != nil ? "Room" : "Part of Car") {
 					TextField("", text: $vm.room)
 						.focused(focusedField)
 						.multilineTextAlignment(.trailing)

@@ -12,12 +12,6 @@ struct MediaMenu: View {
 
 	var body: some View {
 		Button {
-			vm.showAddDeviceSheet()
-		} label: {
-			Label("Add Device", systemImage: "desktopcomputer")
-		}
-
-		Button {
 			vm.showAddServiceProviderSheet()
 		} label: {
 			Label("Add Service Provider", systemImage: "network")
@@ -27,6 +21,12 @@ struct MediaMenu: View {
 			vm.showAddSubscriptionSheet()
 		} label: {
 			Label("Add Subscription", systemImage: "rectangle.stack")
+		}
+
+		Button {
+			vm.showAddDeviceSheet()
+		} label: {
+			Label("Add Device", systemImage: "desktopcomputer")
 		}
 
 		Button {
