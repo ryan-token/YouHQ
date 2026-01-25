@@ -53,6 +53,12 @@ struct YouHQApp: App {
 		#if os(macOS)
 			.windowResizability(.contentSize)
 		#endif
+
+		#if os(macOS)
+			Settings {
+				SettingsScreen()
+			}
+		#endif
 	}
 
 	private func initializeSQLiteData() {

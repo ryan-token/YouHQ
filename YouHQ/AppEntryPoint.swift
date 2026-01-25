@@ -19,26 +19,41 @@ struct AppEntryPoint: View {
 			Tab("Home", systemImage: "house", value: .home) {
 				NavigationStack {
 					ResidenceScreen()
+						.toolbar {
+							SettingsToolbarItem()
+						}
 				}
 			}
 			Tab("Vehicles", systemImage: "car.2", value: .vehicles) {
 				NavigationStack {
 					VehicleScreen()
+						.toolbar {
+							SettingsToolbarItem()
+						}
 				}
 			}
 			Tab("Money", systemImage: "dollarsign", value: .money) {
 				NavigationStack {
 					MoneyScreen()
+						.toolbar {
+							SettingsToolbarItem()
+						}
 				}
 			}
 			Tab("Media", systemImage: "desktopcomputer.and.macbook", value: .media) {
 				NavigationStack {
 					MediaScreen()
+						.toolbar {
+							SettingsToolbarItem()
+						}
 				}
 			}
 			Tab("Career", systemImage: "briefcase", value: .career) {
 				NavigationStack {
 					CareerScreen()
+						.toolbar {
+							SettingsToolbarItem()
+						}
 				}
 			}
 		}
