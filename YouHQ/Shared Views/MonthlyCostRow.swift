@@ -11,7 +11,7 @@ struct MonthlyTCORow: View {
 	let label: String
 	let totalCost: Double
 	let residenceCost: Double?
-	let residenceCostType: CostType
+	let residenceCostType: ResidenceCostType
 	let utilities: [Utility]
 	let insurancePolicies: [InsurancePolicy]
 	let others: [Other]
@@ -23,7 +23,7 @@ struct MonthlyTCORow: View {
 		_ label: String,
 		totalCost: Double,
 		residenceCost: Double?,
-		residenceCostType: CostType,
+		residenceCostType: ResidenceCostType,
 		utilities: [Utility],
 		insurancePolicies: [InsurancePolicy],
 		others: [Other],
@@ -41,40 +41,40 @@ struct MonthlyTCORow: View {
 
 	var body: some View {
 		HStack(alignment: .center) {
-			Group {
-				Text(label)
-					.font(.headline)
-				Button {
-					showPopover.toggle()
-				} label: {
-					Text(totalCost.asCost)
-						.lineLimit(1)
-						.blur(radius: blurred ? 4 : 0)
-						.padding(.horizontal, 12)
-						.padding(.vertical, 4)
-						.background(.white.opacity(0.3))
-						.clipShape(.rect(cornerRadius: 8))
-				}
-				.buttonStyle(.plain)
+			Text(label)
+				.font(.headline)
+			Button {
+				showPopover.toggle()
+			} label: {
+				Text(totalCost.asCost)
+					.lineLimit(1)
+					.blur(radius: blurred ? 4 : 0)
+					.padding(.horizontal, 12)
+					.padding(.vertical, 4)
+					.background(.white.opacity(0.3))
+					.clipShape(.rect(cornerRadius: 8))
 			}
-			.foregroundStyle(.white)
+			.buttonStyle(.plain)
+			.popover(isPresented: $showPopover) {
+				CostBreakdownView(
+					residenceCost: residenceCost,
+					residenceCostType: residenceCostType,
+					utilities: utilities,
+					insurancePolicies: insurancePolicies,
+					others: others,
+					totalCost: totalCost
+				)
+			}
 		}
-		.popover(isPresented: $showPopover) {
-			CostBreakdownView(
-				residenceCost: residenceCost,
-				residenceCostType: residenceCostType,
-				utilities: utilities,
-				insurancePolicies: insurancePolicies,
-				others: others,
-				totalCost: totalCost
-			)
-		}
+		.foregroundStyle(.white)
 	}
 }
 
 struct CostBreakdownView: View {
+	@Environment(\.colorScheme) var colorScheme
+
 	let residenceCost: Double?
-	let residenceCostType: CostType
+	let residenceCostType: ResidenceCostType
 	let utilities: [Utility]
 	let insurancePolicies: [InsurancePolicy]
 	let others: [Other]
@@ -156,6 +156,7 @@ struct CostBreakdownView: View {
 			.padding()
 			.frame(minWidth: 300)
 		}
+		.foregroundStyle(colorScheme == .light ? .black : .white)
 	}
 }
 

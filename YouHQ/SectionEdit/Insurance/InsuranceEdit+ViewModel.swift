@@ -67,6 +67,7 @@ extension InsuranceEdit {
 								id: policy.id,
 								profileID: policy.profileID,
 								residenceID: policy.residenceID,
+								vehicleID: policy.vehicleID,
 								type: type,
 								provider: provider,
 								policyNumber: policyNumber,
@@ -85,6 +86,8 @@ extension InsuranceEdit {
 
 						if policy.residenceID != nil {
 							Analytics.sendSignal(.residenceInsurancePolicyCreated)
+						} else if policy.vehicleID != nil {
+							Analytics.sendSignal(.vehicleInsurancePolicyCreated)
 						}
 					} else {
 						// Update existing record
@@ -128,6 +131,8 @@ extension InsuranceEdit {
 				}
 				if policy.residenceID != nil {
 					Analytics.sendSignal(.residenceInsurancePolicyDeleted)
+				} else if policy.vehicleID != nil {
+					Analytics.sendSignal(.vehicleInsurancePolicyDeleted)
 				}
 			} catch {
 				Analytics.logError(id: .insurancePolicyDeleteFailed, message: error.localizedDescription)

@@ -35,7 +35,7 @@ import SQLiteData
 	var moveOutDate: Date?
 	var isCurrent: Bool = true
 	var monthlyCost: Double?
-	var costType: CostType = .rent
+	var costType: ResidenceCostType = .rent
 	var backgroundColor: String = "indigo"
 	var url: String = ""
 	var notes: String = ""
@@ -203,7 +203,7 @@ extension MaintenanceItem {
 
 // MARK: - Vehicle Section
 
-@Table struct Vehicle: Identifiable {
+@Table struct Vehicle: Identifiable, Equatable {
 	let id: UUID
 	let profileID: Profile.ID
 	var type: VehicleType = .car
@@ -213,9 +213,25 @@ extension MaintenanceItem {
 	var year: String?
 	var color: String?
 	var vin: String?
+	var monthlyCost: Double?
+	var costType: VehicleCostType = .owned
 	var backgroundColor: String = "teal"
 	var url: String = ""
 	var notes: String = ""
+
+	var displayName: String {
+		var parts: [String] = []
+		if year?.isEmpty == false {
+			parts.append(year!)
+		}
+		if make.isNotEmpty {
+			parts.append(make)
+		}
+		if model.isNotEmpty {
+			parts.append(model)
+		}
+		return parts.isEmpty ? "Vehicle" : parts.joined(separator: " ")
+	}
 }
 
 // MARK: - Money Section
@@ -300,7 +316,7 @@ extension MaintenanceItem {
 
 // MARK: - Career Section
 
-@Table struct Job: Identifiable {
+@Table struct Job: Identifiable, Equatable {
 	let id: UUID
 	let profileID: Profile.ID
 	var company: String = ""
@@ -338,7 +354,7 @@ extension MaintenanceItem {
 
 // MARK: - Other
 
-@Table struct Other: Identifiable {
+@Table struct Other: Identifiable, Equatable {
 	let id: UUID
 	let profileID: Profile.ID
 	var residenceID: Residence.ID?
@@ -384,7 +400,7 @@ nonisolated struct ResidenceType: RawRepresentable, Hashable, QueryBindable {
 	]
 }
 
-nonisolated struct CostType: RawRepresentable, Hashable, QueryBindable {
+nonisolated struct ResidenceCostType: RawRepresentable, Hashable, QueryBindable {
 	let rawValue: String
 
 	static let rent = Self(rawValue: "Rent")
@@ -432,6 +448,20 @@ nonisolated struct VehicleSubType: RawRepresentable, Hashable, QueryBindable {
 
 	static let allCases: [Self] = [
 		.gas, .electric, .hybrid, .pluginHybrid, .other
+	]
+}
+
+nonisolated struct VehicleCostType: RawRepresentable, Hashable, QueryBindable {
+	let rawValue: String
+
+	static let owned = Self(rawValue: "Owned (No Payment)")
+	static let loanPayment = Self(rawValue: "Loan Payment")
+	static let leasePayment = Self(rawValue: "Lease Payment")
+	static let dealerPayment = Self(rawValue: "Dealer Payment")
+	static let other = Self(rawValue: "Other")
+
+	static let allCases: [Self] = [
+		.owned, .loanPayment, .leasePayment, .dealerPayment, .other
 	]
 }
 
@@ -487,7 +517,7 @@ nonisolated struct ServiceProviderType: RawRepresentable, Hashable,
 
 	static let internet = Self(rawValue: "Internet")
 	static let tv = Self(rawValue: "TV")
-	static let cell = Self(rawValue: "Cell")
+	static let cell = Self(rawValue: "Cellular")
 
 	static let allCases: [Self] = [.internet, .tv, .cell]
 }

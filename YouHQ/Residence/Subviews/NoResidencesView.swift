@@ -12,7 +12,7 @@ struct NoResidencesView: View {
 	let isSynchronizing: Bool
 	let onAddResidenceTapped: () -> Void
 
-    var body: some View {
+	var body: some View {
 		VStack {
 			if isSynchronizing || !loadDelayFinished {
 				ProgressView()
@@ -34,9 +34,9 @@ struct NoResidencesView: View {
 				loadDelayFinished = true
 			}
 		}
-    }
+	}
 }
 
 #Preview {
-    NoResidencesView(isSynchronizing: false, onAddResidenceTapped: {})
+	NoResidencesView(isSynchronizing: false, onAddResidenceTapped: {})
 }

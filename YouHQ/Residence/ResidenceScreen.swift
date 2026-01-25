@@ -9,8 +9,9 @@ import SQLiteData
 import SwiftUI
 
 struct ResidenceScreen: View {
+	@Dependency(\.defaultSyncEngine) var syncEngine
 	@State private var vm = ViewModel()
-	@AppStorage("hideCosts") private var hideCosts = false
+	@AppStorage("hideResidenceCosts") private var hideResidenceCosts = false
 
 	var body: some View {
 		List {
@@ -24,15 +25,16 @@ struct ResidenceScreen: View {
 
 				if vm.residences.isEmpty {
 					NoResidencesView(
-						isSynchronizing: vm.syncEngine.isSynchronizing,
+						isSynchronizing: syncEngine.isSynchronizing,
 						onAddResidenceTapped: vm.showCreateResidenceSheet
 					)
 				} else {
 					MacOSResidencePicker(residences: vm.residences, selectedResidence: $vm.selectedResidence)
 
-					HideCostsToggle(hideCosts: $hideCosts)
+					HideCostsToggle(hideCosts: $hideResidenceCosts)
 
-					ResidenceInfo(vm: vm, hideCosts: hideCosts)
+					ResidenceInfo(vm: vm, hideCosts: hideResidenceCosts)
+						.id(vm.selectedResidence?.id)
 				}
 			}
 			.listRowSeparator(.hidden)

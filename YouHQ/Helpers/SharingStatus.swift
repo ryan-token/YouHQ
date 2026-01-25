@@ -16,7 +16,7 @@ struct SharingStatus: View {
 				if profile.isShared {
 					Button {
 						Task {
-							await vm.shareResidenceTapped()
+							await vm.shareProfileTapped()
 						}
 					} label: {
 						HStack {

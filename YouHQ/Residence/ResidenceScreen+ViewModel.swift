@@ -20,7 +20,7 @@ extension ResidenceScreen {
 
 		// Join: Get all profiles and whether they are shared or not
 		@Selection
-		struct ProfileShare { // swiftlint:disable:this nesting
+		struct ProfileShare: ProfileShareProtocol { // swiftlint:disable:this nesting
 			let profile: Profile
 			let isShared: Bool
 		}
@@ -62,8 +62,8 @@ extension ResidenceScreen {
 				}
 				residenceNotes = selectedResidence?.notes ?? ""
 
-				// Load data for the new residence
-				if selectedResidence != nil && selectedResidence?.id != oldValue?.id {
+				// Load data for the new residence when ID changes (only for manual switching)
+				if selectedResidence?.id != oldValue?.id, oldValue != nil {
 					Task {
 						await loadAllData()
 					}
@@ -130,7 +130,7 @@ extension ResidenceScreen {
 		func loadResidenceData() async {
 			setProfile(to: "Default")
 			await loadResidences()
-			restoreSelection()
+			await restoreSelection()
 		}
 
 		private func loadAllData() async {
@@ -142,22 +142,27 @@ extension ResidenceScreen {
 			await otherViewModel.loadResidence(for: residenceID)
 		}
 
-		func restoreSelection() {
+		func restoreSelection() async {
 			// Restore from AppStorage once
 			if let selectedResidenceID,
 				let selectedResidenceUUID = UUID(
 					uuidString: selectedResidenceID
 				)
 			{
-				setSelectedResidence(to: selectedResidenceUUID)
+				await setSelectedResidence(to: selectedResidenceUUID)
 			} else if selectedResidenceID == nil, !residences.isEmpty {
-				setSelectedResidence(to: residences.first!.id)
+				await setSelectedResidence(to: residences.first!.id)
 			}
 		}
 
-		private func setSelectedResidence(to residenceID: UUID) {
-			selectedResidence = residences.first(where: { $0.id == residenceID }
-			)
+		private func setSelectedResidence(to residenceID: UUID) async {
+			selectedResidence = residences.first(where: { $0.id == residenceID })
+			// Wait for child data to load before returning
+			await loadAllData()
+		}
+
+		func shareProfileTapped() async {
+			await shareResidenceTapped()
 		}
 
 		func shareResidenceTapped() async {

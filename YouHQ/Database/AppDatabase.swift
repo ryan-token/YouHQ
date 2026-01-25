@@ -108,6 +108,8 @@ func appDatabase() throws -> any DatabaseWriter {
 				"year" TEXT,
 				"color" TEXT,
 				"vin" TEXT,
+				"monthlyCost" TEXT,
+				"costType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'Owned (No Payment)',
 				"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'teal',
 				"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
 				"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''

@@ -77,6 +77,13 @@ struct OtherEdit: View {
 		draftInsurancePolicy: .constant(nil),
 		draftMaintenanceItem: .constant(nil),
 		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil)
+		draftOther: .constant(nil),
+		draftJob: .constant(nil),
+		draftDevice: .constant(nil),
+		draftServiceProvider: .constant(nil),
+		draftSubscription: .constant(nil),
+		draftBankAccount: .constant(nil),
+		draftInvestmentAccount: .constant(nil),
+		draftHealthSavingsAccount: .constant(nil)
 	)
 }

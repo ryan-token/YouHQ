@@ -74,13 +74,19 @@ struct Analytics {
 		case mediaTabTapped = "Media.Tab.tapped"
 		case mediaDeviceCreated = "Media.Device.created"
 		case mediaDeviceDeleted = "Media.Device.deleted"
+		case mediaServiceProviderCreated = "Media.ServiceProvider.created"
+		case mediaServiceProviderDeleted = "Media.ServiceProvider.deleted"
 		case mediaSubscriptionCreated = "Media.Subscription.created"
 		case mediaSubscriptionDeleted = "Media.Subscription.deleted"
+		case mediaOtherCreated = "Media.Other.created"
+		case mediaOtherDeleted = "Media.Other.deleted"
 
 		// Career
 		case careerTabTapped = "Career.Tab.tapped"
 		case careerJobCreated = "Career.Job.created"
 		case careerJobDeleted = "Career.Job.deleted"
+		case careerOtherCreated = "Career.Other.created"
+		case careerOtherDeleted = "Career.Other.deleted"
 
 		// Other
 		case itemBackgroundColorChanged = "Item.BackgroundColor.changed"
@@ -112,8 +118,37 @@ struct Analytics {
 		case otherSaveFailed = "Failed to save other item"
 		case otherDeleteFailed = "Failed to delete other item"
 
+		// Devices
+		case deviceSaveFailed = "Failed to save device"
+		case deviceDeleteFailed = "Failed to delete device"
+
+		// Service Providers
+		case serviceProviderSaveFailed = "Failed to save service provider"
+		case serviceProviderDeleteFailed = "Failed to delete service provider"
+
+		// Subscriptions
+		case subscriptionSaveFailed = "Failed to save subscription"
+		case subscriptionDeleteFailed = "Failed to delete subscription"
+
+		// Jobs
+		case jobSaveFailed = "Failed to save job"
+		case jobLoadFailed = "Failed to load job data"
+		case jobDeleteFailed = "Failed to delete job"
+
 		// CloudKit
 		case profileShareFailed = "Failed to share profile"
+
+		// Bank Accounts
+		case bankAccountSaveFailed = "Failed to save bank account"
+		case bankAccountDeleteFailed = "Failed to delete bank account"
+
+		// Investment Accounts
+		case investmentAccountSaveFailed = "Failed to save investment account"
+		case investmentAccountDeleteFailed = "Failed to delete investment account"
+
+		// Health Savings Accounts
+		case hsaSaveFailed = "Failed to save HSA"
+		case hsaDeleteFailed = "Failed to delete HSA"
 
 		// General
 		case photoSaveFailed = "Failed to save photo to library"

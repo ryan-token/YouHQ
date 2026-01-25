@@ -19,7 +19,7 @@ struct ResidenceFormFields: View {
 	@Binding var moveInDate: Date?
 	@Binding var moveOutDate: Date?
 	@Binding var hasMoveOutDate: Bool
-	@Binding var costType: CostType
+	@Binding var costType: ResidenceCostType
 	@Binding var monthlyCost: Double?
 	@Binding var url: String
 	@Binding var notes: String
@@ -38,7 +38,7 @@ struct ResidenceFormFields: View {
 		moveInDate: Binding<Date?>,
 		moveOutDate: Binding<Date?>,
 		hasMoveOutDate: Binding<Bool>,
-		costType: Binding<CostType>,
+		costType: Binding<ResidenceCostType>,
 		monthlyCost: Binding<Double?>,
 		url: Binding<String>,
 		notes: Binding<String>,
@@ -152,7 +152,7 @@ struct ResidenceFormFields: View {
 		Section("Cost") {
 			LabeledField(label: "Cost Type") {
 				Picker(selection: $costType) {
-					ForEach(CostType.allCases, id: \.self) { type in
+					ForEach(ResidenceCostType.allCases, id: \.self) { type in
 						Text(type.rawValue).tag(type)
 					}
 				} label: {

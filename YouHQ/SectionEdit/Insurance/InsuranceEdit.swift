@@ -19,7 +19,11 @@ struct InsuranceEdit: View {
 					Picker(selection: $vm.type) {
 						ForEach(
 							InsurancePolicyType.allCases.filter {
-								$0 == .home || $0 == .renters
+								if vm.policy.vehicleID != nil {
+									return $0 == .auto
+								} else {
+									return $0 == .home || $0 == .renters
+								}
 							},
 							id: \.self
 						) { type in
@@ -28,6 +32,7 @@ struct InsuranceEdit: View {
 					} label: {
 						EmptyView()
 					}
+					.disabled(vm.policy.vehicleID != nil)
 				}
 
 				LabeledField(label: "Provider") {
@@ -129,6 +134,13 @@ struct InsuranceEdit: View {
 		draftInsurancePolicy: .constant(nil),
 		draftMaintenanceItem: .constant(nil),
 		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil)
+		draftOther: .constant(nil),
+		draftJob: .constant(nil),
+		draftDevice: .constant(nil),
+		draftServiceProvider: .constant(nil),
+		draftSubscription: .constant(nil),
+		draftBankAccount: .constant(nil),
+		draftInvestmentAccount: .constant(nil),
+		draftHealthSavingsAccount: .constant(nil)
 	)
 }

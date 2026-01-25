@@ -12,6 +12,7 @@ import SQLiteData
 /// Used to fetch, create, and delete photo assets for various entity types.
 enum PhotoAssetLink {
 	case residence(Residence)
+	case vehicle(Vehicle)
 	case insurancePolicy(InsurancePolicy)
 	case maintenanceItem(MaintenanceItem)
 	case other(Other)
@@ -37,6 +38,7 @@ enum PhotoAssetLink {
 	private var entityID: UUID {
 		switch self {
 		case .residence(let residence): residence.id
+		case .vehicle(let vehicle): vehicle.id
 		case .insurancePolicy(let policy): policy.id
 		case .maintenanceItem(let item): item.id
 		case .other(let other): other.id
@@ -47,6 +49,8 @@ enum PhotoAssetLink {
 		switch self {
 		case .residence:
 			try Asset.where { $0.residenceID.eq(entityID) }.fetchOne(database)
+		case .vehicle:
+			try Asset.where { $0.vehicleID.eq(entityID) }.fetchOne(database)
 		case .insurancePolicy:
 			try Asset.where { $0.insurancePolicyID.eq(entityID) }.fetchOne(
 				database
@@ -66,6 +70,10 @@ enum PhotoAssetLink {
 			try Asset.where { $0.residenceID.eq(entityID) }.delete().execute(
 				database
 			)
+		case .vehicle:
+			try Asset.where { $0.vehicleID.eq(entityID) }.delete().execute(
+				database
+			)
 		case .insurancePolicy:
 			try Asset.where { $0.insurancePolicyID.eq(entityID) }.delete()
 				.execute(database)
@@ -83,6 +91,8 @@ enum PhotoAssetLink {
 		switch self {
 		case .residence(let residence):
 			return residence.profileID
+		case .vehicle(let vehicle):
+			return vehicle.profileID
 		case .insurancePolicy(let policy):
 			return policy.profileID
 		case .maintenanceItem(let item):
@@ -102,6 +112,8 @@ enum PhotoAssetLink {
 	private func makeAssetDraft(profileID: UUID, imageData: Data) -> Asset.Draft {
 		let residenceID: UUID? =
 			if case .residence = self { entityID } else { nil }
+		let vehicleID: UUID? =
+			if case .vehicle = self { entityID } else { nil }
 		let insurancePolicyID: UUID? =
 			if case .insurancePolicy = self { entityID } else { nil }
 		let maintenanceItemID: UUID? =
@@ -112,7 +124,7 @@ enum PhotoAssetLink {
 			id: UUID(),
 			profileID: profileID,
 			residenceID: residenceID,
-			vehicleID: nil,
+			vehicleID: vehicleID,
 			insurancePolicyID: insurancePolicyID,
 			maintenanceItemID: maintenanceItemID,
 			deviceID: nil,

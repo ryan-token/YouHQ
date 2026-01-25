@@ -27,7 +27,7 @@ extension ResidenceInfoEdit {
 		var moveInDate: Date?
 		var moveOutDate: Date?
 		var hasMoveOutDate: Bool
-		var costType: CostType
+		var costType: ResidenceCostType
 		var monthlyCost: Double?
 		var url: String
 		var notes: String

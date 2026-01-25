@@ -26,7 +26,7 @@ extension AddResidenceSheet {
 		var moveInDate: Date?
 		var moveOutDate: Date?
 		var hasMoveOutDate: Bool = false
-		var costType: CostType = .rent
+		var costType: ResidenceCostType = .rent
 		var monthlyCost: Double?
 		var url: String = ""
 		var notes: String = ""

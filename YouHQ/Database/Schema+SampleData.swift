@@ -63,6 +63,8 @@ extension Vehicle {
 		year: "2023",
 		color: "Midnight Silver Metallic",
 		vin: "5YJ3E1EA1KF123456",
+		monthlyCost: 650.00,
+		costType: .loanPayment,
 		notes: "Long range battery"
 	)
 }

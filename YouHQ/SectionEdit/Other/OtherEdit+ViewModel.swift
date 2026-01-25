@@ -66,8 +66,20 @@ extension OtherEdit {
 							)
 						}
 						.execute(db)
-						if other.residenceID != nil {
+						// Send appropriate analytics signal based on category
+						switch other.category {
+						case .homes:
 							Analytics.sendSignal(.residenceOtherCreated)
+						case .vehicles:
+							Analytics.sendSignal(.vehicleOtherCreated)
+						case .money:
+							Analytics.sendSignal(.moneyOtherCreated)
+						case .media:
+							Analytics.sendSignal(.moneyOtherCreated)
+						case .career:
+							Analytics.sendSignal(.careerOtherCreated)
+						default:
+							break
 						}
 					} else {
 						// Update existing record
@@ -101,8 +113,20 @@ extension OtherEdit {
 						.delete()
 						.execute(db)
 				}
-				if other.residenceID != nil {
+				// Send appropriate analytics signal based on category
+				switch other.category {
+				case .homes:
 					Analytics.sendSignal(.residenceOtherDeleted)
+				case .vehicles:
+					Analytics.sendSignal(.vehicleOtherDeleted)
+				case .money:
+					Analytics.sendSignal(.moneyOtherDeleted)
+				case .media:
+					Analytics.sendSignal(.moneyOtherDeleted)
+				case .career:
+					Analytics.sendSignal(.careerOtherDeleted)
+				default:
+					break
 				}
 			} catch {
 				Analytics.logError(id: .otherDeleteFailed, message: error.localizedDescription)

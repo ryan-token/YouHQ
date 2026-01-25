@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct AvailableProfilesView: View {
-	let profiles: [ResidenceScreen.ViewModel.ProfileShare]
+struct AvailableProfilesView<T>: View where T: ProfileShareProtocol {
+	let profiles: [T]
 
-	init(for profiles: [ResidenceScreen.ViewModel.ProfileShare]) {
+	init(for profiles: [T]) {
 		self.profiles = profiles
 	}
 
-    var body: some View {
+	var body: some View {
 		VStack {
 			ForEach(profiles, id: \.profile.id) { profile in
 				HStack(spacing: 2) {
@@ -26,7 +26,7 @@ struct AvailableProfilesView: View {
 				.font(.caption)
 			}
 		}
-    }
+	}
 }
 
 #Preview {

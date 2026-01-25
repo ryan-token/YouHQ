@@ -28,34 +28,36 @@ struct ResidenceMenu: View {
 				Divider()
 			}
 
-			Button {
-				vm.showAddUtilitySheet()
-			} label: {
-				Label("Add Utility", systemImage: "bolt.fill")
-			}
+			if !vm.residences.isEmpty {
+				Button {
+					vm.showAddUtilitySheet()
+				} label: {
+					Label("Add Utility", systemImage: "bolt.fill")
+				}
 
-			Button {
-				vm.showAddInsurancePolicySheet()
-			} label: {
-				Label("Add Insurance Policy", systemImage: "shield.fill")
-			}
+				Button {
+					vm.showAddInsurancePolicySheet()
+				} label: {
+					Label("Add Insurance Policy", systemImage: "shield.fill")
+				}
 
-			Button {
-				vm.showAddMaintenanceItemSheet()
-			} label: {
-				Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
-			}
+				Button {
+					vm.showAddMaintenanceItemSheet()
+				} label: {
+					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
+				}
 
-			Button {
-				vm.showAddPaintColorSheet()
-			} label: {
-				Label("Add Paint Color", systemImage: "paintbrush.fill")
-			}
+				Button {
+					vm.showAddPaintColorSheet()
+				} label: {
+					Label("Add Paint Color", systemImage: "paintbrush.fill")
+				}
 
-			Button {
-				vm.showAddOtherSheet()
-			} label: {
-				Label("Add Other", systemImage: "ellipsis.circle.fill")
+				Button {
+					vm.showAddOtherSheet()
+				} label: {
+					Label("Add Other", systemImage: "ellipsis.circle.fill")
+				}
 			}
 		}
 	}
