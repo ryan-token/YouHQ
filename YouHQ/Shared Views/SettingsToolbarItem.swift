@@ -15,7 +15,7 @@ struct SettingsToolbarItem: ToolbarContent {
 	#endif
 
     var body: some ToolbarContent {
-		ToolbarItem(placement: .primaryAction) {
+		ToolbarItem(placement: .navigation) {
 			Button {
 				#if os(macOS)
 					openSettings()

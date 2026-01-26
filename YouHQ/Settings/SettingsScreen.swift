@@ -9,60 +9,83 @@ import SwiftUI
 
 struct SettingsScreen: View {
 	enum SettingsTab {
-		case general, profiles
+		case general
+		case premium
+		case profiles
 	}
 
-	@State private var selectedTab: SettingsTab = .general
+	@Environment(\.dismiss) var dismiss
+	@State private var selectedTab: SettingsTab?
 
 	var body: some View {
-		#if os(macOS)
-			NavigationSplitView {
-				List(selection: $selectedTab) {
-					Label("General", systemImage: "gear")
-						.tag(SettingsTab.general)
-					Label("Profiles", systemImage: "person.crop.circle")
-						.tag(SettingsTab.profiles)
+		NavigationSplitView {
+			List(selection: $selectedTab) {
+				Section("Preferences") {
+					SettingsNavLabel(
+						labelText: "General",
+						iconName: "square.stack.fill",
+						iconColor: .orange
+					)
+					.tag(SettingsTab.general)
+
+					SettingsNavLabel(
+						labelText: "YouHQ Premium",
+						iconName: "star.square.fill",
+						iconColor: .purple
+					)
+					.tag(SettingsTab.premium)
+
+					SettingsNavLabel(
+						labelText: "Profiles",
+						iconName: "person.2.square.stack.fill",
+						iconColor: .blue
+					)
+					.tag(SettingsTab.profiles)
 				}
-				.listStyle(.sidebar)
-				.navigationSplitViewColumnWidth(200)
-			} detail: {
-				Group {
-					switch selectedTab {
-					case .general:
-						GeneralSettingsView()
-					case .profiles:
-						EmptyView()
-					}
+
+				Section("More") {
+					RateAppButton()
+					AboutAppButton()
+					TermsAndPrivacyPolicyButton()
 				}
-				.frame(maxHeight: .infinity, alignment: .top)
-				.navigationSplitViewColumnWidth(min: 100, ideal: 100)
 			}
-		#else
-			// iOS version without selection binding
-			NavigationSplitView {
-				List {
-					NavigationLink(value: SettingsTab.general) {
-						Label("General", systemImage: "gear")
-					}
-					NavigationLink(value: SettingsTab.profiles) {
-						Label("Profiles", systemImage: "person.crop.circle")
-					}
-				}
-				.listStyle(.sidebar)
-				.navigationTitle("Settings")
-			} detail: {
-				NavigationStack {
-					Group {
-						switch selectedTab {
-						case .general:
-							GeneralSettingsView()
-						case .profiles:
-							EmptyView()
+			.listStyle(.sidebar)
+			.toolbar(removing: .sidebarToggle)
+			.navigationTitle("Settings")
+			.navigationSplitViewColumnWidth(210)
+
+			#if !os(macOS)
+				.navigationBarTitleDisplayMode(.inline)
+				.toolbar {
+					ToolbarItem(placement: .navigation) {
+						Button {
+							dismiss()
+						} label: {
+							Image(systemName: "xmark")
 						}
 					}
 				}
+			#endif
+		} detail: {
+			Group {
+				switch selectedTab {
+				case .general:
+					GeneralSettingsView()
+				case .premium:
+					YouHQPremiumView()
+				case .profiles:
+					ProfileSettingsView()
+				case nil:
+					ContentUnavailableView {
+						Label("No Selection", systemImage: "questionmark.circle")
+					} description: {
+						Text("Tap an option in the sidebar for settings.")
+					}
+				}
 			}
-		#endif
+			.frame(maxHeight: .infinity, alignment: .top)
+			.navigationSplitViewColumnWidth(min: 100, ideal: 100)
+		}
 	}
 }
 

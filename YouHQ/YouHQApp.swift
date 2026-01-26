@@ -57,6 +57,14 @@ struct YouHQApp: App {
 		#if os(macOS)
 			Settings {
 				SettingsScreen()
+					.frame(
+						minWidth: 600,
+						idealWidth: 800,
+						maxWidth: .infinity,
+						minHeight: 500,
+						idealHeight: 500,
+						maxHeight: .infinity
+					)
 			}
 		#endif
 	}

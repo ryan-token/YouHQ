@@ -1,0 +1,40 @@
+//
+//  RateAppButton.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 1/25/26.
+//
+
+import SwiftUI
+
+struct RateAppButton: View {
+    var body: some View {
+		Button {
+			// TODO: Link to rate in the App Store
+			print("Link to rate in the App Store")
+		} label: {
+			HStack {
+				Label {
+					Text("Rate")
+				} icon: {
+					Image(systemName: "heart.square.fill")
+						.font(.title3)
+						.foregroundStyle(.pink)
+				}
+
+				Spacer()
+
+				Image(systemName: "arrow.up.forward")
+					.foregroundStyle(.secondary)
+					.font(.caption)
+					.fontWeight(.semibold)
+			}
+			.contentShape(.rect)
+		}
+		.buttonStyle(.plain)
+    }
+}
+
+#Preview {
+    RateAppButton()
+}
