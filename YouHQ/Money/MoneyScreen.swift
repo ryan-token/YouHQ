@@ -15,6 +15,8 @@ struct MoneyScreen: View {
 	var body: some View {
 		List {
 			Group {
+				SharingStatus(for: vm.selectedProfile)
+
 				if hasNoAccounts {
 					NoAccountsView(vm: vm)
 				} else {

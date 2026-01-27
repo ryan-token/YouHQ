@@ -9,7 +9,6 @@ import SwiftUI
 
 struct SettingsScreen: View {
 	enum SettingsTab {
-		case general
 		case premium
 		case profiles
 	}
@@ -21,13 +20,6 @@ struct SettingsScreen: View {
 		NavigationSplitView {
 			List(selection: $selectedTab) {
 				Section("Preferences") {
-					SettingsNavLabel(
-						labelText: "General",
-						iconName: "square.stack.fill",
-						iconColor: .orange
-					)
-					.tag(SettingsTab.general)
-
 					SettingsNavLabel(
 						labelText: "YouHQ Premium",
 						iconName: "star.square.fill",
@@ -69,8 +61,6 @@ struct SettingsScreen: View {
 		} detail: {
 			Group {
 				switch selectedTab {
-				case .general:
-					GeneralSettingsView()
 				case .premium:
 					YouHQPremiumView()
 				case .profiles:

@@ -15,6 +15,8 @@ struct MediaScreen: View {
 	var body: some View {
 		List {
 			Group {
+				SharingStatus(for: vm.selectedProfile)
+
 				if hasNoData {
 					NoMediaView(vm: vm)
 				} else {

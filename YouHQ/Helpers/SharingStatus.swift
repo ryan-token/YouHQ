@@ -5,37 +5,93 @@
 //  Created by Ryan Token on 1/19/26.
 //
 
+import CloudKit
+import SQLiteData
 import SwiftUI
 
 struct SharingStatus: View {
-	let vm: ResidenceScreen.ViewModel
+	@ObservationIgnored
+	@Dependency(\.defaultSyncEngine) var syncEngine
+
+	let profile: ProfileShare?
+	let shouldShowShareButtonIfNotShared: Bool
+
+	init(for profile: ProfileShare?, shouldShowShareButtonIfNotShared: Bool = false) {
+		self.profile = profile
+		self.shouldShowShareButtonIfNotShared = shouldShowShareButtonIfNotShared
+	}
+
+	// Sharable CloudKit data that can also drive a sheet to present a share interface
+	@State private var sharedRecord: SharedRecord?
 
 	var body: some View {
-		ForEach(vm.profiles, id: \.profile.id) { profile in
-			if profile.profile.id == vm.selectedProfile?.profile.id {
-				if profile.isShared {
-					Button {
-						Task {
-							await vm.shareProfileTapped()
-						}
-					} label: {
-						HStack {
-							Image(systemName: "network")
-							Text("Shared")
-						}
-					}
-					.buttonStyle(.plain)
-					.padding(.vertical, 6)
-					.padding(.horizontal, 12)
-					.background(.blue)
-					.foregroundStyle(.white)
-					.clipShape(.capsule)
+		if shouldShowShareButtonIfNotShared {
+			Button {
+				Task {
+					await shareProfileTapped()
 				}
+			} label: {
+				if let profile, profile.isShared {
+					SharedLabel(sharedRecord: $sharedRecord)
+				} else {
+					Image(systemName: "square.and.arrow.up")
+				}
+			}
+			.buttonStyle(.plain)
+		} else {
+			if let profile, profile.isShared {
+				Button {
+					Task {
+						await shareProfileTapped()
+					}
+				} label: {
+					SharedLabel(sharedRecord: $sharedRecord)
+				}
+				.buttonStyle(.plain)
+			}
+		}
+	}
+
+	func shareProfileTapped() async {
+		if let profile {
+			do {
+				sharedRecord = try await syncEngine.share(
+					record: profile.profile
+				) {
+					$0[CKShare.SystemFieldKey.title] =
+						"\(profile.profile.name) Profile"
+					$0[CKShare.SystemFieldKey.thumbnailImageData] = nil
+				}
+			} catch {
+				Analytics.logError(id: .profileShareFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 	}
 }
 
+struct SharedLabel: View {
+	@Binding var sharedRecord: SharedRecord?
+
+	var body: some View {
+		HStack {
+			Image(systemName: "network")
+			Text("Shared")
+		}
+		.padding(.vertical, 6)
+		.padding(.horizontal, 12)
+		.background(.blue)
+		.foregroundStyle(.white)
+		.clipShape(.capsule)
+
+		#if !os(macOS)
+			.sheet(item: $sharedRecord) { sharedRecord in
+				CloudSharingView(sharedRecord: sharedRecord)
+			}
+		#endif
+	}
+}
+
 #Preview {
-	SharingStatus(vm: ResidenceScreen.ViewModel())
+	SharingStatus(for: ProfileShare(profile: Profile.sampleData, isShared: true))
 }

@@ -5,7 +5,6 @@
 //  Created by Ryan Token on 1/24/26.
 //
 
-import CloudKit
 import SQLiteData
 import SwiftUI
 
@@ -14,13 +13,6 @@ extension VehicleScreen {
 	class ViewModel {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
-
-		// Join: Get all profiles and whether they are shared or not
-		@Selection
-		struct ProfileShare: ProfileShareProtocol { // swiftlint:disable:this nesting
-			let profile: Profile
-			let isShared: Bool
-		}
 
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
@@ -40,9 +32,6 @@ extension VehicleScreen {
 		init() {
 			vehicleNotes = ""
 		}
-
-		// Sharable CloudKit data that can also drive a sheet to present a share interface
-		var sharedRecord: SharedRecord?
 
 		var selectedProfile: ProfileShare?
 

@@ -5,20 +5,12 @@
 //  Created by Ryan Token on 1/24/26.
 //
 
-import CloudKit
 import SQLiteData
 import SwiftUI
 
 extension MoneyScreen {
 	@Observable
 	class ViewModel {
-		// Join: Get all profiles and whether they are shared or not
-		@Selection
-		struct ProfileShare: ProfileShareProtocol { // swiftlint:disable:this nesting
-			let profile: Profile
-			let isShared: Bool
-		}
-
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
@@ -30,9 +22,6 @@ extension MoneyScreen {
 		var otherViewModel = OtherItemViewModel()
 
 		init() {}
-
-		// Sharable CloudKit data that can also drive a sheet to present a share interface
-		var sharedRecord: SharedRecord?
 
 		var selectedProfile: ProfileShare?
 

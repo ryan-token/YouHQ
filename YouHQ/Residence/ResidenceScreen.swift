@@ -16,12 +16,7 @@ struct ResidenceScreen: View {
 	var body: some View {
 		List {
 			Group {
-				#if DEBUG
-					AvailableProfilesView(for: vm.profiles)
-					SelectedProfileIDView(for: vm.selectedProfile?.profile.id)
-				#endif
-
-				SharingStatus(vm: vm)
+				SharingStatus(for: vm.selectedProfile)
 
 				if vm.residences.isEmpty {
 					NoResidencesView(

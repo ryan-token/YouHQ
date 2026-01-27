@@ -15,6 +15,8 @@ struct VehicleScreen: View {
 	var body: some View {
 		List {
 			Group {
+				SharingStatus(for: vm.selectedProfile)
+
 				if vm.vehicles.isEmpty {
 					NoVehiclesView(onAddVehicleTapped: vm.showCreateVehicleSheet)
 				} else {

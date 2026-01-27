@@ -5,7 +5,6 @@
 //  Created by Ryan Token on 12/30/25.
 //
 
-import CloudKit
 import SQLiteData
 import SwiftUI
 
@@ -14,16 +13,6 @@ extension ResidenceScreen {
 	class ViewModel {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
-
-		@ObservationIgnored
-		@Dependency(\.defaultSyncEngine) var syncEngine
-
-		// Join: Get all profiles and whether they are shared or not
-		@Selection
-		struct ProfileShare: ProfileShareProtocol { // swiftlint:disable:this nesting
-			let profile: Profile
-			let isShared: Bool
-		}
 
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
@@ -44,9 +33,6 @@ extension ResidenceScreen {
 		init() {
 			residenceNotes = ""
 		}
-
-		// Sharable CloudKit data that can also drive a sheet to present a share interface
-		var sharedRecord: SharedRecord?
 
 		var selectedProfile: ProfileShare?
 
@@ -159,27 +145,6 @@ extension ResidenceScreen {
 			selectedResidence = residences.first(where: { $0.id == residenceID })
 			// Wait for child data to load before returning
 			await loadAllData()
-		}
-
-		func shareProfileTapped() async {
-			await shareResidenceTapped()
-		}
-
-		func shareResidenceTapped() async {
-			if let selectedProfile {
-				do {
-					sharedRecord = try await syncEngine.share(
-						record: selectedProfile.profile
-					) {
-						$0[CKShare.SystemFieldKey.title] =
-							selectedProfile.profile.name
-						$0[CKShare.SystemFieldKey.thumbnailImageData] = nil
-					}
-				} catch {
-					Analytics.logError(id: .profileShareFailed, message: error.localizedDescription)
-					reportIssue(error)
-				}
-			}
 		}
 
 		func updateSelectedResidence() {

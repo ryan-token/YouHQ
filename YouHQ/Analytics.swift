@@ -93,6 +93,10 @@ struct Analytics {
 	}
 
 	enum ErrorID: String {
+		// Profiles
+		case profileSaveFailed = "Failed to save profile"
+		case profileDeleteFailed = "Failed to delete profile"
+
 		// Residences
 		case residenceSaveFailed = "Failed to save residence"
 		case residenceLoadFailed = "Failed to load residence data"

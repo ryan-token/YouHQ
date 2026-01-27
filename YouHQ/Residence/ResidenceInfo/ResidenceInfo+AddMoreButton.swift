@@ -15,16 +15,7 @@ extension ResidenceInfo {
 			Menu {
 				ResidenceMenu(vm: vm, includeAddResidence: false)
 			} label: {
-				HStack {
-					Image(systemName: "plus.circle.fill")
-						.font(.title2)
-					Text("Add More")
-						.font(.headline)
-				}
-				.frame(maxWidth: .infinity)
-				.padding()
-				.background(.ultraThinMaterial)
-				.clipShape(.rect(cornerRadius: 12))
+				AddMoreButtonLabel(text: "Add More")
 			}
 			.buttonStyle(.plain)
 			.padding(.bottom)

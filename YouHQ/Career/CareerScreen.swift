@@ -15,6 +15,8 @@ struct CareerScreen: View {
 	var body: some View {
 		List {
 			Group {
+				SharingStatus(for: vm.selectedProfile)
+
 				if vm.sortedJobs.isEmpty && vm.otherViewModel.others.isEmpty {
 					NoJobsView(vm: vm)
 				} else {

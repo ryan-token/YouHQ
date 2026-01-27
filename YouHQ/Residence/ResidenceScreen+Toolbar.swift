@@ -35,19 +35,6 @@ extension ResidenceScreen {
 				}
 			}
 
-			#if !os(macOS)
-				ToolbarItem(placement: .primaryAction) {
-					Button {
-						Task { await vm.shareResidenceTapped() }
-					} label: {
-						Image(systemName: "square.and.arrow.up")
-					}
-					.sheet(item: $vm.sharedRecord) { sharedRecord in
-						CloudSharingView(sharedRecord: sharedRecord)
-					}
-				}
-			#endif
-
 			if vm.residences.isEmpty && syncEngine.isSynchronizing {
 				ToolbarItem(placement: .primaryAction) {
 					ProgressView()
