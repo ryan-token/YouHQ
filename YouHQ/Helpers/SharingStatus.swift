@@ -27,23 +27,29 @@ struct SharingStatus: View {
 	var body: some View {
 		if shouldShowShareButtonIfNotShared {
 			Button {
-				Task {
-					await shareProfileTapped()
-				}
+				#if !os(macOS)
+					Task {
+						await shareProfileTapped()
+					}
+				#endif
 			} label: {
 				if let profile, profile.isShared {
 					SharedLabel(sharedRecord: $sharedRecord)
 				} else {
-					Image(systemName: "square.and.arrow.up")
+					#if !os(macOS)
+						Image(systemName: "square.and.arrow.up")
+					#endif
 				}
 			}
 			.buttonStyle(.plain)
 		} else {
 			if let profile, profile.isShared {
 				Button {
-					Task {
-						await shareProfileTapped()
-					}
+					#if !os(macOS)
+						Task {
+							await shareProfileTapped()
+						}
+					#endif
 				} label: {
 					SharedLabel(sharedRecord: $sharedRecord)
 				}
