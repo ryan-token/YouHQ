@@ -45,6 +45,10 @@ struct PaintColorsScreen: View {
 			}
 		}
 		.navigationTitle("Paint Colors")
+		.navigationTitle("Career")
+		#if !os(macOS)
+			.navigationBarTitleDisplayMode(.inline)
+		#endif
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
 				Button {

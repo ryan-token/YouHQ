@@ -96,6 +96,10 @@ struct MaintenanceItemsScreen: View {
 			}
 		}
 		.navigationTitle("Maintenance Items")
+		.navigationTitle("Career")
+		#if !os(macOS)
+			.navigationBarTitleDisplayMode(.inline)
+		#endif
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
 				Button {

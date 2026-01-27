@@ -43,9 +43,7 @@ struct ResidenceScreen: View {
 		.animation(.default, value: vm.residences)
 		.navigationTitle(vm.selectedResidence?.unitOrStreet ?? "Home")
 		#if !os(macOS)
-			.if(vm.residences.count > 1) {
-				$0.navigationBarTitleDisplayMode(.inline)
-			}
+			.navigationBarTitleDisplayMode(.inline)
 		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {

@@ -77,6 +77,9 @@ struct CareerScreen: View {
 		.animation(.default, value: vm.sortedJobs)
 		.animation(.default, value: vm.otherViewModel.others)
 		.navigationTitle("Career")
+		#if !os(macOS)
+			.navigationBarTitleDisplayMode(.inline)
+		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)

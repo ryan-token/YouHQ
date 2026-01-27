@@ -41,6 +41,10 @@ struct MoneyScreen: View {
 		.animation(.default, value: vm.insuranceViewModel.insurancePolicies.count)
 		.animation(.default, value: vm.otherViewModel.others.count)
 		.navigationTitle("Money")
+		.navigationTitle("Career")
+		#if !os(macOS)
+			.navigationBarTitleDisplayMode(.inline)
+		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)

@@ -32,9 +32,7 @@ struct VehicleScreen: View {
 		.animation(.default, value: vm.vehicles)
 		.navigationTitle(vehicleTitle)
 		#if !os(macOS)
-			.if(vm.vehicles.count > 1) {
-				$0.navigationBarTitleDisplayMode(.inline)
-			}
+			.navigationBarTitleDisplayMode(.inline)
 		#endif
 		.toolbar { Toolbar(vm: vm) }
 		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
