@@ -9,6 +9,12 @@ import SwiftUI
 
 struct AddMoreButtonLabel: View {
 	let text: String
+	let backgroundColor: Color?
+
+	init(text: String, backgroundColor: Color? = nil) {
+		self.text = text
+		self.backgroundColor = backgroundColor
+	}
 
     var body: some View {
 		HStack {
@@ -19,7 +25,15 @@ struct AddMoreButtonLabel: View {
 		}
 		.frame(maxWidth: .infinity)
 		.padding()
-		.background(.ultraThinMaterial)
+		.if(backgroundColor != nil) {
+			$0.background(backgroundColor)
+		}
+		.if(backgroundColor != nil) {
+			$0.foregroundStyle(.white)
+		}
+		.if(backgroundColor == nil) {
+			$0.background(.ultraThinMaterial)
+		}
 		.clipShape(.rect(cornerRadius: 12))
     }
 }

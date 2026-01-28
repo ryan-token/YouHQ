@@ -21,14 +21,19 @@ extension ProfileSettingsView {
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
 		var selectedProfile: ProfileShare?
-		var profileToDelete: Profile?
 
 		var isShowingCreateProfileAlert = false
 		var newProfileName = ""
 
-		var isShowingDeleteProfileAlert = false
-		var isDeletingDefaultProfile = false
-		var deleteProfileMessage = ""
+		// Replace all the delete-related booleans with a single enum state
+		var profileDeletionAlert: ProfileDeletionAlert = .empty
+
+		// Add the enum definition
+		enum ProfileDeletionAlert: Equatable { // swiftlint:disable:this nesting
+			case empty
+			case cannotDeleteDefault
+			case confirmDelete(Profile)
+		}
 
 		func onAppear() async {
 			await loadProfiles()
@@ -85,33 +90,27 @@ extension ProfileSettingsView {
 
 		func confirmProfileDelete(for profile: Profile) {
 			if profile.name == "Default" {
-				isDeletingDefaultProfile = true
-				deleteProfileMessage = "You cannot delete the Default profile"
+				profileDeletionAlert = .cannotDeleteDefault
 			} else {
-				profileToDelete = profile
-				deleteProfileMessage = "Delete \(profile.name) Profile?"
+				profileDeletionAlert = .confirmDelete(profile)
 			}
-			isShowingDeleteProfileAlert = true
 		}
 
-		func deleteProfile(_ profile: Profile?) {
-			if let profile {
-				do {
-					try database.write { db in
-						try Profile.find(profile.id)
-							.delete()
-							.execute(db)
-					}
-
-					Analytics.sendSignal(.profileDeleted)
-				} catch {
-					Analytics.logError(id: .profileDeleteFailed, message: error.localizedDescription)
-					reportIssue(error)
+		func deleteProfile(_ profile: Profile) {
+			do {
+				try database.write { db in
+					try Profile.find(profile.id)
+						.delete()
+						.execute(db)
 				}
 
-				deleteProfileMessage = ""
-				profileToDelete = nil
+				Analytics.sendSignal(.profileDeleted)
+			} catch {
+				Analytics.logError(id: .profileDeleteFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
+
+			profileDeletionAlert = .empty
 		}
 	}
 }

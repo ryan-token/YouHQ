@@ -12,7 +12,7 @@ import SQLiteData
 
 // MARK: - Table Models
 
-@Table struct Profile: Identifiable {
+@Table struct Profile: Identifiable, Hashable {
 	let id: UUID
 	var name: String = "Default"
 	var createdAt: Date = Date()

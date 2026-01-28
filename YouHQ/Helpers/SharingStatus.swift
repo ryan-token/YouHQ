@@ -91,7 +91,7 @@ struct SharedLabel: View {
 		.clipShape(.capsule)
 
 		#if !os(macOS)
-			.sheet(item: $sharedRecord) { sharedRecord in
+			.popover(item: $sharedRecord) { sharedRecord in
 				CloudSharingView(sharedRecord: sharedRecord)
 			}
 		#endif

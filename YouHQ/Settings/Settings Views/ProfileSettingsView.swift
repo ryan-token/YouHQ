@@ -17,58 +17,17 @@ struct ProfileSettingsView: View {
 			Group {
 				Section("Profiles") {
 					ForEach(vm.profiles, id: \.profile.id) { profile in
-						HStack {
-							VStack(alignment: .leading) {
-								Text(profile.profile.name)
-									.font(.headline)
-								Text("ID: \(profile.profile.id)")
-									.font(.caption)
-							}
-
-							Spacer()
-
-							SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true)
-						}
-						.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-							Button(role: .destructive) {
-								vm.confirmProfileDelete(for: profile.profile)
-							} label: {
-								Label("Delete", systemImage: "trash")
-							}
-						}
-					}
-					.alert("Delete Profile", isPresented: $vm.isShowingDeleteProfileAlert) {
-						if !vm.isDeletingDefaultProfile {
-							Button(role: .destructive) {
-								vm.deleteProfile(vm.profileToDelete)
-							} label: {
-								Text("Delete")
-							}
-
-							Button(role: .cancel) {
-								vm.profileToDelete = nil
-							}
-						} else {
-							Button {
-								vm.profileToDelete = nil
-								vm.deleteProfileMessage = ""
-							} label: {
-								Text("OK")
-							}
-						}
-					} message: {
-						Text(vm.deleteProfileMessage)
+						ProfileRow(profile: profile, vm: vm)
 					}
 				}
 
 				Button {
 					vm.isShowingCreateProfileAlert = true
 				} label: {
-					AddMoreButtonLabel(text: "Create Profile")
+					AddMoreButtonLabel(text: "Create Profile", backgroundColor: .blue)
 				}
 				.buttonStyle(.plain)
 				.listRowBackground(Color.clear)
-
 				.alert("Create Profile", isPresented: $vm.isShowingCreateProfileAlert) {
 					TextField("Profile Name", text: $vm.newProfileName)
 					Button {
