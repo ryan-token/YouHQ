@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RateAppButton: View {
-    var body: some View {
+	var body: some View {
 		Button {
 			// TODO: Link to rate in the App Store
 			print("Link to rate in the App Store")
@@ -18,8 +18,7 @@ struct RateAppButton: View {
 					Text("Rate")
 				} icon: {
 					Image(systemName: "heart.square.fill")
-						.font(.title3)
-						.foregroundStyle(.pink)
+						.rowIcon(color: .pink)
 				}
 
 				Spacer()
@@ -32,9 +31,9 @@ struct RateAppButton: View {
 			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
-    }
+	}
 }
 
 #Preview {
-    RateAppButton()
+	RateAppButton()
 }

@@ -10,12 +10,15 @@ import SwiftUI
 
 extension VehicleScreen {
 	@Observable
-	class ViewModel {
+	class ViewModel: ProfileSelection {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
 
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
+
+		@ObservationIgnored
+		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
 
 		@ObservationIgnored
 		@FetchAll(Vehicle.none, animation: .default) var vehicles
@@ -33,7 +36,9 @@ extension VehicleScreen {
 			vehicleNotes = ""
 		}
 
-		var selectedProfile: ProfileShare?
+		var selectedProfile: ProfileShare? {
+			getSelectedProfile()
+		}
 
 		var selectedVehicle: Vehicle? {
 			didSet {
@@ -92,12 +97,6 @@ extension VehicleScreen {
 			}
 		}
 
-		private func setProfile(to profileName: String) {
-			selectedProfile = profiles.first(where: {
-				$0.profile.name == profileName
-			})
-		}
-
 		// MARK: VEHICLE FUNCTIONS
 
 		private func loadVehicles() async {
@@ -113,9 +112,17 @@ extension VehicleScreen {
 		}
 
 		func loadVehicleData() async {
-			setProfile(to: "Default")
 			await loadVehicles()
 			await restoreSelection()
+		}
+
+		func handleProfileChange() async {
+			await loadVehicles()
+			if !vehicles.isEmpty {
+				await setSelectedVehicle(to: vehicles.first!.id)
+			} else {
+				selectedVehicle = nil
+			}
 		}
 
 		private func loadAllData() async {

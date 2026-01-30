@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AboutAppButton: View {
-    var body: some View {
+	var body: some View {
 		Button {
 			// TODO: Show About Sheet
 			print("Show about sheet")
@@ -18,8 +18,7 @@ struct AboutAppButton: View {
 					Text("About")
 				} icon: {
 					Image(systemName: "person.crop.square.fill")
-						.font(.title3)
-						.foregroundStyle(.blue)
+						.rowIcon(color: .blue)
 				}
 
 				Spacer()
@@ -27,8 +26,8 @@ struct AboutAppButton: View {
 			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
-    }
+	}
 }
 #Preview {
-    AboutAppButton()
+	AboutAppButton()
 }

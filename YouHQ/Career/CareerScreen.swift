@@ -89,7 +89,12 @@ struct CareerScreen: View {
 			await vm.loadProfiles()
 			await vm.loadCareerData()
 		}
-		.onChange(of: vm.profiles.count) {
+		.onChange(of: vm.profiles.count) { oldCount, newCount in
+			if oldCount == 0 && newCount > 0 { // so we load the default profile on initial sync
+				Task { await vm.loadCareerData() }
+			}
+		}
+		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
 			Task { await vm.loadCareerData() }
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {

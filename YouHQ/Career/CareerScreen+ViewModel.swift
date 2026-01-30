@@ -10,9 +10,12 @@ import SwiftUI
 
 extension CareerScreen {
 	@Observable
-	class ViewModel {
+	class ViewModel: ProfileSelection {
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
+
+		@ObservationIgnored
+		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
 
 		// Child view models for entity-specific operations
 		var jobViewModel = JobViewModel()
@@ -20,7 +23,9 @@ extension CareerScreen {
 
 		init() {}
 
-		var selectedProfile: ProfileShare?
+		var selectedProfile: ProfileShare? {
+			getSelectedProfile()
+		}
 
 		var isShowingAddJobSheet = false
 		var isShowingSectionEditSheet = false
@@ -71,16 +76,9 @@ extension CareerScreen {
 			}
 		}
 
-		private func setProfile(to profileName: String) {
-			selectedProfile = profiles.first(where: {
-				$0.profile.name == profileName
-			})
-		}
-
 		// MARK: CAREER DATA FUNCTIONS
 
 		func loadCareerData() async {
-			setProfile(to: "Default")
 			guard let profileID = selectedProfile?.profile.id else { return }
 			await jobViewModel.load(for: profileID)
 			await otherViewModel.loadCategory(for: .career, profileID: profileID)

@@ -18,8 +18,7 @@ struct SettingsNavLabel: View {
 				Text(labelText)
 			} icon: {
 				Image(systemName: iconName)
-					.font(.title3)
-					.foregroundStyle(iconColor)
+					.rowIcon(color: iconColor)
 			}
 
 			#if !os(macOS)

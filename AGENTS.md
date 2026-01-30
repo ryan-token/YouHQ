@@ -104,7 +104,10 @@ And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/s
 - Add code comments and documentation comments as needed.
 - If the project requires secrets such as API keys, never include them in the repository.
 - Follow the SwiftLint and swift-format rules defined in the project at `.swiftlint.yml` and `.swift-format`
-- Format the entire project via the following command: `swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ`
+
+## CLI commands
+- Build the project when implementing: `xcodebuild build -scheme YouHQ -destination "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.2"`
+- Format the entire project after every change: `swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ`
 - Check for unused code via the following command: `periphery scan`
 
 

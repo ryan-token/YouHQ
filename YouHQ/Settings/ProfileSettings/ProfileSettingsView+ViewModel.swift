@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ProfileSettingsView {
 	@Observable
-	class ViewModel {
+	class ViewModel: ProfileSelection {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
 
@@ -20,7 +20,20 @@ extension ProfileSettingsView {
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
-		var selectedProfile: ProfileShare?
+		@ObservationIgnored
+		@AppStorage("selectedProfileID") var selectedProfileIDString: String = ""
+
+		var selectedProfile: ProfileShare? {
+			guard let selectedID = currentProfileID else { return nil }
+			return profiles.first(where: { $0.profile.id == selectedID })
+		}
+
+		var profileSwitchAlert: ProfileSwitchAlert = .empty
+
+		enum ProfileSwitchAlert: Equatable { // swiftlint:disable:this nesting
+			case empty
+			case confirmSwitch(Profile)
+		}
 
 		var isShowingCreateProfileAlert = false
 		var newProfileName = ""
@@ -37,7 +50,6 @@ extension ProfileSettingsView {
 
 		func onAppear() async {
 			await loadProfiles()
-			setProfile(to: "Default")
 		}
 
 		private func loadProfiles() async {
@@ -59,10 +71,15 @@ extension ProfileSettingsView {
 			}
 		}
 
-		private func setProfile(to profileName: String) {
-			selectedProfile = profiles.first(where: {
-				$0.profile.name == profileName
-			})
+		func confirmProfileSwitch(for profile: Profile) {
+			profileSwitchAlert = .confirmSwitch(profile)
+		}
+
+		func switchProfile(to profile: Profile) {
+			currentProfileID = profile.id
+			profileSwitchAlert = .empty
+			notifyProfileChanged()
+			Analytics.sendSignal(.profileSwitched)
 		}
 
 		func createProfile(named profileName: String) {
@@ -102,6 +119,20 @@ extension ProfileSettingsView {
 					try Profile.find(profile.id)
 						.delete()
 						.execute(db)
+				}
+
+				// Handle profile deletion - switch to another profile if needed
+				if currentProfileID == profile.id {
+					// Switch to Default if available
+					if let defaultProfile = profiles.first(where: { $0.profile.name == "Default" && $0.profile.id != profile.id }) {
+						currentProfileID = defaultProfile.profile.id
+					} else if let firstProfile = profiles.first(where: { $0.profile.id != profile.id }) {
+						// Otherwise switch to first available
+						currentProfileID = firstProfile.profile.id
+					} else {
+						currentProfileID = nil
+					}
+					notifyProfileChanged()
 				}
 
 				Analytics.sendSignal(.profileDeleted)

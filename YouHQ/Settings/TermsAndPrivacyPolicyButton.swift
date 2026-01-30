@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TermsAndPrivacyPolicyButton: View {
-    var body: some View {
+	var body: some View {
 		Menu {
 			// TODO: Link to Terms/Privacy Policy links
 			Button {
@@ -28,8 +28,7 @@ struct TermsAndPrivacyPolicyButton: View {
 					Text("Terms & Privacy Policy")
 				} icon: {
 					Image(systemName: "lock.square.fill")
-						.font(.title3)
-						.foregroundStyle(.gray)
+						.rowIcon(color: .gray)
 				}
 
 				Spacer()
@@ -37,9 +36,9 @@ struct TermsAndPrivacyPolicyButton: View {
 			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
-    }
+	}
 }
 
 #Preview {
-    TermsAndPrivacyPolicyButton()
+	TermsAndPrivacyPolicyButton()
 }

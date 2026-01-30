@@ -10,9 +10,12 @@ import SwiftUI
 
 extension MoneyScreen {
 	@Observable
-	class ViewModel {
+	class ViewModel: ProfileSelection {
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
+
+		@ObservationIgnored
+		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
 
 		// Child view models for entity-specific operations
 		var bankAccountViewModel = BankAccountViewModel()
@@ -23,7 +26,9 @@ extension MoneyScreen {
 
 		init() {}
 
-		var selectedProfile: ProfileShare?
+		var selectedProfile: ProfileShare? {
+			getSelectedProfile()
+		}
 
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
@@ -49,18 +54,10 @@ extension MoneyScreen {
 			}
 		}
 
-		private func setProfile(to profileName: String) {
-			selectedProfile = profiles.first(where: {
-				$0.profile.name == profileName
-			})
-		}
-
 		// MARK: MONEY ACCOUNT FUNCTIONS
 
 		func loadMoneyData() async {
-			setProfile(to: "Default")
 			guard let profileID = selectedProfile?.profile.id else { return }
-
 			await loadAllData(for: profileID)
 		}
 

@@ -10,12 +10,15 @@ import SwiftUI
 
 extension ResidenceScreen {
 	@Observable
-	class ViewModel {
+	class ViewModel: ProfileSelection {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
 
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
+
+		@ObservationIgnored
+		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
 
 		@ObservationIgnored
 		@FetchAll(Residence.none, animation: .default) var residences
@@ -34,7 +37,9 @@ extension ResidenceScreen {
 			residenceNotes = ""
 		}
 
-		var selectedProfile: ProfileShare?
+		var selectedProfile: ProfileShare? {
+			getSelectedProfile()
+		}
 
 		var selectedResidence: Residence? {
 			didSet {
@@ -93,12 +98,6 @@ extension ResidenceScreen {
 			}
 		}
 
-		private func setProfile(to profileName: String) {
-			selectedProfile = profiles.first(where: {
-				$0.profile.name == profileName
-			})
-		}
-
 		// MARK: RESIDENCE FUNCTIONS
 
 		private func loadResidences() async {
@@ -114,9 +113,17 @@ extension ResidenceScreen {
 		}
 
 		func loadResidenceData() async {
-			setProfile(to: "Default")
 			await loadResidences()
 			await restoreSelection()
+		}
+
+		func handleProfileChange() async {
+			await loadResidences()
+			if !residences.isEmpty {
+				await setSelectedResidence(to: residences.first!.id)
+			} else {
+				selectedResidence = nil
+			}
 		}
 
 		private func loadAllData() async {
@@ -179,7 +186,7 @@ extension ResidenceScreen {
 		}
 
 		func showCreateResidenceSheet() {
-			try? database.ensureDefaultProfile()
+			_ = try? database.ensureDefaultProfile()
 			isShowingAddResidenceSheet = true
 		}
 

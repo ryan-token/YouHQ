@@ -91,8 +91,15 @@ struct SharedLabel: View {
 		.clipShape(.capsule)
 
 		#if !os(macOS)
-			.popover(item: $sharedRecord) { sharedRecord in
-				CloudSharingView(sharedRecord: sharedRecord)
+			.if(UIDevice.current.userInterfaceIdiom == .phone) {
+				$0.sheet(item: $sharedRecord) { sharedRecord in
+					CloudSharingView(sharedRecord: sharedRecord)
+				}
+			}
+			.if(UIDevice.current.userInterfaceIdiom == .pad) {
+				$0.popover(item: $sharedRecord) { sharedRecord in
+					CloudSharingView(sharedRecord: sharedRecord)
+				}
 			}
 		#endif
 	}

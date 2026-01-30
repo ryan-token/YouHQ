@@ -16,7 +16,7 @@ struct AddMoreButtonLabel: View {
 		self.backgroundColor = backgroundColor
 	}
 
-    var body: some View {
+	var body: some View {
 		HStack {
 			Image(systemName: "plus.circle.fill")
 				.font(.title2)
@@ -35,9 +35,9 @@ struct AddMoreButtonLabel: View {
 			$0.background(.ultraThinMaterial)
 		}
 		.clipShape(.rect(cornerRadius: 12))
-    }
+	}
 }
 
 #Preview {
-    AddMoreButtonLabel(text: "Add More")
+	AddMoreButtonLabel(text: "Add More")
 }

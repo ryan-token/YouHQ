@@ -9,12 +9,12 @@ import SwiftUI
 
 struct SettingsToolbarItem: ToolbarContent {
 	#if os(macOS)
-	@Environment(\.openSettings) private var openSettings
+		@Environment(\.openSettings) private var openSettings
 	#else
-	@State private var isShowingSettingsSheet = false
+		@State private var isShowingSettingsSheet = false
 	#endif
 
-    var body: some ToolbarContent {
+	var body: some ToolbarContent {
 		ToolbarItem(placement: .navigation) {
 			Button {
 				#if os(macOS)
@@ -26,16 +26,16 @@ struct SettingsToolbarItem: ToolbarContent {
 				Image(systemName: "gear")
 			}
 			#if !os(macOS)
-			.sheet(isPresented: $isShowingSettingsSheet) {
-				SettingsScreen()
-			}
+				.sheet(isPresented: $isShowingSettingsSheet) {
+					SettingsScreen()
+				}
 			#endif
 		}
-    }
+	}
 }
 
 #Preview {
-    Text("Sample view with toolbar")
+	Text("Sample view with toolbar")
 		.frame(width: 100, height: 74)
 		.toolbar {
 			SettingsToolbarItem()

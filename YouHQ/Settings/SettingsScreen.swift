@@ -42,9 +42,12 @@ struct SettingsScreen: View {
 				}
 			}
 			.listStyle(.sidebar)
-			.toolbar(removing: .sidebarToggle)
 			.navigationTitle("Settings")
+			#if os(macOS)
 			.navigationSplitViewColumnWidth(210)
+			#else
+			.navigationSplitViewColumnWidth(300)
+			#endif
 
 			#if !os(macOS)
 				.navigationBarTitleDisplayMode(.inline)
@@ -74,7 +77,6 @@ struct SettingsScreen: View {
 				}
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
-			.navigationSplitViewColumnWidth(min: 100, ideal: 100)
 		}
 	}
 }

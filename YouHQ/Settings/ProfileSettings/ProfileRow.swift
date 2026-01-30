@@ -11,19 +11,34 @@ struct ProfileRow: View {
 	let profile: ProfileShare
 	let vm: ProfileSettingsView.ViewModel
 
-    var body: some View {
-		HStack {
-			VStack(alignment: .leading) {
-				Text(profile.profile.name)
-					.font(.headline)
-				Text("ID: \(profile.profile.id)")
-					.font(.caption)
+	var isSelected: Bool {
+		vm.selectedProfile?.profile.id == profile.profile.id
+	}
+
+	var body: some View {
+		Button {
+			if !isSelected {
+				vm.confirmProfileSwitch(for: profile.profile)
 			}
+		} label: {
+			HStack {
+				Image(systemName: isSelected ? "checkmark.circle.fill": "circle")
+					.rowIcon(color: isSelected ? .blue : .gray)
+					.animation(.default, value: isSelected)
 
-			Spacer()
+				VStack(alignment: .leading) {
+					Text(profile.profile.name)
+						.font(.headline)
+					Text("\(profile.profile.id)")
+						.font(.caption2)
+				}
 
-			SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true)
+				Spacer()
+
+				SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true)
+			}
 		}
+		.buttonStyle(.plain)
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			Button {
 				vm.confirmProfileDelete(for: profile.profile)
@@ -32,6 +47,34 @@ struct ProfileRow: View {
 					.tint(.red)
 			}
 		}
+
+		.alert(
+			"Switch Profile",
+			isPresented: .init(
+				get: { vm.profileSwitchAlert != .empty },
+				set: { if !$0 { vm.profileSwitchAlert = .empty } }
+			)
+		) {
+			switch vm.profileSwitchAlert {
+			case .empty:
+				EmptyView()
+			case .confirmSwitch(let profile):
+				Button("Switch Profile") {
+					vm.switchProfile(to: profile)
+				}
+				Button("Cancel", role: .cancel) {
+					vm.profileSwitchAlert = .empty
+				}
+			}
+		} message: {
+			switch vm.profileSwitchAlert {
+			case .empty:
+				Text("")
+			case .confirmSwitch(let profile):
+				Text("Switch to \(profile.name)?")
+			}
+		}
+
 		.alert(
 			"Delete Profile",
 			isPresented: .init(
@@ -64,7 +107,7 @@ struct ProfileRow: View {
 				Text("Delete \(profile.name) Profile?")
 			}
 		}
-    }
+	}
 }
 
 #Preview {

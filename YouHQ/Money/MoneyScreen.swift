@@ -13,37 +13,38 @@ struct MoneyScreen: View {
 	@AppStorage("hideAccountNumbers") private var hideAccountNumbers = false
 
 	var body: some View {
-		List {
-			Group {
-				SharingStatus(for: vm.selectedProfile)
+		Group {
+			List {
+				Group {
+					SharingStatus(for: vm.selectedProfile)
 
-				if hasNoAccounts {
-					NoAccountsView(vm: vm)
-				} else {
-					Toggle(isOn: $hideAccountNumbers) {
-						Text("Hide Account Numbers")
-							.foregroundStyle(.secondary)
-							.font(.headline)
+					if hasNoAccounts {
+						NoAccountsView(vm: vm)
+					} else {
+						Toggle(isOn: $hideAccountNumbers) {
+							Text("Hide Account Numbers")
+								.foregroundStyle(.secondary)
+								.font(.headline)
+						}
+						#if os(macOS)
+							.padding(.vertical, 4)
+						#endif
+
+						MoneyInfo(vm: vm, hideAccountNumbers: hideAccountNumbers)
+
+						AddMoreButton(vm: vm)
 					}
-					#if os(macOS)
-						.padding(.vertical, 4)
-					#endif
-
-					MoneyInfo(vm: vm, hideAccountNumbers: hideAccountNumbers)
-
-					AddMoreButton(vm: vm)
 				}
+				.listRowSeparator(.hidden)
+				.listRowBackground(Color.clear)
 			}
-			.listRowSeparator(.hidden)
-			.listRowBackground(Color.clear)
+			.animation(.default, value: vm.bankAccountViewModel.bankAccounts.count)
+			.animation(.default, value: vm.investmentAccountViewModel.investmentAccounts.count)
+			.animation(.default, value: vm.healthSavingsAccountViewModel.healthSavingsAccounts.count)
+			.animation(.default, value: vm.insuranceViewModel.insurancePolicies.count)
+			.animation(.default, value: vm.otherViewModel.others.count)
 		}
-		.animation(.default, value: vm.bankAccountViewModel.bankAccounts.count)
-		.animation(.default, value: vm.investmentAccountViewModel.investmentAccounts.count)
-		.animation(.default, value: vm.healthSavingsAccountViewModel.healthSavingsAccounts.count)
-		.animation(.default, value: vm.insuranceViewModel.insurancePolicies.count)
-		.animation(.default, value: vm.otherViewModel.others.count)
 		.navigationTitle("Money")
-		.navigationTitle("Career")
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
@@ -54,7 +55,12 @@ struct MoneyScreen: View {
 			await vm.loadProfiles()
 			await vm.loadMoneyData()
 		}
-		.onChange(of: vm.profiles.count) {
+		.onChange(of: vm.profiles.count) { oldCount, newCount in
+			if oldCount == 0 && newCount > 0 { // so we load the default profile on initial sync
+				Task { await vm.loadMoneyData() }
+			}
+		}
+		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
 			Task { await vm.loadMoneyData() }
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {

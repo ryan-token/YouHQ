@@ -61,8 +61,13 @@ struct ResidenceScreen: View {
 			await vm.loadProfiles()
 			await vm.loadResidenceData()
 		}
-		.onChange(of: vm.profiles.count) {
-			Task { await vm.loadResidenceData() }
+		.onChange(of: vm.profiles.count) { oldCount, newCount in
+			if oldCount == 0 && newCount > 0 { // so we load the default profile on initial sync
+				Task { await vm.loadResidenceData() }
+			}
+		}
+		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
+			Task { await vm.handleProfileChange() }
 		}
 		.onChange(of: vm.residences) {
 			vm.updateSelectedResidence()
