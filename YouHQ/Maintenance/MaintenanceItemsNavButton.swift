@@ -29,8 +29,9 @@ struct MaintenanceItemsNavButton: View {
 					let upcoming = maintenanceItems.filter { $0.isUpcoming }.count
 
 					VStack(alignment: .leading) {
-						HQText("^[\(maintenanceItems.count) item](inflect: true)")
+						Text("^[\(maintenanceItems.count) item](inflect: true)")
 							.font(.subheadline)
+							.fontDesign(.rounded)
 							.opacity(0.8)
 
 						if pastDue > 0 || upcoming > 0 {

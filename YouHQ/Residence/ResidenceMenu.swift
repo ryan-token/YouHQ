@@ -56,16 +56,6 @@ struct ResidenceMenu: View {
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallMaintenanceItemsThreshold {
-						vm.showAddMaintenanceItemSheet()
-					} else {
-						paywallManager.isShowingPaywallSheet = true
-					}
-				} label: {
-					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
-				}
-
-				Button {
 					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallPaintColorsThreshold {
 						vm.showAddPaintColorSheet()
 					} else {
@@ -73,6 +63,16 @@ struct ResidenceMenu: View {
 					}
 				} label: {
 					Label("Add Paint Color", systemImage: "paintbrush.fill")
+				}
+
+				Button {
+					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallMaintenanceItemsThreshold {
+						vm.showAddMaintenanceItemSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
+				} label: {
+					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
 				}
 
 				Button {

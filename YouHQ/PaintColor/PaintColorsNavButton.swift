@@ -23,8 +23,9 @@ struct PaintColorsNavButton: View {
 					HQText("Paint Colors")
 						.font(.headline)
 
-					HQText("^[\(paintColors.count) color](inflect: true)")
+					Text("^[\(paintColors.count) color](inflect: true)")
 						.font(.subheadline)
+						.fontDesign(.rounded)
 						.opacity(0.8)
 				}
 

@@ -27,10 +27,11 @@ struct MaintenanceItemRow: View {
 					}
 
 					HStack(spacing: 4) {
-						HQText(
+						Text(
 							"Every ^[\(item.intervalValue) \(item.intervalType.rawValue.lowercased())](inflect: true)"
 						)
 						.font(.caption)
+						.fontDesign(.rounded)
 						.foregroundStyle(.secondary)
 
 						HQText("•")
