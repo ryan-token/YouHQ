@@ -28,5 +28,13 @@ struct Paywall: View {
 }
 
 #Preview {
-    Paywall()
+	struct PaywallPreview: View {
+		@State private var paywallManager = PaywallManager()
+
+		var body: some View {
+			Paywall()
+				.environment(paywallManager)
+		}
+	}
+	return PaywallPreview()
 }

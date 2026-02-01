@@ -21,7 +21,7 @@ struct OtherSection: View {
 			onTap: onTap
 		) {
 			if other.name.isNotEmpty {
-				Text(other.name)
+				HQText(other.name)
 					.sectionTitle()
 			}
 
@@ -43,10 +43,10 @@ struct OtherSection: View {
 
 			if other.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(other.notes)
+					HQText(other.notes)
 						.foregroundStyle(.white)
 				}
 			}

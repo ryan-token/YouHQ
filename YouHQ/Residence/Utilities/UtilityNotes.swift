@@ -12,7 +12,7 @@ struct UtilityNotes: View {
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 0) {
-			Text("Notes:")
+			HQText("Notes:")
 				.fontWeight(.semibold)
 
 			TextEditor(text: $notes)

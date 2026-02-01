@@ -27,7 +27,7 @@ struct SubscriptionEdit: View {
 				LabeledField(label: "Category") {
 					Picker(selection: $vm.category) {
 						ForEach(SubscriptionCategory.allCases, id: \.self) { category in
-							Text(category.rawValue).tag(category)
+							HQText(category.rawValue).tag(category)
 						}
 					} label: {
 						EmptyView()
@@ -49,7 +49,7 @@ struct SubscriptionEdit: View {
 				LabeledField(label: "Billing Cycle") {
 					Picker(selection: $vm.billingCycle) {
 						ForEach(BillingCycle.allCases, id: \.self) { cycle in
-							Text(cycle.rawValue).tag(cycle)
+							HQText(cycle.rawValue).tag(cycle)
 						}
 					} label: {
 						EmptyView()

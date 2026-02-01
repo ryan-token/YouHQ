@@ -54,7 +54,7 @@ struct MaintenanceItemEdit: View {
 				LabeledField(label: "Unit") {
 					Picker(selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
-							Text(
+							HQText(
 								vm.intervalValue == 1
 									? type.rawValue : "\(type.rawValue)s"
 							).tag(type)
@@ -101,10 +101,10 @@ struct MaintenanceItemEdit: View {
 						}
 				}
 			} header: {
-				Text("Maintenance Interval")
+				HQText("Maintenance Interval")
 			} footer: {
 				if !vm.isUsingManualDueDate {
-					Text(
+					HQText(
 						"Automatically set to \(vm.calculatedNextDueDate.formatted(date: .abbreviated, time: .omitted)) based on your interval"
 					)
 				}
@@ -118,7 +118,7 @@ struct MaintenanceItemEdit: View {
 				}
 				Button("Cancel", role: .cancel) {}
 			} message: {
-				Text(
+				HQText(
 					"To receive maintenance reminders, please enable notifications in Settings."
 				)
 			}

@@ -27,7 +27,7 @@ struct InsuranceEdit: View {
 							},
 							id: \.self
 						) { type in
-							Text(type.rawValue).tag(type)
+							HQText(type.rawValue).tag(type)
 						}
 					} label: {
 						EmptyView()

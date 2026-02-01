@@ -12,7 +12,7 @@ struct HideCostsToggle: View {
 
 	var body: some View {
 		Toggle(isOn: $hideCosts) {
-			Text("Hide Costs")
+			HQText("Hide Costs")
 				.foregroundStyle(.secondary)
 				.font(.headline)
 		}

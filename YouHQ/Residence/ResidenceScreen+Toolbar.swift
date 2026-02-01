@@ -28,7 +28,7 @@ extension ResidenceScreen {
 						)
 					) {
 						ForEach(vm.residences) { residence in
-							Text(residence.unitOrStreet ?? residence.street)
+							HQText(residence.unitOrStreet ?? residence.street)
 								.tag(residence.id)
 						}
 					}
@@ -54,7 +54,7 @@ extension ResidenceScreen {
 
 #Preview {
 	Form {
-		Text("ResidenceScreen Toolbar")
+		HQText("ResidenceScreen Toolbar")
 	}
 	.toolbar { ResidenceScreen.Toolbar(vm: ResidenceScreen.ViewModel()) }
 }

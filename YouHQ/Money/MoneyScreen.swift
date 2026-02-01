@@ -22,7 +22,7 @@ struct MoneyScreen: View {
 						NoAccountsView(vm: vm)
 					} else {
 						Toggle(isOn: $hideAccountNumbers) {
-							Text("Hide Account Numbers")
+							HQText("Hide Account Numbers")
 								.foregroundStyle(.secondary)
 								.font(.headline)
 						}

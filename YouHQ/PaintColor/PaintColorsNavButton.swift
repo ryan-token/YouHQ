@@ -20,10 +20,10 @@ struct PaintColorsNavButton: View {
 					.font(.title2)
 
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Paint Colors")
+					HQText("Paint Colors")
 						.font(.headline)
 
-					Text("^[\(paintColors.count) color](inflect: true)")
+					HQText("^[\(paintColors.count) color](inflect: true)")
 						.font(.subheadline)
 						.opacity(0.8)
 				}

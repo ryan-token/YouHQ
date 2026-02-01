@@ -17,7 +17,7 @@ struct MediaCostBreakdownView: View {
 	var body: some View {
 		ScrollView {
 			VStack(alignment: .leading, spacing: 12) {
-				Text("Monthly Media Cost")
+				HQText("Monthly Media Cost")
 					.font(.title2)
 					.fontWeight(.semibold)
 					.padding(.bottom, 4)
@@ -26,9 +26,9 @@ struct MediaCostBreakdownView: View {
 					// Service Providers
 					if let firstProvider = serviceProviders.first, let cost = firstProvider.monthlyCost {
 						HStack {
-							Text("\(firstProvider.name.isEmpty ? firstProvider.providerType.rawValue : firstProvider.name)")
+							HQText("\(firstProvider.name.isEmpty ? firstProvider.providerType.rawValue : firstProvider.name)")
 							Spacer()
-							Text(cost.asCost)
+							HQText(cost.asCost)
 								.fontWeight(.medium)
 						}
 					}
@@ -36,9 +36,9 @@ struct MediaCostBreakdownView: View {
 					ForEach(serviceProviders.dropFirst()) { serviceProvider in
 						if let cost = serviceProvider.monthlyCost {
 							HStack {
-								Text("+ \(serviceProvider.name.isEmpty ? serviceProvider.providerType.rawValue : serviceProvider.name)")
+								HQText("+ \(serviceProvider.name.isEmpty ? serviceProvider.providerType.rawValue : serviceProvider.name)")
 								Spacer()
-								Text(cost.asCost)
+								HQText(cost.asCost)
 									.fontWeight(.medium)
 							}
 						}
@@ -48,9 +48,9 @@ struct MediaCostBreakdownView: View {
 					ForEach(subscriptions.filter { $0.isActive }) { subscription in
 						if let cost = subscription.monthlyCost {
 							HStack {
-								Text("+ \(subscription.name)")
+								HQText("+ \(subscription.name)")
 								Spacer()
-								Text(cost.asCost)
+								HQText(cost.asCost)
 									.fontWeight(.medium)
 							}
 							.font(.body)
@@ -62,10 +62,10 @@ struct MediaCostBreakdownView: View {
 
 					// Total
 					HStack {
-						Text("Total")
+						HQText("Total")
 							.fontWeight(.semibold)
 						Spacer()
-						Text(totalCost.asCost)
+						HQText(totalCost.asCost)
 							.fontWeight(.bold)
 					}
 					.font(.title3)

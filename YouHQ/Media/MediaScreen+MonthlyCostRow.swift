@@ -18,12 +18,12 @@ extension MediaScreen {
 
 		var body: some View {
 			HStack(alignment: .center) {
-				Text("Monthly Media Cost:")
+				HQText("Monthly Media Cost:")
 					.font(.headline)
 				Button {
 					showPopover.toggle()
 				} label: {
-					Text(totalCost.asCost)
+					HQText(totalCost.asCost)
 						.lineLimit(1)
 						.blur(radius: blurred ? 4 : 0)
 						.padding(.horizontal, 12)

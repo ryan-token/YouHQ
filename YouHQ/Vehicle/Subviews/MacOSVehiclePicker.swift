@@ -26,7 +26,7 @@ struct MacOSVehiclePicker: View {
 					)
 				) {
 					ForEach(vehicles) { vehicle in
-						Text(vehicle.displayName)
+						HQText(vehicle.displayName)
 							.tag(vehicle.id)
 					}
 				}

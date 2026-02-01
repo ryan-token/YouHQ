@@ -21,7 +21,7 @@ struct InvestmentAccountSection: View {
 			onTap: onTap
 		) {
 			if account.institution.isNotEmpty {
-				Text(account.institution)
+				HQText(account.institution)
 					.sectionTitle()
 			}
 
@@ -43,10 +43,10 @@ struct InvestmentAccountSection: View {
 
 			if account.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(account.notes)
+					HQText(account.notes)
 						.foregroundStyle(.white)
 				}
 			}

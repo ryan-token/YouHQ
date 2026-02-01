@@ -22,8 +22,8 @@ struct SettingsScreen: View {
 				Section("Preferences") {
 					SettingsNavLabel(
 						labelText: "YouHQ Premium",
-						iconName: "star.square.fill",
-						iconColor: .purple
+						iconName: "sparkle",
+						iconColor: .indigo
 					)
 					.tag(SettingsOption.premium)
 
@@ -77,7 +77,7 @@ struct SettingsScreen: View {
 					ContentUnavailableView {
 						Label("No Selection", systemImage: "questionmark.circle")
 					} description: {
-						Text("Tap an option in the sidebar for settings.")
+						HQText("Tap an option in the sidebar for settings.")
 					}
 				}
 			}

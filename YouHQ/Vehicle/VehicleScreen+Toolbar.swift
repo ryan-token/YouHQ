@@ -28,7 +28,7 @@ extension VehicleScreen {
 						)
 					) {
 						ForEach(vm.vehicles) { vehicle in
-							Text(vehicle.displayName)
+							HQText(vehicle.displayName)
 								.tag(vehicle.id)
 						}
 					}
@@ -54,7 +54,7 @@ extension VehicleScreen {
 
 #Preview {
 	Form {
-		Text("VehicleScreen Toolbar")
+		HQText("VehicleScreen Toolbar")
 	}
 	.toolbar { VehicleScreen.Toolbar(vm: VehicleScreen.ViewModel()) }
 }

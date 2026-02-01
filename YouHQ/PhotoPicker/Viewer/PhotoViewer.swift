@@ -95,13 +95,13 @@ struct PhotoViewer: View {
 			}
 		} message: {
 			if let downloadErrorMessage {
-				Text(downloadErrorMessage)
+				HQText(downloadErrorMessage)
 			}
 		}
 		.alert("Success", isPresented: $isShowingSaveSuccess) {
 			Button("OK") {}
 		} message: {
-			Text("Photo saved to your library.")
+			HQText("Photo saved to your library.")
 		}
 	}
 

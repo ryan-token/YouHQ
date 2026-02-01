@@ -21,7 +21,7 @@ struct InsuranceSection: View {
 			onTap: onTap
 		) {
 			if policy.provider.isNotEmpty {
-				Text(policy.provider)
+				HQText(policy.provider)
 					.sectionTitle()
 			}
 
@@ -69,10 +69,10 @@ struct InsuranceSection: View {
 
 			if policy.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(policy.notes)
+					HQText(policy.notes)
 						.foregroundStyle(.white)
 				}
 			}

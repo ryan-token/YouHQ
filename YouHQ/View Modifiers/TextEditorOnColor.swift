@@ -32,6 +32,6 @@ extension View {
 }
 
 #Preview {
-	Text("Xcel")
+	HQText("Xcel")
 		.sectionTitle()
 }

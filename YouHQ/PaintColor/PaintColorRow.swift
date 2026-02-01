@@ -24,18 +24,18 @@ struct PaintColorRow: View {
 					}
 
 				VStack(alignment: .leading, spacing: 4) {
-					Text(paintColor.room.isNotEmpty ? paintColor.room : "No Room")
+					HQText(paintColor.room.isNotEmpty ? paintColor.room : "No Room")
 						.font(.headline)
 
 					if paintColor.colorName.isNotEmpty {
-						Text(paintColor.colorName)
+						HQText(paintColor.colorName)
 							.font(.subheadline)
 							.foregroundStyle(.secondary)
 					}
 
 					HStack(spacing: 4) {
 						if paintColor.manufacturer.isNotEmpty {
-							Text(paintColor.manufacturer)
+							HQText(paintColor.manufacturer)
 								.font(.caption)
 								.foregroundStyle(.secondary)
 						}
@@ -43,13 +43,13 @@ struct PaintColorRow: View {
 						if paintColor.manufacturer.isNotEmpty
 							&& paintColor.surfaceType.isNotEmpty
 						{
-							Text("•")
+							HQText("•")
 								.font(.caption)
 								.foregroundStyle(.secondary)
 						}
 
 						if paintColor.surfaceType.isNotEmpty {
-							Text(paintColor.surfaceType)
+							HQText(paintColor.surfaceType)
 								.font(.caption)
 								.foregroundStyle(.secondary)
 						}

@@ -16,35 +16,36 @@ struct MaintenanceItemRow: View {
 		Button(action: onTap) {
 			HStack(alignment: .top, spacing: 12) {
 				VStack(alignment: .leading, spacing: 4) {
-					Text(item.name)
+					HQText(item.name)
 						.font(.headline)
 
 					if item.itemDescription.isNotEmpty {
-						Text(item.itemDescription)
+						HQText(item.itemDescription)
 							.font(.subheadline)
 							.foregroundStyle(.secondary)
 							.lineLimit(2)
 					}
 
 					HStack(spacing: 4) {
-						Text(
+						HQText(
 							"Every ^[\(item.intervalValue) \(item.intervalType.rawValue.lowercased())](inflect: true)"
 						)
 						.font(.caption)
 						.foregroundStyle(.secondary)
 
-						Text("•")
+						HQText("•")
 							.font(.caption)
 							.foregroundStyle(.secondary)
 
 						if let nextDue = item.dueDate {
 							Text("Due \(nextDue, style: .date)")
 								.font(.caption)
+								.fontDesign(.rounded)
 								.foregroundStyle(
 									item.isPastDue ? .red : .secondary
 								)
 						} else {
-							Text("No due date set")
+							HQText("No due date set")
 								.font(.caption)
 								.foregroundStyle(.secondary)
 						}

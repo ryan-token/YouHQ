@@ -41,6 +41,6 @@ extension View {
 }
 
 #Preview {
-	Text("Card Style")
+	HQText("Card Style")
 		.cardStyle(backgroundColor: .indigo)
 }

@@ -21,7 +21,7 @@ struct JobSection: View {
 			onTap: onTap
 		) {
 			if job.company.isNotEmpty {
-				Text(job.company)
+				HQText(job.company)
 					.sectionTitle()
 			}
 
@@ -69,10 +69,10 @@ struct JobSection: View {
 
 			if job.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(job.notes)
+					HQText(job.notes)
 						.foregroundStyle(.white)
 				}
 			}

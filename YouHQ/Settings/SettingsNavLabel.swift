@@ -15,7 +15,8 @@ struct SettingsNavLabel: View {
 	var body: some View {
 		HStack {
 			Label {
-				Text(labelText)
+				HQText(labelText)
+					.fontWeight(.medium)
 			} icon: {
 				Image(systemName: iconName)
 					.rowIcon(color: iconColor)

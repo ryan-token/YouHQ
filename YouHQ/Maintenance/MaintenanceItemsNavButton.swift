@@ -22,27 +22,27 @@ struct MaintenanceItemsNavButton: View {
 					.font(.title2)
 
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Maintenance Items")
+					HQText("Maintenance Items")
 						.font(.headline)
 
 					let pastDue = maintenanceItems.filter { $0.isPastDue }.count
 					let upcoming = maintenanceItems.filter { $0.isUpcoming }.count
 
 					VStack(alignment: .leading) {
-						Text("^[\(maintenanceItems.count) item](inflect: true)")
+						HQText("^[\(maintenanceItems.count) item](inflect: true)")
 							.font(.subheadline)
 							.opacity(0.8)
 
 						if pastDue > 0 || upcoming > 0 {
 							HStack(spacing: 8) {
 								if pastDue > 0 {
-									Text("\(pastDue) past due")
+									HQText("\(pastDue) past due")
 										.font(.subheadline)
 										.badgeStyle(type: .alert)
 								}
 
 								if upcoming > 0 {
-									Text("\(upcoming) upcoming")
+									HQText("\(upcoming) upcoming")
 										.font(.subheadline)
 										.badgeStyle(type: .warning)
 								}

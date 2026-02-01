@@ -41,12 +41,12 @@ struct MonthlyTCORow: View {
 
 	var body: some View {
 		HStack(alignment: .center) {
-			Text(label)
+			HQText(label)
 				.font(.headline)
 			Button {
 				showPopover.toggle()
 			} label: {
-				Text(totalCost.asCost)
+				HQText(totalCost.asCost)
 					.lineLimit(1)
 					.blur(radius: blurred ? 4 : 0)
 					.padding(.horizontal, 12)
@@ -83,7 +83,7 @@ struct CostBreakdownView: View {
 	var body: some View {
 		ScrollView {
 			VStack(alignment: .leading, spacing: 12) {
-				Text("Monthly Total Cost of Ownership")
+				HQText("Monthly Total Cost of Ownership")
 					.font(.title2)
 					.fontWeight(.semibold)
 					.padding(.bottom, 4)
@@ -92,9 +92,9 @@ struct CostBreakdownView: View {
 					// Residence cost (rent/mortgage) - but not if owned
 					if let residenceCost, residenceCostType != .owned {
 						HStack {
-							Text(residenceCostType.rawValue)
+							HQText(residenceCostType.rawValue)
 							Spacer()
-							Text(residenceCost.asCost)
+							HQText(residenceCost.asCost)
 								.fontWeight(.medium)
 						}
 						.font(.body)
@@ -104,9 +104,9 @@ struct CostBreakdownView: View {
 					ForEach(utilities) { utility in
 						if let cost = utility.approximateMonthlyCost {
 							HStack {
-								Text("+ \(utility.type.rawValue)")
+								HQText("+ \(utility.type.rawValue)")
 								Spacer()
-								Text(cost.asCost)
+								HQText(cost.asCost)
 									.fontWeight(.medium)
 							}
 							.font(.body)
@@ -117,9 +117,9 @@ struct CostBreakdownView: View {
 					ForEach(insurancePolicies) { policy in
 						if let cost = policy.monthlyCost {
 							HStack {
-								Text("+ \(policy.type.rawValue) Insurance")
+								HQText("+ \(policy.type.rawValue) Insurance")
 								Spacer()
-								Text(cost.asCost)
+								HQText(cost.asCost)
 									.fontWeight(.medium)
 							}
 							.font(.body)
@@ -130,9 +130,9 @@ struct CostBreakdownView: View {
 					ForEach(others) { other in
 						if let cost = other.monthlyCost {
 							HStack {
-								Text("+ \(other.name)")
+								HQText("+ \(other.name)")
 								Spacer()
-								Text(cost.asCost)
+								HQText(cost.asCost)
 									.fontWeight(.medium)
 							}
 							.font(.body)
@@ -144,10 +144,10 @@ struct CostBreakdownView: View {
 
 					// Total
 					HStack {
-						Text("Total")
+						HQText("Total")
 							.fontWeight(.semibold)
 						Spacer()
-						Text(totalCost.asCost)
+						HQText(totalCost.asCost)
 							.fontWeight(.bold)
 					}
 					.font(.title3)

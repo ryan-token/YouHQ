@@ -27,7 +27,7 @@ struct InvestmentAccountEdit: View {
 				LabeledField(label: "Account Type") {
 					Picker(selection: $vm.accountType) {
 						ForEach(InvestmentAccountType.allCases, id: \.self) { type in
-							Text(type.rawValue).tag(type)
+							HQText(type.rawValue).tag(type)
 						}
 					} label: {
 						EmptyView()

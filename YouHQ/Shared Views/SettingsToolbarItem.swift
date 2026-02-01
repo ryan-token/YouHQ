@@ -35,7 +35,7 @@ struct SettingsToolbarItem: ToolbarContent {
 }
 
 #Preview {
-	Text("Sample view with toolbar")
+	HQText("Sample view with toolbar")
 		.frame(width: 100, height: 74)
 		.toolbar {
 			SettingsToolbarItem()

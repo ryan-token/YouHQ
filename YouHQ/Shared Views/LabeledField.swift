@@ -15,7 +15,7 @@ struct LabeledField<Content: View>: View {
 		LabeledContent {
 			content()
 		} label: {
-			Text(label)
+			HQText(label)
 				.foregroundStyle(.secondary)
 		}
 	}

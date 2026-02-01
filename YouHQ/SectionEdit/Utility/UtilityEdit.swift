@@ -18,7 +18,7 @@ struct UtilityEdit: View {
 				LabeledField(label: "Type") {
 					Picker(selection: $vm.type) {
 						ForEach(UtilityType.allCases, id: \.self) { type in
-							Text(type.rawValue).tag(type)
+							HQText(type.rawValue).tag(type)
 						}
 					} label: {
 						EmptyView()

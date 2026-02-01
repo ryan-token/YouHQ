@@ -71,7 +71,7 @@ struct VehicleInfoSection: View {
 				onTap?(vehicle)
 			}
 		) {
-			Text(vehicleDisplayName)
+			HQText(vehicleDisplayName)
 				.sectionTitle()
 
 			if vehicle.type != .car || vehicle.subType != .gas {
@@ -117,10 +117,10 @@ struct VehicleInfoSection: View {
 
 			if vehicle.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(vehicle.notes)
+					HQText(vehicle.notes)
 						.foregroundStyle(.white)
 				}
 			}

@@ -21,7 +21,7 @@ struct SubscriptionSection: View {
 			onTap: onTap
 		) {
 			if subscription.name.isNotEmpty {
-				Text(subscription.name)
+				HQText(subscription.name)
 					.sectionTitle()
 			}
 
@@ -53,10 +53,10 @@ struct SubscriptionSection: View {
 
 			if subscription.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(subscription.notes)
+					HQText(subscription.notes)
 						.foregroundStyle(.white)
 				}
 			}

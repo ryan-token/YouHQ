@@ -12,22 +12,22 @@ struct TermsAndPrivacyPolicyButton: View {
 
 	var body: some View {
 		Menu {
-			// TODO: Link to Terms/Privacy Policy links
 			Button {
 				openURL(Constants.termsOfUseURL)
 			} label: {
-				Text("Terms of Use")
+				HQText("Terms of Use")
 			}
 
 			Button {
 				openURL(Constants.privacyPolicyURL)
 			} label: {
-				Text("Privacy Policy")
+				HQText("Privacy Policy")
 			}
 		} label: {
 			HStack {
 				Label {
-					Text("Terms & Privacy Policy")
+					HQText("Terms & Privacy Policy")
+						.fontWeight(.medium)
 				} icon: {
 					Image(systemName: "lock.square.fill")
 						.rowIcon(color: .gray)

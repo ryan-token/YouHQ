@@ -57,7 +57,7 @@ struct VehicleFormFields: View {
 			LabeledField(label: "Type") {
 				Picker(selection: $type) {
 					ForEach(VehicleType.allCases, id: \.self) { type in
-						Text(type.rawValue).tag(type)
+						HQText(type.rawValue).tag(type)
 					}
 				} label: {
 					EmptyView()
@@ -67,7 +67,7 @@ struct VehicleFormFields: View {
 			LabeledField(label: "Subtype") {
 				Picker(selection: $subType) {
 					ForEach(VehicleSubType.allCases, id: \.self) { subType in
-						Text(subType.rawValue).tag(subType)
+						HQText(subType.rawValue).tag(subType)
 					}
 				} label: {
 					EmptyView()
@@ -103,7 +103,7 @@ struct VehicleFormFields: View {
 			LabeledField(label: "Cost Type") {
 				Picker(selection: $costType) {
 					ForEach(VehicleCostType.allCases, id: \.self) { type in
-						Text(type.rawValue).tag(type)
+						HQText(type.rawValue).tag(type)
 					}
 				} label: {
 					EmptyView()

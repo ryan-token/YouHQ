@@ -27,9 +27,9 @@ struct ProfileRow: View {
 					.animation(.default, value: isSelected)
 
 				VStack(alignment: .leading) {
-					Text(profile.profile.name)
+					HQText(profile.profile.name)
 						.font(.headline)
-					Text("\(profile.profile.id)")
+					HQText("\(profile.profile.id)")
 						.font(.caption2)
 				}
 
@@ -69,9 +69,9 @@ struct ProfileRow: View {
 		} message: {
 			switch vm.profileSwitchAlert {
 			case .empty:
-				Text("")
+				HQText("")
 			case .confirmSwitch(let profile):
-				Text("Switch to \(profile.name)?")
+				HQText("Switch to \(profile.name)?")
 			}
 		}
 
@@ -100,11 +100,11 @@ struct ProfileRow: View {
 		} message: {
 			switch vm.profileDeletionAlert {
 			case .empty:
-				Text("")
+				HQText("")
 			case .cannotDeleteDefault:
-				Text("You cannot delete the Default profile")
+				HQText("You cannot delete the Default profile")
 			case .confirmDelete(let profile):
-				Text("Delete \(profile.name) Profile?")
+				HQText("Delete \(profile.name) Profile?")
 			}
 		}
 	}

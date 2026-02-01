@@ -35,7 +35,7 @@ struct JobEdit: View {
 				LabeledField(label: "Employment Type") {
 					Picker(selection: $vm.employmentType) {
 						ForEach(EmploymentType.allCases, id: \.self) { type in
-							Text(type.rawValue).tag(type)
+							HQText(type.rawValue).tag(type)
 						}
 					} label: {
 						EmptyView()

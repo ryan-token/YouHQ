@@ -20,7 +20,7 @@ struct AddMoreButtonLabel: View {
 		HStack {
 			Image(systemName: "plus.circle.fill")
 				.font(.title2)
-			Text(text)
+			HQText(text)
 				.font(.headline)
 		}
 		.frame(maxWidth: .infinity)

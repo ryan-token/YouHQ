@@ -51,7 +51,7 @@ extension SectionEditSheet {
 						}
 						Button("Cancel", role: .cancel) {}
 					} message: {
-						Text(vm.deleteConfirmationMessage)
+						HQText(vm.deleteConfirmationMessage)
 					}
 				}
 			}

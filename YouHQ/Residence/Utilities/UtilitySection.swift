@@ -21,7 +21,7 @@ struct UtilitySection: View {
 			onTap: onTap
 		) {
 			if utility.provider.isNotEmpty {
-				Text(utility.provider)
+				HQText(utility.provider)
 					.sectionTitle()
 			}
 
@@ -43,10 +43,10 @@ struct UtilitySection: View {
 
 			if utility.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(utility.notes)
+					HQText(utility.notes)
 						.foregroundStyle(.white)
 				}
 			}

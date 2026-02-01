@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileSettingsView: View {
+	@Environment(PaywallManager.self) private var paywallManager
 	@State private var vm = ViewModel()
 
 	let profileText = "Profiles hold residences, vehicles, money, media, and career info"
@@ -22,7 +23,11 @@ struct ProfileSettingsView: View {
 				}
 
 				Button {
-					vm.isShowingCreateProfileAlert = true
+					if paywallManager.hasUnlockedPremium {
+						vm.isShowingCreateProfileAlert = true
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					AddMoreButtonLabel(text: "Create Profile", backgroundColor: .blue)
 				}
@@ -33,23 +38,23 @@ struct ProfileSettingsView: View {
 					Button {
 						vm.createProfile(named: vm.newProfileName)
 					} label: {
-						Text("Create")
+						HQText("Create")
 					}
 					Button(role: .cancel) {
 						vm.newProfileName = ""
 					}
 				} message: {
-					Text("\(profileText).")
+					HQText("\(profileText).")
 				}
 
 				VStack(alignment: .leading, spacing: 12) {
-					Text("\(profileText).")
-					Text(
+					HQText("\(profileText).")
+					HQText(
 						"""
 						Create additional profiles to manage data for someone else, \
 						or just to separate your data cleanly.
 						""")
-					Text(
+					HQText(
 						"""
 						Profiles can be shared with others. Sharing a profile \
 						with someone else means all data in that profile \

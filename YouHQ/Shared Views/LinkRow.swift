@@ -35,14 +35,14 @@ struct LinkRow: View {
 	var body: some View {
 		HStack(alignment: .center) {
 			if let label {
-				Text(label)
+				HQText(label)
 					.font(.headline)
 			}
 			if let parsedURL = normalizedURL {
 				Button {
 					openURL(parsedURL)
 				} label: {
-					Text(url)
+					HQText(url)
 						.lineLimit(1)
 						.truncationMode(.middle)
 						.padding(.horizontal, 12)
@@ -57,7 +57,7 @@ struct LinkRow: View {
 				.buttonStyle(.plain)
 			} else if label != nil {
 				// Invalid URL with label
-				Text(url)
+				HQText(url)
 					.font(.body)
 					.lineLimit(1)
 					.truncationMode(.middle)

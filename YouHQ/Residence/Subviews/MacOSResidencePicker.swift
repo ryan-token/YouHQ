@@ -19,7 +19,7 @@ struct MacOSResidencePicker: View {
 					selection: $selectedResidence
 				) {
 					ForEach(residences) { residence in
-						Text(
+						HQText(
 							residence.unitOrStreet
 								?? residence.street
 						)

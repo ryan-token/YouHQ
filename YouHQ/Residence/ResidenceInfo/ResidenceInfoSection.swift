@@ -81,7 +81,7 @@ struct ResidenceInfoSection: View {
 				onTap?(residence)
 			}
 		) {
-			Text(residence.address)
+			HQText(residence.address)
 				.sectionTitle()
 
 			if let moveInDate = residence.moveInDate {
@@ -133,10 +133,10 @@ struct ResidenceInfoSection: View {
 
 			if residence.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(residence.notes)
+					HQText(residence.notes)
 						.foregroundStyle(.white)
 				}
 			}

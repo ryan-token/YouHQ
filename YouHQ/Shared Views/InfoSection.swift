@@ -33,7 +33,7 @@ struct InfoSection<Content: View>: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: 12) {
 			HStack {
-				Text(title)
+				HQText(title)
 					.font(.title3)
 					.fontWeight(.semibold)
 					.italic()
@@ -92,9 +92,9 @@ struct InfoRow: View {
 
 	var body: some View {
 		HStack(alignment: .top) {
-			Text(label)
+			HQText(label)
 				.font(.headline)
-			Text(value)
+			HQText(value)
 				.if(isSelectable) {
 					$0.textSelection(.enabled)
 				}

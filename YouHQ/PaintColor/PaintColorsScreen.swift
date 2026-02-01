@@ -25,7 +25,7 @@ struct PaintColorsScreen: View {
 						systemImage: "paintbrush"
 					)
 				} description: {
-					Text(
+					HQText(
 						"Add paint colors to track what's painted in each room"
 					)
 				}

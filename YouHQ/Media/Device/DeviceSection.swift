@@ -23,7 +23,7 @@ struct DeviceSection: View {
 				let title = [device.brand, device.model]
 					.filter { $0.isNotEmpty }
 					.joined(separator: " ")
-				Text(title)
+				HQText(title)
 					.sectionTitle()
 			}
 
@@ -47,10 +47,10 @@ struct DeviceSection: View {
 
 			if device.notes.isNotEmpty {
 				VStack(alignment: .leading, spacing: 4) {
-					Text("Notes:")
+					HQText("Notes:")
 						.font(.headline)
 						.foregroundStyle(.white)
-					Text(device.notes)
+					HQText(device.notes)
 						.foregroundStyle(.white)
 				}
 			}

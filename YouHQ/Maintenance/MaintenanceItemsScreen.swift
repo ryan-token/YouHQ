@@ -25,7 +25,7 @@ struct MaintenanceItemsScreen: View {
 						systemImage: "wrench.and.screwdriver"
 					)
 				} description: {
-					Text(
+					HQText(
 						"Add maintenance items to track when things need attention"
 					)
 				}
@@ -146,7 +146,7 @@ struct MaintenanceItemsScreen: View {
 			if let item = vm.itemToComplete,
 				let nextDue = item.calculateNextDueDate(from: Date()) as Date?
 			{
-				Text(
+				HQText(
 					"This will mark \"\(item.name)\" as complete and set the next due date to \(nextDue.formatted(date: .abbreviated, time: .omitted))."
 				)
 			}

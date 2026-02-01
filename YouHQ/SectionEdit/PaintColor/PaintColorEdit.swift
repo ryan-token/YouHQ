@@ -57,7 +57,7 @@ struct PaintColorEdit: View {
 				LabeledField(label: "Finish") {
 					Picker(selection: $vm.finish) {
 						ForEach(PaintFinish.allCases, id: \.self) { finish in
-							Text(finish.rawValue).tag(finish)
+							HQText(finish.rawValue).tag(finish)
 						}
 					} label: {
 						EmptyView()
