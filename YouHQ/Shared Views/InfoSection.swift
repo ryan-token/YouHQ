@@ -33,10 +33,9 @@ struct InfoSection<Content: View>: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: 12) {
 			HStack {
-				HQText(title)
+				HQText(title, italic: true)
 					.font(.title3)
 					.fontWeight(.semibold)
-					.italic()
 					.foregroundStyle(.secondary)
 
 				Spacer()

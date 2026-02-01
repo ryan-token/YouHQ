@@ -21,10 +21,10 @@ struct SalaryChart: View {
 			EmptyView()
 		} else {
 			VStack(alignment: .leading, spacing: 12) {
-				HQText("Salary History")
-					.font(.title2)
-					.bold()
-					.foregroundStyle(.primary)
+				HQText("Salary History", italic: true)
+					.font(.title3)
+					.fontWeight(.semibold)
+					.foregroundStyle(.secondary)
 
 				Chart(chartData) { data in
 					BarMark(
