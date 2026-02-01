@@ -9,6 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct PaintColorsScreen: View {
+	@Environment(PaywallManager.self) private var paywallManager
 	@State private var vm: ViewModel
 
 	init(residenceID: UUID? = nil, vehicleID: UUID? = nil) {
@@ -52,7 +53,11 @@ struct PaintColorsScreen: View {
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
 				Button {
-					vm.showAddPaintColorSheet()
+					if paywallManager.hasUnlockedPremium || vm.paintColors.count <= Constants.paywallPaintColorsThreshold {
+						vm.showAddPaintColorSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add", systemImage: "plus")
 				}

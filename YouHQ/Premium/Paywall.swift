@@ -1,0 +1,34 @@
+//
+//  Paywall.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 1/31/26.
+//
+
+import StoreKit
+import SwiftUI
+
+struct Paywall: View {
+	@Environment(PaywallManager.self) private var paywallManager
+	let fromSettings: Bool
+
+	init(fromSettings: Bool = false) {
+		self.fromSettings = fromSettings
+	}
+
+    var body: some View {
+		SubscriptionStoreView(groupID: paywallManager.groupID) {
+			MarketingCopy()
+		}
+		.if(fromSettings) {
+			$0.storeButton(.hidden, for: .cancellation)
+		}
+		.storeButton(.visible, for: .restorePurchases)
+		.subscriptionStorePolicyDestination(url: Constants.privacyPolicyURL, for: .privacyPolicy)
+		.subscriptionStorePolicyDestination(url: Constants.termsOfUse, for: .termsOfService)
+    }
+}
+
+#Preview {
+    Paywall()
+}

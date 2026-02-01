@@ -61,7 +61,13 @@ extension VehicleScreen {
 			}
 		}
 
-		// Computed property for background color
+		// used to determine whether we should show the paywall
+		var vehicleItemsCount: Int {
+			let policiesCount = insuranceViewModel.insurancePolicies.count
+			let otherCount = otherViewModel.others.count
+			return policiesCount + otherCount
+		}
+
 		var backgroundColor: Color {
 			Color(databaseValue: selectedVehicle?.backgroundColor ?? "teal")
 		}

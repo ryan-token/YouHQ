@@ -15,6 +15,8 @@ import UserNotifications
 struct YouHQApp: App {
 	@Dependency(\.context) var context
 	@Environment(\.scenePhase) private var scenePhase
+	@State private var paywallManager = PaywallManager()
+
 	#if !os(macOS)
 		@UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
 	#endif
@@ -29,6 +31,12 @@ struct YouHQApp: App {
 	var body: some Scene {
 		WindowGroup {
 			AppEntryPoint()
+				.environment(paywallManager)
+				.task(id: scenePhase) {
+					await paywallManager.setup()
+					await refreshNotifications()
+				}
+
 				#if os(macOS)
 					.frame(
 						minWidth: 600,
@@ -39,15 +47,6 @@ struct YouHQApp: App {
 						maxHeight: .infinity
 					)
 				#endif
-				.task(id: scenePhase) {
-					// Only refresh when becoming active (includes initial launch)
-					guard scenePhase == .active else { return }
-
-					let status = await NotificationManager.shared.checkAuthorizationStatus()
-					if status == .authorized {
-						await NotificationManager.shared.refreshAllNotifications()
-					}
-				}
 		}
 		#if os(macOS)
 			.windowResizability(.contentSize)
@@ -56,6 +55,11 @@ struct YouHQApp: App {
 		#if os(macOS)
 			Settings {
 				SettingsScreen()
+					.environment(paywallManager)
+					.task { await paywallManager.setup() }
+					.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+						Paywall()
+					}
 					.frame(
 						minWidth: 600,
 						idealWidth: 800,
@@ -92,6 +96,16 @@ struct YouHQApp: App {
 				Other.self,
 				Asset.self
 			)
+		}
+	}
+
+	private func refreshNotifications() async {
+		// Only refresh when becoming active (includes initial launch)
+		guard scenePhase == .active else { return }
+
+		let status = await NotificationManager.shared.checkAuthorizationStatus()
+		if status == .authorized {
+			await NotificationManager.shared.refreshAllNotifications()
 		}
 	}
 }

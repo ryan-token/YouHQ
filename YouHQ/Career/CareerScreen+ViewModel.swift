@@ -27,11 +27,16 @@ extension CareerScreen {
 			getSelectedProfile()
 		}
 
+		var careerItemsCount: Int {
+			let jobsCount = jobViewModel.jobs.count
+			let otherCount = otherViewModel.others.count
+			return jobsCount + otherCount
+		}
+
 		var isShowingAddJobSheet = false
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 
-		// Computed property to get sorted jobs
 		var sortedJobs: [Job] {
 			let currentJob = jobViewModel.jobs.filter { $0.isCurrent }
 			let pastJobs = jobViewModel.jobs.filter { !$0.isCurrent }

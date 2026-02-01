@@ -12,15 +12,20 @@ enum AppTab: String, Hashable {
 }
 
 struct AppEntryPoint: View {
+	@Environment(PaywallManager.self) private var paywallManager
 	@State private var selectedTab: AppTab = .home
 
 	var body: some View {
+		@Bindable var paywallManager = paywallManager
 		TabView(selection: $selectedTab) {
 			Tab("Home", systemImage: "house", value: .home) {
 				NavigationStack {
 					ResidenceScreen()
 						.toolbar {
 							SettingsToolbarItem()
+						}
+						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+							Paywall()
 						}
 				}
 			}
@@ -30,6 +35,9 @@ struct AppEntryPoint: View {
 						.toolbar {
 							SettingsToolbarItem()
 						}
+						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+							Paywall()
+						}
 				}
 			}
 			Tab("Money", systemImage: "dollarsign", value: .money) {
@@ -37,6 +45,9 @@ struct AppEntryPoint: View {
 					MoneyScreen()
 						.toolbar {
 							SettingsToolbarItem()
+						}
+						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+							Paywall()
 						}
 				}
 			}
@@ -46,6 +57,9 @@ struct AppEntryPoint: View {
 						.toolbar {
 							SettingsToolbarItem()
 						}
+						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+							Paywall()
+						}
 				}
 			}
 			Tab("Career", systemImage: "briefcase", value: .career) {
@@ -53,6 +67,9 @@ struct AppEntryPoint: View {
 					CareerScreen()
 						.toolbar {
 							SettingsToolbarItem()
+						}
+						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+							Paywall()
 						}
 				}
 			}

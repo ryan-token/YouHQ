@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct VehicleMenu: View {
+	@Environment(PaywallManager.self) private var paywallManager
+
 	let vm: VehicleScreen.ViewModel
 	let includeAddVehicle: Bool
 
@@ -20,7 +22,11 @@ struct VehicleMenu: View {
 		Group {
 			if includeAddVehicle {
 				Button {
-					vm.showCreateVehicleSheet()
+					if paywallManager.hasUnlockedPremium || vm.vehicles.count < 1 {
+						vm.showCreateVehicleSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add Vehicle", systemImage: "car.2.fill")
 				}
@@ -30,25 +36,41 @@ struct VehicleMenu: View {
 
 			if !vm.vehicles.isEmpty {
 				Button {
-					vm.showAddInsurancePolicySheet()
+					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallCoreItemsThreshold {
+						vm.showAddInsurancePolicySheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add Insurance Policy", systemImage: "shield.fill")
 				}
 
 				Button {
-					vm.showAddMaintenanceItemSheet()
+					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallMaintenanceItemsThreshold {
+						vm.showAddMaintenanceItemSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
 				}
 
 				Button {
-					vm.showAddPaintColorSheet()
+					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallPaintColorsThreshold {
+						vm.showAddPaintColorSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add Paint Color", systemImage: "paintbrush.fill")
 				}
 
 				Button {
-					vm.showAddOtherSheet()
+					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallCoreItemsThreshold {
+						vm.showAddOtherSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add Other", systemImage: "ellipsis.circle.fill")
 				}

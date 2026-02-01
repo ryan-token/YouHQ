@@ -8,35 +8,57 @@
 import SwiftUI
 
 struct MoneyMenu: View {
+	@Environment(PaywallManager.self) private var paywallManager
+
 	let vm: MoneyScreen.ViewModel
 
 	var body: some View {
 		Button {
-			vm.showAddBankAccountSheet()
+			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddBankAccountSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Bank Account", systemImage: "building.columns.fill")
 		}
 
 		Button {
-			vm.showAddInvestmentAccountSheet()
+			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddInvestmentAccountSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Investment Account", systemImage: "chart.line.uptrend.xyaxis")
 		}
 
 		Button {
-			vm.showAddHealthSavingsAccountSheet()
+			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddHealthSavingsAccountSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add HSA/FSA", systemImage: "cross.case.fill")
 		}
 
 		Button {
-			vm.showAddInsurancePolicySheet()
+			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddInsurancePolicySheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Insurance Policy", systemImage: "shield.fill")
 		}
 
 		Button {
-			vm.showAddOtherSheet()
+			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddOtherSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Other", systemImage: "ellipsis.circle.fill")
 		}

@@ -62,7 +62,14 @@ extension ResidenceScreen {
 			}
 		}
 
-		// Computed property for background color
+		// used to determine whether we should show the paywall
+		var residenceItemsCount: Int {
+			let utilitiesCount = utilityViewModel.utilities.count
+			let policiesCount = insuranceViewModel.insurancePolicies.count
+			let otherCount = otherViewModel.others.count
+			return utilitiesCount + policiesCount + otherCount
+		}
+
 		var backgroundColor: Color {
 			Color(databaseValue: selectedResidence?.backgroundColor ?? "indigo")
 		}

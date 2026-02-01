@@ -29,6 +29,14 @@ extension MediaScreen {
 			getSelectedProfile()
 		}
 
+		var mediaItemsCount: Int {
+			let devicesCount = deviceViewModel.devices.count
+			let serviceProvidersCount = serviceProviderViewModel.serviceProviders.count
+			let subscriptionsCount = subscriptionViewModel.subscriptions.count
+			let otherCount = otherViewModel.others.count
+			return devicesCount + serviceProvidersCount + subscriptionsCount + otherCount
+		}
+
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 

@@ -8,29 +8,47 @@
 import SwiftUI
 
 struct MediaMenu: View {
+	@Environment(PaywallManager.self) private var paywallManager
+
 	let vm: MediaScreen.ViewModel
 
 	var body: some View {
 		Button {
-			vm.showAddServiceProviderSheet()
+			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddServiceProviderSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Service Provider", systemImage: "network")
 		}
 
 		Button {
-			vm.showAddSubscriptionSheet()
+			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddSubscriptionSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Subscription", systemImage: "rectangle.stack")
 		}
 
 		Button {
-			vm.showAddDeviceSheet()
+			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddDeviceSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Device", systemImage: "desktopcomputer")
 		}
 
 		Button {
-			vm.showAddOtherSheet()
+			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddOtherSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Other", systemImage: "ellipsis.circle.fill")
 		}

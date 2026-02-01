@@ -35,7 +35,6 @@ struct VehicleInfoSection: View {
 		self.onColorChange = onColorChange
 	}
 
-	// Computed property for total monthly cost
 	var totalMonthlyCost: Double {
 		var total: Double = 0
 

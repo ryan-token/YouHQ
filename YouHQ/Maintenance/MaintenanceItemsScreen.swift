@@ -9,6 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct MaintenanceItemsScreen: View {
+	@Environment(PaywallManager.self) private var paywallManager
 	@State private var vm: ViewModel
 
 	init(residenceID: UUID? = nil, vehicleID: UUID? = nil) {
@@ -103,7 +104,11 @@ struct MaintenanceItemsScreen: View {
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
 				Button {
-					vm.showAddMaintenanceItemSheet()
+					if paywallManager.hasUnlockedPremium || vm.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold {
+						vm.showAddMaintenanceItemSheet()
+					} else {
+						paywallManager.isShowingPaywallSheet = true
+					}
 				} label: {
 					Label("Add", systemImage: "plus")
 				}

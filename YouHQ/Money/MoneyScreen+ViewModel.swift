@@ -30,6 +30,15 @@ extension MoneyScreen {
 			getSelectedProfile()
 		}
 
+		var moneyItemsCount: Int {
+			let bankAccountCount = bankAccountViewModel.bankAccounts.count
+			let investmentAccountsCount = investmentAccountViewModel.investmentAccounts.count
+			let healthSavingsAccountsCount = healthSavingsAccountViewModel.healthSavingsAccounts.count
+			let policiesCount = insuranceViewModel.insurancePolicies.count
+			let otherCount = otherViewModel.others.count
+			return bankAccountCount + investmentAccountsCount + healthSavingsAccountsCount + policiesCount + otherCount
+		}
+
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 

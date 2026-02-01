@@ -65,7 +65,8 @@ struct SettingsScreen: View {
 			Group {
 				switch selectedTab {
 				case .premium:
-					YouHQPremiumView()
+					// YouHQPremiumView()
+					Paywall(fromSettings: true)
 				case .profiles:
 					ProfileSettingsView()
 				case nil:

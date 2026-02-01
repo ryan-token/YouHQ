@@ -8,17 +8,27 @@
 import SwiftUI
 
 struct CareerMenu: View {
+	@Environment(PaywallManager.self) private var paywallManager
+
 	let vm: CareerScreen.ViewModel
 
 	var body: some View {
 		Button {
-			vm.showAddJobSheet()
+			if paywallManager.hasUnlockedPremium || vm.careerItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddJobSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Job", systemImage: "briefcase.fill")
 		}
 
 		Button {
-			vm.showAddOtherSheet()
+			if paywallManager.hasUnlockedPremium || vm.careerItemsCount < Constants.paywallCoreItemsThreshold {
+				vm.showAddOtherSheet()
+			} else {
+				paywallManager.isShowingPaywallSheet = true
+			}
 		} label: {
 			Label("Add Other", systemImage: "ellipsis.circle.fill")
 		}
