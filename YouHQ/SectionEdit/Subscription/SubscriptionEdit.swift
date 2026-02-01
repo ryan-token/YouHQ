@@ -34,7 +34,17 @@ struct SubscriptionEdit: View {
 					}
 				}
 
-				LabeledField(label: "Monthly Cost") {
+				LabeledField(label: "Billing Cycle") {
+					Picker(selection: $vm.billingCycle) {
+						ForEach(BillingCycle.allCases, id: \.self) { cycle in
+							HQText(cycle.rawValue).tag(cycle)
+						}
+					} label: {
+						EmptyView()
+					}
+				}
+
+				LabeledField(label: vm.billingCycle == .annual ? "Annual Cost" : "Monthly Cost") {
 					TextField(
 						"",
 						value: $vm.monthlyCost,
@@ -45,16 +55,6 @@ struct SubscriptionEdit: View {
 				#if !os(macOS)
 					.keyboardType(.decimalPad)
 				#endif
-
-				LabeledField(label: "Billing Cycle") {
-					Picker(selection: $vm.billingCycle) {
-						ForEach(BillingCycle.allCases, id: \.self) { cycle in
-							HQText(cycle.rawValue).tag(cycle)
-						}
-					} label: {
-						EmptyView()
-					}
-				}
 
 				LabeledField(label: "Renewal Date") {
 					DatePicker(

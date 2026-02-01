@@ -27,7 +27,7 @@ struct SubscriptionSection: View {
 
 			if let monthlyCost = subscription.monthlyCost {
 				InfoRow(
-					"Monthly cost:",
+					subscription.billingCycle == .annual ? "Annual cost:" : "Monthly cost:",
 					value: "\(monthlyCost.asCost)",
 					blurred: hideCosts
 				)

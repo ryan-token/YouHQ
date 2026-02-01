@@ -90,7 +90,9 @@ extension MediaScreen {
 			// Add subscription costs (only active subscriptions)
 			for subscription in subscriptionViewModel.subscriptions {
 				if subscription.isActive, let cost = subscription.monthlyCost {
-					total += cost
+					// Convert annual costs to monthly equivalent
+					let monthlyCost = subscription.billingCycle == .annual ? cost / 12 : cost
+					total += monthlyCost
 				}
 			}
 

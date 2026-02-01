@@ -47,10 +47,11 @@ struct MediaCostBreakdownView: View {
 					// Subscriptions (only active)
 					ForEach(subscriptions.filter { $0.isActive }) { subscription in
 						if let cost = subscription.monthlyCost {
+							let monthlyCost = subscription.billingCycle == .annual ? cost / 12 : cost
 							HStack {
 								HQText("+ \(subscription.name)")
 								Spacer()
-								HQText(cost.asCost)
+								HQText(monthlyCost.asCost)
 									.fontWeight(.medium)
 							}
 							.font(.body)
