@@ -34,6 +34,8 @@ struct TermsAndPrivacyPolicyButton: View {
 				}
 
 				Spacer()
+
+				ExternalLinkIndicator()
 			}
 			.contentShape(.rect)
 		}

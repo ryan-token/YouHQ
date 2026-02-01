@@ -40,6 +40,7 @@ class PaywallManager {
 
 	private func consumeVerificationResult(for result: VerificationResult<Transaction>) {
 		guard case .verified(let transaction) = result else { return }
+		Analytics.trackPurchase(for: transaction)
 
 		if transaction.revocationDate != nil {
 			verifiedActiveSubscriptionIDs.remove(transaction.productID)

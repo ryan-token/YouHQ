@@ -57,9 +57,6 @@ struct YouHQApp: App {
 				SettingsScreen()
 					.environment(paywallManager)
 					.task { await paywallManager.setup() }
-					.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
-						Paywall()
-					}
 					.frame(
 						minWidth: 600,
 						idealWidth: 800,

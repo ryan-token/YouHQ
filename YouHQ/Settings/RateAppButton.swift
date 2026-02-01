@@ -23,10 +23,7 @@ struct RateAppButton: View {
 
 				Spacer()
 
-				Image(systemName: "arrow.up.forward")
-					.foregroundStyle(.secondary)
-					.font(.caption)
-					.fontWeight(.semibold)
+				ExternalLinkIndicator()
 			}
 			.contentShape(.rect)
 		}

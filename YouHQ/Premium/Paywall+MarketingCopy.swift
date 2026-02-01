@@ -41,7 +41,8 @@ extension Paywall {
 				.multilineTextAlignment(.leading)
 				.frame(maxWidth: .infinity, alignment: .center)
 			}
-			.foregroundStyle(.white.opacity(0.6))
+			.padding(.vertical)
+			.foregroundStyle(.white.opacity(0.7))
 			.containerBackground(for: .subscriptionStoreFullHeight) {
 				LinearGradient(colors: [.blue, .red], startPoint: .topLeading, endPoint: .bottomTrailing)
 			}

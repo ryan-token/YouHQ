@@ -57,22 +57,6 @@ extension ProfileSelection {
 
 		return nil
 	}
-
-	/// Handles profile deletion - switches to another if currently selected
-	func handleProfileDeletion(_ deletedID: UUID) {
-		guard currentProfileID == deletedID else { return }
-
-		// Switch to Default if available
-		if let defaultProfile = profiles.first(where: {
-			$0.profile.name == "Default" && $0.profile.id != deletedID
-		}) {
-			currentProfileID = defaultProfile.profile.id
-		} else if let firstProfile = profiles.first(where: { $0.profile.id != deletedID }) {
-			currentProfileID = firstProfile.profile.id
-		} else {
-			currentProfileID = nil
-		}
-	}
 }
 
 // MARK: - AppStorage Key

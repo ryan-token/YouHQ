@@ -43,9 +43,9 @@ struct SettingsScreen: View {
 			.listStyle(.sidebar)
 			.navigationTitle("Settings")
 			#if os(macOS)
-			.navigationSplitViewColumnWidth(210)
+				.navigationSplitViewColumnWidth(210)
 			#else
-			.navigationSplitViewColumnWidth(300)
+				.navigationSplitViewColumnWidth(300)
 			#endif
 
 			#if !os(macOS)
@@ -64,7 +64,13 @@ struct SettingsScreen: View {
 			Group {
 				switch selectedSetting {
 				case .premium:
-					Paywall(fromSettings: true)
+					#if os(macOS)
+						ScrollView {
+							Paywall(fromSettings: true)
+						}
+					#else
+						Paywall(fromSettings: true)
+					#endif
 				case .profiles:
 					ProfileSettingsView()
 				case nil:
