@@ -29,7 +29,7 @@ struct ProfileSettingsView: View {
 						paywallManager.isShowingPaywallSheet = true
 					}
 				} label: {
-					AddMoreButtonLabel(text: "Create Profile", backgroundColor: .blue)
+					AddMoreButtonLabel(text: "Create Profile", backgroundColor: .indigo)
 				}
 				.buttonStyle(.plain)
 				.listRowBackground(Color.clear)

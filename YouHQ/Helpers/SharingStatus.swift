@@ -91,7 +91,7 @@ struct SharedLabel: View {
 		}
 		.padding(.vertical, 6)
 		.padding(.horizontal, 12)
-		.background(.blue)
+		.background(.indigo)
 		.foregroundStyle(.white)
 		.clipShape(.capsule)
 
