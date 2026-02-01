@@ -17,15 +17,13 @@ struct Paywall: View {
 	}
 
     var body: some View {
-		SubscriptionStoreView(groupID: paywallManager.groupID) {
+		SubscriptionStoreView(groupID: paywallManager.subscriptionGroupID) {
 			MarketingCopy()
 		}
 		.if(fromSettings) {
 			$0.storeButton(.hidden, for: .cancellation)
 		}
 		.storeButton(.visible, for: .restorePurchases)
-		.subscriptionStorePolicyDestination(url: Constants.privacyPolicyURL, for: .privacyPolicy)
-		.subscriptionStorePolicyDestination(url: Constants.termsOfUse, for: .termsOfService)
     }
 }
 

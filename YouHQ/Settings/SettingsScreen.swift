@@ -8,36 +8,35 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-	enum SettingsTab {
+	enum SettingsOption {
 		case premium
 		case profiles
 	}
 
 	@Environment(\.dismiss) var dismiss
-	@State private var selectedTab: SettingsTab?
+	@State private var selectedSetting: SettingsOption?
 
 	var body: some View {
 		NavigationSplitView {
-			List(selection: $selectedTab) {
+			List(selection: $selectedSetting) {
 				Section("Preferences") {
 					SettingsNavLabel(
 						labelText: "YouHQ Premium",
 						iconName: "star.square.fill",
 						iconColor: .purple
 					)
-					.tag(SettingsTab.premium)
+					.tag(SettingsOption.premium)
 
 					SettingsNavLabel(
 						labelText: "Profiles",
 						iconName: "person.2.square.stack.fill",
 						iconColor: .blue
 					)
-					.tag(SettingsTab.profiles)
+					.tag(SettingsOption.profiles)
 				}
 
 				Section("More") {
 					RateAppButton()
-					AboutAppButton()
 					TermsAndPrivacyPolicyButton()
 				}
 			}
@@ -63,9 +62,8 @@ struct SettingsScreen: View {
 			#endif
 		} detail: {
 			Group {
-				switch selectedTab {
+				switch selectedSetting {
 				case .premium:
-					// YouHQPremiumView()
 					Paywall(fromSettings: true)
 				case .profiles:
 					ProfileSettingsView()

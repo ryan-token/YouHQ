@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct TermsAndPrivacyPolicyButton: View {
+	@Environment(\.openURL) var openURL
+
 	var body: some View {
 		Menu {
 			// TODO: Link to Terms/Privacy Policy links
 			Button {
-				print("Link to Terms of Use")
+				openURL(Constants.termsOfUseURL)
 			} label: {
 				Text("Terms of Use")
 			}
 
 			Button {
-				print("Link to Privacy Policy")
+				openURL(Constants.privacyPolicyURL)
 			} label: {
 				Text("Privacy Policy")
 			}

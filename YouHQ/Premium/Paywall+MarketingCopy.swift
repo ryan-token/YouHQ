@@ -11,7 +11,7 @@ import SwiftUI
 extension Paywall {
 	struct MarketingCopy: View {
 		var body: some View {
-			VStack(spacing: 16) {
+			VStack(spacing: 12) {
 				Image(systemName: "dollarsign.square.fill")
 					.resizable()
 					.scaledToFit()
@@ -35,13 +35,12 @@ extension Paywall {
 						Text("☁️ Profile sharing over iCloud")
 						Text("🙏 My undying gratitude")
 					}
-					.padding(.leading, 8)
+					.padding(.leading, 12)
 				}
 				.font(.subheadline.weight(.medium))
 				.multilineTextAlignment(.leading)
 				.frame(maxWidth: .infinity, alignment: .center)
 			}
-			.padding(.vertical)
 			.foregroundStyle(.white.opacity(0.6))
 			.containerBackground(for: .subscriptionStoreFullHeight) {
 				LinearGradient(colors: [.blue, .red], startPoint: .topLeading, endPoint: .bottomTrailing)

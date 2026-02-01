@@ -9,7 +9,7 @@ import StoreKit
 
 @Observable
 class PaywallManager {
-	let groupID = "21913578"
+	let subscriptionGroupID = "21913578" // from App Store Connect
 
 	var isShowingPaywallSheet = false
 	private(set) var verifiedActiveSubscriptionIDs = Set<String>()
