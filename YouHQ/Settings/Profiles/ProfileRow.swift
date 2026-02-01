@@ -22,7 +22,7 @@ struct ProfileRow: View {
 			}
 		} label: {
 			HStack {
-				Image(systemName: isSelected ? "checkmark.circle.fill": "circle")
+				Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
 					.rowIcon(color: isSelected ? .indigo : .gray)
 					.animation(.default, value: isSelected)
 

@@ -16,7 +16,7 @@ struct Paywall: View {
 		self.fromSettings = fromSettings
 	}
 
-    var body: some View {
+	var body: some View {
 		SubscriptionStoreView(groupID: paywallManager.subscriptionGroupID) {
 			MarketingCopy()
 		}
@@ -24,7 +24,7 @@ struct Paywall: View {
 			$0.storeButton(.hidden, for: .cancellation)
 		}
 		.storeButton(.visible, for: .restorePurchases)
-    }
+	}
 }
 
 #Preview {

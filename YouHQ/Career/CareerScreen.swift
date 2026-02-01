@@ -22,6 +22,8 @@ struct CareerScreen: View {
 				} else {
 					HideSalariesToggle(hideSalaries: $hideSalaries)
 
+					SalaryChart(jobs: vm.sortedJobs, hideSalaries: hideSalaries)
+
 					ForEach(vm.sortedJobs) { job in
 						JobSection(
 							job: job,

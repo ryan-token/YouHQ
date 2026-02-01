@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ExternalLinkIndicator: View {
-    var body: some View {
+	var body: some View {
 		Image(systemName: "arrow.up.forward")
 			.foregroundStyle(.secondary)
 			.font(.caption)
 			.fontWeight(.semibold)
-    }
+	}
 }
 
 #Preview {
-    ExternalLinkIndicator()
+	ExternalLinkIndicator()
 }

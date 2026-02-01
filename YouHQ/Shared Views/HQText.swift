@@ -14,12 +14,12 @@ struct HQText: View {
 		self.text = text
 	}
 
-    var body: some View {
-        Text(text)
+	var body: some View {
+		Text(text)
 			.fontDesign(.rounded)
-    }
+	}
 }
 
 #Preview {
-    HQText("YouHQ Premium")
+	HQText("YouHQ Premium")
 }
