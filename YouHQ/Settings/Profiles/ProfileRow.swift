@@ -37,6 +37,7 @@ struct ProfileRow: View {
 
 				SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true)
 			}
+			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {

@@ -22,61 +22,64 @@ struct SharingStatus: View {
 		self.shouldShowShareButtonIfNotShared = shouldShowShareButtonIfNotShared
 	}
 
-	// Sharable CloudKit data that can also drive a sheet to present a share interface
 	@State private var sharedRecord: SharedRecord?
 
+	private var isShared: Bool {
+		profile?.isShared == true
+	}
+
+	private var shouldShowButton: Bool {
+		shouldShowShareButtonIfNotShared || isShared
+	}
+
 	var body: some View {
-		if shouldShowShareButtonIfNotShared {
-			Button {
-				#if !os(macOS)
+		#if os(macOS)
+			if isShared {
+				SharedLabel(sharedRecord: $sharedRecord)
+			}
+		#else
+			if shouldShowButton {
+				Button {
 					Task {
 						await shareProfileTapped()
 					}
-				#endif
-			} label: {
-				if let profile, profile.isShared {
-					SharedLabel(sharedRecord: $sharedRecord)
-				} else {
-					#if !os(macOS)
-						Image(systemName: "square.and.arrow.up")
-					#endif
-				}
-			}
-			.buttonStyle(.plain)
-		} else {
-			if let profile, profile.isShared {
-				Button {
-					#if !os(macOS)
-						Task {
-							await shareProfileTapped()
-						}
-					#endif
 				} label: {
-					SharedLabel(sharedRecord: $sharedRecord)
+					if isShared {
+						SharedLabel(sharedRecord: $sharedRecord)
+					} else {
+						Image(systemName: "square.and.arrow.up")
+					}
 				}
 				.buttonStyle(.plain)
 			}
-		}
+		#endif
 	}
 
 	func shareProfileTapped() async {
-		if paywallManager.hasUnlockedPremium {
-			if let profile {
-				do {
-					sharedRecord = try await syncEngine.share(
-						record: profile.profile
-					) {
-						$0[CKShare.SystemFieldKey.title] =
-							"\(profile.profile.name) Profile"
-						$0[CKShare.SystemFieldKey.thumbnailImageData] = nil
-					}
-				} catch {
-					Analytics.logError(id: .profileShareFailed, message: error.localizedDescription)
-					reportIssue(error)
-				}
-			}
-		} else {
+		guard paywallManager.hasUnlockedPremium else {
 			paywallManager.isShowingPaywallSheet = true
+			return
+		}
+
+		guard let profile else { return }
+
+		do {
+			sharedRecord = try await syncEngine.share(
+				record: profile.profile
+			) { share in
+				share[CKShare.SystemFieldKey.title] = "YouHQ: \(profile.profile.name)"
+
+				#if !os(macOS)
+					if let image = UIImage(named: "AppIcon-256"),
+						let imageData = image.pngData()
+					{
+						share[CKShare.SystemFieldKey.thumbnailImageData] = imageData as CKRecordValue
+					}
+				#endif
+			}
+		} catch {
+			Analytics.logError(id: .profileShareFailed, message: error.localizedDescription)
+			reportIssue(error)
 		}
 	}
 }
@@ -94,21 +97,29 @@ struct SharedLabel: View {
 		.background(.indigo)
 		.foregroundStyle(.white)
 		.clipShape(.capsule)
-
 		#if !os(macOS)
-			.if(UIDevice.current.userInterfaceIdiom == .phone) {
-				$0.sheet(item: $sharedRecord) { sharedRecord in
-					CloudSharingView(sharedRecord: sharedRecord)
-				}
-			}
-			.if(UIDevice.current.userInterfaceIdiom == .pad) {
-				$0.popover(item: $sharedRecord) { sharedRecord in
-					CloudSharingView(sharedRecord: sharedRecord)
-				}
-			}
+			.modifier(SharePresentationModifier(sharedRecord: $sharedRecord))
 		#endif
 	}
 }
+
+#if !os(macOS)
+	struct SharePresentationModifier: ViewModifier {
+		@Binding var sharedRecord: SharedRecord?
+
+		func body(content: Content) -> some View {
+			if UIDevice.current.userInterfaceIdiom == .phone {
+				content.sheet(item: $sharedRecord) { sharedRecord in
+					CloudSharingView(sharedRecord: sharedRecord)
+				}
+			} else {
+				content.popover(item: $sharedRecord) { sharedRecord in
+					CloudSharingView(sharedRecord: sharedRecord)
+				}
+			}
+		}
+	}
+#endif
 
 #Preview {
 	SharingStatus(for: ProfileShare(profile: Profile.sampleData, isShared: true))
