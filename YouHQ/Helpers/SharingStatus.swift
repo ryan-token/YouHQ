@@ -28,6 +28,10 @@ struct SharingStatus: View {
 		profile?.isShared == true
 	}
 
+	private var sharedParticipantsCount: Int {
+		profile?.participantCount() ?? 0
+	}
+
 	private var shouldShowButton: Bool {
 		shouldShowShareButtonIfNotShared || isShared
 	}
@@ -35,7 +39,7 @@ struct SharingStatus: View {
 	var body: some View {
 		#if os(macOS)
 			if isShared {
-				SharedLabel(sharedRecord: $sharedRecord)
+				SharedLabel(sharedRecord: $sharedRecord, participantsCount: sharedParticipantsCount)
 			}
 		#else
 			if shouldShowButton {
@@ -45,7 +49,7 @@ struct SharingStatus: View {
 					}
 				} label: {
 					if isShared {
-						SharedLabel(sharedRecord: $sharedRecord)
+						SharedLabel(sharedRecord: $sharedRecord, participantsCount: sharedParticipantsCount)
 					} else {
 						Image(systemName: "square.and.arrow.up")
 					}
@@ -86,15 +90,16 @@ struct SharingStatus: View {
 
 struct SharedLabel: View {
 	@Binding var sharedRecord: SharedRecord?
+	let participantsCount: Int
 
 	var body: some View {
 		HStack {
 			Image(systemName: "network")
-			HQText("Shared")
+			HQText(participantsCount > 0 ? "Shared With \(participantsCount)" : "Shareable")
 		}
 		.padding(.vertical, 6)
 		.padding(.horizontal, 12)
-		.background(.indigo)
+		.background(participantsCount > 0 ? .indigo : .indigo.opacity(0.3))
 		.foregroundStyle(.white)
 		.clipShape(.capsule)
 		#if !os(macOS)
@@ -122,5 +127,5 @@ struct SharedLabel: View {
 #endif
 
 #Preview {
-	SharingStatus(for: ProfileShare(profile: Profile.sampleData, isShared: true))
+	SharingStatus(for: ProfileShare(profile: Profile.sampleData, isShared: true, metadata: nil))
 }

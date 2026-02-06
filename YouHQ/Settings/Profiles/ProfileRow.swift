@@ -29,13 +29,17 @@ struct ProfileRow: View {
 				VStack(alignment: .leading) {
 					HQText(profile.profile.name)
 						.font(.headline)
-					HQText("\(profile.profile.id)")
-						.font(.caption2)
+
+					#if DEBUG
+						HQText("\(profile.profile.id)")
+							.font(.caption2)
+					#endif
 				}
 
 				Spacer()
 
 				SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true)
+					.layoutPriority(1)
 			}
 			.contentShape(.rect)
 		}
@@ -112,5 +116,5 @@ struct ProfileRow: View {
 }
 
 #Preview {
-	ProfileRow(profile: ProfileShare(profile: Profile.sampleData, isShared: true), vm: ProfileSettingsView.ViewModel())
+	ProfileRow(profile: ProfileShare(profile: Profile.sampleData, isShared: true, metadata: nil), vm: ProfileSettingsView.ViewModel())
 }

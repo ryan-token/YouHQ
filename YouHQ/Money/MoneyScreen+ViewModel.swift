@@ -55,7 +55,8 @@ extension MoneyScreen {
 						.select {
 							ProfileShare.Columns(
 								profile: $0,
-								isShared: $1.isShared.ifnull(false)
+								isShared: $1.isShared.ifnull(false),
+								metadata: $1
 							)
 						},
 					animation: .default
