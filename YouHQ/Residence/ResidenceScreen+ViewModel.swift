@@ -62,6 +62,10 @@ extension ResidenceScreen {
 			}
 		}
 
+		var hasAddresses: Bool {
+			residences.contains { $0.street.isNotEmpty && $0.city.isNotEmpty }
+		}
+
 		// used to determine whether we should show the paywall
 		var residenceItemsCount: Int {
 			let utilitiesCount = utilityViewModel.utilities.count

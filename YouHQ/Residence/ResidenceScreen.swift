@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 12/29/25.
 //
 
+import MapKit
 import SQLiteData
 import SwiftUI
 
@@ -27,6 +28,13 @@ struct ResidenceScreen: View {
 					MacOSResidencePicker(residences: vm.residences, selectedResidence: $vm.selectedResidence)
 
 					HideCostsToggle(hideCosts: $hideResidenceCosts)
+
+					if vm.hasAddresses {
+						ResidenceMapView(
+							residences: vm.residences,
+							selectedResidence: $vm.selectedResidence
+						)
+					}
 
 					ResidenceInfo(vm: vm, hideCosts: hideResidenceCosts)
 						.id(vm.selectedResidence?.id)
