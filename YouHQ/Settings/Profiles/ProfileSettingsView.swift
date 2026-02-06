@@ -52,13 +52,13 @@ struct ProfileSettingsView: View {
 					HQText(
 						"""
 						Create additional profiles to manage data for someone else, \
-						or just to separate your data cleanly.
+						or to isolate your own data more cleanly.
 						""")
 					HQText(
 						"""
 						Profiles can be shared with others. Sharing a profile \
 						with someone else means all data in that profile \
-						will be synced seamlessly between you.
+						will be synced seamlessly between all participants.
 						""")
 				}
 				.foregroundStyle(.secondary)

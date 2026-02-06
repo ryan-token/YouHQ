@@ -99,7 +99,7 @@ struct SharedLabel: View {
 		}
 		.padding(.vertical, 6)
 		.padding(.horizontal, 12)
-		.background(participantsCount > 0 ? .indigo : .indigo.opacity(0.3))
+		.background(participantsCount > 0 ? .indigo : .indigo.opacity(0.6))
 		.foregroundStyle(.white)
 		.clipShape(.capsule)
 		#if !os(macOS)
