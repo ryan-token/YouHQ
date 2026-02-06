@@ -24,7 +24,7 @@
     "_developerTeamID" : "DJAHJZFYK7",
     "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 791584715.958583,
+    "_lastSynchronizedDate" : 792091732.31735694,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",
@@ -78,7 +78,7 @@
           ],
           "displayPrice" : "9.99",
           "familyShareable" : false,
-          "groupNumber" : 2,
+          "groupNumber" : 1,
           "internalID" : "6758559588",
           "introductoryOffer" : null,
           "localizations" : [
