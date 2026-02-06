@@ -22,7 +22,7 @@ extension AddResidenceSheet {
 		var city: String = ""
 		var state: String = ""
 		var zipCode: String = ""
-		var country: String = "USA"
+		var country: String = ""
 		var moveInDate: Date?
 		var moveOutDate: Date?
 		var hasMoveOutDate: Bool = false

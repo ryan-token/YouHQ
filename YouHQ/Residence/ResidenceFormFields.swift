@@ -99,12 +99,12 @@ struct ResidenceFormFields: View {
 					.textContentType(.addressCity)
 					.textInputAutocapitalization(.words)
 				#endif
-			TextField("State", text: $state)
+			TextField("State/Region", text: $state)
 				#if !os(macOS)
 					.textContentType(.addressState)
-					.textInputAutocapitalization(.characters)
+					.textInputAutocapitalization(.words)
 				#endif
-			TextField("ZIP Code", text: $zipCode)
+			TextField("Postal Code", text: $zipCode)
 				#if !os(macOS)
 					.textContentType(.postalCode)
 					.keyboardType(.numberPad)
