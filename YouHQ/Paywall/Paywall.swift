@@ -10,6 +10,8 @@ import SwiftUI
 
 struct Paywall: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@State private var refreshTrigger = UUID()
+
 	let fromSettings: Bool
 
 	init(fromSettings: Bool = false) {
@@ -24,6 +26,18 @@ struct Paywall: View {
 			$0.storeButton(.hidden, for: .cancellation)
 		}
 		.storeButton(.visible, for: .restorePurchases)
+		.id(refreshTrigger)
+		.onAppear {
+			refreshTrigger = UUID() // SubscriptionStoreView loses the active plan without this
+		}
+		.onInAppPurchaseCompletion { _, result in
+			if case .success(.success(let transaction)) = result {
+				print("Purchased successfully: \(transaction.signedDate)")
+				// rain confetti
+			} else {
+				print("Something went wrong")
+			}
+		}
 	}
 }
 

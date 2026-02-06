@@ -27,7 +27,7 @@ class PaywallManager {
 		guard observerTask == nil else { return }
 		observerTask = Task(priority: .background) {
 			for await result in Transaction.updates {
-				self.consumeVerificationResult(for: result)
+				consumeVerificationResult(for: result)
 			}
 		}
 	}
