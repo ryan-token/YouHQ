@@ -29,7 +29,7 @@ struct ResidenceScreen: View {
 
 					HideCostsToggle(hideCosts: $hideResidenceCosts)
 
-					if vm.hasAddresses {
+					if vm.hasMappableAddresses {
 						ResidenceMap(
 							residences: vm.residences,
 							selectedResidence: $vm.selectedResidence

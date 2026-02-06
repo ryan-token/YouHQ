@@ -62,7 +62,7 @@ extension ResidenceScreen {
 			}
 		}
 
-		var hasAddresses: Bool {
+		var hasMappableAddresses: Bool {
 			residences.contains { $0.street.isNotEmpty && $0.city.isNotEmpty }
 		}
 
