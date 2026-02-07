@@ -43,7 +43,7 @@ struct SalaryChart: View {
 					AxisMarks(position: .leading) { value in
 						AxisValueLabel {
 							if let salary = value.as(Double.self) {
-								Text(vm.formatCompactSalary(salary))
+								HQText(vm.formatCompactSalary(salary))
 									.font(.caption)
 									.blur(radius: hideSalaries ? 4 : 0)
 							}

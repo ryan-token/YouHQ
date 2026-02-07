@@ -18,6 +18,8 @@ struct YouHQApp: App {
 	@Environment(\.scenePhase) private var scenePhase
 	@State private var paywallManager = PaywallManager()
 
+	let settingsWindowFrame: CGFloat = 680
+
 	#if !os(macOS)
 		@UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
 	#endif
@@ -50,12 +52,21 @@ struct YouHQApp: App {
 				#endif
 		}
 		.commands {
-			CommandGroup(replacing: CommandGroupPlacement.appInfo) {
+			CommandGroup(replacing: .appInfo) {
 				Button {
 					openWindow(id: "about")
 				} label: {
-					Text("About YouHQ")
+					Label("About YouHQ", systemImage: "info.circle")
 				}
+			}
+
+			CommandGroup(replacing: .appSettings) {
+				Button {
+					openWindow(id: "settings")
+				} label: {
+					Label("Settings...", systemImage: "gear")
+				}
+				.keyboardShortcut(",", modifiers: .command)
 			}
 		}
 
@@ -73,19 +84,16 @@ struct YouHQApp: App {
 		#endif
 
 		#if os(macOS)
-			Settings {
+			Window("YouHQ Settings", id: "settings") {
 				SettingsScreen()
+					.toolbarBackground(.hidden, for: .windowToolbar)
+					.containerBackground(.ultraThinMaterial, for: .window)
 					.environment(paywallManager)
 					.task { await paywallManager.setup() }
-					.frame(
-						minWidth: 600,
-						idealWidth: 800,
-						maxWidth: .infinity,
-						minHeight: 500,
-						idealHeight: 500,
-						maxHeight: .infinity
-					)
+					.frame(minWidth: settingsWindowFrame, minHeight: settingsWindowFrame)
 			}
+			.windowBackgroundDragBehavior(.enabled)
+			.restorationBehavior(.disabled)
 		#endif
 	}
 

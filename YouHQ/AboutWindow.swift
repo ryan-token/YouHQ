@@ -22,10 +22,6 @@ struct AboutWindow: View {
 		return "© \(year) Ryan Token"
 	}
 
-	private var developerWebsite: URL {
-		URL(string: "https://ryantoken.com/")!
-	}
-
     var body: some View {
 		VStack(spacing: 14) {
 			Image("AppIcon")
@@ -41,7 +37,7 @@ struct AboutWindow: View {
 			.font(.callout)
 			Link(
 				"Developer Website",
-				destination: developerWebsite
+				destination: Constants.ryantokenURL
 			)
 			.foregroundStyle(.accent)
 		}

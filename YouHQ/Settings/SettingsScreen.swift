@@ -23,14 +23,14 @@ struct SettingsScreen: View {
 					SettingsNavLabel(
 						labelText: "YouHQ Premium",
 						iconName: "sparkle",
-						iconColor: .indigo
+						iconColor: iconColor(for: .premium)
 					)
 					.tag(SettingsOption.premium)
 
 					SettingsNavLabel(
 						labelText: "Profiles",
 						iconName: "person.2.square.stack.fill",
-						iconColor: .blue
+						iconColor: iconColor(for: .profiles)
 					)
 					.tag(SettingsOption.profiles)
 				}
@@ -43,7 +43,7 @@ struct SettingsScreen: View {
 			.listStyle(.sidebar)
 			.navigationTitle("Settings")
 			#if os(macOS)
-				.navigationSplitViewColumnWidth(210)
+				.navigationSplitViewColumnWidth(250)
 			#else
 				.navigationSplitViewColumnWidth(300)
 			#endif
@@ -83,6 +83,32 @@ struct SettingsScreen: View {
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
 		}
+		.onAppear {
+			#if !os(macOS)
+				if UIDevice.current.userInterfaceIdiom != .phone {
+					selectedSetting = .premium
+				}
+			#else
+				selectedSetting = .premium
+			#endif
+		}
+	}
+
+	private func iconColor(for setting: SettingsOption) -> Color {
+		var settingColor: Color {
+			switch setting {
+			case .premium:
+				.indigo
+			case .profiles:
+				.blue
+			}
+		}
+
+		#if os(macOS)
+			return selectedSetting == setting ? .white : settingColor
+		#else
+			return settingColor
+		#endif
 	}
 }
 
