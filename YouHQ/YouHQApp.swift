@@ -14,6 +14,7 @@ import UserNotifications
 @main
 struct YouHQApp: App {
 	@Dependency(\.context) var context
+	@Environment(\.openWindow) private var openWindow
 	@Environment(\.scenePhase) private var scenePhase
 	@State private var paywallManager = PaywallManager()
 
@@ -48,8 +49,27 @@ struct YouHQApp: App {
 					)
 				#endif
 		}
+		.commands {
+			CommandGroup(replacing: CommandGroupPlacement.appInfo) {
+				Button {
+					openWindow(id: "about")
+				} label: {
+					Text("About YouHQ")
+				}
+			}
+		}
+
 		#if os(macOS)
+			Window("About YouHQ", id: "about") {
+				AboutWindow()
+					.toolbar(removing: .title)
+					.toolbarBackground(.hidden, for: .windowToolbar)
+					.containerBackground(.ultraThinMaterial, for: .window)
+					.windowMinimizeBehavior(.disabled)
+			}
+			.windowBackgroundDragBehavior(.enabled)
 			.windowResizability(.contentSize)
+			.restorationBehavior(.disabled)
 		#endif
 
 		#if os(macOS)
