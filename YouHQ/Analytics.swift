@@ -88,6 +88,11 @@ struct Analytics {
 		case careerOtherCreated = "Career.Other.created"
 		case careerOtherDeleted = "Career.Other.deleted"
 
+		// IAP
+		case IAPSuccessPending = "IAP.Success.pending"
+		case IAPSuccessUserCancelled = "IAP.Success.UserCancelled"
+		case IAPSuccessUnknown = "IAP.Success.unknown"
+
 		// Other
 		case itemBackgroundColorChanged = "Item.BackgroundColor.changed"
 	}
@@ -154,7 +159,11 @@ struct Analytics {
 		case hsaSaveFailed = "Failed to save HSA"
 		case hsaDeleteFailed = "Failed to delete HSA"
 
-		// General
+		// IAP
+		case IAPFailed = "In-app purchase failed"
+		case IAPUnverified = "In-app purchase had an unverified result from StoreKit"
+
+		// Other
 		case photoSaveFailed = "Failed to save photo to library"
 		case notificationsRequestFailed = "Failed to request notification permissions"
 	}

@@ -34,17 +34,7 @@ struct Paywall: View {
 				refreshTrigger = UUID() // SubscriptionStoreView loses the active plan without this
 			}
 			.onInAppPurchaseCompletion { _, result in
-				if case .success(.success(let transaction)) = result {
-					print("Purchased successfully: \(transaction.signedDate)")
-					shouldRainConfetti = true
-
-					Task {
-						try? await Task.sleep(for: .seconds(animationDuration))
-						shouldRainConfetti = false
-					}
-				} else {
-					print("Something went wrong")
-				}
+				handleIAPResult(result)
 			}
 
 			if shouldRainConfetti {
@@ -65,6 +55,40 @@ struct Paywall: View {
 					animationDelayThreshold: 4
 				)
 			}
+		}
+	}
+
+	private func handleIAPResult(_ result: Result<Product.PurchaseResult, any Error>) {
+		switch result {
+		case .success(.success(let transaction)):
+			rainConfetti()
+			logStoreKitTransaction(transaction)
+		case .success(.pending):
+			Analytics.sendSignal(.IAPSuccessPending)
+		case .success(.userCancelled):
+			Analytics.sendSignal(.IAPSuccessUserCancelled)
+		case .success(_): // swiftlint:disable:this empty_enum_arguments
+			Analytics.sendSignal(.IAPSuccessUnknown)
+		case .failure(let error):
+			Analytics.logError(id: .IAPFailed, message: error.localizedDescription)
+		}
+	}
+
+	private func rainConfetti() {
+		shouldRainConfetti = true
+
+		Task {
+			try? await Task.sleep(for: .seconds(animationDuration))
+			shouldRainConfetti = false
+		}
+	}
+
+	private func logStoreKitTransaction(_ transaction: VerificationResult<StoreKit.Transaction>) {
+		do {
+			let verifiedTransaction = try transaction.payloadValue
+			Analytics.trackPurchase(for: verifiedTransaction)
+		} catch {
+			Analytics.logError(id: .IAPUnverified, message: error.localizedDescription)
 		}
 	}
 }
