@@ -101,6 +101,7 @@ struct Analytics {
 		// Profiles
 		case profileSaveFailed = "Failed to save profile"
 		case profileDeleteFailed = "Failed to delete profile"
+		case profileRenameFailed = "Failed to rename profile"
 
 		// Residences
 		case residenceSaveFailed = "Failed to save residence"

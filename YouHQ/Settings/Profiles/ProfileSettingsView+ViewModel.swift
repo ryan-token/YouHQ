@@ -28,6 +28,10 @@ extension ProfileSettingsView {
 			return profiles.first(where: { $0.profile.id == selectedID })
 		}
 
+		var hasMultipleDefaultProfiles: Bool {
+			profiles.filter { $0.profile.name == "Default" }.count > 1
+		}
+
 		var profileSwitchAlert: ProfileSwitchAlert = .empty
 
 		enum ProfileSwitchAlert: Equatable { // swiftlint:disable:this nesting
@@ -40,12 +44,18 @@ extension ProfileSettingsView {
 
 		// Replace all the delete-related booleans with a single enum state
 		var profileDeletionAlert: ProfileDeletionAlert = .empty
-
-		// Add the enum definition
 		enum ProfileDeletionAlert: Equatable { // swiftlint:disable:this nesting
 			case empty
 			case cannotDeleteDefault
 			case confirmDelete(Profile)
+		}
+
+		var renameProfileText = ""
+		var profileRenameAlert: ProfileRenameAlert = .empty
+		enum ProfileRenameAlert: Equatable { // swiftlint:disable:this nesting
+			case empty
+			case cannotRenameOnlyDefault
+			case confirmRename(Profile)
 		}
 
 		func onAppear() async {
@@ -107,11 +117,11 @@ extension ProfileSettingsView {
 		}
 
 		func confirmProfileDelete(for profile: Profile) {
-			if profile.name == "Default" {
+			if profile.name == "Default" && !hasMultipleDefaultProfiles {
 				profileDeletionAlert = .cannotDeleteDefault
-			} else {
-				profileDeletionAlert = .confirmDelete(profile)
+				return
 			}
+			profileDeletionAlert = .confirmDelete(profile)
 		}
 
 		func deleteProfile(_ profile: Profile) {
@@ -143,6 +153,34 @@ extension ProfileSettingsView {
 			}
 
 			profileDeletionAlert = .empty
+		}
+
+		func confirmProfileRename(for profile: Profile) {
+			if profile.name == "Default" && !hasMultipleDefaultProfiles {
+				profileRenameAlert = .cannotRenameOnlyDefault
+				return
+			}
+
+			renameProfileText = profile.name
+			profileRenameAlert = .confirmRename(profile)
+		}
+
+		func renameProfile(_ profile: Profile, to newName: String) {
+			do {
+				try database.write { db in
+					try Profile.find(profile.id)
+						.update {
+							$0.name = newName
+							$0.updatedAt = now
+						}
+						.execute(db)
+				}
+			} catch {
+				Analytics.logError(id: .profileRenameFailed, message: error.localizedDescription)
+			}
+
+			renameProfileText = ""
+			profileRenameAlert = .empty
 		}
 	}
 }

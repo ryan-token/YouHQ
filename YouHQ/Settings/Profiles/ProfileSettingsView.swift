@@ -35,6 +35,7 @@ struct ProfileSettingsView: View {
 				.listRowBackground(Color.clear)
 				.alert("Create Profile", isPresented: $vm.isShowingCreateProfileAlert) {
 					TextField("Profile Name", text: $vm.newProfileName)
+						.textInputAutocapitalization(.words)
 					Button {
 						vm.createProfile(named: vm.newProfileName)
 					} label: {

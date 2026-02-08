@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileRow: View {
 	let profile: ProfileShare
-	let vm: ProfileSettingsView.ViewModel
+	@Bindable var vm: ProfileSettingsView.ViewModel
 
 	var isSelected: Bool {
 		vm.selectedProfile?.profile.id == profile.profile.id
@@ -45,6 +45,13 @@ struct ProfileRow: View {
 		}
 		.buttonStyle(.plain)
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
+			Button {
+				vm.confirmProfileRename(for: profile.profile)
+			} label: {
+				Image(systemName: "pencil")
+					.tint(.orange)
+			}
+
 			Button {
 				vm.confirmProfileDelete(for: profile.profile)
 			} label: {
@@ -110,6 +117,41 @@ struct ProfileRow: View {
 				HQText("You cannot delete the Default profile")
 			case .confirmDelete(let profile):
 				HQText("Delete \(profile.name) Profile?")
+			}
+		}
+
+		.alert(
+			"Rename Profile",
+			isPresented: .init(
+				get: { vm.profileRenameAlert != .empty },
+				set: { if !$0 { vm.profileRenameAlert = .empty } }
+			)
+		) {
+			switch vm.profileRenameAlert {
+			case .empty:
+				EmptyView()
+			case .cannotRenameOnlyDefault:
+				Button("OK") {
+					vm.profileRenameAlert = .empty
+				}
+			case .confirmRename(let profile):
+				TextField("Profile Name", text: $vm.renameProfileText)
+				Button("Rename") {
+					vm.renameProfile(profile, to: vm.renameProfileText)
+				}
+				Button("Cancel", role: .cancel) {
+					vm.renameProfileText = ""
+					vm.profileRenameAlert = .empty
+				}
+			}
+		} message: {
+			switch vm.profileRenameAlert {
+			case .empty:
+				HQText("")
+			case .cannotRenameOnlyDefault:
+				HQText("You must have at least one Default profile")
+			case .confirmRename:
+				HQText("")
 			}
 		}
 	}
