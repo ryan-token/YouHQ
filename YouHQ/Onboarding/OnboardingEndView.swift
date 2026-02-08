@@ -82,7 +82,7 @@ struct OnboardingEndView: View {
 					.padding(.bottom, 24)
 				}
 
-				VStack(alignment: .leading, spacing: 0){
+				VStack(alignment: .leading, spacing: 0) {
 					HQText("You will be able to add more data later.")
 						.foregroundStyle(.secondary)
 
