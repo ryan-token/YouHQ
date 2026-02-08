@@ -26,7 +26,7 @@ struct OnboardingEndView: View {
 
 	var body: some View {
 		ScrollView {
-			VStack(spacing: 24) {
+			VStack(spacing: 18) {
 				VStack(alignment: .leading, spacing: 12) {
 					HQText("YouHQ is your personal command center for life's important details.")
 					HQText(
@@ -34,7 +34,7 @@ struct OnboardingEndView: View {
 					)
 					HQText(
 						"""
-						🔒 Your data is your own. All of your data lives locally on your device \
+						🔒 Your data is your own. All of your data stays on your devices \
 						and is synced securely over iCloud via your Apple Account.
 						""")
 				}
@@ -71,21 +71,37 @@ struct OnboardingEndView: View {
 						iconName: "briefcase.fill",
 						backgroundColor: .blue
 					)
+
+					Button {
+						showCongratulations = true
+					} label: {
+						HQText("Skip")
+							.fontWeight(.medium)
+					}
+					.frame(maxWidth: .infinity, alignment: .center)
+					.padding(.bottom, 24)
 				}
 
-				Button {
-					showCongratulations = true
-				} label: {
-					HQText("Skip")
-						.fontWeight(.medium)
+				VStack(alignment: .leading, spacing: 0){
+					HQText("You will be able to add more data later.")
+						.foregroundStyle(.secondary)
+
+					Link(
+						"Privacy Policy",
+						destination: Constants.privacyPolicyURL
+					)
+					.foregroundStyle(.accent)
 				}
-				.padding(.bottom, 24)
+				.font(.callout)
+				.fontWeight(.medium)
+				.frame(maxWidth: .infinity, alignment: .leading)
 
 				Spacer()
 			}
 			.padding()
-			.padding(.horizontal)
+			.padding(.horizontal, 8)
 		}
+		.toolbar(removing: .title)
 		.onAppear {
 			profileID = try? database.ensureDefaultProfile()
 		}

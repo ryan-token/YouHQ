@@ -25,18 +25,19 @@ struct AppOnboardingFlow: View {
 
 	var body: some View {
 		NavigationStack(path: $navigationPath) {
-			VStack {
+			VStack(spacing: 8) {
 				VStack(spacing: 0) {
 					ScalableImage("AppIcon", height: 90)
+
 					HQText("YouHQ")
 						.font(.largeTitle)
 						.fontWeight(.black)
+
+					HQText("Your life, organized.")
+						.font(.title)
+						.fontWeight(.semibold)
 				}
 				.padding(.top)
-
-				HQText("Your life, organized.")
-					.font(.title)
-					.fontWeight(.semibold)
 
 				TabView(selection: $currentTab) {
 					ForEach(0..<5) { idx in
@@ -48,14 +49,14 @@ struct AppOnboardingFlow: View {
 							.frame(maxHeight: 525)
 
 							HQText(screenshots[idx].title)
-								.font(.title)
-								.fontWeight(.black)
+								.font(.title2)
+								.fontWeight(.bold)
 
 							HQText(screenshots[idx].description)
 								.font(.headline)
-								.fontWeight(.semibold)
+								.fontWeight(.medium)
 						}
-						.padding(.horizontal, 16)
+						.padding(.horizontal, 8)
 						.padding(.bottom, 40)
 						.tag(idx)
 					}
@@ -92,8 +93,8 @@ struct AppOnboardingFlow: View {
 				if isStartingOnboarding {
 					initialTimerCounter += 1
 
-					if initialTimerCounter == 2 {
-						withAnimation {
+					if initialTimerCounter == 1 {
+						withAnimation(.linear(duration: 2)) {
 							isStartingOnboarding = false
 						}
 					}
@@ -116,31 +117,31 @@ struct AppOnboardingFlow: View {
 	private let screenshots: [ScreenshotConfig] = [
 		.init(
 			title: "Home",
-			description: "Track utilities, paint colors, maintenance items, and more.",
+			description: "Track utilities, paint colors, maintenance, & more",
 			imageNameLight: "onboarding.home.light",
 			imageNameDark: "onboarding.home.dark"
 		),
 		.init(
 			title: "Vehicles",
-			description: "Track auto insurance, paint colors, and maintenance items.",
+			description: "Track insurance, paint colors, & maintenance",
 			imageNameLight: "onboarding.vehicles.light",
 			imageNameDark: "onboarding.vehicles.dark"
 		),
 		.init(
 			title: "Money",
-			description: "Track bank accounts, investment accounts, HSA/FSAs, and insurance policies.",
+			description: "Track banks, investment accounts, & HSA/FSAs",
 			imageNameLight: "onboarding.money.light",
 			imageNameDark: "onboarding.money.dark"
 		),
 		.init(
 			title: "Media",
-			description: "Track service providers, subscriptions, and devices.",
+			description: "Track service providers, subscriptions, & devices",
 			imageNameLight: "onboarding.media.light",
 			imageNameDark: "onboarding.media.dark"
 		),
 		.init(
 			title: "Career",
-			description: "Track jobs and salary history over time.",
+			description: "Track jobs & salary history over time",
 			imageNameLight: "onboarding.career.light",
 			imageNameDark: "onboarding.career.dark"
 		)
