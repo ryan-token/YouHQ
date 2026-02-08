@@ -12,10 +12,7 @@ extension Paywall {
 	struct MarketingCopy: View {
 		var body: some View {
 			VStack(spacing: 12) {
-				Image("AppIcon")
-					.resizable()
-					.scaledToFit()
-					.frame(height: 80)
+				ScalableImage("AppIcon")
 
 				VStack(spacing: 4) {
 					HQText("YouHQ Premium")

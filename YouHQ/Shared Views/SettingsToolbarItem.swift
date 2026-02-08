@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsToolbarItem: ToolbarContent {
 	#if os(macOS)
-		@Environment(\.openSettings) private var openSettings
+		@Environment(\.openWindow) private var openWindow
 	#else
 		@State private var isShowingSettingsSheet = false
 	#endif
@@ -18,7 +18,7 @@ struct SettingsToolbarItem: ToolbarContent {
 		ToolbarItem(placement: .navigation) {
 			Button {
 				#if os(macOS)
-					openSettings()
+					openWindow(id: "settings")
 				#else
 					isShowingSettingsSheet = true
 				#endif

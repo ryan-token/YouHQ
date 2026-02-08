@@ -119,7 +119,7 @@ struct ParticleEmitter: View {
 				.rotationEffect(isActive ? rotation.end : rotation.start)
 				.position(isActive ? position.end : position.start)
 				.animation(animation.delay(animationDelay), value: isActive)
-				.onAppear{ isActive = true }
+				.onAppear { isActive = true }
 		}
 	}
 

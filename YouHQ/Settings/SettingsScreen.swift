@@ -11,6 +11,7 @@ struct SettingsScreen: View {
 	enum SettingsOption {
 		case premium
 		case profiles
+		case onboarding
 	}
 
 	@Environment(\.dismiss) var dismiss
@@ -36,7 +37,15 @@ struct SettingsScreen: View {
 				}
 
 				Section("More") {
+					SettingsNavLabel(
+						labelText: "Onboarding",
+						iconName: "point.bottomleft.forward.to.arrow.triangle.scurvepath",
+						iconColor: iconColor(for: .onboarding)
+					)
+					.tag(SettingsOption.onboarding)
+
 					RateAppButton()
+
 					TermsAndPrivacyPolicyButton()
 				}
 			}
@@ -73,6 +82,8 @@ struct SettingsScreen: View {
 					#endif
 				case .profiles:
 					ProfileSettingsView()
+				case .onboarding:
+					AppOnboardingFlow()
 				case nil:
 					ContentUnavailableView {
 						Label("No Selection", systemImage: "questionmark.circle")
@@ -92,6 +103,9 @@ struct SettingsScreen: View {
 				selectedSetting = .premium
 			#endif
 		}
+		.onReceive(NotificationCenter.default.publisher(for: .onboardingCompleted)) { _ in
+			dismiss()
+		}
 	}
 
 	private func iconColor(for setting: SettingsOption) -> Color {
@@ -101,6 +115,8 @@ struct SettingsScreen: View {
 				.indigo
 			case .profiles:
 				.blue
+			case .onboarding:
+				.orange
 			}
 		}
 

@@ -9,9 +9,11 @@ import SwiftUI
 
 struct AboutWindow: View {
 	private var appVersionAndBuild: String {
-		let version = Bundle.main
+		let version =
+			Bundle.main
 			.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
-		let build = Bundle.main
+		let build =
+			Bundle.main
 			.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 		return "Version \(version) (\(build))"
 	}
@@ -22,19 +24,19 @@ struct AboutWindow: View {
 		return "© \(year) Ryan Token"
 	}
 
-    var body: some View {
+	var body: some View {
 		VStack(spacing: 14) {
-			Image("AppIcon")
-				.resizable()
-				.scaledToFit()
-				.frame(width: 80)
+			ScalableImage("AppIcon")
+
 			HQText("YouHQ")
 				.font(.title)
+
 			VStack(spacing: 6) {
 				HQText(appVersionAndBuild)
 				HQText(copyright)
 			}
 			.font(.callout)
+
 			Link(
 				"Developer Website",
 				destination: Constants.ryantokenURL
@@ -43,9 +45,9 @@ struct AboutWindow: View {
 		}
 		.padding()
 		.frame(minWidth: 400, minHeight: 260)
-    }
+	}
 }
 
 #Preview {
-    AboutWindow()
+	AboutWindow()
 }
