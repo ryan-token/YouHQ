@@ -19,13 +19,7 @@ extension ResidenceMap {
 		let mapHeight: CGFloat = 200
 		let latLonDelta: CLLocationDegrees = 0.25
 
-		private let residences: [Residence]
-
-		init(residences: [Residence]) {
-			self.residences = residences
-		}
-
-		func geocodeResidences(selectedResidenceId: UUID? = nil) async {
+		func geocodeResidences(_ residences: [Residence], selectedResidenceId: UUID? = nil) async {
 			var locations: [ResidenceMapLocation] = []
 
 			await withTaskGroup(of: ResidenceMapLocation?.self) { group in

@@ -10,14 +10,7 @@ import SwiftUI
 struct ResidenceMap: View {
 	let residences: [Residence]
 	@Binding var selectedResidence: Residence?
-
-	@State private var vm: ViewModel
-
-	init(residences: [Residence], selectedResidence: Binding<Residence?>) {
-		self.residences = residences
-		_selectedResidence = selectedResidence
-		_vm = State(wrappedValue: ViewModel(residences: residences))
-	}
+	@State private var vm = ViewModel()
 
 	var body: some View {
 		ResidenceMapView(
@@ -34,10 +27,10 @@ struct ResidenceMap: View {
 			vm.isShowingFullScreenMap = true
 		}
 		.task {
-			await vm.geocodeResidences(selectedResidenceId: selectedResidence?.id)
+			await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id)
 		}
 		.onChange(of: residences) {
-			Task { await vm.geocodeResidences(selectedResidenceId: selectedResidence?.id) }
+			Task { await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id) }
 		}
 		.onChange(of: vm.selectedMapLocation) { _, newLocation in
 			if let newLocation {
@@ -46,6 +39,9 @@ struct ResidenceMap: View {
 		}
 		.onChange(of: selectedResidence?.id) {
 			vm.syncSelection(with: selectedResidence?.id)
+		}
+		.onChange(of: selectedResidence) {
+			Task { await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id) }
 		}
 		.sheet(isPresented: $vm.isShowingFullScreenMap) {
 			FullScreenMapView(
