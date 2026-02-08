@@ -326,6 +326,10 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YouHQ/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow YouHQ to take photos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allow YouHQ to save photos to your library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow YouHQ to access your photo library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -393,6 +397,10 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YouHQ/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Allow YouHQ to take photos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allow YouHQ to save photos to your library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow YouHQ to access your photo library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

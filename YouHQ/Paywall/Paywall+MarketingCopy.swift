@@ -39,9 +39,13 @@ extension Paywall {
 			}
 			.padding(.vertical)
 			.foregroundStyle(.white.opacity(0.7))
-			.containerBackground(for: .subscriptionStoreFullHeight) {
-				LinearGradient(colors: [.indigo, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
-			}
+			#if os(visionOS)
+				.background(LinearGradient(colors: [.indigo, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
+			#else
+				.containerBackground(for: .subscriptionStoreFullHeight) {
+					LinearGradient(colors: [.indigo, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
+				}
+			#endif
 		}
 	}
 }
