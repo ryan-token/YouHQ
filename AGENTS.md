@@ -1,42 +1,14 @@
-# Agent guide for Swift and SwiftUI
+# Agent Guide for YouHQ
 
-This repository contains a multi-platform Xcode project written with Swift and SwiftUI. Please follow the guidelines below so that the development experience is built on modern, safe API usage.
+This repository contains a multi-platform Xcode project written with Swift and SwiftUI. The app works across iOS, iPadOS, macOS, and even visionOS. Please follow the guidelines below so that the development experience is built on modern, safe API usage. Use the skills listed in the `Available Skills` section at the bottom of the file for in-depth skill knowledge.
 
 ## Project Overview
 
-YouHQ is a personal life management iOS app built with Swift, SwiftUI, and SQLiteData. It organizes various aspects of life including residences, vehicles, finances, media/devices, career, and insurance into a tabbed interface backed by a SQLite database.
+YouHQ. Your life, organized.
 
-## Development Commands
+YouHQ is a personal command center for life's important details. Track everything from home maintenance and vehicles to career history and where all of your money is, all in one place.
 
-### Building and Running
-```bash
-xcodebuild build -scheme YouHQ -destination "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.2"
-
-# Run on simulator (after building)
-# Use Xcode or: xcrun simctl boot <device_id> && xcrun simctl install booted <path_to_app>
-
-# Clean build folder
-xcodebuild clean -project YouHQ.xcodeproj -scheme YouHQ
-```
-
-### Formatting and pruning dead code
-```bash
-# Format the entire project after every change
-swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ
-
-# Check for unused code via the following command
-periphery scan
-```
-
-### Testing
-Use Swift Testing framework (not XCTest) for new tests:
-```bash
-# Run all tests
-xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 15 Pro'
-
-# Run specific test
-xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 15 Pro' -only-testing:YouHQTests/TestName
-```
+The app works across iOS, iPadOS, macOS, and even visionOS. It's written with modern, idiomatic Swift, SwiftUI, and SQLiteData (from PointFreeCo). It organizes various aspects of life including residences, vehicles, finances, media/devices, and career into a tabbed interface backed by a SQLite database powered by GRDB.
 
 ## Architecture
 
@@ -47,6 +19,7 @@ xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iO
 - Database is bootstrapped at app launch in `YouHQApp.init()` using PointFreeCo's Dependencies library
 - Foreign key relationships are enforced with CASCADE deletes
 - Triggers automatically update profile `updatedAt` timestamps when related data changes
+- See more SQLiteData information in the `## SQLiteData instructions` section
 
 ### Core Tables
 - **Profile**: Root entity, contains user profile(s) with `createdAt` and `updatedAt` timestamps
@@ -137,7 +110,7 @@ You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, S
 
 ## Core instructions
 
-These are high-level instructions. For in-depth skill implementations, like best practices across SwiftUI and Swift Concurrency and more, refer to the ## Available Skills block at the bottom of this file.
+These are high-level instructions. For in-depth skill implementations, like best practices across SwiftUI and Swift Concurrency and more, refer to the `## Available Skills` block at the bottom of this file.
 
 - Target iOS 26.0 or later, iPadOS 26.0 or later, macOS 26.0 or later, and visionOS 26.0 or later. (Yes, they definitely exist.)
 - Swift 6.2 or later, using modern Swift concurrency.
@@ -238,6 +211,77 @@ And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/s
 ## PR instructions
 
 - If installed, make sure SwiftLint returns no warnings or errors before committing.
+
+
+## Marketing Information
+
+YouHQ is your personal command center for life's important details. Track everything from home maintenance and vehicles to career history and where all of your money is, all in one place.
+
+🔒 Your data is your own. All of your data stays on your devices and is synced securely over iCloud via your Apple Account.
+
+YouHQ works across iPhone, iPad, Mac, and even Apple Vision Pro. Your data will sync seamlessly between platforms, and you can even share your data with others securely over iCloud.
+
+### Home
+* Track multiple residences with utilities, insurance, paint colors, and more
+* Schedule maintenance reminders and get notifications when they're due
+* See monthly total cost of ownership for each property
+* Attach photos to track visual details
+
+### Vehicles
+* Track multiple vehicles with insurance and paint colors
+* Schedule maintenance and service reminders
+* View monthly cost of ownership per vehicle
+* Attach photos for records and reference
+
+### Money
+* Track bank accounts and investment accounts
+* Manage HSA/FSA accounts
+* Store insurance policy information
+* Monitor all financial accounts in one place
+
+### Media
+* Track streaming services and subscriptions
+* Manage devices and service providers
+* See total monthly media costs at a glance
+
+### Career
+* Track job history and career milestones
+* View salary history over time in a bar chart
+* Store important career-related photos
+
+
+## Development Commands
+
+### Building and Running
+```bash
+xcodebuild build -scheme YouHQ -destination "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.2"
+
+# Run on simulator (after building)
+# Use Xcode or: xcrun simctl boot <device_id> && xcrun simctl install booted <path_to_app>
+
+# Clean build folder
+xcodebuild clean -project YouHQ.xcodeproj -scheme YouHQ
+```
+
+### Formatting and pruning dead code
+```bash
+# Format the entire project after every change
+swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ
+
+# Check for unused code via the following command
+periphery scan
+```
+
+### Testing
+Use Swift Testing framework (not XCTest) for new tests:
+```bash
+# Run all tests
+xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 15 Pro'
+
+# Run specific test
+xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 15 Pro' -only-testing:YouHQTests/TestName
+```
+
 
 <skills_system priority="1">
 
