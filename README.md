@@ -38,17 +38,18 @@ The app is built with [Swift](https://www.swift.org), [SwiftUI](https://develope
 - All data stays local to your devices and is synced securely over iCloud
 - Seriously, I don't even run servers for this app
 - I use [TelemetryDeck](https://telemetrydeck.com) for very basic app analytics, and I don't store any private or personally identifiable info there
+- Read the [Privacy Policy](https://www.ryantoken.com/privacy-policy)
 
-## Other
+## More
 
-- Private and secure!
-  - See the `## Security & Privacy` section above
-- Fast!
-  - Speed is a top priority. All interactions with the app are local and happen instantly. No waiting on API responses or network lag
-- Works offline!
-  - See above. There is no dependence whatsoever on a network connection for YouHQ to function properly
-- Fun!
+- It's fast!
+  - Speed is a top priority
+  - All interactions with the app are local and happen instantly
+  - No waiting on API responses or network lag
+- It's fun!
   - Every core item you add to the app has a customizable background color
+- It works offline!
+  - There is no dependence whatsoever on a network connection for YouHQ to function properly
 
 ## Code
 
