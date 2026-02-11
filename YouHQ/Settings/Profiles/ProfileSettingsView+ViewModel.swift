@@ -28,8 +28,8 @@ extension ProfileSettingsView {
 			return profiles.first(where: { $0.profile.id == selectedID })
 		}
 
-		var hasMultipleDefaultProfiles: Bool {
-			profiles.filter { $0.profile.name == "Default" }.count > 1
+		var hasMultipleProfiles: Bool {
+			profiles.count > 1
 		}
 
 		var profileSwitchAlert: ProfileSwitchAlert = .empty
@@ -46,7 +46,7 @@ extension ProfileSettingsView {
 		var profileDeletionAlert: ProfileDeletionAlert = .empty
 		enum ProfileDeletionAlert: Equatable { // swiftlint:disable:this nesting
 			case empty
-			case cannotDeleteDefault
+			case cannotDeleteLastProfile
 			case confirmDelete(Profile)
 		}
 
@@ -54,7 +54,6 @@ extension ProfileSettingsView {
 		var profileRenameAlert: ProfileRenameAlert = .empty
 		enum ProfileRenameAlert: Equatable { // swiftlint:disable:this nesting
 			case empty
-			case cannotRenameOnlyDefault
 			case confirmRename(Profile)
 		}
 
@@ -117,8 +116,8 @@ extension ProfileSettingsView {
 		}
 
 		func confirmProfileDelete(for profile: Profile) {
-			if profile.name == "Default" && !hasMultipleDefaultProfiles {
-				profileDeletionAlert = .cannotDeleteDefault
+			if !hasMultipleProfiles {
+				profileDeletionAlert = .cannotDeleteLastProfile
 				return
 			}
 			profileDeletionAlert = .confirmDelete(profile)
@@ -134,11 +133,8 @@ extension ProfileSettingsView {
 
 				// Handle profile deletion - switch to another profile if needed
 				if currentProfileID == profile.id {
-					// Switch to Default if available
-					if let defaultProfile = profiles.first(where: { $0.profile.name == "Default" && $0.profile.id != profile.id }) {
-						currentProfileID = defaultProfile.profile.id
-					} else if let firstProfile = profiles.first(where: { $0.profile.id != profile.id }) {
-						// Otherwise switch to first available
+					// Switch to first available profile
+					if let firstProfile = profiles.first(where: { $0.profile.id != profile.id }) {
 						currentProfileID = firstProfile.profile.id
 					} else {
 						currentProfileID = nil
@@ -156,11 +152,6 @@ extension ProfileSettingsView {
 		}
 
 		func confirmProfileRename(for profile: Profile) {
-			if profile.name == "Default" && !hasMultipleDefaultProfiles {
-				profileRenameAlert = .cannotRenameOnlyDefault
-				return
-			}
-
 			renameProfileText = profile.name
 			profileRenameAlert = .confirmRename(profile)
 		}

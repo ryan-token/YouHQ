@@ -198,7 +198,6 @@ extension ResidenceScreen {
 		}
 
 		func showCreateResidenceSheet() {
-			_ = try? database.ensureDefaultProfile()
 			isShowingAddResidenceSheet = true
 		}
 

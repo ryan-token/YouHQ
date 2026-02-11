@@ -34,7 +34,7 @@ extension ProfileSelection {
 	}
 
 	/// Gets the selected profile ID with fallback logic
-	/// Falls back to: stored ID -> "Default" -> first available
+	/// Falls back to: stored ID -> first available
 	func getSelectedProfileID() -> UUID? {
 		// Try stored profile
 		if let storedID = currentProfileID,
@@ -43,13 +43,7 @@ extension ProfileSelection {
 			return storedID
 		}
 
-		// Fall back to Default
-		if let defaultProfile = profiles.first(where: { $0.profile.name == "Default" }) {
-			currentProfileID = defaultProfile.profile.id
-			return defaultProfile.profile.id
-		}
-
-		// Fall back to first
+		// Fall back to first available profile
 		if let firstProfile = profiles.first {
 			currentProfileID = firstProfile.profile.id
 			return firstProfile.profile.id

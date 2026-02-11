@@ -20,8 +20,8 @@ struct AppOnboardingFlow: View {
 	@State private var navigationPath = NavigationPath()
 
 	let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-	let totalTabs = 6
 	let timeOnEachTab = 4
+	let lastAutoAdvanceTab = 5 // Stop auto-advancing after OnboardingEndView
 
 	var body: some View {
 		NavigationStack(path: $navigationPath) {
@@ -62,9 +62,16 @@ struct AppOnboardingFlow: View {
 					}
 
 					OnboardingEndView {
-						navigationPath.append("congratulations")
+						withAnimation {
+							currentTab = 6
+						}
 					}
 					.tag(5)
+
+					OnboardingProfileCreationView {
+						navigationPath.append("congratulations")
+					}
+					.tag(6)
 				}
 				#if !os(macOS)
 					.tabViewStyle(.page)
@@ -100,7 +107,8 @@ struct AppOnboardingFlow: View {
 					}
 				} else {
 					mainTimerCounter += 1
-					guard currentTab != totalTabs - 1 else { return }
+					// Stop auto-advancing after lastAutoAdvanceTab
+					guard currentTab < lastAutoAdvanceTab else { return }
 
 					if mainTimerCounter % timeOnEachTab == 0 {
 						let newTab = mainTimerCounter / timeOnEachTab
@@ -112,6 +120,7 @@ struct AppOnboardingFlow: View {
 				}
 			}
 		}
+		.toolbar(removing: .title)
 	}
 
 	private let screenshots: [ScreenshotConfig] = [

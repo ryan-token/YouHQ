@@ -46,17 +46,17 @@ struct ProfileRow: View {
 		.buttonStyle(.plain)
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
 			Button {
-				vm.confirmProfileRename(for: profile.profile)
-			} label: {
-				Image(systemName: "pencil")
-					.tint(.orange)
-			}
-
-			Button {
 				vm.confirmProfileDelete(for: profile.profile)
 			} label: {
 				Image(systemName: "trash")
 					.tint(.red)
+			}
+
+			Button {
+				vm.confirmProfileRename(for: profile.profile)
+			} label: {
+				Image(systemName: "pencil")
+					.tint(.orange)
 			}
 		}
 
@@ -97,7 +97,7 @@ struct ProfileRow: View {
 			switch vm.profileDeletionAlert {
 			case .empty:
 				EmptyView()
-			case .cannotDeleteDefault:
+			case .cannotDeleteLastProfile:
 				Button("OK") {
 					vm.profileDeletionAlert = .empty
 				}
@@ -113,8 +113,8 @@ struct ProfileRow: View {
 			switch vm.profileDeletionAlert {
 			case .empty:
 				HQText("")
-			case .cannotDeleteDefault:
-				HQText("You cannot delete the Default profile")
+			case .cannotDeleteLastProfile:
+				HQText("You must have at least one profile")
 			case .confirmDelete(let profile):
 				HQText("Delete \(profile.name) Profile?")
 			}
@@ -130,10 +130,6 @@ struct ProfileRow: View {
 			switch vm.profileRenameAlert {
 			case .empty:
 				EmptyView()
-			case .cannotRenameOnlyDefault:
-				Button("OK") {
-					vm.profileRenameAlert = .empty
-				}
 			case .confirmRename(let profile):
 				TextField("Profile Name", text: $vm.renameProfileText)
 				Button("Rename") {
@@ -148,8 +144,6 @@ struct ProfileRow: View {
 			switch vm.profileRenameAlert {
 			case .empty:
 				HQText("")
-			case .cannotRenameOnlyDefault:
-				HQText("You must have at least one Default profile")
 			case .confirmRename:
 				HQText("")
 			}
