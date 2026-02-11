@@ -14,7 +14,7 @@ extension AddResidenceSheet {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) var database
 
-		let profileID: UUID
+		var selectedProfileID: UUID
 		var type: ResidenceType = .apartment
 		var isCurrent: Bool = true
 		var street: String = ""
@@ -32,12 +32,19 @@ extension AddResidenceSheet {
 		var notes: String = ""
 		var photoPicker = PhotoPickerViewModel()
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+
 		var isValid: Bool {
 			street.trimmingCharacters(in: .whitespaces).isNotEmpty
 		}
 
 		init(profileID: UUID) {
-			self.profileID = profileID
+			self.selectedProfileID = profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() -> Residence? {
@@ -48,7 +55,7 @@ extension AddResidenceSheet {
 					try Residence.insert {
 						Residence.Draft(
 							id: residenceID,
-							profileID: profileID,
+							profileID: selectedProfileID,
 							type: type,
 							street: street,
 							unit: unit,
@@ -71,7 +78,7 @@ extension AddResidenceSheet {
 						try Asset.insert {
 							Asset.Draft(
 								id: UUID(),
-								profileID: profileID,
+								profileID: selectedProfileID,
 								residenceID: residenceID,
 								vehicleID: nil,
 								insurancePolicyID: nil,

@@ -25,6 +25,15 @@ extension BankAccountEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let name = bankName.isNotEmpty ? "\(bankName) - \(accountType.rawValue)" : "this bank account"
+			return name
+		}
+
 		var title: String {
 			isNew ? "Add Bank Account" : "Edit Bank Account"
 		}
@@ -47,6 +56,11 @@ extension BankAccountEdit {
 			self.isActive = account.isActive
 			self.url = account.url
 			self.notes = account.notes
+			self.currentProfileID = account.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -57,7 +71,7 @@ extension BankAccountEdit {
 						try BankAccount.insert {
 							BankAccount.Draft(
 								id: account.id,
-								profileID: account.profileID,
+								profileID: currentProfileID,
 								bankName: bankName,
 								accountType: accountType,
 								accountNumber: accountNumber,
@@ -74,6 +88,7 @@ extension BankAccountEdit {
 						// Update existing record
 						try BankAccount.find(account.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.bankName = bankName
 								$0.accountType = accountType
 								$0.accountNumber = accountNumber

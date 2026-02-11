@@ -108,6 +108,11 @@ struct Analytics {
 		case residenceLoadFailed = "Failed to load residence data"
 		case residenceDeleteFailed = "Failed to delete residence"
 
+		// Vehicles
+		case vehicleSaveFailed = "Failed to save vehicle"
+		case vehicleLoadFailed = "Failed to load vehicle data"
+		case vehicleDeleteFailed = "Failed to delete vehicle"
+
 		// Utilities
 		case utilitySaveFailed = "Failed to save utility"
 		case utilityDeleteFailed = "Failed to delete utility"

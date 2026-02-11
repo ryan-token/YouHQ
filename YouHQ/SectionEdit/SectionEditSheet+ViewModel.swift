@@ -11,16 +11,33 @@ protocol SectionEditViewModel: AnyObject, Observable {
 	var title: String { get }
 	var isValid: Bool { get }
 	var deleteConfirmationMessage: String { get }
+	var profiles: [ProfileShare] { get }
+	var currentProfileID: UUID { get set }
+	var itemNameForProfilePicker: String { get }
+	var supportsProfileSwitching: Bool { get }
 	func save()
 	func cancel()
 	func delete()
+	func loadProfiles() async
+}
+
+// Default implementations for items that don't support profile switching
+extension SectionEditViewModel {
+	var profiles: [ProfileShare] { [] }
+	var currentProfileID: UUID {
+		get { UUID() }
+		set { _ = newValue }
+	}
+	var itemNameForProfilePicker: String { "" }
+	var supportsProfileSwitching: Bool { false }
+	func loadProfiles() async {}
 }
 
 extension SectionEditSheet {
 	@Observable
 	class ViewModel {
 		let section: EditableSection
-		private let sectionViewModel: any SectionEditViewModel
+		let sectionViewModel: any SectionEditViewModel
 
 		var title: String {
 			sectionViewModel.title

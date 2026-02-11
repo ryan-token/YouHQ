@@ -24,6 +24,7 @@ struct AppTabView: View {
 					ResidenceScreen()
 						.toolbar {
 							SettingsToolbarItem()
+							ProfileSwitcherToolbarItem()
 						}
 						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
 							Paywall()
@@ -35,6 +36,7 @@ struct AppTabView: View {
 					VehicleScreen()
 						.toolbar {
 							SettingsToolbarItem()
+							ProfileSwitcherToolbarItem()
 						}
 						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
 							Paywall()
@@ -46,6 +48,7 @@ struct AppTabView: View {
 					MoneyScreen()
 						.toolbar {
 							SettingsToolbarItem()
+							ProfileSwitcherToolbarItem()
 						}
 						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
 							Paywall()
@@ -57,6 +60,7 @@ struct AppTabView: View {
 					MediaScreen()
 						.toolbar {
 							SettingsToolbarItem()
+							ProfileSwitcherToolbarItem()
 						}
 						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
 							Paywall()
@@ -68,6 +72,7 @@ struct AppTabView: View {
 					CareerScreen()
 						.toolbar {
 							SettingsToolbarItem()
+							ProfileSwitcherToolbarItem()
 						}
 						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
 							Paywall()

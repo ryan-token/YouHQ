@@ -22,6 +22,16 @@ struct AddResidenceSheet: View {
 	var body: some View {
 		NavigationStack {
 			Form {
+				// Profile picker section (only shows if >1 profile)
+				if vm.profiles.count > 1 {
+					ProfilePickerSection(
+						profiles: vm.profiles,
+						selectedProfileID: $vm.selectedProfileID,
+						itemName: "this new residence",
+						isNewItem: true
+					)
+				}
+
 				ResidenceFormFields(
 					type: $vm.type,
 					isCurrent: $vm.isCurrent,
@@ -41,6 +51,9 @@ struct AddResidenceSheet: View {
 					photoPicker: vm.photoPicker,
 					focusedField: $focusedField
 				)
+			}
+			.task {
+				await vm.loadProfiles()
 			}
 			.onAppear {
 				focusedField = true

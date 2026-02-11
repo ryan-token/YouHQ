@@ -29,6 +29,15 @@ extension InsuranceEdit {
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let name = provider.isNotEmpty ? "\(provider) - \(type.rawValue)" : "this policy"
+			return name
+		}
+
 		var title: String {
 			isNew ? "Add Policy" : "Edit Policy"
 		}
@@ -54,7 +63,12 @@ extension InsuranceEdit {
 			self.hasRenewalDate = policy.renewalDate != nil
 			self.url = policy.url
 			self.notes = policy.notes
+			self.currentProfileID = policy.profileID
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -65,7 +79,7 @@ extension InsuranceEdit {
 						try InsurancePolicy.insert {
 							InsurancePolicy.Draft(
 								id: policy.id,
-								profileID: policy.profileID,
+								profileID: currentProfileID,
 								residenceID: policy.residenceID,
 								vehicleID: policy.vehicleID,
 								type: type,
@@ -93,6 +107,7 @@ extension InsuranceEdit {
 						// Update existing record
 						try InsurancePolicy.find(policy.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.type = type
 								$0.provider = provider
 								$0.policyNumber = policyNumber

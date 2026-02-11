@@ -24,6 +24,15 @@ extension HealthSavingsAccountEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let name = institution.isNotEmpty ? "\(institution) - \(accountType.rawValue)" : "this account"
+			return name
+		}
+
 		var title: String {
 			isNew ? "Add HSA/FSA" : "Edit HSA/FSA"
 		}
@@ -45,6 +54,11 @@ extension HealthSavingsAccountEdit {
 			self.isActive = account.isActive
 			self.url = account.url
 			self.notes = account.notes
+			self.currentProfileID = account.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -54,7 +68,7 @@ extension HealthSavingsAccountEdit {
 						try HealthSavingsAccount.insert {
 							HealthSavingsAccount.Draft(
 								id: account.id,
-								profileID: account.profileID,
+								profileID: currentProfileID,
 								accountType: accountType,
 								institution: institution,
 								accountNumber: accountNumber,
@@ -69,6 +83,7 @@ extension HealthSavingsAccountEdit {
 					} else {
 						try HealthSavingsAccount.find(account.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.accountType = accountType
 								$0.institution = institution
 								$0.accountNumber = accountNumber

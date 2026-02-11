@@ -26,6 +26,14 @@ extension SubscriptionEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			name.isNotEmpty ? name : "this subscription"
+		}
+
 		var title: String {
 			isNew ? "Add Subscription" : "Edit Subscription"
 		}
@@ -49,6 +57,11 @@ extension SubscriptionEdit {
 			self.isActive = subscription.isActive
 			self.url = subscription.url
 			self.notes = subscription.notes
+			self.currentProfileID = subscription.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -59,7 +72,7 @@ extension SubscriptionEdit {
 						try Subscription.insert {
 							Subscription.Draft(
 								id: subscription.id,
-								profileID: subscription.profileID,
+								profileID: currentProfileID,
 								name: name,
 								category: category,
 								monthlyCost: monthlyCost,
@@ -77,6 +90,7 @@ extension SubscriptionEdit {
 						// Update existing record
 						try Subscription.find(subscription.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.name = name
 								$0.category = category
 								$0.monthlyCost = monthlyCost

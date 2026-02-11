@@ -27,6 +27,14 @@ extension JobEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			company.isNotEmpty ? company : "this job"
+		}
+
 		var title: String {
 			isNew ? "Add Job" : "Edit Job"
 		}
@@ -51,6 +59,11 @@ extension JobEdit {
 			self.employmentType = job.employmentType
 			self.url = job.url
 			self.notes = job.notes
+			self.currentProfileID = job.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -61,7 +74,7 @@ extension JobEdit {
 						try Job.insert {
 							Job.Draft(
 								id: job.id,
-								profileID: job.profileID,
+								profileID: currentProfileID,
 								company: company,
 								title: jobTitle,
 								startDate: startDate,
@@ -80,6 +93,7 @@ extension JobEdit {
 						// Update existing record
 						try Job.find(job.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.company = company
 								$0.title = jobTitle
 								$0.startDate = startDate

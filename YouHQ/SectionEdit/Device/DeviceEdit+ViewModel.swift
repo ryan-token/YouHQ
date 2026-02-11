@@ -25,6 +25,15 @@ extension DeviceEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let displayName = [brand, model].filter { $0.isNotEmpty }.joined(separator: " ")
+			return displayName.isEmpty ? "this device" : displayName
+		}
+
 		var title: String {
 			isNew ? "Add Device" : "Edit Device"
 		}
@@ -48,6 +57,11 @@ extension DeviceEdit {
 			self.purchaseDate = device.purchaseDate
 			self.url = device.url
 			self.notes = device.notes
+			self.currentProfileID = device.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -58,7 +72,7 @@ extension DeviceEdit {
 						try Device.insert {
 							Device.Draft(
 								id: device.id,
-								profileID: device.profileID,
+								profileID: currentProfileID,
 								type: type,
 								brand: brand,
 								model: model,
@@ -75,6 +89,7 @@ extension DeviceEdit {
 						// Update existing record
 						try Device.find(device.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.type = type
 								$0.brand = brand
 								$0.model = model

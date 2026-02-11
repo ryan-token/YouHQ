@@ -14,7 +14,7 @@ extension AddVehicleSheet {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) var database
 
-		let profileID: UUID
+		var selectedProfileID: UUID
 		var type: VehicleType = .car
 		var subType: VehicleSubType = .gas
 		var make: String = ""
@@ -28,12 +28,19 @@ extension AddVehicleSheet {
 		var notes: String = ""
 		var photoPicker = PhotoPickerViewModel()
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+
 		var isValid: Bool {
 			make.trimmingCharacters(in: .whitespaces).isNotEmpty
 		}
 
 		init(profileID: UUID) {
-			self.profileID = profileID
+			self.selectedProfileID = profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() -> Vehicle? {
@@ -44,7 +51,7 @@ extension AddVehicleSheet {
 					try Vehicle.insert {
 						Vehicle.Draft(
 							id: vehicleID,
-							profileID: profileID,
+							profileID: selectedProfileID,
 							type: type,
 							subType: subType,
 							make: make,
@@ -64,7 +71,7 @@ extension AddVehicleSheet {
 						try Asset.insert {
 							Asset.Draft(
 								id: UUID(),
-								profileID: profileID,
+								profileID: selectedProfileID,
 								vehicleID: vehicleID,
 								imageData: photoData
 							)
@@ -75,7 +82,7 @@ extension AddVehicleSheet {
 				}
 				Analytics.sendSignal(.vehicleCreated)
 			} catch {
-				Analytics.logError(id: .residenceSaveFailed, message: error.localizedDescription)
+				Analytics.logError(id: .vehicleSaveFailed, message: error.localizedDescription)
 				reportIssue(error)
 			}
 			return savedVehicle

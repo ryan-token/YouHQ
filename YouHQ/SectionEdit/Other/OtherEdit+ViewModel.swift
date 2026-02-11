@@ -24,6 +24,14 @@ extension OtherEdit {
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			name.isNotEmpty ? name : "this item"
+		}
+
 		var title: String {
 			isNew ? "Add Other" : "Edit Other"
 		}
@@ -42,7 +50,12 @@ extension OtherEdit {
 			self.monthlyCost = other.monthlyCost
 			self.url = other.url
 			self.notes = other.notes
+			self.currentProfileID = other.profileID
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -53,7 +66,7 @@ extension OtherEdit {
 						try Other.insert {
 							Other.Draft(
 								id: other.id,
-								profileID: other.profileID,
+								profileID: currentProfileID,
 								residenceID: other.residenceID,
 								vehicleID: other.vehicleID,
 								category: other.category,
@@ -85,6 +98,7 @@ extension OtherEdit {
 						// Update existing record
 						try Other.find(other.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.name = name
 								$0.otherDescription = otherDescription
 								$0.monthlyCost = monthlyCost

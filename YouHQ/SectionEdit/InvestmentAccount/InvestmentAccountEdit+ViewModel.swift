@@ -24,6 +24,15 @@ extension InvestmentAccountEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let name = institution.isNotEmpty ? "\(institution) - \(accountType.rawValue)" : "this investment account"
+			return name
+		}
+
 		var title: String {
 			isNew ? "Add Investment Account" : "Edit Investment Account"
 		}
@@ -45,6 +54,11 @@ extension InvestmentAccountEdit {
 			self.isActive = account.isActive
 			self.url = account.url
 			self.notes = account.notes
+			self.currentProfileID = account.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -54,7 +68,7 @@ extension InvestmentAccountEdit {
 						try InvestmentAccount.insert {
 							InvestmentAccount.Draft(
 								id: account.id,
-								profileID: account.profileID,
+								profileID: currentProfileID,
 								institution: institution,
 								accountType: accountType,
 								accountNumber: accountNumber,
@@ -69,6 +83,7 @@ extension InvestmentAccountEdit {
 					} else {
 						try InvestmentAccount.find(account.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.institution = institution
 								$0.accountType = accountType
 								$0.accountNumber = accountNumber

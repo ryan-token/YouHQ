@@ -64,6 +64,19 @@ struct SectionEditSheet: View {
 	var body: some View {
 		NavigationStack {
 			Form {
+				// Profile picker section (only shows if supported and >1 profile)
+				if vm.sectionViewModel.supportsProfileSwitching {
+					ProfilePickerSection(
+						profiles: vm.sectionViewModel.profiles,
+						selectedProfileID: Binding(
+							get: { vm.sectionViewModel.currentProfileID },
+							set: { vm.sectionViewModel.currentProfileID = $0 }
+						),
+						itemName: vm.sectionViewModel.itemNameForProfilePicker,
+						isNewItem: vm.section.isDraft
+					)
+				}
+
 				switch vm.section {
 				case .residenceInfo:
 					ResidenceInfoEdit(
@@ -136,6 +149,10 @@ struct SectionEditSheet: View {
 						focusedField: $hsaFieldFocused
 					)
 				}
+			}
+			.task {
+				// Load profiles for profile switching
+				await vm.sectionViewModel.loadProfiles()
 			}
 			.onAppear {
 				if vm.section.isDraft {

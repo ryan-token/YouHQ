@@ -33,6 +33,15 @@ extension ResidenceInfoEdit {
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let address = residence.shortAddress
+			return address.isNotEmpty ? "this residence (\(address))" : "this residence"
+		}
+
 		var title: String {
 			"Edit Residence"
 		}
@@ -62,7 +71,12 @@ extension ResidenceInfoEdit {
 			self.monthlyCost = residence.monthlyCost
 			self.url = residence.url
 			self.notes = residence.notes
+			self.currentProfileID = residence.profileID
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -70,6 +84,7 @@ extension ResidenceInfoEdit {
 				try database.write { db in
 					try Residence.find(residence.id)
 						.update {
+							$0.profileID = currentProfileID
 							$0.type = residenceType
 							$0.isCurrent = isCurrent
 							$0.street = street

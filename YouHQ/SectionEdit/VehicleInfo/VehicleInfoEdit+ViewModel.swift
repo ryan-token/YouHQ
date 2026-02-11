@@ -29,6 +29,14 @@ extension VehicleInfoEdit {
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			vehicle.displayName
+		}
+
 		var title: String {
 			"Edit Vehicle"
 		}
@@ -54,7 +62,12 @@ extension VehicleInfoEdit {
 			self.monthlyCost = vehicle.monthlyCost
 			self.url = vehicle.url
 			self.notes = vehicle.notes
+			self.currentProfileID = vehicle.profileID
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -62,6 +75,7 @@ extension VehicleInfoEdit {
 				try database.write { db in
 					try Vehicle.find(vehicle.id)
 						.update {
+							$0.profileID = currentProfileID
 							$0.type = vehicleType
 							$0.subType = subType
 							$0.make = make
@@ -115,7 +129,7 @@ extension VehicleInfoEdit {
 
 				Analytics.sendSignal(.vehicleDeleted)
 			} catch {
-				Analytics.logError(id: .residenceDeleteFailed, message: error.localizedDescription)
+				Analytics.logError(id: .vehicleDeleteFailed, message: error.localizedDescription)
 				reportIssue(error)
 			}
 		}

@@ -24,6 +24,15 @@ extension ServiceProviderEdit {
 		var url: String
 		var notes: String
 
+		// Profile switching support
+		var profiles: [ProfileShare] = []
+		var currentProfileID: UUID
+		var supportsProfileSwitching: Bool { true }
+		var itemNameForProfilePicker: String {
+			let displayName = name.isNotEmpty ? "\(name) - \(providerType.rawValue)" : "this service provider"
+			return displayName
+		}
+
 		var title: String {
 			isNew ? "Add Service Provider" : "Edit Service Provider"
 		}
@@ -45,6 +54,11 @@ extension ServiceProviderEdit {
 			self.accountNumber = serviceProvider.accountNumber
 			self.url = serviceProvider.url
 			self.notes = serviceProvider.notes
+			self.currentProfileID = serviceProvider.profileID
+		}
+
+		func loadProfiles() async {
+			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {
@@ -55,7 +69,7 @@ extension ServiceProviderEdit {
 						try ServiceProvider.insert {
 							ServiceProvider.Draft(
 								id: serviceProvider.id,
-								profileID: serviceProvider.profileID,
+								profileID: currentProfileID,
 								providerType: providerType,
 								name: name,
 								monthlyCost: monthlyCost,
@@ -71,6 +85,7 @@ extension ServiceProviderEdit {
 						// Update existing record
 						try ServiceProvider.find(serviceProvider.id)
 							.update {
+								$0.profileID = currentProfileID
 								$0.providerType = providerType
 								$0.name = name
 								$0.monthlyCost = monthlyCost
