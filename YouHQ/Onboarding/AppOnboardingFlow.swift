@@ -41,6 +41,11 @@ struct AppOnboardingFlow: View {
 							.fontWeight(.semibold)
 					}
 					.padding(.top)
+					#if !os(macOS)
+						.if(UIDevice.current.userInterfaceIdiom == .pad) {
+							$0.padding(.top, 40)
+						}
+					#endif
 				}
 
 				TabView(selection: $vm.currentTab) {
@@ -85,12 +90,13 @@ struct AppOnboardingFlow: View {
 					.tag(vm.paywallTab)
 				}
 				#if !os(macOS)
-					.tabViewStyle(.page)
+					.tabViewStyle(.page(indexDisplayMode: .never))
 				#else
 					.tabViewStyle(.grouped)
 				#endif
 				.opacity(vm.isStartingOnboarding ? 0 : 1)
 			}
+			.background(backgroundGradient)
 			.navigationDestination(for: String.self) { destination in
 				if destination == "congratulations" {
 					OnboardingCongratulationsView()
@@ -108,7 +114,7 @@ struct AppOnboardingFlow: View {
 		#if !os(macOS)
 			.toolbar(.hidden, for: .navigationBar)
 			.overlay(alignment: .topLeading) {
-				if fromSettings {
+				if fromSettings && UIDevice.current.userInterfaceIdiom == .phone {
 					backButton
 					.padding()
 				}
@@ -129,12 +135,21 @@ struct AppOnboardingFlow: View {
 		}
 	}
 
+	@ViewBuilder
+	private var backgroundGradient: some View {
+		if vm.currentTab == vm.paywallTab {
+			PaywallGradient()
+		} else {
+			LinearGradient(colors: [.clear, .clear], startPoint: .top, endPoint: .bottom)
+		}
+	}
+
 	private var backButton: some View {
 		Button {
 			dismiss()
 		} label: {
 			Image(systemName: "chevron.left")
-				.font(.title.weight(.semibold))
+				.font(.title.weight(.medium))
 		}
 		.buttonStyle(.glass)
 	}

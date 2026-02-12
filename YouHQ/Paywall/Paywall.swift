@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Paywall: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@State private var showContent = false
 	@State private var shouldRainConfetti = false
 	@State private var refreshTrigger = UUID()
 
@@ -27,8 +28,9 @@ struct Paywall: View {
 	var body: some View {
 		ZStack {
 			SubscriptionStoreView(groupID: paywallManager.subscriptionGroupID) {
-				MarketingCopy(fromOnboarding: fromOnboarding, onComplete: onComplete)
+				MarketingCopy(fromSettings: fromSettings, fromOnboarding: fromOnboarding, onComplete: onComplete)
 			}
+			.opacity(showContent ? 1 : 0)
 			.if(fromSettings) {
 				$0.storeButton(.hidden, for: .cancellation)
 			}
@@ -59,6 +61,16 @@ struct Paywall: View {
 					animationDelayThreshold: 4
 				)
 			}
+		}
+		.ignoresSafeArea(.all, edges: .vertical)
+		.task {
+			try? await Task.sleep(for: .seconds(0.5))
+			withAnimation {
+				showContent = true
+			}
+		}
+		.onDisappear {
+			showContent = false
 		}
 	}
 
