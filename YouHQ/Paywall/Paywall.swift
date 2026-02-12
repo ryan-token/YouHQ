@@ -14,16 +14,20 @@ struct Paywall: View {
 	@State private var refreshTrigger = UUID()
 
 	let fromSettings: Bool
+	let fromOnboarding: Bool
+	let onComplete: (() -> Void)?
 	let animationDuration: TimeInterval = 7
 
-	init(fromSettings: Bool = false) {
+	init(fromSettings: Bool = false, fromOnboarding: Bool = false, onComplete: (() -> Void)? = nil) {
 		self.fromSettings = fromSettings
+		self.fromOnboarding = fromOnboarding
+		self.onComplete = onComplete
 	}
 
 	var body: some View {
 		ZStack {
 			SubscriptionStoreView(groupID: paywallManager.subscriptionGroupID) {
-				MarketingCopy()
+				MarketingCopy(fromOnboarding: fromOnboarding, onComplete: onComplete)
 			}
 			.if(fromSettings) {
 				$0.storeButton(.hidden, for: .cancellation)
@@ -63,6 +67,9 @@ struct Paywall: View {
 		case .success(.success(let transaction)):
 			rainConfetti()
 			logStoreKitTransaction(transaction)
+			if fromOnboarding {
+				onComplete?()
+			}
 		case .success(.pending):
 			Analytics.sendSignal(.IAPSuccessPending)
 		case .success(.userCancelled):

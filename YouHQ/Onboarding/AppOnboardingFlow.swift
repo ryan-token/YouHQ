@@ -6,40 +6,44 @@
 //
 
 import Combine
+import SQLiteData
 import SwiftUI
 
 struct AppOnboardingFlow: View {
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.dismiss) private var dismiss
+	@Environment(PaywallManager.self) private var paywallManager
 
-	@State private var currentTab: Int = 0
-	@State private var initialTimerCounter = 0
-	@State private var mainTimerCounter = 0
-	@State private var isTimerActive = true
-	@State private var expectedTab: Int?
-	@State private var isStartingOnboarding = true
-	@State private var navigationPath = NavigationPath()
+	@State private var vm = ViewModel()
 
+	let fromSettings: Bool
 	let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 	let timeOnEachTab = 4
 	let lastAutoAdvanceTab = 5 // Stop auto-advancing after OnboardingEndView
 
+	init(fromSettings: Bool = false) {
+		self.fromSettings = fromSettings
+	}
+
 	var body: some View {
-		NavigationStack(path: $navigationPath) {
+		NavigationStack(path: $vm.navigationPath) {
 			VStack(spacing: 8) {
-				VStack(spacing: 0) {
-					ScalableImage("AppIcon", height: 90)
+				if vm.currentTab != vm.paywallTab {
+					VStack(spacing: 0) {
+						ScalableImage("AppIcon", height: 90)
 
-					HQText("YouHQ")
-						.font(.largeTitle)
-						.fontWeight(.black)
+						HQText("YouHQ")
+							.font(.largeTitle)
+							.fontWeight(.black)
 
-					HQText("Your life, organized.")
-						.font(.title)
-						.fontWeight(.semibold)
+						HQText("Your life, organized.")
+							.font(.title)
+							.fontWeight(.semibold)
+					}
+					.padding(.top)
 				}
-				.padding(.top)
 
-				TabView(selection: $currentTab) {
+				TabView(selection: $vm.currentTab) {
 					ForEach(0..<5) { idx in
 						VStack {
 							ScalableImage(
@@ -63,64 +67,76 @@ struct AppOnboardingFlow: View {
 
 					OnboardingEndView {
 						withAnimation {
-							currentTab = 6
+							vm.currentTab = 6
 						}
 					}
 					.tag(5)
 
 					OnboardingProfileCreationView {
-						navigationPath.append("congratulations")
+						withAnimation {
+							vm.navigateAfterProfileCreation(hasUnlockedPremium: paywallManager.hasUnlockedPremium)
+						}
 					}
 					.tag(6)
+
+					Paywall(fromOnboarding: true) {
+						vm.navigationPath.append("congratulations")
+					}
+					.tag(vm.paywallTab)
 				}
 				#if !os(macOS)
 					.tabViewStyle(.page)
 				#else
 					.tabViewStyle(.grouped)
 				#endif
-				.opacity(isStartingOnboarding ? 0 : 1)
+				.opacity(vm.isStartingOnboarding ? 0 : 1)
 			}
 			.navigationDestination(for: String.self) { destination in
 				if destination == "congratulations" {
 					OnboardingCongratulationsView()
 				}
 			}
-			.onChange(of: currentTab) {
-				// Check if this was a timer-driven change
-				if expectedTab == currentTab {
-					expectedTab = nil // Reset
-				} else {
-					// This was a manual swipe
-					isTimerActive = false
+			.onChange(of: vm.currentTab) { oldValue, newValue in
+				Task {
+					await vm.handleTabChange(oldValue: oldValue, newValue: newValue, hasUnlockedPremium: paywallManager.hasUnlockedPremium)
 				}
 			}
 			.onReceive(timer) { _ in
-				guard isTimerActive else { return }
-
-				if isStartingOnboarding {
-					initialTimerCounter += 1
-
-					if initialTimerCounter == 1 {
-						withAnimation(.linear(duration: 2)) {
-							isStartingOnboarding = false
-						}
-					}
-				} else {
-					mainTimerCounter += 1
-					// Stop auto-advancing after lastAutoAdvanceTab
-					guard currentTab < lastAutoAdvanceTab else { return }
-
-					if mainTimerCounter % timeOnEachTab == 0 {
-						let newTab = mainTimerCounter / timeOnEachTab
-						expectedTab = newTab
-						withAnimation {
-							currentTab = newTab
-						}
-					}
-				}
+				vm.handleTimerTick(timeOnEachTab: timeOnEachTab, lastAutoAdvanceTab: lastAutoAdvanceTab)
 			}
 		}
-		.toolbar(removing: .title)
+		#if !os(macOS)
+			.toolbar(.hidden, for: .navigationBar)
+			.overlay(alignment: .topLeading) {
+				if fromSettings {
+					backButton
+					.padding()
+				}
+			}
+		#endif
+		.alert("Profile Required", isPresented: $vm.showProfileRequiredAlert) {
+			Button("OK", role: .cancel) {}
+		} message: {
+			Text("You must create a profile before proceeding.")
+		}
+		.task {
+			await vm.checkForProfile()
+		}
+		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
+			Task {
+				await vm.checkForProfile()
+			}
+		}
+	}
+
+	private var backButton: some View {
+		Button {
+			dismiss()
+		} label: {
+			Image(systemName: "chevron.left")
+				.font(.title.weight(.semibold))
+		}
+		.buttonStyle(.glass)
 	}
 
 	private let screenshots: [ScreenshotConfig] = [

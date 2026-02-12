@@ -58,6 +58,9 @@ struct OnboardingProfileSetup: View {
 			}
 			.contentMargins(.top, 0)
 			.navigationTitle("Create Profile")
+			#if os(macOS)
+				.frame(minHeight: 500)
+			#endif
 			#if !os(macOS)
 				.navigationBarTitleDisplayMode(.inline)
 			#endif
