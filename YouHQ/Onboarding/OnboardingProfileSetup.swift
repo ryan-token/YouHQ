@@ -10,9 +10,14 @@ import SwiftUI
 
 struct OnboardingProfileSetup: View {
 	@Environment(\.dismiss) private var dismiss
+	@Environment(PaywallManager.self) private var paywallManager
 	@State private var vm = ViewModel()
 	@Binding var createdNewProfile: Bool
 	@Binding var createdProfileName: String
+
+	private var isFreeTierLimited: Bool {
+		vm.profileCount >= 1 && !paywallManager.hasUnlockedPremium
+	}
 
 	var body: some View {
 		NavigationStack {
@@ -41,6 +46,18 @@ struct OnboardingProfileSetup: View {
 							will be synced seamlessly between all participants.
 							"""
 						)
+
+						if isFreeTierLimited {
+							Text(
+								"""
+								**Note:** The free version of YouHQ includes 1 profile. \
+								You already have a profile, so you'll need to subscribe to YouHQ Premium \
+								to create additional profiles.
+								"""
+							)
+							.foregroundStyle(.secondary)
+							.padding(.top, 8)
+						}
 					}
 					.fontDesign(.rounded)
 					.listRowBackground(Color.clear)
@@ -55,6 +72,8 @@ struct OnboardingProfileSetup: View {
 				.buttonStyle(.plain)
 				.listRowBackground(Color.clear)
 				.listRowSeparator(.hidden)
+				.disabled(isFreeTierLimited)
+				.opacity(isFreeTierLimited ? 0.5 : 1.0)
 			}
 			.contentMargins(.top, 0)
 			.navigationTitle("Create Profile")
@@ -70,6 +89,9 @@ struct OnboardingProfileSetup: View {
 						dismiss()
 					}
 				}
+			}
+			.task {
+				await vm.checkProfileCount()
 			}
 			.alert("Create Profile", isPresented: $vm.isShowingCreateProfileAlert) {
 				TextField("Profile Name", text: $vm.newProfileName)
@@ -109,9 +131,22 @@ extension OnboardingProfileSetup {
 
 		var isShowingCreateProfileAlert = false
 		var newProfileName = ""
+		var profileCount = 0
 
 		var isProfileNameEmpty: Bool {
 			newProfileName.trimmingCharacters(in: .whitespaces).isEmpty
+		}
+
+		func checkProfileCount() async {
+			do {
+				let count = try await database.read { db in
+					try Profile.fetchCount(db)
+				}
+				profileCount = count
+			} catch {
+				print("Error checking profile count: \(error)")
+				profileCount = 0
+			}
 		}
 
 		func createProfile(named profileName: String) {
@@ -146,4 +181,5 @@ extension OnboardingProfileSetup {
 		createdNewProfile: .constant(false),
 		createdProfileName: .constant("")
 	)
+	.environment(PaywallManager())
 }

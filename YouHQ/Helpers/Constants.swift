@@ -9,6 +9,7 @@ import Foundation
 
 struct Constants {
 	// MARK: - Paywall
+	static let profilesThreshold = 1
 	static let paywallCoreItemsThreshold = 5
 	static let paywallMaintenanceItemsThreshold = 5
 	static let paywallPaintColorsThreshold = 5

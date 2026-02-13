@@ -10,6 +10,7 @@ import SwiftUI
 
 struct OnboardingProfileCreationView: View {
 	@Dependency(\.defaultDatabase) private var database
+	@Environment(PaywallManager.self) private var paywallManager
 
 	@State private var showAddResidence = false
 	@State private var showAddVehicle = false
@@ -18,7 +19,9 @@ struct OnboardingProfileCreationView: View {
 	@State private var selectedVehicle: Vehicle?
 	@State private var draftJob: Job?
 	@State private var showCreateProfileSheet = false
+	@State private var showPaywallSheet = false
 	@State private var hasAnyProfile = false
+	@State private var existingProfileName = ""
 	@State private var createdNewProfile = false
 	@State private var createdProfileName = ""
 
@@ -26,6 +29,10 @@ struct OnboardingProfileCreationView: View {
 
 	private var selectedProfileID: UUID? {
 		UUID(uuidString: selectedProfileIDString)
+	}
+
+	private var isFreeTierLimited: Bool {
+		hasAnyProfile && !paywallManager.hasUnlockedPremium
 	}
 
 	var onComplete: () -> Void
@@ -47,15 +54,33 @@ struct OnboardingProfileCreationView: View {
 						HQText("Profiles hold residences, vehicles, money, media, and career info.")
 							.foregroundStyle(.secondary)
 
-						Button {
-							showCreateProfileSheet = true
-						} label: {
-							HQText(hasAnyProfile ? "Create New Profile" : "Create Profile")
-								.fontWeight(.medium)
-								.frame(maxWidth: .infinity)
+						// Show limitation card if free user has existing profile
+						if hasAnyProfile && !paywallManager.hasUnlockedPremium {
+							freeTierLimitationCard
 						}
-						.buttonStyle(.borderedProminent)
-						.controlSize(.large)
+
+						// Button logic: Subscribe for free users with profile, Create for others
+						if hasAnyProfile && !paywallManager.hasUnlockedPremium {
+							Button {
+								showPaywallSheet = true
+							} label: {
+								HQText("Subscribe to Create More Profiles")
+									.fontWeight(.medium)
+									.frame(maxWidth: .infinity)
+							}
+							.buttonStyle(.borderedProminent)
+							.controlSize(.large)
+						} else {
+							Button {
+								showCreateProfileSheet = true
+							} label: {
+								HQText(hasAnyProfile ? "Create New Profile" : "Create Profile")
+									.fontWeight(.medium)
+									.frame(maxWidth: .infinity)
+							}
+							.buttonStyle(.borderedProminent)
+							.controlSize(.large)
+						}
 					}
 				}
 
@@ -147,6 +172,14 @@ struct OnboardingProfileCreationView: View {
 				createdProfileName: $createdProfileName
 			)
 		}
+		.sheet(isPresented: $showPaywallSheet) {
+			Paywall(fromOnboarding: true) {
+				Task {
+					try? await Task.sleep(for: .seconds(7)) // so the user sees confetti before it dismisses
+					showPaywallSheet = false
+				}
+			}
+		}
 		.sheet(isPresented: $showAddResidence) {
 			if let selectedProfileID {
 				AddResidenceSheet(profileID: selectedProfileID, selectedResidence: $selectedResidence)
@@ -183,19 +216,53 @@ struct OnboardingProfileCreationView: View {
 		}
 	}
 
+	@ViewBuilder
+	private var freeTierLimitationCard: some View {
+		VStack(alignment: .leading, spacing: 8) {
+			HStack(spacing: 8) {
+				Image(systemName: "person.circle.fill")
+					.foregroundStyle(.indigo)
+					.font(.largeTitle)
+
+				VStack(alignment: .leading, spacing: 0) {
+					HQText("You already have a profile")
+						.font(.headline)
+						.fontWeight(.semibold)
+
+					HQText("Profile: \(existingProfileName)")
+						.foregroundStyle(.secondary)
+						.font(.subheadline)
+				}
+			}
+
+			Text("""
+			The free version of YouHQ allows \(Constants.profilesThreshold) profile. \
+			To create additional profiles, subscribe to **YouHQ Premium**.
+			""")
+			.foregroundStyle(.secondary)
+			.font(.callout)
+			.fontDesign(.rounded)
+		}
+		.padding(12)
+		.background(.quinary, in: .rect(cornerRadius: 24))
+	}
+
 	private func checkForProfile() async {
 		do {
-			let profileCount = try await database.read { db in
-				try Profile.fetchCount(db)
+			let profiles = try await database.read { db in
+				try Profile.fetchAll(db)
 			}
-			hasAnyProfile = profileCount > 0
+			hasAnyProfile = !profiles.isEmpty
+			existingProfileName = profiles.first?.name ?? ""
 		} catch {
 			print("Error checking for profiles: \(error)")
 			hasAnyProfile = false
+			existingProfileName = ""
 		}
 	}
 }
 
 #Preview {
 	OnboardingProfileCreationView(onComplete: {})
+		.environment(PaywallManager())
 }

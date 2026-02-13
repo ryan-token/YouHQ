@@ -106,6 +106,10 @@ extension Paywall {
 						}
 						.buttonStyle(.bordered)
 						.controlSize(.regular)
+						.overlay {
+							Capsule()
+								.stroke(.white.opacity(0.8), lineWidth: 1)
+						}
 					} else {
 						if paywallManager.hasUnlockedPremium {
 							HQText("🎉 Thank you for supporting YouHQ!")
