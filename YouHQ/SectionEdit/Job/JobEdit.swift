@@ -60,18 +60,20 @@ struct JobEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField(label: "End Date") {
-					DatePicker(
-						"",
-						selection: Binding(
-							get: { vm.endDate ?? Date() },
-							set: { vm.endDate = $0 }
-						),
-						displayedComponents: [.date]
-					)
-					.labelsHidden()
-					.disabled(vm.isCurrent)
-					.opacity(vm.isCurrent ? 0.5 : 1.0)
+				if !vm.isCurrent {
+					LabeledField(label: "End Date") {
+						DatePicker(
+							"",
+							selection: Binding(
+								get: { vm.endDate ?? Date() },
+								set: { vm.endDate = $0 }
+							),
+							displayedComponents: [.date]
+						)
+						.labelsHidden()
+						.disabled(vm.isCurrent)
+						.opacity(vm.isCurrent ? 0.5 : 1.0)
+					}
 				}
 
 				LabeledField(label: "Salary") {
