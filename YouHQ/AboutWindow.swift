@@ -26,7 +26,7 @@ struct AboutWindow: View {
 
 	var body: some View {
 		VStack(spacing: 14) {
-			ScalableImage("AppIcon")
+			ScalableImage("AppIcon-1024")
 
 			HQText("YouHQ")
 				.font(.title)

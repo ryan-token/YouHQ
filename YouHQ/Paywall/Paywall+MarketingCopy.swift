@@ -38,7 +38,7 @@ extension Paywall {
 		var body: some View {
 			VStack(spacing: 8) {
 				VStack(spacing: 0) {
-					ScalableImage("AppIcon", height: 90)
+					ScalableImage("AppIcon-1024", height: 90)
 
 					VStack(spacing: 4) {
 						HQText("YouHQ Premium")

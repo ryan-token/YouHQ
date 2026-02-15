@@ -30,7 +30,7 @@ struct AppOnboardingFlow: View {
 			VStack(spacing: 8) {
 				if vm.currentTab != vm.paywallTab {
 					VStack(spacing: 0) {
-						ScalableImage("AppIcon", height: 90)
+						ScalableImage("AppIcon-1024", height: 90)
 
 						HQText("YouHQ")
 							.font(.largeTitle)
@@ -151,7 +151,9 @@ struct AppOnboardingFlow: View {
 			Image(systemName: "chevron.left")
 				.font(.title.weight(.medium))
 		}
-		.buttonStyle(.glass)
+		#if !os(visionOS)
+			.buttonStyle(.glass)
+		#endif
 	}
 
 	private let screenshots: [ScreenshotConfig] = [

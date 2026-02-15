@@ -25,5 +25,5 @@ struct ScalableImage: View {
 }
 
 #Preview {
-	ScalableImage("AppIcon")
+	ScalableImage("AppIcon-1024")
 }
