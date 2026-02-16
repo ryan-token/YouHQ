@@ -84,7 +84,7 @@ struct AppOnboardingFlow: View {
 					}
 					.tag(6)
 
-					Paywall(fromOnboarding: true) {
+					Paywall(fromOnboarding: true, shouldShowSkipButton: true) {
 						vm.navigationPath.append("congratulations")
 					}
 					.tag(vm.paywallTab)

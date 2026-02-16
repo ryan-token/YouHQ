@@ -14,26 +14,24 @@ struct Paywall: View {
 	@State private var shouldRainConfetti = false
 	@State private var refreshTrigger = UUID()
 
-	let fromSettings: Bool
 	let fromOnboarding: Bool
+	let shouldShowSkipButton: Bool
 	let onComplete: (() -> Void)?
 	let animationDuration: TimeInterval = 7
 
-	init(fromSettings: Bool = false, fromOnboarding: Bool = false, onComplete: (() -> Void)? = nil) {
-		self.fromSettings = fromSettings
+	init(fromOnboarding: Bool = false, shouldShowSkipButton: Bool = false, onComplete: (() -> Void)? = nil) {
 		self.fromOnboarding = fromOnboarding
+		self.shouldShowSkipButton = shouldShowSkipButton
 		self.onComplete = onComplete
 	}
 
 	var body: some View {
 		ZStack {
 			SubscriptionStoreView(groupID: paywallManager.subscriptionGroupID) {
-				MarketingCopy(fromSettings: fromSettings, fromOnboarding: fromOnboarding, onComplete: onComplete)
+				MarketingCopy(shouldShowSkipButton: shouldShowSkipButton, onComplete: onComplete)
 			}
 			.opacity(showContent ? 1 : 0)
-			.if(fromSettings) {
-				$0.storeButton(.hidden, for: .cancellation)
-			}
+			.storeButton(.hidden, for: .cancellation)
 			.storeButton(.visible, for: .restorePurchases)
 			.id(refreshTrigger)
 			.onAppear {

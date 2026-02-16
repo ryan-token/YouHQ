@@ -75,15 +75,15 @@ struct SettingsScreen: View {
 				case .premium:
 					#if os(macOS)
 						ScrollView {
-							Paywall(fromSettings: true)
+							Paywall()
 						}
 					#else
-						Paywall(fromSettings: true)
+						Paywall()
 					#endif
 				case .profiles:
 					ProfileSettingsView()
 				case .onboarding:
-					AppOnboardingFlow(fromSettings: true)
+					AppOnboardingFlow()
 				case nil:
 					ContentUnavailableView {
 						Label("No Selection", systemImage: "questionmark.circle")

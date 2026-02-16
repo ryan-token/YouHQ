@@ -13,8 +13,7 @@ extension Paywall {
 		@Environment(\.colorScheme) var colorScheme
 		@Environment(PaywallManager.self) private var paywallManager
 
-		let fromSettings: Bool
-		let fromOnboarding: Bool
+		let shouldShowSkipButton: Bool
 		let onComplete: (() -> Void)?
 
 		var hstackSpacing: CGFloat {
@@ -29,9 +28,8 @@ extension Paywall {
 			#endif
 		}
 
-		init(fromSettings: Bool = false, fromOnboarding: Bool = false, onComplete: (() -> Void)? = nil) {
-			self.fromSettings = fromSettings
-			self.fromOnboarding = fromOnboarding
+		init(shouldShowSkipButton: Bool, onComplete: (() -> Void)? = nil) {
+			self.shouldShowSkipButton = shouldShowSkipButton
 			self.onComplete = onComplete
 		}
 
@@ -95,7 +93,7 @@ extension Paywall {
 				.frame(maxWidth: .infinity, alignment: .center)
 
 				Group {
-					if fromOnboarding {
+					if shouldShowSkipButton {
 						Button {
 							onComplete?()
 						} label: {
@@ -136,5 +134,5 @@ extension Paywall {
 }
 
 #Preview {
-	Paywall.MarketingCopy()
+	Paywall.MarketingCopy(shouldShowSkipButton: true)
 }
