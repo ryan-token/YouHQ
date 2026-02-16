@@ -83,7 +83,7 @@ struct SettingsScreen: View {
 				case .profiles:
 					ProfileSettingsView()
 				case .onboarding:
-					AppOnboardingFlow()
+					AppOnboardingFlow(fromSettings: true)
 				case nil:
 					ContentUnavailableView {
 						Label("No Selection", systemImage: "questionmark.circle")
