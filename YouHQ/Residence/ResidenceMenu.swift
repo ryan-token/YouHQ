@@ -22,7 +22,7 @@ struct ResidenceMenu: View {
 		Group {
 			if includeAddResidence {
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residences.count < 1 {
+					if paywallManager.hasUnlockedPremium || vm.residences.count < Constants.paywallResidencesThreshold {
 						vm.showCreateResidenceSheet()
 					} else {
 						paywallManager.showPaywall()

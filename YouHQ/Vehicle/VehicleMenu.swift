@@ -22,7 +22,7 @@ struct VehicleMenu: View {
 		Group {
 			if includeAddVehicle {
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.vehicles.count < 1 {
+					if paywallManager.hasUnlockedPremium || vm.vehicles.count < Constants.paywallVehiclesThreshold {
 						vm.showCreateVehicleSheet()
 					} else {
 						paywallManager.showPaywall()

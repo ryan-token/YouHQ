@@ -9,31 +9,12 @@ import SQLiteData
 import SwiftUI
 
 struct OnboardingProfileCreationView: View {
-	@Dependency(\.defaultDatabase) private var database
 	@Environment(PaywallManager.self) private var paywallManager
+	@State private var vm = ViewModel()
 
-	@State private var showAddResidence = false
-	@State private var showAddVehicle = false
-	@State private var showAddJob = false
 	@State private var selectedResidence: Residence?
 	@State private var selectedVehicle: Vehicle?
 	@State private var draftJob: Job?
-	@State private var showCreateProfileSheet = false
-	@State private var showPaywallSheet = false
-	@State private var hasAnyProfile = false
-	@State private var existingProfileName = ""
-	@State private var createdNewProfile = false
-	@State private var createdProfileName = ""
-
-	@AppStorage("selectedProfileID") private var selectedProfileIDString: String = ""
-
-	private var selectedProfileID: UUID? {
-		UUID(uuidString: selectedProfileIDString)
-	}
-
-	private var isFreeTierLimited: Bool {
-		hasAnyProfile && !paywallManager.hasUnlockedPremium
-	}
 
 	var onComplete: () -> Void
 
@@ -41,8 +22,8 @@ struct OnboardingProfileCreationView: View {
 		ScrollView {
 			VStack(spacing: 18) {
 				VStack(alignment: .leading, spacing: 12) {
-					if createdNewProfile {
-						HQText("Profile \"\(createdProfileName)\" created!")
+					if vm.createdNewProfile {
+						HQText("Profile \"\(vm.createdProfileName)\" created!")
 							.font(.title2)
 							.fontWeight(.semibold)
 							.frame(maxWidth: .infinity, alignment: .leading)
@@ -55,14 +36,14 @@ struct OnboardingProfileCreationView: View {
 							.foregroundStyle(.secondary)
 
 						// Show limitation card if free user has existing profile
-						if hasAnyProfile && !paywallManager.hasUnlockedPremium {
-							freeTierLimitationCard
+						if vm.hasAnyProfile && !paywallManager.hasUnlockedPremium {
+							FreeTierLimitationCard(profileName: vm.existingProfileName)
 						}
 
 						// Button logic: Subscribe for free users with profile, Create for others
-						if hasAnyProfile && !paywallManager.hasUnlockedPremium {
+						if vm.hasAnyProfile && !paywallManager.hasUnlockedPremium {
 							Button {
-								showPaywallSheet = true
+								vm.showPaywallSheet = true
 							} label: {
 								HQText("Subscribe to Create More Profiles")
 									.fontWeight(.medium)
@@ -72,9 +53,9 @@ struct OnboardingProfileCreationView: View {
 							.controlSize(.large)
 						} else {
 							Button {
-								showCreateProfileSheet = true
+								vm.showCreateProfileSheet = true
 							} label: {
-								HQText(hasAnyProfile ? "Create New Profile" : "Create Profile")
+								HQText(vm.hasAnyProfile ? "Create New Profile" : "Create Profile")
 									.fontWeight(.medium)
 									.frame(maxWidth: .infinity)
 							}
@@ -85,21 +66,33 @@ struct OnboardingProfileCreationView: View {
 				}
 
 				// Show "Get started" section only if user created a new profile
-				if createdNewProfile {
+				if vm.createdNewProfile {
 					VStack(alignment: .leading, spacing: 12) {
 						HQText("Now add your first residence, vehicle, or job:")
 							.fontWeight(.medium)
 							.padding(.bottom, 4)
 
 						OnboardingButton(
-							action: { showAddResidence = true },
+							action: {
+								if paywallManager.hasUnlockedPremium || vm.residencesCount < Constants.paywallResidencesThreshold {
+									vm.showAddResidence = true
+								} else {
+									vm.showPaywallSheet = true
+								}
+							},
 							text: "Add Residence",
 							iconName: "house.fill",
 							backgroundColor: .indigo
 						)
 
 						OnboardingButton(
-							action: { showAddVehicle = true },
+							action: {
+								if paywallManager.hasUnlockedPremium || vm.vehiclesCount < Constants.paywallVehiclesThreshold {
+									vm.showAddVehicle = true
+								} else {
+									vm.showPaywallSheet = true
+								}
+							},
 							text: "Add Vehicle",
 							iconName: "car.fill",
 							backgroundColor: .teal
@@ -107,9 +100,13 @@ struct OnboardingProfileCreationView: View {
 
 						OnboardingButton(
 							action: {
-								if let selectedProfileID {
-									draftJob = Job(id: UUID(), profileID: selectedProfileID)
-									showAddJob = true
+								if let selectedProfileID = vm.selectedProfileID {
+									if paywallManager.hasUnlockedPremium || vm.jobsCount < Constants.paywallCoreItemsThreshold {
+										draftJob = Job(id: UUID(), profileID: selectedProfileID)
+										vm.showAddJob = true
+									} else {
+										vm.showPaywallSheet = true
+									}
 								}
 							},
 							text: "Add Job",
@@ -120,7 +117,7 @@ struct OnboardingProfileCreationView: View {
 				}
 
 				// Show Skip button if user has any profiles
-				if hasAnyProfile {
+				if vm.hasAnyProfile {
 					Button {
 						onComplete()
 					} label: {
@@ -152,45 +149,45 @@ struct OnboardingProfileCreationView: View {
 		}
 		.toolbar(removing: .title)
 		.task {
-			await checkForProfile()
+			await vm.checkForProfile()
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
 			Task {
-				await checkForProfile()
+				await vm.checkForProfile()
 			}
 		}
 		.sheet(
-			isPresented: $showCreateProfileSheet,
+			isPresented: $vm.showCreateProfileSheet,
 			onDismiss: {
 				Task {
-					await checkForProfile()
+					await vm.checkForProfile()
 				}
 			}
 		) {
 			OnboardingProfileSetup(
-				createdNewProfile: $createdNewProfile,
-				createdProfileName: $createdProfileName
+				createdNewProfile: $vm.createdNewProfile,
+				createdProfileName: $vm.createdProfileName
 			)
 		}
-		.sheet(isPresented: $showPaywallSheet) {
+		.sheet(isPresented: $vm.showPaywallSheet) {
 			Paywall(fromOnboarding: true) {
 				Task {
 					try? await Task.sleep(for: .seconds(7)) // so the user sees confetti before it dismisses
-					showPaywallSheet = false
+					vm.showPaywallSheet = false
 				}
 			}
 		}
-		.sheet(isPresented: $showAddResidence) {
-			if let selectedProfileID {
+		.sheet(isPresented: $vm.showAddResidence) {
+			if let selectedProfileID = vm.selectedProfileID {
 				AddResidenceSheet(profileID: selectedProfileID, selectedResidence: $selectedResidence)
 			}
 		}
-		.sheet(isPresented: $showAddVehicle) {
-			if let selectedProfileID {
+		.sheet(isPresented: $vm.showAddVehicle) {
+			if let selectedProfileID = vm.selectedProfileID {
 				AddVehicleSheet(profileID: selectedProfileID, selectedVehicle: $selectedVehicle)
 			}
 		}
-		.sheet(isPresented: $showAddJob) {
+		.sheet(isPresented: $vm.showAddJob) {
 			SectionEditSheet(section: .jobDraft, draftJob: $draftJob)
 		}
 		.onChange(of: selectedResidence) { _, newValue in
@@ -199,69 +196,16 @@ struct OnboardingProfileCreationView: View {
 		.onChange(of: selectedVehicle) { _, newValue in
 			if newValue != nil { onComplete() }
 		}
-		.onChange(of: showAddJob) { _, isShowing in
+		.onChange(of: vm.showAddJob) { _, isShowing in
 			// When job sheet dismisses, check if a job was saved
 			if !isShowing, let draftJob {
 				Task {
-					do {
-						let savedJob = try await database.read { db in
-							try Job.find(draftJob.id).fetchOne(db)
-						}
-						if savedJob != nil {
-							onComplete()
-						}
-					} catch {
-						Analytics.logError(id: .jobSaveVerificationFailed, message: error.localizedDescription)
+					let wasSaved = await vm.checkIfJobWasSaved(jobID: draftJob.id)
+					if wasSaved {
+						onComplete()
 					}
 				}
 			}
-		}
-	}
-
-	@ViewBuilder
-	private var freeTierLimitationCard: some View {
-		VStack(alignment: .leading, spacing: 8) {
-			HStack(spacing: 8) {
-				Image(systemName: "person.circle.fill")
-					.foregroundStyle(.indigo)
-					.font(.largeTitle)
-
-				VStack(alignment: .leading, spacing: 0) {
-					HQText("You already have a profile")
-						.font(.headline)
-						.fontWeight(.semibold)
-
-					HQText("Profile: \(existingProfileName)")
-						.foregroundStyle(.secondary)
-						.font(.subheadline)
-				}
-			}
-
-			Text(
-				"""
-				The free version of YouHQ allows \(Constants.profilesThreshold) profile. \
-				To create additional profiles, subscribe to **YouHQ Premium**.
-				"""
-			)
-			.foregroundStyle(.secondary)
-			.font(.callout)
-			.fontDesign(.rounded)
-		}
-		.padding(12)
-		.background(.quinary, in: .rect(cornerRadius: 24))
-	}
-
-	private func checkForProfile() async {
-		do {
-			let profiles = try await database.read { db in
-				try Profile.fetchAll(db)
-			}
-			hasAnyProfile = !profiles.isEmpty
-			existingProfileName = profiles.first?.name ?? ""
-		} catch {
-			print("Error checking for profiles: \(error)")
-			hasAnyProfile = false
-			existingProfileName = ""
 		}
 	}
 }
