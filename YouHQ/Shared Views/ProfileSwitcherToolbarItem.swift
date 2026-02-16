@@ -41,7 +41,7 @@ struct ProfileSwitcherToolbarItem: ToolbarContent {
 						}
 					}
 				} label: {
-					Image(systemName: "shuffle")
+					Image(systemName: "person.2.square.stack")
 				}
 			}
 		}
