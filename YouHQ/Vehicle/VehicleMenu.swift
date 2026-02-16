@@ -46,7 +46,8 @@ struct VehicleMenu: View {
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallPaintColorsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.paintColorViewModel.paintColors.count < Constants.paywallPaintColorsThreshold
+					{
 						vm.showAddPaintColorSheet()
 					} else {
 						paywallManager.showPaywall()
@@ -56,7 +57,9 @@ struct VehicleMenu: View {
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallMaintenanceItemsThreshold {
+					if paywallManager.hasUnlockedPremium
+						|| vm.maintenanceViewModel.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold
+					{
 						vm.showAddMaintenanceItemSheet()
 					} else {
 						paywallManager.showPaywall()
