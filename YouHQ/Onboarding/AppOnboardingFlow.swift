@@ -84,10 +84,19 @@ struct AppOnboardingFlow: View {
 					}
 					.tag(6)
 
-					Paywall(fromOnboarding: true, shouldShowSkipButton: true) {
-						vm.navigationPath.append("congratulations")
-					}
-					.tag(vm.paywallTab)
+					#if os(macOS)
+						ScrollView {
+							Paywall(fromOnboarding: true, shouldShowSkipButton: true, shouldShowDismissButton: false) {
+								vm.navigationPath.append("congratulations")
+							}
+							.tag(vm.paywallTab)
+						}
+					#else
+						Paywall(fromOnboarding: true, shouldShowSkipButton: true, shouldShowDismissButton: false) {
+							vm.navigationPath.append("congratulations")
+						}
+						.tag(vm.paywallTab)
+					#endif
 				}
 				#if !os(macOS)
 					.tabViewStyle(.page(indexDisplayMode: .never))
@@ -150,7 +159,7 @@ struct AppOnboardingFlow: View {
 			dismiss()
 		} label: {
 			Image(systemName: "chevron.left")
-				.font(.title.weight(.medium))
+				.font(.title2.weight(.medium))
 		}
 		#if !os(visionOS)
 			.buttonStyle(.glass)

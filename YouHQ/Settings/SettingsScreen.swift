@@ -75,10 +75,10 @@ struct SettingsScreen: View {
 				case .premium:
 					#if os(macOS)
 						ScrollView {
-							Paywall()
+							Paywall(shouldShowDismissButton: false)
 						}
 					#else
-						Paywall()
+						Paywall(shouldShowDismissButton: false)
 					#endif
 				case .profiles:
 					ProfileSettingsView()

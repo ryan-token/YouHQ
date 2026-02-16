@@ -10,9 +10,11 @@ import SwiftUI
 
 extension Paywall {
 	struct MarketingCopy: View {
+		@Environment(\.dismiss) private var dismiss
 		@Environment(PaywallManager.self) private var paywallManager
 
 		let shouldShowSkipButton: Bool
+		let shouldShowDismissButton: Bool
 		let onComplete: (() -> Void)?
 
 		var hstackSpacing: CGFloat {
@@ -27,15 +29,32 @@ extension Paywall {
 			#endif
 		}
 
-		init(shouldShowSkipButton: Bool, onComplete: (() -> Void)? = nil) {
+		init(shouldShowSkipButton: Bool, shouldShowDismissButton: Bool, onComplete: (() -> Void)? = nil) {
 			self.shouldShowSkipButton = shouldShowSkipButton
+			self.shouldShowDismissButton = shouldShowDismissButton
 			self.onComplete = onComplete
 		}
 
 		var body: some View {
 			VStack(spacing: 8) {
 				VStack(spacing: 0) {
-					ScalableImage("AppIcon-1024", height: 90)
+					ZStack(alignment: .topTrailing) {
+						ScalableImage("AppIcon-1024", height: 90)
+							.frame(maxWidth: .infinity, alignment: .center)
+
+						if shouldShowDismissButton {
+							Button {
+								dismiss()
+							} label: {
+								Image(systemName: "xmark")
+									.font(.title2.weight(.medium))
+									.frame(width: 20, height: 30)
+									.contentShape(Circle())
+							}
+							.buttonStyle(.glass)
+							.padding(4)
+						}
+					}
 
 					VStack(spacing: 4) {
 						HQText("YouHQ Premium")
@@ -133,5 +152,5 @@ extension Paywall {
 }
 
 #Preview {
-	Paywall.MarketingCopy(shouldShowSkipButton: true)
+	Paywall.MarketingCopy(shouldShowSkipButton: true, shouldShowDismissButton: true)
 }

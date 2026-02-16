@@ -10,25 +10,37 @@ import SwiftUI
 
 struct Paywall: View {
 	@Environment(PaywallManager.self) private var paywallManager
+
 	@State private var showContent = false
 	@State private var shouldRainConfetti = false
 	@State private var refreshTrigger = UUID()
 
 	let fromOnboarding: Bool
 	let shouldShowSkipButton: Bool
+	let shouldShowDismissButton: Bool
 	let onComplete: (() -> Void)?
 	let animationDuration: TimeInterval = 7
 
-	init(fromOnboarding: Bool = false, shouldShowSkipButton: Bool = false, onComplete: (() -> Void)? = nil) {
+	init(
+		fromOnboarding: Bool = false,
+		shouldShowSkipButton: Bool = false,
+		shouldShowDismissButton: Bool = true,
+		onComplete: (() -> Void)? = nil
+	) {
 		self.fromOnboarding = fromOnboarding
 		self.shouldShowSkipButton = shouldShowSkipButton
+		self.shouldShowDismissButton = shouldShowDismissButton
 		self.onComplete = onComplete
 	}
 
 	var body: some View {
 		ZStack {
 			SubscriptionStoreView(groupID: paywallManager.subscriptionGroupID) {
-				MarketingCopy(shouldShowSkipButton: shouldShowSkipButton, onComplete: onComplete)
+				MarketingCopy(
+					shouldShowSkipButton: shouldShowSkipButton,
+					shouldShowDismissButton: shouldShowDismissButton,
+					onComplete: onComplete
+				)
 			}
 			.opacity(showContent ? 1 : 0)
 			.storeButton(.hidden, for: .cancellation)
