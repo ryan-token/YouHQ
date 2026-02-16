@@ -21,6 +21,7 @@ extension AddVehicleSheet {
 		var model: String = ""
 		var year: String = ""
 		var color: String = ""
+		var backgroundColor: Color = .teal
 		var vin: String = ""
 		var costType: VehicleCostType = .owned
 		var monthlyCost: Double?
@@ -61,6 +62,7 @@ extension AddVehicleSheet {
 							vin: vin.isEmpty ? nil : vin,
 							monthlyCost: monthlyCost,
 							costType: costType,
+							backgroundColor: backgroundColor.databaseValue,
 							url: url,
 							notes: notes
 						)

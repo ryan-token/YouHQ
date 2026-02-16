@@ -81,10 +81,6 @@ struct VehicleInfoSection: View {
 				)
 			}
 
-			if let color = vehicle.color, color.isNotEmpty {
-				InfoRow("Color:", value: color)
-			}
-
 			if let vin = vehicle.vin, vin.isNotEmpty {
 				InfoRow("VIN:", value: vin)
 			}

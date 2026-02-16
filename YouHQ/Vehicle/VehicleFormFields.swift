@@ -14,6 +14,7 @@ struct VehicleFormFields: View {
 	@Binding var model: String
 	@Binding var year: String
 	@Binding var color: String
+	@Binding var backgroundColor: Color
 	@Binding var vin: String
 	@Binding var costType: VehicleCostType
 	@Binding var monthlyCost: Double?
@@ -29,6 +30,7 @@ struct VehicleFormFields: View {
 		model: Binding<String>,
 		year: Binding<String>,
 		color: Binding<String>,
+		backgroundColor: Binding<Color>,
 		vin: Binding<String>,
 		costType: Binding<VehicleCostType>,
 		monthlyCost: Binding<Double?>,
@@ -43,6 +45,7 @@ struct VehicleFormFields: View {
 		_model = model
 		_year = year
 		_color = color
+		_backgroundColor = backgroundColor
 		_vin = vin
 		_costType = costType
 		_monthlyCost = monthlyCost
@@ -89,10 +92,19 @@ struct VehicleFormFields: View {
 				#if !os(macOS)
 					.keyboardType(.numberPad)
 				#endif
-			TextField("Color", text: $color)
-				#if !os(macOS)
-					.textInputAutocapitalization(.words)
-				#endif
+
+			LabeledField(label: "Color") {
+				ColorPicker(
+					"",
+					selection: $backgroundColor,
+					supportsOpacity: false
+				)
+				.labelsHidden()
+				.onChange(of: backgroundColor) { _, newColor in
+					color = newColor.databaseValue
+				}
+			}
+
 			TextField("VIN", text: $vin)
 				#if !os(macOS)
 					.textInputAutocapitalization(.characters)

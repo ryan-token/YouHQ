@@ -39,6 +39,7 @@ struct AddVehicleSheet: View {
 					model: $vm.model,
 					year: $vm.year,
 					color: $vm.color,
+					backgroundColor: $vm.backgroundColor,
 					vin: $vm.vin,
 					costType: $vm.costType,
 					monthlyCost: $vm.monthlyCost,

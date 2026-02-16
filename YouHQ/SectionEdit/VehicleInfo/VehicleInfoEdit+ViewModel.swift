@@ -22,6 +22,7 @@ extension VehicleInfoEdit {
 		var model: String
 		var year: String
 		var color: String
+		var backgroundColor: Color
 		var vin: String
 		var costType: VehicleCostType
 		var monthlyCost: Double?
@@ -57,6 +58,7 @@ extension VehicleInfoEdit {
 			self.model = vehicle.model
 			self.year = vehicle.year ?? ""
 			self.color = vehicle.color ?? ""
+			self.backgroundColor = Color(databaseValue: vehicle.backgroundColor)
 			self.vin = vehicle.vin ?? ""
 			self.costType = vehicle.costType
 			self.monthlyCost = vehicle.monthlyCost
@@ -82,6 +84,7 @@ extension VehicleInfoEdit {
 							$0.model = model
 							$0.year = year.isEmpty ? nil : year
 							$0.color = color.isEmpty ? nil : color
+							$0.backgroundColor = backgroundColor.databaseValue
 							$0.vin = vin.isEmpty ? nil : vin
 							$0.monthlyCost = monthlyCost
 							$0.costType = costType
