@@ -10,7 +10,6 @@ import SwiftUI
 
 extension Paywall {
 	struct MarketingCopy: View {
-		@Environment(\.colorScheme) var colorScheme
 		@Environment(PaywallManager.self) private var paywallManager
 
 		let shouldShowSkipButton: Bool
