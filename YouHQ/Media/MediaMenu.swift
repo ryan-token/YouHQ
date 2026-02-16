@@ -17,7 +17,7 @@ struct MediaMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddServiceProviderSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Service Provider", systemImage: "network")
@@ -27,7 +27,7 @@ struct MediaMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddSubscriptionSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Subscription", systemImage: "rectangle.stack")
@@ -37,7 +37,7 @@ struct MediaMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddDeviceSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Device", systemImage: "desktopcomputer")
@@ -47,7 +47,7 @@ struct MediaMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddOtherSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Other", systemImage: "ellipsis.circle.fill")

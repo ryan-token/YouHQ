@@ -88,6 +88,9 @@ struct Analytics {
 		case careerOtherCreated = "Career.Other.created"
 		case careerOtherDeleted = "Career.Other.deleted"
 
+		// Paywall
+		case paywallPresented = "Paywall.presented"
+
 		// IAP
 		case IAPSuccessPending = "IAP.Success.pending"
 		case IAPSuccessUserCancelled = "IAP.Success.UserCancelled"
@@ -147,6 +150,7 @@ struct Analytics {
 
 		// Jobs
 		case jobSaveFailed = "Failed to save job"
+		case jobSaveVerificationFailed = "Failed to verify a saved job"
 		case jobLoadFailed = "Failed to load job data"
 		case jobDeleteFailed = "Failed to delete job"
 
@@ -164,6 +168,9 @@ struct Analytics {
 		// Health Savings Accounts
 		case hsaSaveFailed = "Failed to save HSA"
 		case hsaDeleteFailed = "Failed to delete HSA"
+
+		// Paywall
+		case invalidProfileOnSave = "Invalid Profile ID on Save"
 
 		// IAP
 		case IAPFailed = "In-app purchase failed"

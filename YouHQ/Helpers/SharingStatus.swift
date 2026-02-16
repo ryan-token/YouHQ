@@ -61,7 +61,7 @@ struct SharingStatus: View {
 
 	func shareProfileTapped() async {
 		guard paywallManager.hasUnlockedPremium else {
-			paywallManager.isShowingPaywallSheet = true
+			paywallManager.showPaywall()
 			return
 		}
 

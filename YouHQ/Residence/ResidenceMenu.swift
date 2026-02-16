@@ -25,7 +25,7 @@ struct ResidenceMenu: View {
 					if paywallManager.hasUnlockedPremium || vm.residences.count < 1 {
 						vm.showCreateResidenceSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Residence", systemImage: "house.fill")
@@ -36,50 +36,50 @@ struct ResidenceMenu: View {
 
 			if !vm.residences.isEmpty {
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallCoreItemsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
 						vm.showAddUtilitySheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Utility", systemImage: "bolt.fill")
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallCoreItemsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
 						vm.showAddInsurancePolicySheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Insurance Policy", systemImage: "shield.fill")
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallPaintColorsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallPaintColorsThreshold {
 						vm.showAddPaintColorSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Paint Color", systemImage: "paintbrush.fill")
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallMaintenanceItemsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallMaintenanceItemsThreshold {
 						vm.showAddMaintenanceItemSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
 				}
 
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount <= Constants.paywallCoreItemsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
 						vm.showAddOtherSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Other", systemImage: "ellipsis.circle.fill")

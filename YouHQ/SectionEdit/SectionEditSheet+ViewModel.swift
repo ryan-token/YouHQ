@@ -274,6 +274,16 @@ extension SectionEditSheet {
 		}
 
 		func save() {
+			// Validate profile-related items before saving
+			if sectionViewModel.profiles.isNotEmpty {
+				let currentProfileID = sectionViewModel.currentProfileID
+				let profileExists = sectionViewModel.profiles.contains { $0.profile.id == currentProfileID }
+				if !profileExists {
+					Analytics.logError(
+						id: .invalidProfileOnSave, message: "Attempted to save item with invalid profile ID: \(currentProfileID)")
+					return
+				}
+			}
 			sectionViewModel.save()
 		}
 

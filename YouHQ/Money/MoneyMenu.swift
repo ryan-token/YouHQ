@@ -17,7 +17,7 @@ struct MoneyMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddBankAccountSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Bank Account", systemImage: "building.columns.fill")
@@ -27,7 +27,7 @@ struct MoneyMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddInvestmentAccountSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Investment Account", systemImage: "chart.line.uptrend.xyaxis")
@@ -37,7 +37,7 @@ struct MoneyMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddHealthSavingsAccountSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add HSA/FSA", systemImage: "cross.case.fill")
@@ -47,7 +47,7 @@ struct MoneyMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddInsurancePolicySheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Insurance Policy", systemImage: "shield.fill")
@@ -57,7 +57,7 @@ struct MoneyMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddOtherSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Other", systemImage: "ellipsis.circle.fill")

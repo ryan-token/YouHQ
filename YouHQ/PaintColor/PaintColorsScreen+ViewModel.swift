@@ -21,7 +21,7 @@ extension PaintColorsScreen {
 		let residenceID: UUID?
 		let vehicleID: UUID?
 		var isShowingEditSheet = false
-		var itemToEdit: PaintColor?
+		var draftPaintColor: PaintColor?
 		var isNewItem = false
 
 		init(residenceID: UUID?, vehicleID: UUID?) {
@@ -51,7 +51,7 @@ extension PaintColorsScreen {
 
 		func showAddPaintColorSheet() {
 			// Create a draft paint color in memory (not in database)
-			let draftItem = PaintColor(
+			draftPaintColor = PaintColor(
 				id: UUID(),
 				residenceID: residenceID,
 				vehicleID: vehicleID,
@@ -68,13 +68,12 @@ extension PaintColorsScreen {
 				url: "",
 				notes: ""
 			)
-			itemToEdit = draftItem
 			isNewItem = true
 			isShowingEditSheet = true
 		}
 
 		func editPaintColor(_ item: PaintColor) {
-			itemToEdit = item
+			draftPaintColor = item
 			isNewItem = false
 			isShowingEditSheet = true
 		}

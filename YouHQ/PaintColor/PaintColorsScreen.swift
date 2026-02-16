@@ -17,6 +17,7 @@ struct PaintColorsScreen: View {
 	}
 
 	var body: some View {
+		@Bindable var paywallManager = paywallManager
 		List {
 			if vm.$paintColors.isLoading, vm.paintColors.isEmpty {
 				ContentUnavailableView {
@@ -46,17 +47,16 @@ struct PaintColorsScreen: View {
 			}
 		}
 		.navigationTitle("Paint Colors")
-		.navigationTitle("Career")
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
 				Button {
-					if paywallManager.hasUnlockedPremium || vm.paintColors.count <= Constants.paywallPaintColorsThreshold {
+					if paywallManager.hasUnlockedPremium || vm.paintColors.count < Constants.paywallPaintColorsThreshold {
 						vm.showAddPaintColorSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add", systemImage: "plus")
@@ -65,14 +65,14 @@ struct PaintColorsScreen: View {
 		}
 		.task { await vm.loadData() }
 		.sheet(isPresented: $vm.isShowingEditSheet) {
-			if let itemToEdit = vm.itemToEdit {
+			if let draftItem = vm.draftPaintColor {
 				SectionEditSheet(
 					section: vm.isNewItem
-						? .paintColorDraft : .paintColor(itemToEdit),
+						? .paintColorDraft : .paintColor(draftItem),
 					draftUtility: .constant(nil),
 					draftInsurancePolicy: .constant(nil),
 					draftMaintenanceItem: .constant(nil),
-					draftPaintColor: .constant(itemToEdit),
+					draftPaintColor: $vm.draftPaintColor,
 					draftOther: .constant(nil),
 					draftJob: .constant(nil),
 					draftDevice: .constant(nil),

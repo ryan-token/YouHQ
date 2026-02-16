@@ -22,7 +22,7 @@ extension MaintenanceItemsScreen {
 		let vehicleID: UUID?
 		var isShowingEditSheet = false
 		var isShowingCompleteAlert = false
-		var itemToEdit: MaintenanceItem?
+		var draftMaintenanceItem: MaintenanceItem?
 		var itemToComplete: MaintenanceItem?
 		var isNewItem = false
 
@@ -65,7 +65,7 @@ extension MaintenanceItemsScreen {
 
 		func showAddMaintenanceItemSheet() {
 			// Create a draft maintenance item in memory (not in database)
-			let draftItem = MaintenanceItem(
+			draftMaintenanceItem = MaintenanceItem(
 				id: UUID(),
 				residenceID: residenceID,
 				vehicleID: vehicleID,
@@ -81,13 +81,12 @@ extension MaintenanceItemsScreen {
 				url: "",
 				notes: ""
 			)
-			itemToEdit = draftItem
 			isNewItem = true
 			isShowingEditSheet = true
 		}
 
 		func editMaintenanceItem(_ item: MaintenanceItem) {
-			itemToEdit = item
+			draftMaintenanceItem = item
 			isNewItem = false
 			isShowingEditSheet = true
 		}

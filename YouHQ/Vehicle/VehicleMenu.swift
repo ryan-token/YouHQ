@@ -25,7 +25,7 @@ struct VehicleMenu: View {
 					if paywallManager.hasUnlockedPremium || vm.vehicles.count < 1 {
 						vm.showCreateVehicleSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Vehicle", systemImage: "car.2.fill")
@@ -39,7 +39,7 @@ struct VehicleMenu: View {
 					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallCoreItemsThreshold {
 						vm.showAddInsurancePolicySheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Insurance Policy", systemImage: "shield.fill")
@@ -49,7 +49,7 @@ struct VehicleMenu: View {
 					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallPaintColorsThreshold {
 						vm.showAddPaintColorSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Paint Color", systemImage: "paintbrush.fill")
@@ -59,7 +59,7 @@ struct VehicleMenu: View {
 					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallMaintenanceItemsThreshold {
 						vm.showAddMaintenanceItemSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
@@ -69,7 +69,7 @@ struct VehicleMenu: View {
 					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallCoreItemsThreshold {
 						vm.showAddOtherSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add Other", systemImage: "ellipsis.circle.fill")

@@ -53,8 +53,8 @@ extension ResidenceScreen {
 				}
 				residenceNotes = selectedResidence?.notes ?? ""
 
-				// Load data for the new residence when ID changes (only for manual switching)
-				if selectedResidence?.id != oldValue?.id, oldValue != nil {
+				// Load data for the new residence when ID changes
+				if selectedResidence?.id != oldValue?.id {
 					Task {
 						await loadAllData()
 					}
@@ -190,9 +190,13 @@ extension ResidenceScreen {
 					let residence = residences.first(where: { $0.id == uuid })
 				{
 					self.selectedResidence = residence
+					// Load child data for the newly selected residence (e.g., from sync)
+					Task { await loadAllData() }
 				} else if let firstResidence = residences.first {
 					// Fall back to first residence if no AppStorage value
 					self.selectedResidence = firstResidence
+					// Load child data for the newly selected residence (e.g., from sync)
+					Task { await loadAllData() }
 				}
 			}
 		}

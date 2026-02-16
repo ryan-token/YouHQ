@@ -17,8 +17,16 @@ class PaywallManager {
 	@ObservationIgnored
 	private var observerTask: Task<Void, Never>?
 
+	@ObservationIgnored
+	private var lastEntitlementCheck: Date?
+
 	var hasUnlockedPremium: Bool {
 		verifiedActiveSubscriptionIDs.isNotEmpty
+	}
+
+	func showPaywall() {
+		Analytics.sendSignal(.paywallPresented)
+		isShowingPaywallSheet = true
 	}
 
 	func setup() async {
@@ -30,6 +38,22 @@ class PaywallManager {
 				consumeVerificationResult(for: result)
 			}
 		}
+	}
+
+	func refreshEntitlementsIfNeeded() async {
+		guard let lastCheck = lastEntitlementCheck else {
+			await refreshEntitlements()
+			return
+		}
+
+		if Date.now.timeIntervalSince(lastCheck) > 300 {
+			await refreshEntitlements()
+		}
+	}
+
+	private func refreshEntitlements() async {
+		await setInitialStatus()
+		lastEntitlementCheck = Date.now
 	}
 
 	private func setInitialStatus() async {

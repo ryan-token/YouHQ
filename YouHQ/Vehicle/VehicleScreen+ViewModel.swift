@@ -52,8 +52,8 @@ extension VehicleScreen {
 				}
 				vehicleNotes = selectedVehicle?.notes ?? ""
 
-				// Load data for the new vehicle when ID changes (only for manual switching)
-				if selectedVehicle?.id != oldValue?.id, oldValue != nil {
+				// Load data for the new vehicle when ID changes
+				if selectedVehicle?.id != oldValue?.id {
 					Task {
 						await loadAllData()
 					}
@@ -183,9 +183,13 @@ extension VehicleScreen {
 					let vehicle = vehicles.first(where: { $0.id == uuid })
 				{
 					self.selectedVehicle = vehicle
+					// Load child data for the newly selected vehicle (e.g., from sync)
+					Task { await loadAllData() }
 				} else if let firstVehicle = vehicles.first {
 					// Fall back to first vehicle if no AppStorage value
 					self.selectedVehicle = firstVehicle
+					// Load child data for the newly selected vehicle (e.g., from sync)
+					Task { await loadAllData() }
 				}
 			}
 		}

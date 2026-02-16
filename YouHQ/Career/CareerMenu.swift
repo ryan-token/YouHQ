@@ -17,7 +17,7 @@ struct CareerMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.careerItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddJobSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Job", systemImage: "briefcase.fill")
@@ -27,7 +27,7 @@ struct CareerMenu: View {
 			if paywallManager.hasUnlockedPremium || vm.careerItemsCount < Constants.paywallCoreItemsThreshold {
 				vm.showAddOtherSheet()
 			} else {
-				paywallManager.isShowingPaywallSheet = true
+				paywallManager.showPaywall()
 			}
 		} label: {
 			Label("Add Other", systemImage: "ellipsis.circle.fill")

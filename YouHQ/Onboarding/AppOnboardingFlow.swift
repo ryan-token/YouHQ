@@ -126,6 +126,7 @@ struct AppOnboardingFlow: View {
 			Text("You must create a profile before proceeding.")
 		}
 		.task {
+			await paywallManager.refreshEntitlementsIfNeeded()
 			await vm.checkForProfile()
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in

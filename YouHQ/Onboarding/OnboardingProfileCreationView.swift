@@ -202,15 +202,17 @@ struct OnboardingProfileCreationView: View {
 		.onChange(of: showAddJob) { _, isShowing in
 			// When job sheet dismisses, check if a job was saved
 			if !isShowing, let draftJob {
-				do {
-					let savedJob = try database.read { db in
-						try Job.find(draftJob.id).fetchOne(db)
+				Task {
+					do {
+						let savedJob = try await database.read { db in
+							try Job.find(draftJob.id).fetchOne(db)
+						}
+						if savedJob != nil {
+							onComplete()
+						}
+					} catch {
+						Analytics.logError(id: .jobSaveVerificationFailed, message: error.localizedDescription)
 					}
-					if savedJob != nil {
-						onComplete()
-					}
-				} catch {
-					print("Error checking job existence: \(error)")
 				}
 			}
 		}
@@ -235,10 +237,12 @@ struct OnboardingProfileCreationView: View {
 				}
 			}
 
-			Text("""
-			The free version of YouHQ allows \(Constants.profilesThreshold) profile. \
-			To create additional profiles, subscribe to **YouHQ Premium**.
-			""")
+			Text(
+				"""
+				The free version of YouHQ allows \(Constants.profilesThreshold) profile. \
+				To create additional profiles, subscribe to **YouHQ Premium**.
+				"""
+			)
 			.foregroundStyle(.secondary)
 			.font(.callout)
 			.fontDesign(.rounded)

@@ -17,6 +17,7 @@ struct MaintenanceItemsScreen: View {
 	}
 
 	var body: some View {
+		@Bindable var paywallManager = paywallManager
 		List {
 			if vm.$maintenanceItems.isLoading, vm.maintenanceItems.isEmpty {
 				ContentUnavailableView {
@@ -97,7 +98,6 @@ struct MaintenanceItemsScreen: View {
 			}
 		}
 		.navigationTitle("Maintenance Items")
-		.navigationTitle("Career")
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
@@ -107,7 +107,7 @@ struct MaintenanceItemsScreen: View {
 					if paywallManager.hasUnlockedPremium || vm.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold {
 						vm.showAddMaintenanceItemSheet()
 					} else {
-						paywallManager.isShowingPaywallSheet = true
+						paywallManager.showPaywall()
 					}
 				} label: {
 					Label("Add", systemImage: "plus")
@@ -116,13 +116,13 @@ struct MaintenanceItemsScreen: View {
 		}
 		.task { await vm.loadData() }
 		.sheet(isPresented: $vm.isShowingEditSheet) {
-			if let itemToEdit = vm.itemToEdit {
+			if let draftItem = vm.draftMaintenanceItem {
 				SectionEditSheet(
 					section: vm.isNewItem
-						? .maintenanceItemDraft : .maintenanceItem(itemToEdit),
+						? .maintenanceItemDraft : .maintenanceItem(draftItem),
 					draftUtility: .constant(nil),
 					draftInsurancePolicy: .constant(nil),
-					draftMaintenanceItem: .constant(itemToEdit),
+					draftMaintenanceItem: $vm.draftMaintenanceItem,
 					draftPaintColor: .constant(nil),
 					draftOther: .constant(nil),
 					draftJob: .constant(nil),

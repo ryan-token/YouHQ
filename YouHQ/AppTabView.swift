@@ -26,9 +26,6 @@ struct AppTabView: View {
 							SettingsToolbarItem()
 							ProfileSwitcherToolbarItem()
 						}
-						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
-							Paywall()
-						}
 				}
 			}
 			Tab("Vehicles", systemImage: "car.2", value: .vehicles) {
@@ -37,9 +34,6 @@ struct AppTabView: View {
 						.toolbar {
 							SettingsToolbarItem()
 							ProfileSwitcherToolbarItem()
-						}
-						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
-							Paywall()
 						}
 				}
 			}
@@ -50,9 +44,6 @@ struct AppTabView: View {
 							SettingsToolbarItem()
 							ProfileSwitcherToolbarItem()
 						}
-						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
-							Paywall()
-						}
 				}
 			}
 			Tab("Media", systemImage: "desktopcomputer.and.macbook", value: .media) {
@@ -61,9 +52,6 @@ struct AppTabView: View {
 						.toolbar {
 							SettingsToolbarItem()
 							ProfileSwitcherToolbarItem()
-						}
-						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
-							Paywall()
 						}
 				}
 			}
@@ -74,14 +62,14 @@ struct AppTabView: View {
 							SettingsToolbarItem()
 							ProfileSwitcherToolbarItem()
 						}
-						.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
-							Paywall()
-						}
 				}
 			}
 		}
 		.onChange(of: selectedTab) {
 			logTabSelection(for: selectedTab)
+		}
+		.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+			Paywall()
 		}
 	}
 
