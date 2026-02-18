@@ -22,6 +22,8 @@ struct YouHQApp: App {
 
 	#if !os(macOS)
 		@UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+	#else
+		@NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
 	#endif
 
 	init() {

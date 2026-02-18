@@ -66,5 +66,9 @@ import SQLiteData
 				try await syncEngine.acceptShare(metadata: metadata)
 			}
 		}
+
+		func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+			return true
+		}
 	}
 #endif
