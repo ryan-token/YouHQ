@@ -306,8 +306,20 @@ Usage notes:
 <available_skills>
 
 <skill>
+<name>refactor-pass</name>
+<description>Perform a refactor pass focused on simplicity after recent changes. Use when the user asks for a refactor/cleanup pass, simplification, or dead-code removal and expects build/tests to verify behavior.</description>
+<location>project</location>
+</skill>
+
+<skill>
 <name>swift-concurrency</name>
 <description>'Expert guidance on Swift Concurrency best practices, patterns, and implementation. Use when developers mention: (1) Swift Concurrency, async/await, actors, or tasks, (2) "use Swift Concurrency" or "modern concurrency patterns", (3) migrating to Swift 6, (4) data races or thread safety issues, (5) refactoring closures to async/await, (6) @MainActor, Sendable, or actor isolation, (7) concurrent code architecture or performance optimization, (8) concurrency-related linter warnings (SwiftLint or similar; e.g. async_without_await, Sendable/actor isolation/MainActor lint).'</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>swift-testing-expert</name>
+<description>'Expert guidance for Swift Testing: test structure, #expect/#require macros, traits and tags, parameterized tests, test plans, parallel execution, async waiting patterns, and XCTest migration. Use when writing new Swift tests, modernizing XCTest suites, debugging flaky tests, or improving test quality and maintainability in Apple-platform or Swift server projects.'</description>
 <location>project</location>
 </skill>
 
@@ -315,6 +327,12 @@ Usage notes:
 <name>swiftui-expert-skill</name>
 <description>Write, review, or improve SwiftUI code following best practices for state management, view composition, performance, modern APIs, Swift concurrency, and iOS 26+ Liquid Glass adoption. Use when building new SwiftUI features, refactoring existing views, reviewing code quality, or adopting modern SwiftUI patterns.</description>
 <location>project</location>
+</skill>
+
+<skill>
+<name>interview</name>
+<description>Conduct a detailed interview about a specific feature or topic to gather information and create a specification.</description>
+<location>global</location>
 </skill>
 
 </available_skills>
