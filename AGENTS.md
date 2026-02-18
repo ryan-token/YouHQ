@@ -13,13 +13,12 @@ The app works across iOS, iPadOS, macOS, and even visionOS. It's written with mo
 ## Architecture
 
 ### Database Layer
-- **SQLiteData** (PointFreeCo) is the persistence layer, wrapping GRDB
+- **SQLiteData** (PointFreeCo) is the persistence layer, wrapping GRDB - use the `sqlitedata` skill for reference
 - Database initialization happens in `Database/AppDatabase.swift` via `appDatabase()` function
 - All models use the `@Table` macro from SQLiteData (see `Database/Schema.swift`)
 - Database is bootstrapped at app launch in `YouHQApp.init()` using PointFreeCo's Dependencies library
 - Foreign key relationships are enforced with CASCADE deletes
 - Triggers automatically update profile `updatedAt` timestamps when related data changes
-- See more SQLiteData information in the `## SQLiteData instructions` section
 
 ### Core Tables
 - **Profile**: Root entity, contains user profile(s) with `createdAt` and `updatedAt` timestamps
@@ -110,7 +109,7 @@ You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, S
 
 ## Core instructions
 
-These are high-level instructions. For in-depth skill implementations, like best practices across SwiftUI and Swift Concurrency and more, refer to the `## Available Skills` block at the bottom of this file.
+These are high-level instructions. For in-depth skill implementations, like best practices across SwiftUI, SQLiteData, Swift Concurrency and more, refer to the `## Available Skills` block at the bottom of this file.
 
 - Target iOS 26.0 or later, iPadOS 26.0 or later, macOS 26.0 or later, and visionOS 26.0 or later. (Yes, they definitely exist.)
 - Swift 6.2 or later, using modern Swift concurrency.
@@ -157,13 +156,16 @@ These are high-level instructions. For in-depth skill implementations, like best
 
 ## SQLiteData instructions
 
+Refer to the `sqlitedata` skill for in-depth instructions on properly using SQLiteData.
+
 Persistence, CloudKit Sync, and CloudKit Sharing is handled by SQLiteData from PointFreeCo.
 
 - Using `@FetchAll` or `@FetchOne` from an `@Observable` View Model should always be marked with `@ObservationIgnored`
 - CloudKit Sync is configured via the SyncEngine at YouHQApp.swift
 - CloudKit Sharing is configured via CKShare Shared Records, managed via AppDelegate.swift and SQLiteData's CloudSharingView
-- You can use the `@Selection` macro to mark a custom struct as a way to join multiple tables into one `@FetchAll` request. That could might look like this:
-```
+- You can use the `@Selection` macro to mark a custom struct as a way to join multiple tables into one `@FetchAll` request. That might look like this:
+
+```swift
 @Selection
 struct ProfileShare { // swiftlint:disable:this nesting
 	let profile: Profile
@@ -190,11 +192,7 @@ func loadProfiles() async {
 }
 ```
 
-
-Refer to the SQLiteData README on GitHub here: https://github.com/pointfreeco/sqlite-data?tab=readme-ov-file#Documentation
-
-And refer to its documentation here: https://swiftpackageindex.com/pointfreeco/sqlite-data/main/documentation/sqlitedata/
-
+Again, refer to the `sqlitedata` skill for an in-depth reference.
 
 ## Project structure
 
@@ -308,6 +306,12 @@ Usage notes:
 <skill>
 <name>refactor-pass</name>
 <description>Perform a refactor pass focused on simplicity after recent changes. Use when the user asks for a refactor/cleanup pass, simplification, or dead-code removal and expects build/tests to verify behavior.</description>
+<location>project</location>
+</skill>
+
+<skill>
+<name>sqlitedata</name>
+<description>SQLiteData queries, @Table models, Point-Free SQLite, RETURNING clause, FTS5 full-text search, CloudKit sync, CTEs, JSON aggregation, @DatabaseFunction</description>
 <location>project</location>
 </skill>
 
