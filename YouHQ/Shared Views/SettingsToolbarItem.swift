@@ -8,30 +8,47 @@
 import SwiftUI
 
 struct SettingsToolbarItem: ToolbarContent {
-	#if os(macOS)
-		@Environment(\.openWindow) private var openWindow
-	#else
-		@State private var isShowingSettingsSheet = false
-	#endif
-
 	var body: some ToolbarContent {
 		ToolbarItem(placement: .navigation) {
-			Button {
-				#if os(macOS)
-					openWindow(id: "settings")
-				#else
-					isShowingSettingsSheet = true
-				#endif
-			} label: {
-				Image(systemName: "gear")
-			}
-			#if !os(macOS)
-				.sheet(isPresented: $isShowingSettingsSheet) {
-					SettingsScreen()
-				}
+			#if os(macOS)
+				MacOSSettingsButton()
+			#else
+				SettingsButton()
 			#endif
 		}
 	}
+
+	#if os(macOS)
+		private struct MacOSSettingsButton: View {
+			@Environment(\.openWindow) private var openWindow
+
+			var body: some View {
+				Button {
+					openWindow(id: "settings")
+				} label: {
+					Image(systemName: "gear")
+				}
+			}
+		}
+	#else
+		private struct SettingsButton: View {
+			@Namespace private var namespace
+			@State private var isShowingSettingsSheet = false
+
+			var body: some View {
+				Button {
+					isShowingSettingsSheet = true
+				} label: {
+					Image(systemName: "gear")
+				}
+				.matchedTransitionSource(id: "settingsButton", in: namespace)
+				.sheet(isPresented: $isShowingSettingsSheet) {
+					SettingsScreen()
+						.navigationTransition(.zoom(sourceID: "settingsButton", in: namespace))
+				}
+			}
+		}
+	#endif
 }
 
 #Preview {

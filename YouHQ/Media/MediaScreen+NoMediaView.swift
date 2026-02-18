@@ -12,13 +12,16 @@ extension MediaScreen {
 	struct NoMediaView: View {
 		let vm: ViewModel
 
+		@Environment(\.sheetNamespace) private var namespace
+
 		var body: some View {
 			ContentUnavailableView {
 				Label("No media", systemImage: "desktopcomputer.and.macbook")
 			} description: {
 				Menu("Add Media") {
-					MediaMenu(vm: vm)
+					MediaMenu(vm: vm, sourceID: "emptyStateButton")
 				}
+				.matchedTransitionSource(id: "emptyStateButton", in: namespace)
 			}
 			.frame(maxWidth: .infinity, alignment: .center)
 		}

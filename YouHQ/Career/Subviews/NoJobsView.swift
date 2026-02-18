@@ -11,14 +11,16 @@ import SwiftUI
 extension CareerScreen {
 	struct NoJobsView: View {
 		let vm: ViewModel
+		@Environment(\.sheetNamespace) private var namespace
 
 		var body: some View {
 			ContentUnavailableView {
 				Label("No jobs", systemImage: "briefcase")
 			} description: {
 				Menu("Add Job") {
-					CareerMenu(vm: vm)
+					CareerMenu(vm: vm, sourceID: "emptyStateButton")
 				}
+				.matchedTransitionSource(id: "emptyStateButton", in: namespace)
 			}
 			.frame(maxWidth: .infinity, alignment: .center)
 		}

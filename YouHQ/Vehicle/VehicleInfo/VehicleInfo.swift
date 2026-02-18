@@ -10,6 +10,7 @@ import SwiftUI
 struct VehicleInfo: View {
 	@Bindable var vm: VehicleScreen.ViewModel
 	let hideCosts: Bool
+	@Environment(\.sheetNamespace) private var namespace
 
 	var body: some View {
 		if let vehicle = vm.selectedVehicle {
@@ -20,6 +21,7 @@ struct VehicleInfo: View {
 				hideCosts: hideCosts,
 				backgroundColor: vm.backgroundColor,
 				onTap: { vehicle in
+					vm.sheetTransitionSourceID = vehicle.id.uuidString
 					vm.sectionToEdit = .vehicleInfo(vehicle)
 					vm.isShowingSectionEditSheet = true
 				},
@@ -27,6 +29,7 @@ struct VehicleInfo: View {
 					vm.updateVehicleBackgroundColor(newColor)
 				}
 			)
+			.matchedTransitionSource(id: vehicle.id.uuidString, in: namespace)
 
 			ForEach(vm.insuranceViewModel.insurancePolicies) { policy in
 				InsuranceSection(
@@ -39,10 +42,12 @@ struct VehicleInfo: View {
 						)
 					},
 					onTap: {
+						vm.sheetTransitionSourceID = policy.id.uuidString
 						vm.sectionToEdit = .insurancePolicy(policy)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
+				.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
 						vm.insuranceViewModel.delete(policy)
@@ -63,10 +68,12 @@ struct VehicleInfo: View {
 						)
 					},
 					onTap: {
+						vm.sheetTransitionSourceID = other.id.uuidString
 						vm.sectionToEdit = .other(other)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
+				.matchedTransitionSource(id: other.id.uuidString, in: namespace)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
 						vm.otherViewModel.delete(other)

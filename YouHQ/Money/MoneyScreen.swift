@@ -9,6 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct MoneyScreen: View {
+	@Namespace private var addButtonNamespace
 	@State private var vm = ViewModel()
 	@AppStorage("hideAccountNumbers") private var hideAccountNumbers = false
 
@@ -48,7 +49,8 @@ struct MoneyScreen: View {
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
-		.toolbar { Toolbar(vm: vm) }
+		.toolbar { Toolbar(vm: vm, namespace: addButtonNamespace) }
+		.environment(\.sheetNamespace, addButtonNamespace)
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
 		.task {
@@ -73,6 +75,9 @@ struct MoneyScreen: View {
 					draftInvestmentAccount: $vm.investmentAccountViewModel.draftInvestmentAccount,
 					draftHealthSavingsAccount: $vm.healthSavingsAccountViewModel.draftHealthSavingsAccount
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		#if !os(visionOS)

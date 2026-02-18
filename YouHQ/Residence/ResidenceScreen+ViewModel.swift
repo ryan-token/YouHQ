@@ -81,6 +81,7 @@ extension ResidenceScreen {
 		var isShowingAddResidenceSheet = false
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
+		var sheetTransitionSourceID: String = "addButton"
 		var isNavigatingToMaintenanceItems = false
 		var isNavigatingToPaintColors = false
 		var residenceNotes: String
@@ -201,7 +202,8 @@ extension ResidenceScreen {
 			}
 		}
 
-		func showCreateResidenceSheet() {
+		func showCreateResidenceSheet(sourceID: String = "addButton") {
+			sheetTransitionSourceID = sourceID
 			isShowingAddResidenceSheet = true
 		}
 
@@ -220,16 +222,17 @@ extension ResidenceScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showAddUtilitySheet() {
+		func showAddUtilitySheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
 			utilityViewModel.draftUtility = utilityViewModel.createDraft(
 				for: residenceID
 			)
 			sectionToEdit = .utilityDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddInsurancePolicySheet() {
+		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
@@ -239,26 +242,29 @@ extension ResidenceScreen {
 					profileID: profileID
 				)
 			sectionToEdit = .insurancePolicyDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddMaintenanceItemSheet() {
+		func showAddMaintenanceItemSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
 			maintenanceViewModel.draftMaintenanceItem =
 				maintenanceViewModel.createDraft(for: residenceID)
 			sectionToEdit = .maintenanceItemDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddPaintColorSheet() {
+		func showAddPaintColorSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
 			paintColorViewModel.draftPaintColor =
 				paintColorViewModel.createDraft(for: residenceID)
 			sectionToEdit = .paintColorDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddOtherSheet() {
+		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
@@ -267,6 +273,7 @@ extension ResidenceScreen {
 				profileID: profileID
 			)
 			sectionToEdit = .otherDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 

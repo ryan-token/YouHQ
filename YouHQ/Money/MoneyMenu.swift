@@ -11,11 +11,17 @@ struct MoneyMenu: View {
 	@Environment(PaywallManager.self) private var paywallManager
 
 	let vm: MoneyScreen.ViewModel
+	let sourceID: String
+
+	init(vm: MoneyScreen.ViewModel, sourceID: String = "addButton") {
+		self.vm = vm
+		self.sourceID = sourceID
+	}
 
 	var body: some View {
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddBankAccountSheet()
+				vm.showAddBankAccountSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -25,7 +31,7 @@ struct MoneyMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddInvestmentAccountSheet()
+				vm.showAddInvestmentAccountSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -35,7 +41,7 @@ struct MoneyMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddHealthSavingsAccountSheet()
+				vm.showAddHealthSavingsAccountSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -45,7 +51,7 @@ struct MoneyMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddInsurancePolicySheet()
+				vm.showAddInsurancePolicySheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -55,7 +61,7 @@ struct MoneyMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddOtherSheet()
+				vm.showAddOtherSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}

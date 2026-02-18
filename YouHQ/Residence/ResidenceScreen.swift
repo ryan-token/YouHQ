@@ -10,9 +10,10 @@ import SQLiteData
 import SwiftUI
 
 struct ResidenceScreen: View {
-	@Dependency(\.defaultSyncEngine) var syncEngine
-	@State private var vm = ViewModel()
 	@AppStorage("hideResidenceCosts") private var hideResidenceCosts = false
+	@Dependency(\.defaultSyncEngine) var syncEngine
+	@Namespace private var addButtonNamespace
+	@State private var vm = ViewModel()
 
 	var body: some View {
 		List {
@@ -22,7 +23,7 @@ struct ResidenceScreen: View {
 				if vm.residences.isEmpty {
 					NoResidencesView(
 						isSynchronizing: syncEngine.isSynchronizing,
-						onAddResidenceTapped: vm.showCreateResidenceSheet
+						onAddResidenceTapped: { vm.showCreateResidenceSheet(sourceID: "emptyStateButton") }
 					)
 				} else {
 					MacOSResidencePicker(residences: vm.residences, selectedResidence: $vm.selectedResidence)
@@ -48,7 +49,8 @@ struct ResidenceScreen: View {
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
-		.toolbar { Toolbar(vm: vm) }
+		.toolbar { Toolbar(vm: vm, namespace: addButtonNamespace) }
+		.environment(\.sheetNamespace, addButtonNamespace)
 		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
 			if let residenceIDString = vm.selectedResidenceID,
 				let residenceID = UUID(uuidString: residenceIDString)
@@ -86,6 +88,9 @@ struct ResidenceScreen: View {
 					profileID: profileID,
 					selectedResidence: $vm.selectedResidence
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
@@ -100,6 +105,9 @@ struct ResidenceScreen: View {
 					draftPaintColor: $vm.paintColorViewModel.draftPaintColor,
 					draftOther: $vm.otherViewModel.draftOther
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		#if !os(visionOS)

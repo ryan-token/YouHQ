@@ -12,6 +12,7 @@ extension MoneyScreen {
 	struct Toolbar: ToolbarContent {
 		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: MoneyScreen.ViewModel
+		let namespace: Namespace.ID
 
 		var body: some ToolbarContent {
 			if vm.bankAccountViewModel.bankAccounts.isEmpty
@@ -31,6 +32,7 @@ extension MoneyScreen {
 					} label: {
 						Label("Add", systemImage: "plus")
 					}
+					.matchedTransitionSource(id: "addButton", in: namespace)
 				}
 			}
 		}

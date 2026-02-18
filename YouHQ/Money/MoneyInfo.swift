@@ -10,6 +10,7 @@ import SwiftUI
 struct MoneyInfo: View {
 	@Bindable var vm: MoneyScreen.ViewModel
 	let hideAccountNumbers: Bool
+	@Environment(\.sheetNamespace) private var namespace
 
 	var body: some View {
 		ForEach(vm.bankAccountViewModel.bankAccounts) { account in
@@ -23,10 +24,12 @@ struct MoneyInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = account.id.uuidString
 					vm.sectionToEdit = .bankAccount(account)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: account.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.bankAccountViewModel.delete(account)
@@ -47,10 +50,12 @@ struct MoneyInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = account.id.uuidString
 					vm.sectionToEdit = .investmentAccount(account)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: account.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.investmentAccountViewModel.delete(account)
@@ -71,10 +76,12 @@ struct MoneyInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = account.id.uuidString
 					vm.sectionToEdit = .healthSavingsAccount(account)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: account.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.healthSavingsAccountViewModel.delete(account)
@@ -95,10 +102,12 @@ struct MoneyInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = policy.id.uuidString
 					vm.sectionToEdit = .insurancePolicy(policy)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.insuranceViewModel.delete(policy)
@@ -119,10 +128,12 @@ struct MoneyInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = other.id.uuidString
 					vm.sectionToEdit = .other(other)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: other.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.otherViewModel.delete(other)

@@ -9,6 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct CareerScreen: View {
+	@Namespace private var addButtonNamespace
 	@State private var vm = ViewModel()
 	@AppStorage("hideSalaries") private var hideSalaries = false
 
@@ -35,10 +36,12 @@ struct CareerScreen: View {
 								)
 							},
 							onTap: {
+								vm.sheetTransitionSourceID = job.id.uuidString
 								vm.sectionToEdit = .job(job)
 								vm.isShowingSectionEditSheet = true
 							}
 						)
+						.matchedTransitionSource(id: job.id.uuidString, in: addButtonNamespace)
 						.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 							Button(role: .destructive) {
 								vm.jobViewModel.delete(job)
@@ -59,10 +62,12 @@ struct CareerScreen: View {
 								)
 							},
 							onTap: {
+								vm.sheetTransitionSourceID = other.id.uuidString
 								vm.sectionToEdit = .other(other)
 								vm.isShowingSectionEditSheet = true
 							}
 						)
+						.matchedTransitionSource(id: other.id.uuidString, in: addButtonNamespace)
 						.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 							Button(role: .destructive) {
 								vm.otherViewModel.delete(other)
@@ -84,7 +89,8 @@ struct CareerScreen: View {
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
-		.toolbar { Toolbar(vm: vm) }
+		.toolbar { Toolbar(vm: vm, namespace: addButtonNamespace) }
+		.environment(\.sheetNamespace, addButtonNamespace)
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
 		.task {
@@ -106,6 +112,9 @@ struct CareerScreen: View {
 					draftOther: $vm.otherViewModel.draftOther,
 					draftJob: $vm.jobViewModel.draftJob
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		#if !os(visionOS)

@@ -12,10 +12,12 @@ struct VehicleMenu: View {
 
 	let vm: VehicleScreen.ViewModel
 	let includeAddVehicle: Bool
+	let sourceID: String
 
-	init(vm: VehicleScreen.ViewModel, includeAddVehicle: Bool = false) {
+	init(vm: VehicleScreen.ViewModel, includeAddVehicle: Bool = false, sourceID: String = "addButton") {
 		self.vm = vm
 		self.includeAddVehicle = includeAddVehicle
+		self.sourceID = sourceID
 	}
 
 	var body: some View {
@@ -23,7 +25,7 @@ struct VehicleMenu: View {
 			if includeAddVehicle {
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.vehicles.count < Constants.paywallVehiclesThreshold {
-						vm.showCreateVehicleSheet()
+						vm.showCreateVehicleSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -37,7 +39,7 @@ struct VehicleMenu: View {
 			if !vm.vehicles.isEmpty {
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddInsurancePolicySheet()
+						vm.showAddInsurancePolicySheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -48,7 +50,7 @@ struct VehicleMenu: View {
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.paintColorViewModel.paintColors.count < Constants.paywallPaintColorsThreshold
 					{
-						vm.showAddPaintColorSheet()
+						vm.showAddPaintColorSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -60,7 +62,7 @@ struct VehicleMenu: View {
 					if paywallManager.hasUnlockedPremium
 						|| vm.maintenanceViewModel.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold
 					{
-						vm.showAddMaintenanceItemSheet()
+						vm.showAddMaintenanceItemSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -70,7 +72,7 @@ struct VehicleMenu: View {
 
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.vehicleItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddOtherSheet()
+						vm.showAddOtherSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}

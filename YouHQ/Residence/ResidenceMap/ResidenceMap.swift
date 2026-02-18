@@ -10,6 +10,7 @@ import SwiftUI
 struct ResidenceMap: View {
 	let residences: [Residence]
 	@Binding var selectedResidence: Residence?
+	@Namespace private var namespace
 	@State private var vm = ViewModel()
 
 	var body: some View {
@@ -23,6 +24,7 @@ struct ResidenceMap: View {
 		.frame(height: vm.mapHeight)
 		.clipShape(.rect(cornerRadius: 12))
 		.contentShape(.rect)
+		.matchedTransitionSource(id: "residenceMap", in: namespace)
 		.onTapGesture {
 			vm.isShowingFullScreenMap = true
 		}
@@ -51,6 +53,9 @@ struct ResidenceMap: View {
 				cameraPosition: vm.cameraPosition,
 				latLonDelta: vm.latLonDelta
 			)
+			#if !os(macOS)
+				.navigationTransition(.zoom(sourceID: "residenceMap", in: namespace))
+			#endif
 		}
 	}
 }

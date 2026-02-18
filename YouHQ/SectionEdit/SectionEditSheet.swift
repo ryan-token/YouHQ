@@ -208,13 +208,6 @@ struct SectionEditSheet: View {
 					onDismiss: { dismiss() }
 				)
 			}
-			#if os(iOS)
-				.presentationDetents(
-					UIDevice.current.userInterfaceIdiom == .pad
-						? [.large]
-						: (vm.section.isDraft ? [.large] : [.medium, .large])
-				)
-			#endif
 			.interactiveDismissDisabled(vm.section.isDraft)
 		}
 		.photoViewerOverlayHost()

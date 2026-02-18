@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PaintColorsScreen: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@Namespace private var addButtonNamespace
 	@State private var vm: ViewModel
 
 	init(residenceID: UUID? = nil, vehicleID: UUID? = nil) {
@@ -38,6 +39,7 @@ struct PaintColorsScreen: View {
 							vm.editPaintColor(paintColor)
 						}
 					)
+					.matchedTransitionSource(id: paintColor.id.uuidString, in: addButtonNamespace)
 				}
 				.onDelete { indexSet in
 					for index in indexSet {
@@ -61,6 +63,7 @@ struct PaintColorsScreen: View {
 				} label: {
 					Label("Add", systemImage: "plus")
 				}
+				.matchedTransitionSource(id: "addButton", in: addButtonNamespace)
 			}
 		}
 		.task { await vm.loadData() }
@@ -79,6 +82,9 @@ struct PaintColorsScreen: View {
 					draftServiceProvider: .constant(nil),
 					draftSubscription: .constant(nil)
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 	}

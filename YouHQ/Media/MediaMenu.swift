@@ -11,11 +11,17 @@ struct MediaMenu: View {
 	@Environment(PaywallManager.self) private var paywallManager
 
 	let vm: MediaScreen.ViewModel
+	let sourceID: String
+
+	init(vm: MediaScreen.ViewModel, sourceID: String = "addButton") {
+		self.vm = vm
+		self.sourceID = sourceID
+	}
 
 	var body: some View {
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddServiceProviderSheet()
+				vm.showAddServiceProviderSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -25,7 +31,7 @@ struct MediaMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddSubscriptionSheet()
+				vm.showAddSubscriptionSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -35,7 +41,7 @@ struct MediaMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddDeviceSheet()
+				vm.showAddDeviceSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}
@@ -45,7 +51,7 @@ struct MediaMenu: View {
 
 		Button {
 			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddOtherSheet()
+				vm.showAddOtherSheet(sourceID: sourceID)
 			} else {
 				paywallManager.showPaywall()
 			}

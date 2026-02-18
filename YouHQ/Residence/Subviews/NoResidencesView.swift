@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NoResidencesView: View {
 	@State private var loadDelayFinished = false
+	@Environment(\.sheetNamespace) private var namespace
 	let isSynchronizing: Bool
 	let onAddResidenceTapped: () -> Void
 
@@ -24,6 +25,7 @@ struct NoResidencesView: View {
 					Button("Add residence") {
 						onAddResidenceTapped()
 					}
+					.matchedTransitionSource(id: "emptyStateButton", in: namespace)
 				}
 			}
 		}

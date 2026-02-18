@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MaintenanceItemsScreen: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@Namespace private var addButtonNamespace
 	@State private var vm: ViewModel
 
 	init(residenceID: UUID? = nil, vehicleID: UUID? = nil) {
@@ -43,6 +44,7 @@ struct MaintenanceItemsScreen: View {
 									vm.showCompleteAlert(for: item)
 								}
 							)
+							.matchedTransitionSource(id: item.id.uuidString, in: addButtonNamespace)
 						}
 						.onDelete { indexSet in
 							for index in indexSet {
@@ -64,6 +66,7 @@ struct MaintenanceItemsScreen: View {
 									vm.showCompleteAlert(for: item)
 								}
 							)
+							.matchedTransitionSource(id: item.id.uuidString, in: addButtonNamespace)
 						}
 						.onDelete { indexSet in
 							for index in indexSet {
@@ -87,6 +90,7 @@ struct MaintenanceItemsScreen: View {
 									vm.showCompleteAlert(for: item)
 								}
 							)
+							.matchedTransitionSource(id: item.id.uuidString, in: addButtonNamespace)
 						}
 						.onDelete { indexSet in
 							for index in indexSet {
@@ -112,6 +116,7 @@ struct MaintenanceItemsScreen: View {
 				} label: {
 					Label("Add", systemImage: "plus")
 				}
+				.matchedTransitionSource(id: "addButton", in: addButtonNamespace)
 			}
 		}
 		.task { await vm.loadData() }
@@ -130,6 +135,9 @@ struct MaintenanceItemsScreen: View {
 					draftServiceProvider: .constant(nil),
 					draftSubscription: .constant(nil)
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		.alert(

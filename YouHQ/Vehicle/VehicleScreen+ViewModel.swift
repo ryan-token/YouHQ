@@ -75,6 +75,7 @@ extension VehicleScreen {
 		var isShowingAddVehicleSheet = false
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
+		var sheetTransitionSourceID: String = "addButton"
 		var isNavigatingToMaintenanceItems = false
 		var isNavigatingToPaintColors = false
 		var vehicleNotes: String
@@ -194,7 +195,8 @@ extension VehicleScreen {
 			}
 		}
 
-		func showCreateVehicleSheet() {
+		func showCreateVehicleSheet(sourceID: String = "addButton") {
+			sheetTransitionSourceID = sourceID
 			isShowingAddVehicleSheet = true
 		}
 
@@ -213,7 +215,7 @@ extension VehicleScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showAddInsurancePolicySheet() {
+		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
@@ -223,26 +225,29 @@ extension VehicleScreen {
 					profileID: profileID
 				)
 			sectionToEdit = .insurancePolicyDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddMaintenanceItemSheet() {
+		func showAddMaintenanceItemSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id else { return }
 			maintenanceViewModel.draftMaintenanceItem =
 				maintenanceViewModel.createVehicleDraft(for: vehicleID)
 			sectionToEdit = .maintenanceItemDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddPaintColorSheet() {
+		func showAddPaintColorSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id else { return }
 			paintColorViewModel.draftPaintColor =
 				paintColorViewModel.createVehicleDraft(for: vehicleID)
 			sectionToEdit = .paintColorDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddOtherSheet() {
+		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
@@ -251,6 +256,7 @@ extension VehicleScreen {
 				profileID: profileID
 			)
 			sectionToEdit = .otherDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 

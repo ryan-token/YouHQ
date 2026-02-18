@@ -10,15 +10,17 @@ import SwiftUI
 extension MediaInfo {
 	struct AddMoreButton: View {
 		let vm: MediaScreen.ViewModel
+		@Environment(\.sheetNamespace) private var namespace
 
 		var body: some View {
 			Menu {
-				MediaMenu(vm: vm)
+				MediaMenu(vm: vm, sourceID: "addMoreButton")
 			} label: {
 				AddMoreButtonLabel(text: "Add More")
 			}
 			.buttonStyle(.plain)
 			.padding(.bottom)
+			.matchedTransitionSource(id: "addMoreButton", in: namespace)
 		}
 	}
 }

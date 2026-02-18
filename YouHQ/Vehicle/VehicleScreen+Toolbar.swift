@@ -12,6 +12,7 @@ extension VehicleScreen {
 	struct Toolbar: ToolbarContent {
 		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: VehicleScreen.ViewModel
+		let namespace: Namespace.ID
 
 		var body: some ToolbarContent {
 			if vm.vehicles.count > 1 {
@@ -46,6 +47,7 @@ extension VehicleScreen {
 					} label: {
 						Label("Add", systemImage: "plus")
 					}
+					.matchedTransitionSource(id: "addButton", in: namespace)
 				}
 			}
 		}
@@ -53,8 +55,12 @@ extension VehicleScreen {
 }
 
 #Preview {
-	Form {
-		HQText("VehicleScreen Toolbar")
+	struct PreviewWrapper: View {
+		@Namespace private var namespace
+		var body: some View {
+			Form { HQText("VehicleScreen Toolbar") }
+				.toolbar { VehicleScreen.Toolbar(vm: VehicleScreen.ViewModel(), namespace: namespace) }
+		}
 	}
-	.toolbar { VehicleScreen.Toolbar(vm: VehicleScreen.ViewModel()) }
+	return PreviewWrapper()
 }

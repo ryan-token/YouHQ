@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NoVehiclesView: View {
+	@Environment(\.sheetNamespace) private var namespace
 	let onAddVehicleTapped: () -> Void
 
 	var body: some View {
@@ -17,6 +18,7 @@ struct NoVehiclesView: View {
 			Button("Add vehicle") {
 				onAddVehicleTapped()
 			}
+			.matchedTransitionSource(id: "emptyStateButton", in: namespace)
 		}
 		.frame(maxWidth: .infinity, alignment: .center)
 	}

@@ -9,6 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct VehicleScreen: View {
+	@Namespace private var addButtonNamespace
 	@State private var vm = ViewModel()
 	@AppStorage("hideVehicleCosts") private var hideVehicleCosts = false
 
@@ -18,7 +19,7 @@ struct VehicleScreen: View {
 				SharingStatus(for: vm.selectedProfile)
 
 				if vm.vehicles.isEmpty {
-					NoVehiclesView(onAddVehicleTapped: vm.showCreateVehicleSheet)
+					NoVehiclesView(onAddVehicleTapped: { vm.showCreateVehicleSheet(sourceID: "emptyStateButton") })
 				} else {
 					MacOSVehiclePicker(vehicles: vm.vehicles, selectedVehicle: $vm.selectedVehicle)
 
@@ -36,7 +37,8 @@ struct VehicleScreen: View {
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
-		.toolbar { Toolbar(vm: vm) }
+		.toolbar { Toolbar(vm: vm, namespace: addButtonNamespace) }
+		.environment(\.sheetNamespace, addButtonNamespace)
 		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
 			if let vehicleIDString = vm.selectedVehicleID,
 				let vehicleID = UUID(uuidString: vehicleIDString)
@@ -72,6 +74,9 @@ struct VehicleScreen: View {
 					profileID: profileID,
 					selectedVehicle: $vm.selectedVehicle
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
@@ -85,6 +90,9 @@ struct VehicleScreen: View {
 					draftPaintColor: $vm.paintColorViewModel.draftPaintColor,
 					draftOther: $vm.otherViewModel.draftOther
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		#if !os(visionOS)

@@ -12,6 +12,7 @@ extension CareerScreen {
 	struct Toolbar: ToolbarContent {
 		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: CareerScreen.ViewModel
+		let namespace: Namespace.ID
 
 		var body: some ToolbarContent {
 			if vm.sortedJobs.isEmpty && syncEngine.isSynchronizing {
@@ -25,6 +26,7 @@ extension CareerScreen {
 					} label: {
 						Label("Add", systemImage: "plus")
 					}
+					.matchedTransitionSource(id: "addButton", in: namespace)
 				}
 			}
 		}

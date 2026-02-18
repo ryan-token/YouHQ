@@ -12,6 +12,7 @@ extension ResidenceScreen {
 	struct Toolbar: ToolbarContent {
 		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: ResidenceScreen.ViewModel
+		let namespace: Namespace.ID
 
 		var body: some ToolbarContent {
 			if vm.residences.count > 1 {
@@ -46,6 +47,7 @@ extension ResidenceScreen {
 					} label: {
 						Label("Add", systemImage: "plus")
 					}
+					.matchedTransitionSource(id: "addButton", in: namespace)
 				}
 			}
 		}
@@ -53,8 +55,12 @@ extension ResidenceScreen {
 }
 
 #Preview {
-	Form {
-		HQText("ResidenceScreen Toolbar")
+	struct PreviewWrapper: View {
+		@Namespace private var namespace
+		var body: some View {
+			Form { HQText("ResidenceScreen Toolbar") }
+				.toolbar { ResidenceScreen.Toolbar(vm: ResidenceScreen.ViewModel(), namespace: namespace) }
+		}
 	}
-	.toolbar { ResidenceScreen.Toolbar(vm: ResidenceScreen.ViewModel()) }
+	return PreviewWrapper()
 }

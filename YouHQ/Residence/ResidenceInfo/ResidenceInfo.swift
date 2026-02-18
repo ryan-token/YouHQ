@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ResidenceInfo: View {
 	@Bindable var vm: ResidenceScreen.ViewModel
+	@Environment(\.sheetNamespace) private var namespace
 	let hideCosts: Bool
 
 	var body: some View {
@@ -21,6 +22,7 @@ struct ResidenceInfo: View {
 				hideCosts: hideCosts,
 				backgroundColor: vm.backgroundColor,
 				onTap: { residence in
+					vm.sheetTransitionSourceID = residence.id.uuidString
 					vm.sectionToEdit = .residenceInfo(residence)
 					vm.isShowingSectionEditSheet = true
 				},
@@ -28,6 +30,7 @@ struct ResidenceInfo: View {
 					vm.updateResidenceBackgroundColor(newColor)
 				}
 			)
+			.matchedTransitionSource(id: residence.id.uuidString, in: namespace)
 
 			ForEach(vm.utilityViewModel.utilities) { utility in
 				UtilitySection(
@@ -40,10 +43,12 @@ struct ResidenceInfo: View {
 						)
 					},
 					onTap: {
+						vm.sheetTransitionSourceID = utility.id.uuidString
 						vm.sectionToEdit = .utility(utility)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
+				.matchedTransitionSource(id: utility.id.uuidString, in: namespace)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
 						vm.utilityViewModel.delete(utility)
@@ -64,10 +69,12 @@ struct ResidenceInfo: View {
 						)
 					},
 					onTap: {
+						vm.sheetTransitionSourceID = policy.id.uuidString
 						vm.sectionToEdit = .insurancePolicy(policy)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
+				.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
 						vm.insuranceViewModel.delete(policy)
@@ -88,10 +95,12 @@ struct ResidenceInfo: View {
 						)
 					},
 					onTap: {
+						vm.sheetTransitionSourceID = other.id.uuidString
 						vm.sectionToEdit = .other(other)
 						vm.isShowingSectionEditSheet = true
 					}
 				)
+				.matchedTransitionSource(id: other.id.uuidString, in: namespace)
 				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 					Button(role: .destructive) {
 						vm.otherViewModel.delete(other)

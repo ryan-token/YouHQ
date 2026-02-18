@@ -23,6 +23,7 @@ extension PaintColorsScreen {
 		var isShowingEditSheet = false
 		var draftPaintColor: PaintColor?
 		var isNewItem = false
+		var sheetTransitionSourceID: String = "addButton"
 
 		init(residenceID: UUID?, vehicleID: UUID?) {
 			self.residenceID = residenceID
@@ -51,6 +52,7 @@ extension PaintColorsScreen {
 
 		func showAddPaintColorSheet() {
 			// Create a draft paint color in memory (not in database)
+			sheetTransitionSourceID = "addButton"
 			draftPaintColor = PaintColor(
 				id: UUID(),
 				residenceID: residenceID,
@@ -75,6 +77,7 @@ extension PaintColorsScreen {
 		func editPaintColor(_ item: PaintColor) {
 			draftPaintColor = item
 			isNewItem = false
+			sheetTransitionSourceID = item.id.uuidString
 			isShowingEditSheet = true
 		}
 

@@ -10,15 +10,17 @@ import SwiftUI
 extension CareerScreen {
 	struct AddMoreButton: View {
 		let vm: ViewModel
+		@Environment(\.sheetNamespace) private var namespace
 
 		var body: some View {
 			Menu {
-				CareerMenu(vm: vm)
+				CareerMenu(vm: vm, sourceID: "addMoreButton")
 			} label: {
 				AddMoreButtonLabel(text: "Add More")
 			}
 			.buttonStyle(.plain)
 			.padding(.bottom)
+			.matchedTransitionSource(id: "addMoreButton", in: namespace)
 		}
 	}
 }

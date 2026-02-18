@@ -41,6 +41,7 @@ extension MoneyScreen {
 
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
+		var sheetTransitionSourceID: String = "addButton"
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -96,31 +97,34 @@ extension MoneyScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showAddBankAccountSheet() {
+		func showAddBankAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			bankAccountViewModel.draftBankAccount =
 				bankAccountViewModel.createDraft(for: profileID)
 			sectionToEdit = .bankAccountDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddInvestmentAccountSheet() {
+		func showAddInvestmentAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			investmentAccountViewModel.draftInvestmentAccount =
 				investmentAccountViewModel.createDraft(for: profileID)
 			sectionToEdit = .investmentAccountDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddHealthSavingsAccountSheet() {
+		func showAddHealthSavingsAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			healthSavingsAccountViewModel.draftHealthSavingsAccount =
 				healthSavingsAccountViewModel.createDraft(for: profileID)
 			sectionToEdit = .healthSavingsAccountDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddInsurancePolicySheet() {
+		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			insuranceViewModel.draftInsurancePolicy =
 				InsurancePolicy(
@@ -129,14 +133,16 @@ extension MoneyScreen {
 					type: .health
 				)
 			sectionToEdit = .insurancePolicyDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddOtherSheet() {
+		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			otherViewModel.draftOther =
 				otherViewModel.createCategoryDraft(for: .money, profileID: profileID)
 			sectionToEdit = .otherDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 	}

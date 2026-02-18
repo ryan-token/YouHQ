@@ -9,6 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct MediaScreen: View {
+	@Namespace private var addButtonNamespace
 	@State private var vm = ViewModel()
 	@AppStorage("hideMediaCosts") private var hideMediaCosts = false
 
@@ -46,7 +47,8 @@ struct MediaScreen: View {
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
-		.toolbar { Toolbar(vm: vm) }
+		.toolbar { Toolbar(vm: vm, namespace: addButtonNamespace) }
+		.environment(\.sheetNamespace, addButtonNamespace)
 		.contentMargins(.top, 0)
 		.scrollContentBackground(.hidden)
 		.task {
@@ -70,6 +72,9 @@ struct MediaScreen: View {
 					draftServiceProvider: $vm.serviceProviderViewModel.draftServiceProvider,
 					draftSubscription: $vm.subscriptionViewModel.draftSubscription
 				)
+				#if !os(macOS)
+					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+				#endif
 			}
 		}
 		#if !os(visionOS)

@@ -39,6 +39,7 @@ extension MediaScreen {
 
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
+		var sheetTransitionSourceID: String = "addButton"
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -102,38 +103,42 @@ extension MediaScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showAddDeviceSheet() {
+		func showAddDeviceSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			deviceViewModel.draftDevice = deviceViewModel.createDraft(
 				for: profileID
 			)
 			sectionToEdit = .deviceDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddServiceProviderSheet() {
+		func showAddServiceProviderSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			serviceProviderViewModel.draftServiceProvider =
 				serviceProviderViewModel.createDraft(for: profileID)
 			sectionToEdit = .serviceProviderDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddSubscriptionSheet() {
+		func showAddSubscriptionSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			subscriptionViewModel.draftSubscription =
 				subscriptionViewModel.createDraft(for: profileID)
 			sectionToEdit = .subscriptionDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
-		func showAddOtherSheet() {
+		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
 			otherViewModel.draftOther = otherViewModel.createCategoryDraft(
 				for: .media,
 				profileID: profileID
 			)
 			sectionToEdit = .otherDraft
+			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 	}

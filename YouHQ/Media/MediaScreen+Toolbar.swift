@@ -12,6 +12,7 @@ extension MediaScreen {
 	struct Toolbar: ToolbarContent {
 		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: MediaScreen.ViewModel
+		let namespace: Namespace.ID
 
 		var body: some ToolbarContent {
 			if vm.deviceViewModel.devices.isEmpty
@@ -30,6 +31,7 @@ extension MediaScreen {
 					} label: {
 						Label("Add", systemImage: "plus")
 					}
+					.matchedTransitionSource(id: "addButton", in: namespace)
 				}
 			}
 		}

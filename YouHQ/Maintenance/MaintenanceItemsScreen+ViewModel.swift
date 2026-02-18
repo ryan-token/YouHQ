@@ -25,6 +25,7 @@ extension MaintenanceItemsScreen {
 		var draftMaintenanceItem: MaintenanceItem?
 		var itemToComplete: MaintenanceItem?
 		var isNewItem = false
+		var sheetTransitionSourceID: String = "addButton"
 
 		init(residenceID: UUID?, vehicleID: UUID?) {
 			self.residenceID = residenceID
@@ -65,6 +66,7 @@ extension MaintenanceItemsScreen {
 
 		func showAddMaintenanceItemSheet() {
 			// Create a draft maintenance item in memory (not in database)
+			sheetTransitionSourceID = "addButton"
 			draftMaintenanceItem = MaintenanceItem(
 				id: UUID(),
 				residenceID: residenceID,
@@ -88,6 +90,7 @@ extension MaintenanceItemsScreen {
 		func editMaintenanceItem(_ item: MaintenanceItem) {
 			draftMaintenanceItem = item
 			isNewItem = false
+			sheetTransitionSourceID = item.id.uuidString
 			isShowingEditSheet = true
 		}
 

@@ -10,6 +10,7 @@ import SwiftUI
 struct MediaInfo: View {
 	@Bindable var vm: MediaScreen.ViewModel
 	let hideCosts: Bool
+	@Environment(\.sheetNamespace) private var namespace
 
 	var body: some View {
 		ForEach(vm.serviceProviderViewModel.serviceProviders) { serviceProvider in
@@ -23,10 +24,12 @@ struct MediaInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = serviceProvider.id.uuidString
 					vm.sectionToEdit = .serviceProvider(serviceProvider)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: serviceProvider.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.serviceProviderViewModel.delete(serviceProvider)
@@ -47,10 +50,12 @@ struct MediaInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = subscription.id.uuidString
 					vm.sectionToEdit = .subscription(subscription)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: subscription.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.subscriptionViewModel.delete(subscription)
@@ -70,10 +75,12 @@ struct MediaInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = device.id.uuidString
 					vm.sectionToEdit = .device(device)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: device.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.deviceViewModel.delete(device)
@@ -94,10 +101,12 @@ struct MediaInfo: View {
 					)
 				},
 				onTap: {
+					vm.sheetTransitionSourceID = other.id.uuidString
 					vm.sectionToEdit = .other(other)
 					vm.isShowingSectionEditSheet = true
 				}
 			)
+			.matchedTransitionSource(id: other.id.uuidString, in: namespace)
 			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
 				Button(role: .destructive) {
 					vm.otherViewModel.delete(other)

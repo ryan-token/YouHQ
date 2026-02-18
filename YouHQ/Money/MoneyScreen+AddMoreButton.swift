@@ -10,15 +10,17 @@ import SwiftUI
 extension MoneyScreen {
 	struct AddMoreButton: View {
 		let vm: ViewModel
+		@Environment(\.sheetNamespace) private var namespace
 
 		var body: some View {
 			Menu {
-				MoneyMenu(vm: vm)
+				MoneyMenu(vm: vm, sourceID: "addMoreButton")
 			} label: {
 				AddMoreButtonLabel(text: "Add More")
 			}
 			.buttonStyle(.plain)
 			.padding(.bottom)
+			.matchedTransitionSource(id: "addMoreButton", in: namespace)
 		}
 	}
 }

@@ -12,10 +12,12 @@ struct ResidenceMenu: View {
 
 	let vm: ResidenceScreen.ViewModel
 	let includeAddResidence: Bool
+	let sourceID: String
 
-	init(vm: ResidenceScreen.ViewModel, includeAddResidence: Bool = false) {
+	init(vm: ResidenceScreen.ViewModel, includeAddResidence: Bool = false, sourceID: String = "addButton") {
 		self.vm = vm
 		self.includeAddResidence = includeAddResidence
+		self.sourceID = sourceID
 	}
 
 	var body: some View {
@@ -37,7 +39,7 @@ struct ResidenceMenu: View {
 			if !vm.residences.isEmpty {
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddUtilitySheet()
+						vm.showAddUtilitySheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -47,7 +49,7 @@ struct ResidenceMenu: View {
 
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddInsurancePolicySheet()
+						vm.showAddInsurancePolicySheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -58,7 +60,7 @@ struct ResidenceMenu: View {
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.paintColorViewModel.paintColors.count < Constants.paywallPaintColorsThreshold
 					{
-						vm.showAddPaintColorSheet()
+						vm.showAddPaintColorSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -70,7 +72,7 @@ struct ResidenceMenu: View {
 					if paywallManager.hasUnlockedPremium
 						|| vm.maintenanceViewModel.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold
 					{
-						vm.showAddMaintenanceItemSheet()
+						vm.showAddMaintenanceItemSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
@@ -80,7 +82,7 @@ struct ResidenceMenu: View {
 
 				Button {
 					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddOtherSheet()
+						vm.showAddOtherSheet(sourceID: sourceID)
 					} else {
 						paywallManager.showPaywall()
 					}
