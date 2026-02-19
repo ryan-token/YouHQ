@@ -68,7 +68,10 @@ struct VehicleScreen: View {
 		.onChange(of: vm.vehicles) {
 			vm.updateSelectedVehicle()
 		}
-		.sheet(isPresented: $vm.isShowingAddVehicleSheet) {
+		.sheet(isPresented: Binding(
+			get: { vm.isShowingAddVehicleSheet && vm.selectedProfile?.profile.id != nil },
+			set: { vm.isShowingAddVehicleSheet = $0 }
+		)) {
 			if let profileID = vm.selectedProfile?.profile.id {
 				AddVehicleSheet(
 					profileID: profileID,

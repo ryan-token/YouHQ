@@ -82,7 +82,10 @@ struct ResidenceScreen: View {
 		.onChange(of: vm.residences) {
 			vm.updateSelectedResidence()
 		}
-		.sheet(isPresented: $vm.isShowingAddResidenceSheet) {
+		.sheet(isPresented: Binding(
+			get: { vm.isShowingAddResidenceSheet && vm.selectedProfile?.profile.id != nil },
+			set: { vm.isShowingAddResidenceSheet = $0 }
+		)) {
 			if let profileID = vm.selectedProfile?.profile.id {
 				AddResidenceSheet(
 					profileID: profileID,

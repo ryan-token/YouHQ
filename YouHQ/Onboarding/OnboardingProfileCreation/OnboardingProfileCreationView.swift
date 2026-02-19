@@ -177,12 +177,18 @@ struct OnboardingProfileCreationView: View {
 				}
 			}
 		}
-		.sheet(isPresented: $vm.showAddResidence) {
+		.sheet(isPresented: Binding(
+			get: { vm.showAddResidence && vm.selectedProfileID != nil },
+			set: { vm.showAddResidence = $0 }
+		)) {
 			if let selectedProfileID = vm.selectedProfileID {
 				AddResidenceSheet(profileID: selectedProfileID, selectedResidence: $selectedResidence)
 			}
 		}
-		.sheet(isPresented: $vm.showAddVehicle) {
+		.sheet(isPresented: Binding(
+			get: { vm.showAddVehicle && vm.selectedProfileID != nil },
+			set: { vm.showAddVehicle = $0 }
+		)) {
 			if let selectedProfileID = vm.selectedProfileID {
 				AddVehicleSheet(profileID: selectedProfileID, selectedVehicle: $selectedVehicle)
 			}

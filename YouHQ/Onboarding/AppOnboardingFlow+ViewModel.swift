@@ -42,11 +42,11 @@ extension AppOnboardingFlow {
 		}
 
 		func handleTabChange(oldValue: Int, newValue: Int, hasUnlockedPremium: Bool) async {
-			// Handle swiping forward from profile creation screen
-			if oldValue == 6 && newValue == paywallTab {
+			// Block navigation to paywall tab if no profile exists
+			if newValue == paywallTab {
 				await checkForProfile()
 
-				// If no profile exists, block the swipe
+				// If no profile exists, block the navigation
 				if !hasAnyProfile {
 					withAnimation(.smooth) {
 						currentTab = 6
@@ -66,7 +66,7 @@ extension AppOnboardingFlow {
 			if expectedTab == currentTab {
 				expectedTab = nil
 			} else {
-				// This was a manual swipe
+				// This was a manual swipe/click
 				isTimerActive = false
 			}
 		}

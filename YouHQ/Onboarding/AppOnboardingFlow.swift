@@ -89,8 +89,9 @@ struct AppOnboardingFlow: View {
 							Paywall(fromOnboarding: true, shouldShowSkipButton: true, shouldShowDismissButton: false) {
 								vm.navigationPath.append("congratulations")
 							}
-							.tag(vm.paywallTab)
 						}
+						.tag(vm.paywallTab)
+						.disabled(!vm.hasAnyProfile)
 					#else
 						Paywall(fromOnboarding: true, shouldShowSkipButton: true, shouldShowDismissButton: false) {
 							vm.navigationPath.append("congratulations")
