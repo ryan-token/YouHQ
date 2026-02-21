@@ -138,11 +138,14 @@ extension MaintenanceItemsScreen {
 					}
 					.execute(db)
 
-					// Update item
+					// Due to changes in Swift 6.3, the compiler can no longer automatically promote
+					// some values into query expressions, particularly when it comes to UPDATE queries.
+					// To mitigate this, use '#bind' to explicitly wrap this value in a query expression: '$0.column = #bind(value)'
+					// https://tinyurl.com/4j78225v
 					try MaintenanceItem.find(item.id)
 						.update {
-							$0.lastCompletedAt = completedAt
-							$0.dueDate = nextDue
+							$0.lastCompletedAt = #bind(completedAt)
+							$0.dueDate = #bind(nextDue)
 						}
 						.execute(db)
 				}

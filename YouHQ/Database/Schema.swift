@@ -12,7 +12,7 @@ import SQLiteData
 
 // MARK: - Table Models
 
-@Table struct Profile: Identifiable, Hashable {
+@Table nonisolated struct Profile: Identifiable, Hashable {
 	let id: UUID
 	var name: String = "Default"
 	var createdAt: Date = Date()
@@ -21,7 +21,7 @@ import SQLiteData
 
 // MARK: - Residence Section
 
-@Table struct Residence: Identifiable, Hashable {
+@Table nonisolated struct Residence: Identifiable, Hashable {
 	let id: UUID
 	let profileID: Profile.ID
 	var type: ResidenceType = .apartment
@@ -53,7 +53,7 @@ import SQLiteData
 		}
 
 		// Country (only if not USA)
-		if !country.isEmpty && country != "USA" {
+		if country.isNotEmpty && country != "USA" {
 			components.append(country)
 		}
 
@@ -75,6 +75,8 @@ import SQLiteData
 		return components.joined(separator: ", ")
 	}
 
+	// MARK: - Helper Properties
+
 	var unitOrStreet: String? {
 		if unit.isNotEmpty {
 			return unit
@@ -85,12 +87,10 @@ import SQLiteData
 		}
 	}
 
-	// MARK: - Helper Properties
-
 	private var streetLine: String? {
-		guard !street.isEmpty else { return nil }
+		guard street.isNotEmpty else { return nil }
 
-		if !unit.isEmpty {
+		if unit.isNotEmpty {
 			return "\(street), \(unit)"
 		} else {
 			return street
@@ -98,20 +98,20 @@ import SQLiteData
 	}
 
 	private var cityState: String? {
-		let parts = [city, state].filter { !$0.isEmpty }
+		let parts = [city, state].filter { $0.isNotEmpty }
 		return parts.isEmpty ? nil : parts.joined(separator: ", ")
 	}
 
 	private var cityStateZip: String? {
 		var parts: [String] = []
 
-		if !city.isEmpty {
+		if city.isNotEmpty {
 			parts.append(city)
 		}
-		if !state.isEmpty {
+		if state.isNotEmpty {
 			parts.append(state)
 		}
-		if !zipCode.isEmpty {
+		if zipCode.isNotEmpty {
 			parts.append(zipCode)
 		}
 
@@ -119,7 +119,7 @@ import SQLiteData
 	}
 }
 
-@Table struct Utility: Identifiable {
+@Table nonisolated struct Utility: Identifiable {
 	let id: UUID
 	let residenceID: Residence.ID
 	var type: UtilityType = .electric
@@ -131,7 +131,7 @@ import SQLiteData
 	var notes: String = ""
 }
 
-@Table struct MaintenanceItem: Identifiable {
+@Table nonisolated struct MaintenanceItem: Identifiable {
 	let id: UUID
 	let residenceID: Residence.ID?
 	let vehicleID: Vehicle.ID?
@@ -176,14 +176,14 @@ extension MaintenanceItem {
 	}
 }
 
-@Table struct MaintenanceCompletion: Identifiable {
+@Table nonisolated struct MaintenanceCompletion: Identifiable {
 	let id: UUID
 	let maintenanceItemID: MaintenanceItem.ID
 	var completedAt: Date = Date()
 	var notes: String = ""
 }
 
-@Table struct PaintColor: Identifiable {
+@Table nonisolated struct PaintColor: Identifiable {
 	let id: UUID
 	let residenceID: Residence.ID?
 	let vehicleID: Vehicle.ID?
@@ -203,7 +203,7 @@ extension MaintenanceItem {
 
 // MARK: - Vehicle Section
 
-@Table struct Vehicle: Identifiable, Equatable {
+@Table nonisolated struct Vehicle: Identifiable, Equatable {
 	let id: UUID
 	let profileID: Profile.ID
 	var type: VehicleType = .car
@@ -236,7 +236,7 @@ extension MaintenanceItem {
 
 // MARK: - Money Section
 
-@Table struct BankAccount: Identifiable {
+@Table nonisolated struct BankAccount: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var bankName: String = ""
@@ -249,7 +249,7 @@ extension MaintenanceItem {
 	var notes: String = ""
 }
 
-@Table struct InvestmentAccount: Identifiable {
+@Table nonisolated struct InvestmentAccount: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var institution: String = ""
@@ -261,7 +261,7 @@ extension MaintenanceItem {
 	var notes: String = ""
 }
 
-@Table struct HealthSavingsAccount: Identifiable {
+@Table nonisolated struct HealthSavingsAccount: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var accountType: HealthSavingsAccountType = .hsa
@@ -275,7 +275,7 @@ extension MaintenanceItem {
 
 // MARK: - Media Section
 
-@Table struct ServiceProvider: Identifiable {
+@Table nonisolated struct ServiceProvider: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var providerType: ServiceProviderType = .internet
@@ -287,7 +287,7 @@ extension MaintenanceItem {
 	var notes: String = ""
 }
 
-@Table struct Device: Identifiable {
+@Table nonisolated struct Device: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var type: DeviceType = .computer
@@ -300,7 +300,7 @@ extension MaintenanceItem {
 	var notes: String = ""
 }
 
-@Table struct Subscription: Identifiable {
+@Table nonisolated struct Subscription: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var name: String = ""
@@ -316,7 +316,7 @@ extension MaintenanceItem {
 
 // MARK: - Career Section
 
-@Table struct Job: Identifiable, Equatable {
+@Table nonisolated struct Job: Identifiable, Equatable {
 	let id: UUID
 	let profileID: Profile.ID
 	var company: String = ""
@@ -333,7 +333,7 @@ extension MaintenanceItem {
 
 // MARK: - Insurance Section
 
-@Table struct InsurancePolicy: Identifiable {
+@Table nonisolated struct InsurancePolicy: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	var residenceID: Residence.ID?
@@ -354,7 +354,7 @@ extension MaintenanceItem {
 
 // MARK: - Other
 
-@Table struct Other: Identifiable, Equatable {
+@Table nonisolated struct Other: Identifiable, Equatable {
 	let id: UUID
 	let profileID: Profile.ID
 	var residenceID: Residence.ID?
@@ -370,7 +370,7 @@ extension MaintenanceItem {
 
 // MARK: - Assets
 
-@Table struct Asset: Identifiable {
+@Table nonisolated struct Asset: Identifiable {
 	let id: UUID
 	let profileID: Profile.ID
 	let residenceID: Residence.ID?

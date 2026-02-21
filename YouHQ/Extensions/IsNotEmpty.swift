@@ -6,19 +6,19 @@
 //
 
 extension String {
-	var isNotEmpty: Bool {
+	nonisolated var isNotEmpty: Bool {
 		!self.isEmpty
 	}
 }
 
 extension Array {
-	var isNotEmpty: Bool {
+	nonisolated var isNotEmpty: Bool {
 		!self.isEmpty
 	}
 }
 
 extension Set {
-	var isNotEmpty: Bool {
+	nonisolated var isNotEmpty: Bool {
 		!self.isEmpty
 	}
 }

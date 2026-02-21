@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F43DBA232F2F144B00334B51 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F43DBA222F2F144B00334B51 /* AppIcon.icon */; };
+		F48205FF2F49663C00CB6EAE /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = F48205FE2F49663C00CB6EAE /* SQLiteData */; };
 		F4851D642F248EB5002E4AFF /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = F4851D632F248EB5002E4AFF /* TelemetryDeck */; };
-		F489E7EB2F034B7600EB50D4 /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = F489E7EA2F034B7600EB50D4 /* SQLiteData */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F489E7EB2F034B7600EB50D4 /* SQLiteData in Frameworks */,
+				F48205FF2F49663C00CB6EAE /* SQLiteData in Frameworks */,
 				F4851D642F248EB5002E4AFF /* TelemetryDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,6 +56,7 @@
 			children = (
 				F43DBA222F2F144B00334B51 /* AppIcon.icon */,
 				F489E7DD2F034A8E00EB50D4 /* YouHQ */,
+				F4D2E50C2F46C70800342A5F /* Frameworks */,
 				F489E7DC2F034A8E00EB50D4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,6 +67,13 @@
 				F489E7DB2F034A8E00EB50D4 /* YouHQ.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F4D2E50C2F46C70800342A5F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -89,8 +97,8 @@
 			);
 			name = YouHQ;
 			packageProductDependencies = (
-				F489E7EA2F034B7600EB50D4 /* SQLiteData */,
 				F4851D632F248EB5002E4AFF /* TelemetryDeck */,
+				F48205FE2F49663C00CB6EAE /* SQLiteData */,
 			);
 			productName = YouHQ;
 			productReference = F489E7DB2F034A8E00EB50D4 /* YouHQ.app */;
@@ -103,7 +111,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2620;
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					F489E7DA2F034A8E00EB50D4 = {
@@ -121,8 +129,9 @@
 			mainGroup = F489E7D22F034A8E00EB50D4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F489E7E92F034B7600EB50D4 /* XCRemoteSwiftPackageReference "sqlite-data" */,
 				F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */,
+				F48205FD2F49663C00CB6EAE /* XCRemoteSwiftPackageReference "sqlite-data" */,
+				F48206022F4966FE00CB6EAE /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F489E7DC2F034A8E00EB50D4 /* Products */;
@@ -463,6 +472,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F48205FD2F49663C00CB6EAE /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.0;
+			};
+		};
+		F48206022F4966FE00CB6EAE /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.11.0;
+			};
+		};
 		F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
@@ -471,26 +496,18 @@
 				minimumVersion = 2.11.0;
 			};
 		};
-		F489E7E92F034B7600EB50D4 /* XCRemoteSwiftPackageReference "sqlite-data" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/sqlite-data";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F48205FE2F49663C00CB6EAE /* SQLiteData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F48205FD2F49663C00CB6EAE /* XCRemoteSwiftPackageReference "sqlite-data" */;
+			productName = SQLiteData;
+		};
 		F4851D632F248EB5002E4AFF /* TelemetryDeck */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */;
 			productName = TelemetryDeck;
-		};
-		F489E7EA2F034B7600EB50D4 /* SQLiteData */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F489E7E92F034B7600EB50D4 /* XCRemoteSwiftPackageReference "sqlite-data" */;
-			productName = SQLiteData;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

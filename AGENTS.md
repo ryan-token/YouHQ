@@ -13,7 +13,7 @@ The app works across iOS, iPadOS, macOS, and even visionOS. It's written with mo
 ## Architecture
 
 ### Database Layer
-- **SQLiteData** (PointFreeCo) is the persistence layer, wrapping GRDB - use the `sqlitedata` skill for reference
+- **SQLiteData** (PointFreeCo) is the persistence layer, wrapping GRDB - use the `pfw-sqlite-data` skill for reference
 - Database initialization happens in `Database/AppDatabase.swift` via `appDatabase()` function
 - All models use the `@Table` macro from SQLiteData (see `Database/Schema.swift`)
 - Database is bootstrapped at app launch in `YouHQApp.init()` using PointFreeCo's Dependencies library
@@ -156,7 +156,7 @@ These are high-level instructions. For in-depth skill implementations, like best
 
 ## SQLiteData instructions
 
-Refer to the `sqlitedata` skill for in-depth instructions on properly using SQLiteData.
+Refer to the `pfw-sqlite-data` skill for in-depth instructions on properly using SQLiteData.
 
 Persistence, CloudKit Sync, and CloudKit Sharing is handled by SQLiteData from PointFreeCo.
 
@@ -192,7 +192,7 @@ func loadProfiles() async {
 }
 ```
 
-Again, refer to the `sqlitedata` skill for an in-depth reference.
+Again, refer to the `pfw-sqlite-data` skill for an in-depth reference.
 
 ## Project structure
 
@@ -310,8 +310,8 @@ Usage notes:
 </skill>
 
 <skill>
-<name>sqlitedata</name>
-<description>SQLiteData queries, @Table models, Point-Free SQLite, RETURNING clause, FTS5 full-text search, CloudKit sync, CTEs, JSON aggregation, @DatabaseFunction</description>
+<name>pfw-sqlite-data</name>
+<description>SQLiteData queries, @Table models, Point-Free SQLite, RETURNING clause, FTS5 full-text search, CloudKit sync, CTEs, JSON aggregation, @DatabaseFunction, and testing</description>
 <location>project</location>
 </skill>
 

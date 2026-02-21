@@ -5,20 +5,26 @@
 //  Created by Ryan Token on 1/23/26.
 //
 
+import Dependencies
 import StoreKit
 import TelemetryDeck
 
 struct Analytics {
+	@Dependency(\.context) private static var context
+
 	static func sendSignal(_ signal: Signal) {
+		guard context == .live else { return }
 		TelemetryDeck.signal(signal.rawValue)
 	}
 
 	static func logError(id: ErrorID, message: String) {
 		print("Error: \(id). Message: \(message)")
+		guard context == .live else { return }
 		TelemetryDeck.errorOccurred(id: id.rawValue, message: message)
 	}
 
 	static func trackPurchase(for transaction: Transaction) {
+		guard context == .live else { return }
 		TelemetryDeck.purchaseCompleted(transaction: transaction)
 	}
 
