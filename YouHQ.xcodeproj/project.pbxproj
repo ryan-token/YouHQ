@@ -82,7 +82,6 @@
 				F43DBA222F2F144B00334B51 /* AppIcon.icon */,
 				F489E7DD2F034A8E00EB50D4 /* YouHQ */,
 				F4EBA9B82F4A256800C9FEE0 /* YouHQTests */,
-				F4D2E50C2F46C70800342A5F /* Frameworks */,
 				F489E7DC2F034A8E00EB50D4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -94,13 +93,6 @@
 				F4EBA9B72F4A256800C9FEE0 /* YouHQTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F4D2E50C2F46C70800342A5F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
