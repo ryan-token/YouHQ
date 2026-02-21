@@ -14,6 +14,6 @@ extension Double {
 		formatter.maximumFractionDigits = 2
 
 		let number = NSNumber(value: self)
-		return formatter.string(from: number)!
+		return formatter.string(from: number) ?? "$0.00"
 	}
 }

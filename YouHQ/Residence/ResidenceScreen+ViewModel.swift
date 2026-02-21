@@ -55,7 +55,8 @@ extension ResidenceScreen {
 
 				// Load data for the new residence when ID changes
 				if selectedResidence?.id != oldValue?.id {
-					Task {
+					loadDataTask?.cancel()
+					loadDataTask = Task {
 						await loadAllData()
 					}
 				}
@@ -86,8 +87,8 @@ extension ResidenceScreen {
 		var isNavigatingToPaintColors = false
 		var residenceNotes: String
 
-		// Task for debouncing notes updates
 		private var notesDebounceTask: Task<Void, Never>?
+		private var loadDataTask: Task<Void, Never>?
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -132,8 +133,8 @@ extension ResidenceScreen {
 
 		func handleProfileChange() async {
 			await loadResidences()
-			if !residences.isEmpty {
-				await setSelectedResidence(to: residences.first!.id)
+			if let first = residences.first {
+				await setSelectedResidence(to: first.id)
 			} else {
 				selectedResidence = nil
 			}
@@ -156,8 +157,8 @@ extension ResidenceScreen {
 				)
 			{
 				await setSelectedResidence(to: selectedResidenceUUID)
-			} else if selectedResidenceID == nil, !residences.isEmpty {
-				await setSelectedResidence(to: residences.first!.id)
+			} else if selectedResidenceID == nil, let first = residences.first {
+				await setSelectedResidence(to: first.id)
 			}
 		}
 
@@ -191,13 +192,8 @@ extension ResidenceScreen {
 					let residence = residences.first(where: { $0.id == uuid })
 				{
 					self.selectedResidence = residence
-					// Load child data for the newly selected residence (e.g., from sync)
-					Task { await loadAllData() }
 				} else if let firstResidence = residences.first {
-					// Fall back to first residence if no AppStorage value
 					self.selectedResidence = firstResidence
-					// Load child data for the newly selected residence (e.g., from sync)
-					Task { await loadAllData() }
 				}
 			}
 		}

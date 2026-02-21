@@ -10,11 +10,23 @@
 		F43DBA232F2F144B00334B51 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F43DBA222F2F144B00334B51 /* AppIcon.icon */; };
 		F48205FF2F49663C00CB6EAE /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = F48205FE2F49663C00CB6EAE /* SQLiteData */; };
 		F4851D642F248EB5002E4AFF /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = F4851D632F248EB5002E4AFF /* TelemetryDeck */; };
+		F4EBA9C12F4A280200C9FEE0 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = F4EBA9C02F4A280200C9FEE0 /* DependenciesTestSupport */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F4EBA9BB2F4A256800C9FEE0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F489E7D32F034A8E00EB50D4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F489E7DA2F034A8E00EB50D4;
+			remoteInfo = YouHQ;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		F43DBA222F2F144B00334B51 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		F489E7DB2F034A8E00EB50D4 /* YouHQ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouHQ.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4EBA9B72F4A256800C9FEE0 /* YouHQTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouHQTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +48,11 @@
 			path = YouHQ;
 			sourceTree = "<group>";
 		};
+		F4EBA9B82F4A256800C9FEE0 /* YouHQTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = YouHQTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +65,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F4EBA9B42F4A256800C9FEE0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4EBA9C12F4A280200C9FEE0 /* DependenciesTestSupport in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -56,6 +81,7 @@
 			children = (
 				F43DBA222F2F144B00334B51 /* AppIcon.icon */,
 				F489E7DD2F034A8E00EB50D4 /* YouHQ */,
+				F4EBA9B82F4A256800C9FEE0 /* YouHQTests */,
 				F4D2E50C2F46C70800342A5F /* Frameworks */,
 				F489E7DC2F034A8E00EB50D4 /* Products */,
 			);
@@ -65,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				F489E7DB2F034A8E00EB50D4 /* YouHQ.app */,
+				F4EBA9B72F4A256800C9FEE0 /* YouHQTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -104,6 +131,30 @@
 			productReference = F489E7DB2F034A8E00EB50D4 /* YouHQ.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F4EBA9B62F4A256800C9FEE0 /* YouHQTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4EBA9BD2F4A256800C9FEE0 /* Build configuration list for PBXNativeTarget "YouHQTests" */;
+			buildPhases = (
+				F4EBA9B32F4A256800C9FEE0 /* Sources */,
+				F4EBA9B42F4A256800C9FEE0 /* Frameworks */,
+				F4EBA9B52F4A256800C9FEE0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F4EBA9BC2F4A256800C9FEE0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F4EBA9B82F4A256800C9FEE0 /* YouHQTests */,
+			);
+			name = YouHQTests;
+			packageProductDependencies = (
+				F4EBA9C02F4A280200C9FEE0 /* DependenciesTestSupport */,
+			);
+			productName = YouHQTests;
+			productReference = F4EBA9B72F4A256800C9FEE0 /* YouHQTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -116,6 +167,10 @@
 				TargetAttributes = {
 					F489E7DA2F034A8E00EB50D4 = {
 						CreatedOnToolsVersion = 26.2;
+					};
+					F4EBA9B62F4A256800C9FEE0 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = F489E7DA2F034A8E00EB50D4;
 					};
 				};
 			};
@@ -139,6 +194,7 @@
 			projectRoot = "";
 			targets = (
 				F489E7DA2F034A8E00EB50D4 /* YouHQ */,
+				F4EBA9B62F4A256800C9FEE0 /* YouHQTests */,
 			);
 		};
 /* End PBXProject section */
@@ -149,6 +205,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F43DBA232F2F144B00334B51 /* AppIcon.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F4EBA9B52F4A256800C9FEE0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +246,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F4EBA9B32F4A256800C9FEE0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F4EBA9BC2F4A256800C9FEE0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F489E7DA2F034A8E00EB50D4 /* YouHQ */;
+			targetProxy = F4EBA9BB2F4A256800C9FEE0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F489E7E42F034A8F00EB50D4 /* Debug */ = {
@@ -448,6 +526,55 @@
 			};
 			name = Release;
 		};
+		F4EBA9BE2F4A256800C9FEE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJAHJZFYK7;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryantoken.YouHQTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouHQ.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YouHQ";
+			};
+			name = Debug;
+		};
+		F4EBA9BF2F4A256800C9FEE0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJAHJZFYK7;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryantoken.YouHQTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouHQ.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YouHQ";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -465,6 +592,15 @@
 			buildConfigurations = (
 				F489E7E72F034A8F00EB50D4 /* Debug */,
 				F489E7E82F034A8F00EB50D4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F4EBA9BD2F4A256800C9FEE0 /* Build configuration list for PBXNativeTarget "YouHQTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4EBA9BE2F4A256800C9FEE0 /* Debug */,
+				F4EBA9BF2F4A256800C9FEE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -508,6 +644,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F4851D622F248EB5002E4AFF /* XCRemoteSwiftPackageReference "SwiftSDK" */;
 			productName = TelemetryDeck;
+		};
+		F4EBA9C02F4A280200C9FEE0 /* DependenciesTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F48206022F4966FE00CB6EAE /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesTestSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

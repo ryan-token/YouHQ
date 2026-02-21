@@ -54,7 +54,8 @@ extension VehicleScreen {
 
 				// Load data for the new vehicle when ID changes
 				if selectedVehicle?.id != oldValue?.id {
-					Task {
+					loadDataTask?.cancel()
+					loadDataTask = Task {
 						await loadAllData()
 					}
 				}
@@ -80,8 +81,8 @@ extension VehicleScreen {
 		var isNavigatingToPaintColors = false
 		var vehicleNotes: String
 
-		// Task for debouncing notes updates
 		private var notesDebounceTask: Task<Void, Never>?
+		private var loadDataTask: Task<Void, Never>?
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -126,8 +127,8 @@ extension VehicleScreen {
 
 		func handleProfileChange() async {
 			await loadVehicles()
-			if !vehicles.isEmpty {
-				await setSelectedVehicle(to: vehicles.first!.id)
+			if let first = vehicles.first {
+				await setSelectedVehicle(to: first.id)
 			} else {
 				selectedVehicle = nil
 			}
@@ -149,8 +150,8 @@ extension VehicleScreen {
 				)
 			{
 				await setSelectedVehicle(to: selectedVehicleUUID)
-			} else if selectedVehicleID == nil, !vehicles.isEmpty {
-				await setSelectedVehicle(to: vehicles.first!.id)
+			} else if selectedVehicleID == nil, let first = vehicles.first {
+				await setSelectedVehicle(to: first.id)
 			}
 		}
 
@@ -184,13 +185,8 @@ extension VehicleScreen {
 					let vehicle = vehicles.first(where: { $0.id == uuid })
 				{
 					self.selectedVehicle = vehicle
-					// Load child data for the newly selected vehicle (e.g., from sync)
-					Task { await loadAllData() }
 				} else if let firstVehicle = vehicles.first {
-					// Fall back to first vehicle if no AppStorage value
 					self.selectedVehicle = firstVehicle
-					// Load child data for the newly selected vehicle (e.g., from sync)
-					Task { await loadAllData() }
 				}
 			}
 		}
