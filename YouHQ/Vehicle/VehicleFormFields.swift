@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct VehicleFormFields: View {
+	enum Field: Hashable {
+		case make, model, vin, url, notes
+	}
+
 	@Binding var type: VehicleType
 	@Binding var subType: VehicleSubType
 	@Binding var make: String
@@ -21,7 +25,9 @@ struct VehicleFormFields: View {
 	@Binding var url: String
 	@Binding var notes: String
 	let photoPicker: PhotoPickerViewModel
-	var focusedField: FocusState<Bool>.Binding?
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	init(
 		type: Binding<VehicleType>,
@@ -37,7 +43,7 @@ struct VehicleFormFields: View {
 		url: Binding<String>,
 		notes: Binding<String>,
 		photoPicker: PhotoPickerViewModel,
-		focusedField: FocusState<Bool>.Binding? = nil
+		autoFocus: Bool = false
 	) {
 		_type = type
 		_subType = subType
@@ -52,7 +58,7 @@ struct VehicleFormFields: View {
 		_url = url
 		_notes = notes
 		self.photoPicker = photoPicker
-		self.focusedField = focusedField
+		self.autoFocus = autoFocus
 	}
 
 	var body: some View {
@@ -77,14 +83,23 @@ struct VehicleFormFields: View {
 				}
 			}
 		}
+		.onAppear {
+			if autoFocus, !hasAppeared {
+				hasAppeared = true
+				focusedField = .make
+			}
+		}
 
 		Section("Details") {
 			TextField("Make", text: $make)
-				.focused(focusedField ?? FocusState<Bool>().projectedValue)
+				.focused($focusedField, equals: .make)
+				.onSubmit { focusedField = .model }
 				#if !os(macOS)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("Model", text: $model)
+				.focused($focusedField, equals: .model)
+				.onSubmit { focusedField = .vin }
 				#if !os(macOS)
 					.textInputAutocapitalization(.words)
 				#endif
@@ -106,6 +121,8 @@ struct VehicleFormFields: View {
 			}
 
 			TextField("VIN", text: $vin)
+				.focused($focusedField, equals: .vin)
+				.onSubmit { focusedField = .url }
 				#if !os(macOS)
 					.textInputAutocapitalization(.characters)
 				#endif
@@ -139,6 +156,8 @@ struct VehicleFormFields: View {
 
 		Section("Website") {
 			URLTextField(text: $url)
+				.focused($focusedField, equals: .url)
+				.onSubmit { focusedField = .notes }
 		}
 
 		PhotoPickerSection(
@@ -150,6 +169,8 @@ struct VehicleFormFields: View {
 			TextEditor(text: $notes)
 				.frame(minHeight: 100)
 				.scrollContentBackground(.hidden)
+				.focused($focusedField, equals: .notes)
+				.onSubmit { focusedField = nil }
 		}
 	}
 }

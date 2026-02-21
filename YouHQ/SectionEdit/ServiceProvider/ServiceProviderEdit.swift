@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct ServiceProviderEdit: View {
+	enum Field: Hashable {
+		case name, accountNumber, url, notes
+	}
+
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	var body: some View {
 		if let serviceProviderVM = coordinator.serviceProviderViewModel {
@@ -27,7 +33,8 @@ struct ServiceProviderEdit: View {
 
 				LabeledField(label: "Name") {
 					TextField("", text: $vm.name)
-						.focused(focusedField)
+						.focused($focusedField, equals: .name)
+						.onSubmit { focusedField = .accountNumber }
 						.multilineTextAlignment(.trailing)
 				}
 				#if !os(macOS)
@@ -36,6 +43,8 @@ struct ServiceProviderEdit: View {
 
 				LabeledField(label: "Account Number") {
 					TextField("", text: $vm.accountNumber)
+						.focused($focusedField, equals: .accountNumber)
+						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 
@@ -51,15 +60,25 @@ struct ServiceProviderEdit: View {
 					.keyboardType(.decimalPad)
 				#endif
 			}
+			.onAppear {
+				if autoFocus, !hasAppeared {
+					hasAppeared = true
+					focusedField = .name
+				}
+			}
 
 			Section("Website") {
 				URLTextField(text: $vm.url)
+					.focused($focusedField, equals: .url)
+					.onSubmit { focusedField = .notes }
 			}
 
 			Section("Notes") {
 				TextEditor(text: $vm.notes)
 					.frame(minHeight: 100)
 					.scrollContentBackground(.hidden)
+					.focused($focusedField, equals: .notes)
+					.onSubmit { focusedField = nil }
 			}
 		}
 	}

@@ -12,21 +12,6 @@ struct SectionEditSheet: View {
 	@State private var vm: ViewModel
 	@State private var isShowingDeleteConfirmation = false
 
-	@FocusState private var residenceFieldFocused: Bool
-	@FocusState private var vehicleFieldFocused: Bool
-	@FocusState private var utilityFieldFocused: Bool
-	@FocusState private var insuranceFieldFocused: Bool
-	@FocusState private var maintenanceFieldFocused: Bool
-	@FocusState private var paintColorFieldFocused: Bool
-	@FocusState private var otherFieldFocused: Bool
-	@FocusState private var bankAccountFieldFocused: Bool
-	@FocusState private var investmentAccountFieldFocused: Bool
-	@FocusState private var hsaFieldFocused: Bool
-	@FocusState private var jobFieldFocused: Bool
-	@FocusState private var deviceFieldFocused: Bool
-	@FocusState private var serviceProviderFieldFocused: Bool
-	@FocusState private var subscriptionFieldFocused: Bool
-
 	init(
 		section: EditableSection,
 		draftUtility: Binding<Utility?> = .constant(nil),
@@ -81,72 +66,72 @@ struct SectionEditSheet: View {
 				case .residenceInfo:
 					ResidenceInfoEdit(
 						coordinator: vm,
-						focusedField: $residenceFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .vehicleInfo:
 					VehicleInfoEdit(
 						coordinator: vm,
-						focusedField: $vehicleFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .utility, .utilityDraft:
 					UtilityEdit(
 						coordinator: vm,
-						focusedField: $utilityFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .insurancePolicy, .insurancePolicyDraft:
 					InsuranceEdit(
 						coordinator: vm,
-						focusedField: $insuranceFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .maintenanceItem, .maintenanceItemDraft:
 					MaintenanceItemEdit(
 						coordinator: vm,
-						focusedField: $maintenanceFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .paintColor, .paintColorDraft:
 					PaintColorEdit(
 						coordinator: vm,
-						focusedField: $paintColorFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .other, .otherDraft:
 					OtherEdit(
 						coordinator: vm,
-						focusedField: $otherFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .job, .jobDraft:
 					JobEdit(
 						coordinator: vm,
-						focusedField: $jobFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .device, .deviceDraft:
 					DeviceEdit(
 						coordinator: vm,
-						focusedField: $deviceFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .serviceProvider, .serviceProviderDraft:
 					ServiceProviderEdit(
 						coordinator: vm,
-						focusedField: $serviceProviderFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .subscription, .subscriptionDraft:
 					SubscriptionEdit(
 						coordinator: vm,
-						focusedField: $subscriptionFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .bankAccount, .bankAccountDraft:
 					BankAccountEdit(
 						coordinator: vm,
-						focusedField: $bankAccountFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .investmentAccount, .investmentAccountDraft:
 					InvestmentAccountEdit(
 						coordinator: vm,
-						focusedField: $investmentAccountFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				case .healthSavingsAccount, .healthSavingsAccountDraft:
 					HealthSavingsAccountEdit(
 						coordinator: vm,
-						focusedField: $hsaFieldFocused
+						autoFocus: vm.section.isDraft
 					)
 				}
 			}
@@ -154,40 +139,7 @@ struct SectionEditSheet: View {
 				// Load profiles for profile switching
 				await vm.sectionViewModel.loadProfiles()
 			}
-			.onAppear {
-				if vm.section.isDraft {
-					switch vm.section {
-					case .residenceInfo:
-						residenceFieldFocused = true
-					case .vehicleInfo:
-						vehicleFieldFocused = true
-					case .utility, .utilityDraft:
-						utilityFieldFocused = true
-					case .insurancePolicy, .insurancePolicyDraft:
-						insuranceFieldFocused = true
-					case .maintenanceItem, .maintenanceItemDraft:
-						maintenanceFieldFocused = true
-					case .paintColor, .paintColorDraft:
-						paintColorFieldFocused = true
-					case .other, .otherDraft:
-						otherFieldFocused = true
-					case .job, .jobDraft:
-						jobFieldFocused = true
-					case .device, .deviceDraft:
-						deviceFieldFocused = true
-					case .serviceProvider, .serviceProviderDraft:
-						serviceProviderFieldFocused = true
-					case .subscription, .subscriptionDraft:
-						subscriptionFieldFocused = true
-					case .bankAccount, .bankAccountDraft:
-						bankAccountFieldFocused = true
-					case .investmentAccount, .investmentAccountDraft:
-						investmentAccountFieldFocused = true
-					case .healthSavingsAccount, .healthSavingsAccountDraft:
-						hsaFieldFocused = true
-					}
-				}
-			}
+
 			#if os(macOS)
 				.formStyle(.grouped)
 				.frame(minWidth: 500, minHeight: 350)

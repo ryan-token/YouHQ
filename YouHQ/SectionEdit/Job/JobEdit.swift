@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct JobEdit: View {
+	enum Field: Hashable {
+		case company, title, url, notes
+	}
+
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	var body: some View {
 		if let jobVM = coordinator.jobViewModel {
@@ -17,7 +23,8 @@ struct JobEdit: View {
 			Section("Job Info") {
 				LabeledField(label: "Company") {
 					TextField("", text: $vm.company)
-						.focused(focusedField)
+						.focused($focusedField, equals: .company)
+						.onSubmit { focusedField = .title }
 						.multilineTextAlignment(.trailing)
 				}
 				#if !os(macOS)
@@ -26,6 +33,8 @@ struct JobEdit: View {
 
 				LabeledField(label: "Title") {
 					TextField("", text: $vm.jobTitle)
+						.focused($focusedField, equals: .title)
+						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 				#if !os(macOS)
@@ -88,15 +97,25 @@ struct JobEdit: View {
 					.keyboardType(.decimalPad)
 				#endif
 			}
+			.onAppear {
+				if autoFocus, !hasAppeared {
+					hasAppeared = true
+					focusedField = .company
+				}
+			}
 
 			Section("Website") {
 				URLTextField(text: $vm.url)
+					.focused($focusedField, equals: .url)
+					.onSubmit { focusedField = .notes }
 			}
 
 			Section("Notes") {
 				TextEditor(text: $vm.notes)
 					.frame(minHeight: 100)
 					.scrollContentBackground(.hidden)
+					.focused($focusedField, equals: .notes)
+					.onSubmit { focusedField = nil }
 			}
 		}
 	}

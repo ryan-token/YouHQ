@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ResidenceFormFields: View {
+	enum Field: Hashable {
+		case street, unit, city, state, country, url, notes
+	}
+
 	@Binding var type: ResidenceType
 	@Binding var isCurrent: Bool
 	@Binding var street: String
@@ -24,7 +28,9 @@ struct ResidenceFormFields: View {
 	@Binding var url: String
 	@Binding var notes: String
 	let photoPicker: PhotoPickerViewModel
-	var focusedField: FocusState<Bool>.Binding?
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	init(
 		type: Binding<ResidenceType>,
@@ -43,7 +49,7 @@ struct ResidenceFormFields: View {
 		url: Binding<String>,
 		notes: Binding<String>,
 		photoPicker: PhotoPickerViewModel,
-		focusedField: FocusState<Bool>.Binding? = nil
+		autoFocus: Bool = false
 	) {
 		_type = type
 		_isCurrent = isCurrent
@@ -61,7 +67,7 @@ struct ResidenceFormFields: View {
 		_url = url
 		_notes = notes
 		self.photoPicker = photoPicker
-		self.focusedField = focusedField
+		self.autoFocus = autoFocus
 	}
 
 	var body: some View {
@@ -81,25 +87,38 @@ struct ResidenceFormFields: View {
 					.labelsHidden()
 			}
 		}
+		.onAppear {
+			if autoFocus, !hasAppeared {
+				hasAppeared = true
+				focusedField = .street
+			}
+		}
 
 		Section("Address") {
 			TextField("Street", text: $street)
-				.focused(focusedField ?? FocusState<Bool>().projectedValue)
+				.focused($focusedField, equals: .street)
+				.onSubmit { focusedField = .unit }
 				#if !os(macOS)
 					.textContentType(.streetAddressLine1)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("Unit", text: $unit)
+				.focused($focusedField, equals: .unit)
+				.onSubmit { focusedField = .city }
 				#if !os(macOS)
 					.textContentType(.streetAddressLine2)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("City", text: $city)
+				.focused($focusedField, equals: .city)
+				.onSubmit { focusedField = .state }
 				#if !os(macOS)
 					.textContentType(.addressCity)
 					.textInputAutocapitalization(.words)
 				#endif
 			TextField("State/Region", text: $state)
+				.focused($focusedField, equals: .state)
+				.onSubmit { focusedField = .country }
 				#if !os(macOS)
 					.textContentType(.addressState)
 					.textInputAutocapitalization(.words)
@@ -110,6 +129,8 @@ struct ResidenceFormFields: View {
 					.keyboardType(.numberPad)
 				#endif
 			TextField("Country", text: $country)
+				.focused($focusedField, equals: .country)
+				.onSubmit { focusedField = .url }
 				#if !os(macOS)
 					.textContentType(.countryName)
 					.textInputAutocapitalization(.words)
@@ -177,6 +198,8 @@ struct ResidenceFormFields: View {
 
 		Section("Website") {
 			URLTextField(text: $url)
+				.focused($focusedField, equals: .url)
+				.onSubmit { focusedField = .notes }
 		}
 
 		PhotoPickerSection(
@@ -188,6 +211,8 @@ struct ResidenceFormFields: View {
 			TextEditor(text: $notes)
 				.frame(minHeight: 100)
 				.scrollContentBackground(.hidden)
+				.focused($focusedField, equals: .notes)
+				.onSubmit { focusedField = nil }
 		}
 	}
 }

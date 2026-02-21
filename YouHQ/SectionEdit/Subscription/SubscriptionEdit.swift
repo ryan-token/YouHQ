@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct SubscriptionEdit: View {
+	enum Field: Hashable {
+		case name, url, notes
+	}
+
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	var body: some View {
 		if let subscriptionVM = coordinator.subscriptionViewModel {
@@ -17,7 +23,8 @@ struct SubscriptionEdit: View {
 			Section("Subscription Info") {
 				LabeledField(label: "Name") {
 					TextField("", text: $vm.name)
-						.focused(focusedField)
+						.focused($focusedField, equals: .name)
+						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 				#if !os(macOS)
@@ -73,15 +80,25 @@ struct SubscriptionEdit: View {
 						.labelsHidden()
 				}
 			}
+			.onAppear {
+				if autoFocus, !hasAppeared {
+					hasAppeared = true
+					focusedField = .name
+				}
+			}
 
 			Section("Website") {
 				URLTextField(text: $vm.url)
+					.focused($focusedField, equals: .url)
+					.onSubmit { focusedField = .notes }
 			}
 
 			Section("Notes") {
 				TextEditor(text: $vm.notes)
 					.frame(minHeight: 100)
 					.scrollContentBackground(.hidden)
+					.focused($focusedField, equals: .notes)
+					.onSubmit { focusedField = nil }
 			}
 		}
 	}

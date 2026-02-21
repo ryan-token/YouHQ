@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct HealthSavingsAccountEdit: View {
+	enum Field: Hashable {
+		case institution, accountNumber, url, notes
+	}
+
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	var body: some View {
 		if let hsaVM = coordinator.healthSavingsAccountViewModel {
@@ -27,7 +33,8 @@ struct HealthSavingsAccountEdit: View {
 
 				LabeledField(label: "Institution") {
 					TextField("", text: $vm.institution)
-						.focused(focusedField)
+						.focused($focusedField, equals: .institution)
+						.onSubmit { focusedField = .accountNumber }
 						.multilineTextAlignment(.trailing)
 				}
 				#if !os(macOS)
@@ -36,20 +43,32 @@ struct HealthSavingsAccountEdit: View {
 
 				LabeledField(label: "Account Number") {
 					TextField("", text: $vm.accountNumber)
+						.focused($focusedField, equals: .accountNumber)
+						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 
 				Toggle("Active", isOn: $vm.isActive)
 			}
+			.onAppear {
+				if autoFocus, !hasAppeared {
+					hasAppeared = true
+					focusedField = .institution
+				}
+			}
 
 			Section("Website") {
 				URLTextField(text: $vm.url)
+					.focused($focusedField, equals: .url)
+					.onSubmit { focusedField = .notes }
 			}
 
 			Section("Notes") {
 				TextEditor(text: $vm.notes)
 					.frame(minHeight: 100)
 					.scrollContentBackground(.hidden)
+					.focused($focusedField, equals: .notes)
+					.onSubmit { focusedField = nil }
 			}
 		}
 	}

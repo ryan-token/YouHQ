@@ -12,7 +12,6 @@ struct AddVehicleSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
 	@Binding var selectedVehicle: Vehicle?
-	@FocusState private var focusedField: Bool
 
 	init(profileID: UUID, selectedVehicle: Binding<Vehicle?>) {
 		_vm = State(wrappedValue: ViewModel(profileID: profileID))
@@ -46,15 +45,13 @@ struct AddVehicleSheet: View {
 					url: $vm.url,
 					notes: $vm.notes,
 					photoPicker: vm.photoPicker,
-					focusedField: $focusedField
+					autoFocus: true
 				)
 			}
 			.task {
 				await vm.loadProfiles()
 			}
-			.onAppear {
-				focusedField = true
-			}
+
 			#if os(macOS)
 				.formStyle(.grouped)
 				.frame(minWidth: 500, minHeight: 350)

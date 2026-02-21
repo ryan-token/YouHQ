@@ -9,7 +9,7 @@ import SwiftUI
 
 struct VehicleInfoEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
 
 	var body: some View {
 		if let vehicleVM = coordinator.vehicleViewModel {
@@ -28,7 +28,7 @@ struct VehicleInfoEdit: View {
 				url: $vm.url,
 				notes: $vm.notes,
 				photoPicker: vm.photoPicker,
-				focusedField: focusedField
+				autoFocus: autoFocus
 			)
 		}
 	}

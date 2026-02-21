@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ResidenceInfoEdit: View {
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
 
 	var body: some View {
 		if let residenceVM = coordinator.residenceViewModel {
@@ -31,7 +31,7 @@ struct ResidenceInfoEdit: View {
 				url: $vm.url,
 				notes: $vm.notes,
 				photoPicker: vm.photoPicker,
-				focusedField: focusedField
+				autoFocus: autoFocus
 			)
 		}
 	}

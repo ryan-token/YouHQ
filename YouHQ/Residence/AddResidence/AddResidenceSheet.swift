@@ -12,7 +12,6 @@ struct AddResidenceSheet: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var vm: ViewModel
 	@Binding var selectedResidence: Residence?
-	@FocusState private var focusedField: Bool
 
 	init(profileID: UUID, selectedResidence: Binding<Residence?>) {
 		_vm = State(wrappedValue: ViewModel(profileID: profileID))
@@ -49,15 +48,13 @@ struct AddResidenceSheet: View {
 					url: $vm.url,
 					notes: $vm.notes,
 					photoPicker: vm.photoPicker,
-					focusedField: $focusedField
+					autoFocus: true
 				)
 			}
 			.task {
 				await vm.loadProfiles()
 			}
-			.onAppear {
-				focusedField = true
-			}
+
 			#if os(macOS)
 				.formStyle(.grouped)
 				.frame(minWidth: 500, minHeight: 350)

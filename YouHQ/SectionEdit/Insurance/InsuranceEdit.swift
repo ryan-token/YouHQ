@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct InsuranceEdit: View {
+	enum Field: Hashable {
+		case provider, policyNumber, url, notes
+	}
+
 	let coordinator: SectionEditSheet.ViewModel
-	var focusedField: FocusState<Bool>.Binding
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
 
 	var body: some View {
 		if let insuranceVM = coordinator.insuranceViewModel {
@@ -37,7 +43,8 @@ struct InsuranceEdit: View {
 
 				LabeledField(label: "Provider") {
 					TextField("", text: $vm.provider)
-						.focused(focusedField)
+						.focused($focusedField, equals: .provider)
+						.onSubmit { focusedField = .policyNumber }
 						.multilineTextAlignment(.trailing)
 				}
 				#if !os(macOS)
@@ -46,7 +53,15 @@ struct InsuranceEdit: View {
 
 				LabeledField(label: "Policy Number") {
 					TextField("", text: $vm.policyNumber)
+						.focused($focusedField, equals: .policyNumber)
+						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
+				}
+			}
+			.onAppear {
+				if autoFocus, !hasAppeared {
+					hasAppeared = true
+					focusedField = .provider
 				}
 			}
 
@@ -111,6 +126,8 @@ struct InsuranceEdit: View {
 
 			Section("Website") {
 				URLTextField(text: $vm.url)
+					.focused($focusedField, equals: .url)
+					.onSubmit { focusedField = .notes }
 			}
 
 			PhotoPickerSection(
@@ -122,6 +139,8 @@ struct InsuranceEdit: View {
 				TextEditor(text: $vm.notes)
 					.frame(minHeight: 100)
 					.scrollContentBackground(.hidden)
+					.focused($focusedField, equals: .notes)
+					.onSubmit { focusedField = nil }
 			}
 		}
 	}
