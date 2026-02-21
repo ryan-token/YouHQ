@@ -13,7 +13,7 @@ import Testing
 @testable import YouHQ
 
 extension YouHQTests {
-	@Suite("SalaryChart.ViewModel")
+	@Suite("Salary chart")
 	struct SalaryChartViewModelTests {
 
 		// MARK: - prepareChartData
