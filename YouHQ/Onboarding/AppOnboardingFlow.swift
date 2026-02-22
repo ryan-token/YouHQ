@@ -106,7 +106,9 @@ struct AppOnboardingFlow: View {
 				#endif
 				.opacity(vm.isStartingOnboarding ? 0 : 1)
 			}
-			.background(backgroundGradient)
+			#if !os(macOS)
+				.background(backgroundGradient)
+			#endif
 			.navigationDestination(for: String.self) { destination in
 				if destination == "congratulations" {
 					OnboardingCongratulationsView()
