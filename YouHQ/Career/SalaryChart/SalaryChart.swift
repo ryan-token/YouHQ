@@ -88,10 +88,10 @@ struct SalaryChart: View {
 				}
 				#if os(macOS)
 					.background(
-						Color(.secondarySystemFill)
+						Color(.secondarySystemFill).opacity(0.2)
 							.overlay(
 								RoundedRectangle(cornerRadius: 12)
-									.stroke(Color.primary.opacity(0.1), lineWidth: 1)
+									.stroke(Color.primary.opacity(0.2), lineWidth: 1)
 							)
 					)
 				#else
