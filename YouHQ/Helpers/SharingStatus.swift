@@ -16,10 +16,12 @@ struct SharingStatus: View {
 
 	let profile: ProfileShare?
 	let shouldShowShareButtonIfNotShared: Bool
+	let isInsideSheet: Bool
 
-	init(for profile: ProfileShare?, shouldShowShareButtonIfNotShared: Bool = false) {
+	init(for profile: ProfileShare?, shouldShowShareButtonIfNotShared: Bool = false, isInsideSheet: Bool = false) {
 		self.profile = profile
 		self.shouldShowShareButtonIfNotShared = shouldShowShareButtonIfNotShared
+		self.isInsideSheet = isInsideSheet
 	}
 
 	@State private var sharedRecord: SharedRecord?
@@ -61,7 +63,11 @@ struct SharingStatus: View {
 
 	func shareProfileTapped() async {
 		guard paywallManager.hasUnlockedPremium else {
-			paywallManager.showPaywall()
+			if isInsideSheet {
+				paywallManager.showPaywallFromSettings()
+			} else {
+				paywallManager.showPaywall()
+			}
 			return
 		}
 

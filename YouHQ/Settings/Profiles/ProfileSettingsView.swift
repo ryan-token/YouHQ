@@ -26,7 +26,7 @@ struct ProfileSettingsView: View {
 					if paywallManager.hasUnlockedPremium {
 						vm.isShowingCreateProfileAlert = true
 					} else {
-						paywallManager.showPaywall()
+						paywallManager.showPaywallFromSettings()
 					}
 				} label: {
 					AddMoreButtonLabel(text: "Create Profile", backgroundColor: .indigo)

@@ -14,10 +14,13 @@ struct SettingsScreen: View {
 		case onboarding
 	}
 
+	@Environment(PaywallManager.self) private var paywallManager
 	@Environment(\.dismiss) var dismiss
 	@State private var selectedSetting: SettingsOption?
 
 	var body: some View {
+		@Bindable var paywallManager = paywallManager
+
 		NavigationSplitView {
 			List(selection: $selectedSetting) {
 				Section("Preferences") {
@@ -106,6 +109,17 @@ struct SettingsScreen: View {
 		.onReceive(NotificationCenter.default.publisher(for: .onboardingCompleted)) { _ in
 			dismiss()
 		}
+		#if os(macOS)
+		.sheet(isPresented: $paywallManager.isShowingPaywallInSettingsWindow) {
+			Paywall()
+		}
+		#else
+		.onChange(of: paywallManager.needsSettingsDismissalBeforePaywall) {
+			if paywallManager.needsSettingsDismissalBeforePaywall {
+				dismiss()
+			}
+		}
+		#endif
 	}
 
 	private func iconColor(for setting: SettingsOption) -> Color {

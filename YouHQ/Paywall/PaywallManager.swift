@@ -12,6 +12,8 @@ class PaywallManager {
 	let subscriptionGroupID = "21913578" // from App Store Connect
 
 	var isShowingPaywallSheet = false
+	var isShowingPaywallInSettingsWindow = false
+	var needsSettingsDismissalBeforePaywall = false
 	private(set) var verifiedActiveSubscriptionIDs = Set<String>()
 
 	@ObservationIgnored
@@ -27,6 +29,18 @@ class PaywallManager {
 	func showPaywall() {
 		Analytics.sendSignal(.paywallPresented)
 		isShowingPaywallSheet = true
+	}
+
+	/// Call this instead of `showPaywall()` when inside SettingsScreen.
+	/// On iOS, this dismisses the Settings sheet first so the paywall can present from AppTabView.
+	/// On macOS, this presents the paywall in the Settings window only (not the main window).
+	func showPaywallFromSettings() {
+		Analytics.sendSignal(.paywallPresented)
+		#if os(macOS)
+		isShowingPaywallInSettingsWindow = true
+		#else
+		needsSettingsDismissalBeforePaywall = true
+		#endif
 	}
 
 	func setup() async {

@@ -38,7 +38,7 @@ struct ProfileRow: View {
 
 				Spacer()
 
-				SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true)
+				SharingStatus(for: profile, shouldShowShareButtonIfNotShared: true, isInsideSheet: true)
 					.layoutPriority(1)
 			}
 			.contentShape(.rect)
