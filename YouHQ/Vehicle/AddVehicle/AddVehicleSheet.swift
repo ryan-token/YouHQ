@@ -48,9 +48,6 @@ struct AddVehicleSheet: View {
 					autoFocus: true
 				)
 			}
-			.task {
-				await vm.loadProfiles()
-			}
 
 			#if os(macOS)
 				.formStyle(.grouped)
@@ -74,7 +71,9 @@ struct AddVehicleSheet: View {
 
 				ToolbarItem(placement: .confirmationAction) {
 					Button("Save") {
-						if let newVehicle = vm.save() {
+						if let newVehicle = vm.save(),
+						   vm.isSavingToOriginalProfile
+						{
 							selectedVehicle = newVehicle
 						}
 						dismiss()

@@ -55,10 +55,7 @@ extension ServiceProviderEdit {
 			self.url = serviceProvider.url
 			self.notes = serviceProvider.notes
 			self.currentProfileID = serviceProvider.profileID
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
+			self.profiles = loadAllProfiles(from: database)
 		}
 
 		func save() {

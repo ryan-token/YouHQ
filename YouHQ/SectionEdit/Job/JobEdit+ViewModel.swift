@@ -60,10 +60,7 @@ extension JobEdit {
 			self.url = job.url
 			self.notes = job.notes
 			self.currentProfileID = job.profileID
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
+			self.profiles = loadAllProfiles(from: database)
 		}
 
 		func save() {

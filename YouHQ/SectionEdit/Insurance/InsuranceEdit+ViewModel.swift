@@ -64,11 +64,8 @@ extension InsuranceEdit {
 			self.url = policy.url
 			self.notes = policy.notes
 			self.currentProfileID = policy.profileID
+			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {

@@ -58,10 +58,7 @@ extension SubscriptionEdit {
 			self.url = subscription.url
 			self.notes = subscription.notes
 			self.currentProfileID = subscription.profileID
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
+			self.profiles = loadAllProfiles(from: database)
 		}
 
 		func save() {

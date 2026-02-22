@@ -2,7 +2,7 @@
 //  ProfileSwitcherToolbarItem.swift
 //  YouHQ
 //
-//  Created by Claude Code on 2/11/26.
+//  Created by Ryan Token on 2/11/26.
 //
 
 import SQLiteData

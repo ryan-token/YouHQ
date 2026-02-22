@@ -9,9 +9,9 @@ import SQLiteData
 
 /// Helper function to load all profiles from the database
 /// This is used by SectionEditViewModel implementations that support profile switching
-func loadAllProfiles(from database: any DatabaseReader) async -> [ProfileShare] {
-	await withErrorReporting {
-		try await database.read { db in
+func loadAllProfiles(from database: any DatabaseReader) -> [ProfileShare] {
+	withErrorReporting {
+		try database.read { db in
 			try Profile
 				.group(by: \.id)
 				.leftJoin(SyncMetadata.all) {

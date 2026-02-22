@@ -65,11 +65,8 @@ extension VehicleInfoEdit {
 			self.url = vehicle.url
 			self.notes = vehicle.notes
 			self.currentProfileID = vehicle.profileID
+			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {

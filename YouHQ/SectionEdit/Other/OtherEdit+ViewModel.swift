@@ -51,11 +51,8 @@ extension OtherEdit {
 			self.url = other.url
 			self.notes = other.notes
 			self.currentProfileID = other.profileID
+			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {

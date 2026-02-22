@@ -55,10 +55,7 @@ extension InvestmentAccountEdit {
 			self.url = account.url
 			self.notes = account.notes
 			self.currentProfileID = account.profileID
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
+			self.profiles = loadAllProfiles(from: database)
 		}
 
 		func save() {

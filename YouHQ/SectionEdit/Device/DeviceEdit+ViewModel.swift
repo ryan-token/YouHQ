@@ -58,10 +58,7 @@ extension DeviceEdit {
 			self.url = device.url
 			self.notes = device.notes
 			self.currentProfileID = device.profileID
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
+			self.profiles = loadAllProfiles(from: database)
 		}
 
 		func save() {

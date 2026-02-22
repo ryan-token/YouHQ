@@ -14,6 +14,7 @@ extension AddVehicleSheet {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) var database
 
+		let originalProfileID: UUID
 		var selectedProfileID: UUID
 		var type: VehicleType = .car
 		var subType: VehicleSubType = .gas
@@ -36,12 +37,14 @@ extension AddVehicleSheet {
 			make.trimmingCharacters(in: .whitespaces).isNotEmpty
 		}
 
-		init(profileID: UUID) {
-			self.selectedProfileID = profileID
+		var isSavingToOriginalProfile: Bool {
+			selectedProfileID == originalProfileID
 		}
 
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
+		init(profileID: UUID) {
+			self.originalProfileID = profileID
+			self.selectedProfileID = profileID
+			self.profiles = loadAllProfiles(from: database)
 		}
 
 		func save() -> Vehicle? {

@@ -72,11 +72,8 @@ extension ResidenceInfoEdit {
 			self.url = residence.url
 			self.notes = residence.notes
 			self.currentProfileID = residence.profileID
+			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
-		}
-
-		func loadProfiles() async {
-			profiles = await loadAllProfiles(from: database)
 		}
 
 		func save() {

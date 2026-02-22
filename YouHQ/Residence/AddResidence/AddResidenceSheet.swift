@@ -51,9 +51,6 @@ struct AddResidenceSheet: View {
 					autoFocus: true
 				)
 			}
-			.task {
-				await vm.loadProfiles()
-			}
 
 			#if os(macOS)
 				.formStyle(.grouped)
@@ -77,7 +74,9 @@ struct AddResidenceSheet: View {
 
 				ToolbarItem(placement: .confirmationAction) {
 					Button("Save") {
-						if let newResidence = vm.save() {
+						if let newResidence = vm.save(),
+						   vm.isSavingToOriginalProfile
+						{
 							selectedResidence = newResidence
 						}
 						dismiss()

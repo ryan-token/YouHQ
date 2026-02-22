@@ -135,10 +135,6 @@ struct SectionEditSheet: View {
 					)
 				}
 			}
-			.task {
-				// Load profiles for profile switching
-				await vm.sectionViewModel.loadProfiles()
-			}
 
 			#if os(macOS)
 				.formStyle(.grouped)

@@ -18,7 +18,6 @@ protocol SectionEditViewModel: AnyObject, Observable {
 	func save()
 	func cancel()
 	func delete()
-	func loadProfiles() async
 }
 
 // Default implementations for items that don't support profile switching
@@ -30,7 +29,6 @@ extension SectionEditViewModel {
 	}
 	var itemNameForProfilePicker: String { "" }
 	var supportsProfileSwitching: Bool { false }
-	func loadProfiles() async {}
 }
 
 extension SectionEditSheet {
