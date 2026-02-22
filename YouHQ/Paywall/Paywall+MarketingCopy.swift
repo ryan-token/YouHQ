@@ -10,24 +10,11 @@ import SwiftUI
 
 extension Paywall {
 	struct MarketingCopy: View {
-		@Environment(\.dismiss) private var dismiss
 		@Environment(PaywallManager.self) private var paywallManager
 
 		let shouldShowSkipButton: Bool
 		let shouldShowDismissButton: Bool
 		let onComplete: (() -> Void)?
-
-		var hstackSpacing: CGFloat {
-			#if os(macOS)
-				64
-			#else
-				if UIDevice.current.userInterfaceIdiom == .phone {
-					10
-				} else {
-					32
-				}
-			#endif
-		}
 
 		init(shouldShowSkipButton: Bool, shouldShowDismissButton: Bool, onComplete: (() -> Void)? = nil) {
 			self.shouldShowSkipButton = shouldShowSkipButton
@@ -36,110 +23,27 @@ extension Paywall {
 		}
 
 		var body: some View {
-			VStack(spacing: 8) {
-				VStack(spacing: 0) {
-					ZStack(alignment: .topTrailing) {
-						ScalableImage("AppIcon-1024", height: 90)
-							.frame(maxWidth: .infinity, alignment: .center)
-
-						if shouldShowDismissButton {
-							Button {
-								dismiss()
-							} label: {
-								Image(systemName: "xmark")
-									.font(.title2.weight(.medium))
-									.frame(width: 20, height: 30)
-									.contentShape(Circle())
-							}
-							#if !os(visionOS)
-								.buttonStyle(.glass)
-							#endif
-							.padding(4)
-						}
-					}
-
-					VStack(spacing: 4) {
-						HQText("YouHQ Premium")
-							.font(.largeTitle)
-							.fontWeight(.black)
-
-						HQText("Made with ❤️ by an independent developer")
-							.font(.headline)
-					}
-				}
-				.padding(.top)
-				#if !os(macOS)
-					.if(UIDevice.current.userInterfaceIdiom == .pad) {
-						$0.padding(.top, 40)
-					}
-				#endif
-
-				HStack(alignment: .top, spacing: hstackSpacing) {
-					VStack(alignment: .leading, spacing: 2) {
-						HQText("Free:")
+			Group {
+				if paywallManager.hasUnlockedPremium {
+					VStack {
+						Header(shouldShowDismissButton: shouldShowDismissButton)
+						Spacer()
+						HQText("🎉 Thank you for supporting YouHQ!")
+							.padding(.vertical, 24)
 							.font(.headline.weight(.semibold))
-						Group {
-							HQText("• 1 Profile")
-							HQText("• 1 Residence")
-							HQText("• 1 Vehicle")
-							HQText("• \(Constants.paywallCoreItemsThreshold) Items per Tab")
-							HQText("• \(Constants.paywallPaintColorsThreshold) Paint Colors")
-							HQText("• \(Constants.paywallPaintColorsThreshold) Maintenance Items")
-							HQText("• Profiles Can't Be Shared")
-						}
+							.rainbowGradient()
+							.animation(.default, value: paywallManager.hasUnlockedPremium)
 					}
-					.foregroundStyle(.white.opacity(0.7))
-
-					VStack(alignment: .leading, spacing: 2) {
-						HQText("YouHQ Premium:")
-							.foregroundStyle(
-								LinearGradient(
-									colors: [.pink, .orange, .yellow, .green, .blue, .purple], startPoint: .leading, endPoint: .trailing)
-							)
-							.font(.headline.weight(.semibold))
-						Group {
-							HQText("🎭 Unlimited Profiles")
-							HQText("🏠 Unlimited Residences")
-							HQText("🚗 Unlimited Vehicles")
-							HQText("💯 Unlimited Items")
-							HQText("✨ Unlimited Everything")
-							HQText("☁️ Profile Sharing")
-							HQText("🙏 My Undying Gratitude")
+				} else {
+					VStack(spacing: 8) {
+						Header(shouldShowDismissButton: shouldShowDismissButton)
+						FeatureComparison()
+						if shouldShowSkipButton {
+							SkipButton(onComplete: onComplete)
 						}
+						Spacer()
 					}
 				}
-				.font(.subheadline.weight(.medium))
-				.multilineTextAlignment(.leading)
-				.frame(maxWidth: .infinity, alignment: .center)
-
-				Group {
-					if shouldShowSkipButton {
-						Button {
-							onComplete?()
-						} label: {
-							HQText("Skip")
-								.foregroundStyle(.white.opacity(0.7))
-								.fontWeight(.medium)
-								.padding(.horizontal)
-						}
-						.buttonStyle(.bordered)
-						.controlSize(.regular)
-						.overlay {
-							Capsule()
-								.stroke(.white.opacity(0.8), lineWidth: 1)
-						}
-					} else {
-						if paywallManager.hasUnlockedPremium {
-							HQText("🎉 Thank you for supporting YouHQ!")
-								.font(.headline.weight(.semibold))
-								.animation(.default, value: paywallManager.hasUnlockedPremium)
-						}
-					}
-				}
-				.padding(.top, 8)
-				.padding(.bottom, 2)
-
-				Spacer()
 			}
 			.foregroundStyle(.white)
 			#if os(visionOS)
@@ -155,4 +59,5 @@ extension Paywall {
 
 #Preview {
 	Paywall.MarketingCopy(shouldShowSkipButton: true, shouldShowDismissButton: true)
+		.environment(PaywallManager())
 }

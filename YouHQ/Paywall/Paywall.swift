@@ -127,8 +127,10 @@ struct Paywall: View {
 		@State private var paywallManager = PaywallManager()
 
 		var body: some View {
-			Paywall()
-				.environment(paywallManager)
+			NavigationStack {
+				Paywall()
+					.environment(paywallManager)
+			}
 		}
 	}
 	return PaywallPreview()

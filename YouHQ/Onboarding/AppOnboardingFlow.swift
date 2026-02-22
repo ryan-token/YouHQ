@@ -209,5 +209,15 @@ struct AppOnboardingFlow: View {
 }
 
 #Preview {
-	AppOnboardingFlow()
+	struct AppOnboardingPreview: View {
+		@State private var paywallManager = PaywallManager()
+
+		var body: some View {
+			NavigationStack {
+				AppOnboardingFlow()
+					.environment(paywallManager)
+			}
+		}
+	}
+	return AppOnboardingPreview()
 }
