@@ -28,10 +28,7 @@ extension Paywall {
 					VStack {
 						Header(shouldShowDismissButton: shouldShowDismissButton)
 						Spacer()
-						HQText("🎉 Thank you for supporting YouHQ!")
-							.padding(.vertical, 24)
-							.font(.headline.weight(.semibold))
-							.rainbowGradient()
+						ThankYouBadge()
 							.animation(.default, value: paywallManager.hasUnlockedPremium)
 					}
 				} else {

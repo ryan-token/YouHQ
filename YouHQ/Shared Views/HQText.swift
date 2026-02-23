@@ -19,7 +19,7 @@ struct HQText: View {
 	var body: some View {
 		Text(text)
 			.fontDesign(.rounded)
-			#if os(macOS)
+			#if !os(iOS)
 				.if(italic) {
 					$0.padding(.leading, 2)
 				}

@@ -12,7 +12,7 @@ struct RainbowGradient: ViewModifier {
 		content
 			.foregroundStyle(
 				LinearGradient(
-					colors: [.pink, .orange, .yellow, .green, .blue, .purple], startPoint: .leading, endPoint: .trailing
+					colors: [.pink, .orange, .green, .blue, .purple], startPoint: .leading, endPoint: .trailing
 				)
 			)
 	}

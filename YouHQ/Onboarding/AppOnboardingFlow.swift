@@ -20,6 +20,7 @@ struct AppOnboardingFlow: View {
 	let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 	let timeOnEachTab = 4
 	let lastAutoAdvanceTab = 5 // Stop auto-advancing after OnboardingEndView
+	private let screenshots = makeScreenshots()
 
 	init(fromSettings: Bool = false) {
 		self.fromSettings = fromSettings
@@ -169,38 +170,65 @@ struct AppOnboardingFlow: View {
 		#endif
 	}
 
-	private let screenshots: [ScreenshotConfig] = [
-		.init(
-			title: "Home",
-			description: "Track utilities, paint colors, maintenance, & more",
-			imageNameLight: "onboarding.home.light",
-			imageNameDark: "onboarding.home.dark"
-		),
-		.init(
-			title: "Vehicles",
-			description: "Track insurance, paint colors, & maintenance",
-			imageNameLight: "onboarding.vehicles.light",
-			imageNameDark: "onboarding.vehicles.dark"
-		),
-		.init(
-			title: "Money",
-			description: "Track banks, investment accounts, & HSA/FSAs",
-			imageNameLight: "onboarding.money.light",
-			imageNameDark: "onboarding.money.dark"
-		),
-		.init(
-			title: "Media",
-			description: "Track service providers, subscriptions, & devices",
-			imageNameLight: "onboarding.media.light",
-			imageNameDark: "onboarding.media.dark"
-		),
-		.init(
-			title: "Career",
-			description: "Track jobs & salary history over time",
-			imageNameLight: "onboarding.career.light",
-			imageNameDark: "onboarding.career.dark"
-		)
-	]
+	private static var platform: String {
+		#if os(iOS)
+			switch UIDevice.current.userInterfaceIdiom {
+			case .phone:
+				"ios"
+			case .pad:
+				"ipados"
+			default:
+				"ios"
+			}
+		#elseif os(macOS)
+			"macos"
+		#elseif os(visionOS)
+			"visionos"
+		#else
+			"ios"
+		#endif
+	}
+
+	private static func makeScreenshots() -> [ScreenshotConfig] {
+		#if os(visionOS)
+			return [
+				.init(
+					title: "Home", description: "Track utilities, paint colors, maintenance, & more",
+					imageNameLight: "\(platform).onboarding.home", imageNameDark: "\(platform).onboarding.home"),
+				.init(
+					title: "Vehicles", description: "Track insurance, paint colors, & maintenance",
+					imageNameLight: "\(platform).onboarding.vehicles", imageNameDark: "\(platform).onboarding.vehicles"),
+				.init(
+					title: "Money", description: "Track banks, investment accounts, & HSA/FSAs",
+					imageNameLight: "\(platform).onboarding.money", imageNameDark: "\(platform).onboarding.money"),
+				.init(
+					title: "Media", description: "Track service providers, subscriptions, & devices",
+					imageNameLight: "\(platform).onboarding.media", imageNameDark: "\(platform).onboarding.media"),
+				.init(
+					title: "Career", description: "Track jobs & salary history over time", imageNameLight: "\(platform).onboarding.career",
+					imageNameDark: "\(platform).onboarding.career")
+			]
+		#else
+			return [
+				.init(
+					title: "Home", description: "Track utilities, paint colors, maintenance, & more",
+					imageNameLight: "\(platform).onboarding.home.light", imageNameDark: "\(platform).onboarding.home.dark"),
+				.init(
+					title: "Vehicles", description: "Track insurance, paint colors, & maintenance",
+					imageNameLight: "\(platform).onboarding.vehicles.light", imageNameDark: "\(platform).onboarding.vehicles.dark"),
+				.init(
+					title: "Money", description: "Track banks, investment accounts, & HSA/FSAs",
+					imageNameLight: "\(platform).onboarding.money.light", imageNameDark: "\(platform).onboarding.money.dark"),
+				.init(
+					title: "Media", description: "Track service providers, subscriptions, & devices",
+					imageNameLight: "\(platform).onboarding.media.light", imageNameDark: "\(platform).onboarding.media.dark"),
+				.init(
+					title: "Career", description: "Track jobs & salary history over time",
+					imageNameLight: "\(platform).onboarding.career.light",
+					imageNameDark: "\(platform).onboarding.career.dark")
+			]
+		#endif
+	}
 
 	private struct ScreenshotConfig {
 		let title: String
