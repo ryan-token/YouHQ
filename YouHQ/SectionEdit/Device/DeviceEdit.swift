@@ -21,7 +21,7 @@ struct DeviceEdit: View {
 		if let deviceVM = coordinator.deviceViewModel {
 			@Bindable var vm = deviceVM
 			Section("Device Info") {
-				LabeledField(label: "Type") {
+				LabeledField("Type", shouldOverrideTap: false) {
 					Picker(selection: $vm.type) {
 						ForEach(DeviceType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
@@ -31,7 +31,7 @@ struct DeviceEdit: View {
 					}
 				}
 
-				LabeledField(label: "Brand") {
+				LabeledField("Brand") {
 					TextField("", text: $vm.brand)
 						.focused($focusedField, equals: .brand)
 						.onSubmit { focusedField = .model }
@@ -41,7 +41,7 @@ struct DeviceEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Model") {
+				LabeledField("Model") {
 					TextField("", text: $vm.model)
 						.focused($focusedField, equals: .model)
 						.onSubmit { focusedField = .serialNumber }
@@ -51,14 +51,14 @@ struct DeviceEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Serial Number") {
+				LabeledField("Serial Number") {
 					TextField("", text: $vm.serialNumber)
 						.focused($focusedField, equals: .serialNumber)
 						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 
-				LabeledField(label: "Purchase Date") {
+				LabeledField("Purchase Date") {
 					DatePicker(
 						"",
 						selection: Binding(

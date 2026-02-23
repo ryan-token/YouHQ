@@ -72,7 +72,7 @@ struct ResidenceFormFields: View {
 
 	var body: some View {
 		Section("Basic Info") {
-			LabeledField(label: "Type") {
+			LabeledField("Type", shouldOverrideTap: false) {
 				Picker(selection: $type) {
 					ForEach(ResidenceType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
@@ -82,7 +82,7 @@ struct ResidenceFormFields: View {
 				}
 			}
 
-			LabeledField(label: "Current Residence") {
+			LabeledField("Current Residence") {
 				Toggle("", isOn: $isCurrent)
 					.labelsHidden()
 			}
@@ -138,7 +138,7 @@ struct ResidenceFormFields: View {
 		}
 
 		Section("Dates") {
-			LabeledField(label: "Move-in Date") {
+			LabeledField("Move-in Date") {
 				DatePicker(
 					"",
 					selection: Binding(
@@ -150,13 +150,13 @@ struct ResidenceFormFields: View {
 				.labelsHidden()
 			}
 
-			LabeledField(label: "Has Move-out Date") {
+			LabeledField("Has Move-out Date") {
 				Toggle("", isOn: $hasMoveOutDate)
 					.labelsHidden()
 			}
 
 			if hasMoveOutDate {
-				LabeledField(label: "Move-out Date") {
+				LabeledField("Move-out Date") {
 					DatePicker(
 						"",
 						selection: Binding(
@@ -171,7 +171,7 @@ struct ResidenceFormFields: View {
 		}
 
 		Section("Cost") {
-			LabeledField(label: "Cost Type") {
+			LabeledField("Cost Type", shouldOverrideTap: false) {
 				Picker(selection: $costType) {
 					ForEach(ResidenceCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
@@ -182,7 +182,7 @@ struct ResidenceFormFields: View {
 			}
 
 			if costType != .owned {
-				LabeledField(label: "Monthly Cost") {
+				LabeledField("Monthly Cost") {
 					TextField(
 						"",
 						value: $monthlyCost,

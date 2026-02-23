@@ -21,7 +21,7 @@ struct SubscriptionEdit: View {
 		if let subscriptionVM = coordinator.subscriptionViewModel {
 			@Bindable var vm = subscriptionVM
 			Section("Subscription Info") {
-				LabeledField(label: "Name") {
+				LabeledField("Name") {
 					TextField("", text: $vm.name)
 						.focused($focusedField, equals: .name)
 						.onSubmit { focusedField = .url }
@@ -31,7 +31,7 @@ struct SubscriptionEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Category") {
+				LabeledField("Category", shouldOverrideTap: false) {
 					Picker(selection: $vm.category) {
 						ForEach(SubscriptionCategory.allCases, id: \.self) { category in
 							HQText(category.rawValue).tag(category)
@@ -41,7 +41,7 @@ struct SubscriptionEdit: View {
 					}
 				}
 
-				LabeledField(label: "Billing Cycle") {
+				LabeledField("Billing Cycle", shouldOverrideTap: false) {
 					Picker(selection: $vm.billingCycle) {
 						ForEach(BillingCycle.allCases, id: \.self) { cycle in
 							HQText(cycle.rawValue).tag(cycle)
@@ -51,7 +51,7 @@ struct SubscriptionEdit: View {
 					}
 				}
 
-				LabeledField(label: vm.billingCycle == .annual ? "Annual Cost" : "Monthly Cost") {
+				LabeledField(vm.billingCycle == .annual ? "Annual Cost" : "Monthly Cost") {
 					TextField(
 						"",
 						value: $vm.monthlyCost,
@@ -63,7 +63,7 @@ struct SubscriptionEdit: View {
 					.keyboardType(.decimalPad)
 				#endif
 
-				LabeledField(label: "Renewal Date") {
+				LabeledField("Renewal Date") {
 					DatePicker(
 						"",
 						selection: Binding(
@@ -75,7 +75,7 @@ struct SubscriptionEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField(label: "Active") {
+				LabeledField("Active") {
 					Toggle("", isOn: $vm.isActive)
 						.labelsHidden()
 				}

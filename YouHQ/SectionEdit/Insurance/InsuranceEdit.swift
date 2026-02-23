@@ -21,7 +21,7 @@ struct InsuranceEdit: View {
 		if let insuranceVM = coordinator.insuranceViewModel {
 			@Bindable var vm = insuranceVM
 			Section("Policy Info") {
-				LabeledField(label: "Type") {
+				LabeledField("Type", shouldOverrideTap: false) {
 					Picker(selection: $vm.type) {
 						ForEach(
 							InsurancePolicyType.allCases.filter {
@@ -41,7 +41,7 @@ struct InsuranceEdit: View {
 					.disabled(vm.policy.vehicleID != nil)
 				}
 
-				LabeledField(label: "Provider") {
+				LabeledField("Provider") {
 					TextField("", text: $vm.provider)
 						.focused($focusedField, equals: .provider)
 						.onSubmit { focusedField = .policyNumber }
@@ -51,7 +51,7 @@ struct InsuranceEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Policy Number") {
+				LabeledField("Policy Number") {
 					TextField("", text: $vm.policyNumber)
 						.focused($focusedField, equals: .policyNumber)
 						.onSubmit { focusedField = .url }
@@ -66,7 +66,7 @@ struct InsuranceEdit: View {
 			}
 
 			Section("Cost") {
-				LabeledField(label: "Monthly Cost") {
+				LabeledField("Monthly Cost") {
 					TextField(
 						"",
 						value: $vm.monthlyCost,
@@ -78,7 +78,7 @@ struct InsuranceEdit: View {
 					.keyboardType(.decimalPad)
 				#endif
 
-				LabeledField(label: "Deductible") {
+				LabeledField("Deductible") {
 					TextField(
 						"",
 						value: $vm.deductible,
@@ -90,7 +90,7 @@ struct InsuranceEdit: View {
 					.keyboardType(.decimalPad)
 				#endif
 
-				LabeledField(label: "Coverage Amount") {
+				LabeledField("Coverage Amount") {
 					TextField(
 						"",
 						value: $vm.coverageAmount,
@@ -104,13 +104,13 @@ struct InsuranceEdit: View {
 			}
 
 			Section("Dates") {
-				LabeledField(label: "Has Renewal Date") {
+				LabeledField("Has Renewal Date") {
 					Toggle("", isOn: $vm.hasRenewalDate)
 						.labelsHidden()
 				}
 
 				if vm.hasRenewalDate {
-					LabeledField(label: "Renewal Date") {
+					LabeledField("Renewal Date") {
 						DatePicker(
 							"",
 							selection: Binding(

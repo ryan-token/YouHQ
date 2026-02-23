@@ -8,9 +8,17 @@
 import SwiftUI
 
 struct LabeledField<Content: View>: View {
-	let label: String
-	@ViewBuilder let content: () -> Content
 	@FocusState private var isFocused: Bool
+
+	let label: String
+	let shouldOverrideTap: Bool
+	@ViewBuilder let content: () -> Content
+
+	init(_ label: String, shouldOverrideTap: Bool = true, content: @escaping () -> Content) {
+		self.label = label
+		self.shouldOverrideTap = shouldOverrideTap
+		self.content = content
+	}
 
 	var body: some View {
 		LabeledContent {
@@ -19,15 +27,18 @@ struct LabeledField<Content: View>: View {
 		} label: {
 			HQText(label)
 				.foregroundStyle(.secondary)
-				.onTapGesture {
-					isFocused = true
-				}
+		}
+		.contentShape(.rect)
+		.if(shouldOverrideTap) {
+			$0.onTapGesture {
+				isFocused = true
+			}
 		}
 	}
 }
 
 #Preview {
-	LabeledField(label: "Account Number") {
+	LabeledField("Account Number") {
 		TextField("", text: .constant("123456"))
 	}
 }

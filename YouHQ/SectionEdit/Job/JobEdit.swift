@@ -21,7 +21,7 @@ struct JobEdit: View {
 		if let jobVM = coordinator.jobViewModel {
 			@Bindable var vm = jobVM
 			Section("Job Info") {
-				LabeledField(label: "Company") {
+				LabeledField("Company") {
 					TextField("", text: $vm.company)
 						.focused($focusedField, equals: .company)
 						.onSubmit { focusedField = .title }
@@ -31,7 +31,7 @@ struct JobEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Title") {
+				LabeledField("Title") {
 					TextField("", text: $vm.jobTitle)
 						.focused($focusedField, equals: .title)
 						.onSubmit { focusedField = .url }
@@ -41,7 +41,7 @@ struct JobEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Employment Type") {
+				LabeledField("Employment Type", shouldOverrideTap: false) {
 					Picker(selection: $vm.employmentType) {
 						ForEach(EmploymentType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
@@ -51,13 +51,13 @@ struct JobEdit: View {
 					}
 				}
 
-				LabeledField(label: "Current Job") {
+				LabeledField("Current Job") {
 					Toggle(isOn: $vm.isCurrent) {
 						EmptyView()
 					}
 				}
 
-				LabeledField(label: "Start Date") {
+				LabeledField("Start Date") {
 					DatePicker(
 						"",
 						selection: Binding(
@@ -70,7 +70,7 @@ struct JobEdit: View {
 				}
 
 				if !vm.isCurrent {
-					LabeledField(label: "End Date") {
+					LabeledField("End Date") {
 						DatePicker(
 							"",
 							selection: Binding(
@@ -85,7 +85,7 @@ struct JobEdit: View {
 					}
 				}
 
-				LabeledField(label: "Salary") {
+				LabeledField("Salary") {
 					TextField(
 						"",
 						value: $vm.salary,

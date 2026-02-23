@@ -21,7 +21,7 @@ struct BankAccountEdit: View {
 		if let bankAccountVM = coordinator.bankAccountViewModel {
 			@Bindable var vm = bankAccountVM
 			Section("Account Info") {
-				LabeledField(label: "Bank Name") {
+				LabeledField("Bank Name") {
 					TextField("", text: $vm.bankName)
 						.focused($focusedField, equals: .bankName)
 						.onSubmit { focusedField = .accountNumber }
@@ -31,7 +31,7 @@ struct BankAccountEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Account Type") {
+				LabeledField("Account Type", shouldOverrideTap: false) {
 					Picker(selection: $vm.accountType) {
 						ForEach(BankAccountType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
@@ -41,14 +41,14 @@ struct BankAccountEdit: View {
 					}
 				}
 
-				LabeledField(label: "Account Number") {
+				LabeledField("Account Number") {
 					TextField("", text: $vm.accountNumber)
 						.focused($focusedField, equals: .accountNumber)
 						.onSubmit { focusedField = .routingNumber }
 						.multilineTextAlignment(.trailing)
 				}
 
-				LabeledField(label: "Routing Number") {
+				LabeledField("Routing Number") {
 					TextField("", text: $vm.routingNumber)
 						.focused($focusedField, equals: .routingNumber)
 						.onSubmit { focusedField = .url }

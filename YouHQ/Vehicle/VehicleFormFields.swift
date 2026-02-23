@@ -63,7 +63,7 @@ struct VehicleFormFields: View {
 
 	var body: some View {
 		Section("Basic Info") {
-			LabeledField(label: "Type") {
+			LabeledField("Type", shouldOverrideTap: false) {
 				Picker(selection: $type) {
 					ForEach(VehicleType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
@@ -73,7 +73,7 @@ struct VehicleFormFields: View {
 				}
 			}
 
-			LabeledField(label: "Subtype") {
+			LabeledField("Subtype", shouldOverrideTap: false) {
 				Picker(selection: $subType) {
 					ForEach(VehicleSubType.allCases, id: \.self) { subType in
 						HQText(subType.rawValue).tag(subType)
@@ -108,7 +108,7 @@ struct VehicleFormFields: View {
 					.keyboardType(.numberPad)
 				#endif
 
-			LabeledField(label: "Color") {
+			LabeledField("Color") {
 				ColorPicker(
 					"",
 					selection: $backgroundColor,
@@ -129,7 +129,7 @@ struct VehicleFormFields: View {
 		}
 
 		Section("Cost") {
-			LabeledField(label: "Cost Type") {
+			LabeledField("Cost Type", shouldOverrideTap: false) {
 				Picker(selection: $costType) {
 					ForEach(VehicleCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
@@ -140,7 +140,7 @@ struct VehicleFormFields: View {
 			}
 
 			if costType != .owned {
-				LabeledField(label: "Monthly Cost") {
+				LabeledField("Monthly Cost") {
 					TextField(
 						"",
 						value: $monthlyCost,

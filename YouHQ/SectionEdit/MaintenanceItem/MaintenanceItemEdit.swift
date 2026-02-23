@@ -21,7 +21,7 @@ struct MaintenanceItemEdit: View {
 		if let maintenanceVM = coordinator.maintenanceViewModel {
 			@Bindable var vm = maintenanceVM
 			Section("Maintenance Info") {
-				LabeledField(label: "Name") {
+				LabeledField("Name") {
 					TextField("", text: $vm.name)
 						.focused($focusedField, equals: .name)
 						.onSubmit { focusedField = .url }
@@ -31,7 +31,7 @@ struct MaintenanceItemEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Description") {
+				LabeledField("Description") {
 					TextField(
 						"",
 						text: $vm.itemDescription,
@@ -52,7 +52,7 @@ struct MaintenanceItemEdit: View {
 			}
 
 			Section {
-				LabeledField(label: "Every") {
+				LabeledField("Every") {
 					TextField(
 						"",
 						value: $vm.intervalValue,
@@ -64,7 +64,7 @@ struct MaintenanceItemEdit: View {
 					.keyboardType(.numberPad)
 				#endif
 
-				LabeledField(label: "Unit") {
+				LabeledField("Unit", shouldOverrideTap: false) {
 					Picker(selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
 							HQText(
@@ -77,7 +77,7 @@ struct MaintenanceItemEdit: View {
 					}
 				}
 
-				LabeledField(label: "Next Due Date") {
+				LabeledField("Next Due Date") {
 					DatePicker(
 						"",
 						selection: Binding(
@@ -106,7 +106,7 @@ struct MaintenanceItemEdit: View {
 					.buttonStyle(.bordered)
 				}
 
-				LabeledField(label: "Notify When Due") {
+				LabeledField("Notify When Due") {
 					Toggle("", isOn: $vm.shouldNotify)
 						.labelsHidden()
 						.onChange(of: vm.shouldNotify) {

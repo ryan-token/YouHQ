@@ -21,7 +21,7 @@ struct OtherEdit: View {
 		if let otherVM = coordinator.otherViewModel {
 			@Bindable var vm = otherVM
 			Section("Basic Info") {
-				LabeledField(label: "Name") {
+				LabeledField("Name") {
 					TextField("", text: $vm.name)
 						.focused($focusedField, equals: .name)
 						.onSubmit { focusedField = .url }
@@ -31,7 +31,7 @@ struct OtherEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Description") {
+				LabeledField("Description") {
 					TextField(
 						"",
 						text: $vm.otherDescription,
@@ -52,7 +52,7 @@ struct OtherEdit: View {
 			}
 
 			Section("Cost") {
-				LabeledField(label: "Monthly Cost") {
+				LabeledField("Monthly Cost") {
 					TextField(
 						"",
 						value: $vm.monthlyCost,

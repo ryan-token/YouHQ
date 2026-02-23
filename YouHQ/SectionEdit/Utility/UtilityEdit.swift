@@ -21,7 +21,7 @@ struct UtilityEdit: View {
 		if let utilityVM = coordinator.utilityViewModel {
 			@Bindable var vm = utilityVM
 			Section("Utility Info") {
-				LabeledField(label: "Type") {
+				LabeledField("Type", shouldOverrideTap: false) {
 					Picker(selection: $vm.type) {
 						ForEach(UtilityType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
@@ -31,7 +31,7 @@ struct UtilityEdit: View {
 					}
 				}
 
-				LabeledField(label: "Provider") {
+				LabeledField("Provider") {
 					TextField("", text: $vm.provider)
 						.focused($focusedField, equals: .provider)
 						.onSubmit { focusedField = .accountNumber }
@@ -41,14 +41,14 @@ struct UtilityEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Account Number") {
+				LabeledField("Account Number") {
 					TextField("", text: $vm.accountNumber)
 						.focused($focusedField, equals: .accountNumber)
 						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 
-				LabeledField(label: "Appx Monthly Cost") {
+				LabeledField("Appx Monthly Cost") {
 					TextField(
 						"",
 						value: $vm.monthlyCost,

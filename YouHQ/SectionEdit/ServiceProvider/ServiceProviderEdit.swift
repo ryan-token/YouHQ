@@ -21,7 +21,7 @@ struct ServiceProviderEdit: View {
 		if let serviceProviderVM = coordinator.serviceProviderViewModel {
 			@Bindable var vm = serviceProviderVM
 			Section("Service Provider Info") {
-				LabeledField(label: "Type") {
+				LabeledField("Type", shouldOverrideTap: false) {
 					Picker(selection: $vm.providerType) {
 						ForEach(ServiceProviderType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
@@ -31,7 +31,7 @@ struct ServiceProviderEdit: View {
 					}
 				}
 
-				LabeledField(label: "Name") {
+				LabeledField("Name") {
 					TextField("", text: $vm.name)
 						.focused($focusedField, equals: .name)
 						.onSubmit { focusedField = .accountNumber }
@@ -41,14 +41,14 @@ struct ServiceProviderEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Account Number") {
+				LabeledField("Account Number") {
 					TextField("", text: $vm.accountNumber)
 						.focused($focusedField, equals: .accountNumber)
 						.onSubmit { focusedField = .url }
 						.multilineTextAlignment(.trailing)
 				}
 
-				LabeledField(label: "Monthly Cost") {
+				LabeledField("Monthly Cost") {
 					TextField(
 						"",
 						value: $vm.monthlyCost,

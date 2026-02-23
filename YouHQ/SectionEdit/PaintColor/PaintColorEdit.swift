@@ -21,7 +21,7 @@ struct PaintColorEdit: View {
 		if let paintColorVM = coordinator.paintColorViewModel {
 			@Bindable var vm = paintColorVM
 			Section("Paint Info") {
-				LabeledField(label: vm.paintColor.residenceID != nil ? "Room" : "Part of Car") {
+				LabeledField(vm.paintColor.residenceID != nil ? "Room" : "Part of Car") {
 					TextField("", text: $vm.room)
 						.focused($focusedField, equals: .room)
 						.onSubmit { focusedField = .manufacturer }
@@ -31,7 +31,7 @@ struct PaintColorEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Manufacturer") {
+				LabeledField("Manufacturer") {
 					TextField("", text: $vm.manufacturer)
 						.focused($focusedField, equals: .manufacturer)
 						.onSubmit { focusedField = .colorName }
@@ -41,7 +41,7 @@ struct PaintColorEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Color Name") {
+				LabeledField("Color Name") {
 					TextField("", text: $vm.colorName)
 						.focused($focusedField, equals: .colorName)
 						.onSubmit { focusedField = .colorCode }
@@ -51,14 +51,14 @@ struct PaintColorEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Color Code") {
+				LabeledField("Color Code") {
 					TextField("", text: $vm.colorCode)
 						.focused($focusedField, equals: .colorCode)
 						.onSubmit { focusedField = .surfaceType }
 						.multilineTextAlignment(.trailing)
 				}
 
-				LabeledField(label: "Appx Color") {
+				LabeledField("Appx Color") {
 					ColorPicker(
 						"Paint Color",
 						selection: $vm.backgroundColor,
@@ -67,7 +67,7 @@ struct PaintColorEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField(label: "Finish") {
+				LabeledField("Finish", shouldOverrideTap: false) {
 					Picker(selection: $vm.finish) {
 						ForEach(PaintFinish.allCases, id: \.self) { finish in
 							HQText(finish.rawValue).tag(finish)
@@ -77,7 +77,7 @@ struct PaintColorEdit: View {
 					}
 				}
 
-				LabeledField(label: "Surface Type") {
+				LabeledField("Surface Type") {
 					TextField("", text: $vm.surfaceType)
 						.focused($focusedField, equals: .surfaceType)
 						.onSubmit { focusedField = .purchasedFrom }
@@ -95,7 +95,7 @@ struct PaintColorEdit: View {
 			}
 
 			Section("Purchase Details") {
-				LabeledField(label: "Purchased From") {
+				LabeledField("Purchased From") {
 					TextField("", text: $vm.storePurchasedFrom)
 						.focused($focusedField, equals: .purchasedFrom)
 						.onSubmit { focusedField = .url }
@@ -105,7 +105,7 @@ struct PaintColorEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField(label: "Purchase Date") {
+				LabeledField("Purchase Date") {
 					DatePicker(
 						"",
 						selection: Binding(
@@ -117,7 +117,7 @@ struct PaintColorEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField(label: "Application Date") {
+				LabeledField("Application Date") {
 					DatePicker(
 						"",
 						selection: Binding(
