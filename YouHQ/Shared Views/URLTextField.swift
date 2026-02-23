@@ -11,13 +11,20 @@ struct URLTextField: View {
 	@Binding var text: String
 
 	var body: some View {
-		TextField("URL", text: $text)
-			.textContentType(.URL)
-			#if !os(macOS)
-				.keyboardType(.URL)
-				.textInputAutocapitalization(.never)
-			#endif
-			.autocorrectionDisabled()
+		TextField(
+			text: $text,
+			label: {
+				HQText("URL")
+					.foregroundStyle(.secondary)
+			}
+		)
+		.textContentType(.URL)
+		.autocorrectionDisabled()
+		.contentShape(.rect)
+		#if !os(macOS)
+			.keyboardType(.URL)
+			.textInputAutocapitalization(.never)
+		#endif
 	}
 }
 

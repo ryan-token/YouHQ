@@ -48,7 +48,10 @@ struct HealthSavingsAccountEdit: View {
 						.multilineTextAlignment(.trailing)
 				}
 
-				Toggle("Active", isOn: $vm.isActive)
+				LabeledField("Active") {
+					Toggle("", isOn: $vm.isActive)
+						.labelsHidden()
+				}
 			}
 			.onAppear {
 				if autoFocus, !hasAppeared {

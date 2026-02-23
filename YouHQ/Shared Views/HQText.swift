@@ -19,12 +19,12 @@ struct HQText: View {
 	var body: some View {
 		Text(text)
 			.fontDesign(.rounded)
-			#if !os(iOS)
-				.if(italic) {
-					$0.padding(.leading, 2)
-				}
-			#endif
 			.if(italic) {
+				$0.padding(.leading, 2)
+			}
+			.if(italic) {
+				// manually italicize font
+				// we need this because italic & rounded don't work together by default
 				$0.transformEffect(CGAffineTransform(a: 1, b: 0, c: CGFloat(tan(-10 * CGFloat.pi / 180)), d: 1, tx: 0, ty: 0))
 			}
 	}
