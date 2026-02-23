@@ -33,7 +33,6 @@ struct SettingsToolbarItem: ToolbarContent {
 	#else
 		private struct SettingsButton: View {
 			@Environment(PaywallManager.self) private var paywallManager
-			@Namespace private var namespace
 			@State private var isShowingSettingsSheet = false
 
 			var body: some View {
@@ -42,7 +41,6 @@ struct SettingsToolbarItem: ToolbarContent {
 				} label: {
 					Image(systemName: "gear")
 				}
-				.matchedTransitionSource(id: "settingsButton", in: namespace)
 				.sheet(isPresented: $isShowingSettingsSheet, onDismiss: {
 					if paywallManager.needsSettingsDismissalBeforePaywall {
 						paywallManager.needsSettingsDismissalBeforePaywall = false
@@ -50,7 +48,6 @@ struct SettingsToolbarItem: ToolbarContent {
 					}
 				}) {
 					SettingsScreen()
-						.navigationTransition(.zoom(sourceID: "settingsButton", in: namespace))
 				}
 			}
 		}
