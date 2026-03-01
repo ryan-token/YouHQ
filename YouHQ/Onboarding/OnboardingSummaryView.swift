@@ -1,5 +1,5 @@
 //
-//  OnboardingEndView.swift
+//  OnboardingSummaryView.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 2/7/26.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct OnboardingEndView: View {
+struct OnboardingSummaryView: View {
 	var onContinue: () -> Void
 
 	var body: some View {
 		ScrollView {
 			VStack(spacing: 24) {
 				VStack(alignment: .leading, spacing: 12) {
-					HQText("YouHQ is your personal command center for life's important details.")
+					HQText("YouHQ is a reference guide for life's important details.")
 					HQText(
 						"Track everything from home maintenance and vehicles to career history and where all of your money is, all in one place."
 					)
@@ -64,5 +64,5 @@ struct OnboardingEndView: View {
 }
 
 #Preview {
-	OnboardingEndView(onContinue: {})
+	OnboardingSummaryView(onContinue: {})
 }
