@@ -83,7 +83,7 @@ extension InvestmentAccountEdit {
 								$0.profileID = currentProfileID
 								$0.institution = institution
 								$0.accountType = accountType
-								$0.accountNumber = accountNumber
+								$0.accountNumber = #bind(accountNumber)
 								$0.isActive = isActive
 								$0.url = url
 								$0.notes = notes

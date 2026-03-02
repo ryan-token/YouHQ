@@ -86,7 +86,7 @@ extension ServiceProviderEdit {
 								$0.providerType = providerType
 								$0.name = name
 								$0.monthlyCost = monthlyCost
-								$0.accountNumber = accountNumber
+								$0.accountNumber = #bind(accountNumber)
 								$0.url = url
 								$0.notes = notes
 							}

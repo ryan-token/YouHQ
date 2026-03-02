@@ -21,10 +21,10 @@ extension AppOnboardingFlow {
 		var phase: OnboardingPhase = .tabView
 		var isStartingOnboarding = true
 		var navigationPath = NavigationPath()
+		var isTimerActive = true
+		var initialTimerCounter = 0
+		var mainTimerCounter = 0
 
-		private var initialTimerCounter = 0
-		private var mainTimerCounter = 0
-		private var isTimerActive = true
 		private var expectedTab: Int?
 
 		/// Stops auto-advancing the tab timer when the user manually swipes.

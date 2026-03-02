@@ -88,8 +88,8 @@ extension BankAccountEdit {
 								$0.profileID = currentProfileID
 								$0.bankName = bankName
 								$0.accountType = accountType
-								$0.accountNumber = accountNumber
-								$0.routingNumber = routingNumber
+								$0.accountNumber = #bind(accountNumber)
+								$0.routingNumber = #bind(routingNumber)
 								$0.isActive = isActive
 								$0.url = url
 								$0.notes = notes

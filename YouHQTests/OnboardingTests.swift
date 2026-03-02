@@ -28,76 +28,7 @@ extension YouHQTests {
 
 				#expect(vm.currentTab == 0)
 				#expect(vm.isStartingOnboarding == true)
-				#expect(vm.showProfileRequiredAlert == false)
-				#expect(vm.hasAnyProfile == false)
 				#expect(vm.isTimerActive == true)
-				#expect(vm.paywallTab == 7)
-			}
-
-			@Test("checkForProfile detects existing profiles")
-			func checkForProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-					}
-				}
-
-				let vm = AppOnboardingFlow.ViewModel()
-				await vm.checkForProfile()
-
-				#expect(vm.hasAnyProfile == true)
-			}
-
-			@Test("checkForProfile detects no profiles")
-			func checkForNoProfile() async {
-				let vm = AppOnboardingFlow.ViewModel()
-				await vm.checkForProfile()
-
-				#expect(vm.hasAnyProfile == false)
-			}
-
-			@Test("handleTabChange blocks paywall when no profile exists")
-			func blockPaywallWithoutProfile() async {
-				let vm = AppOnboardingFlow.ViewModel()
-				// No profiles in database
-				vm.currentTab = 7 // paywall tab
-				await vm.handleTabChange(oldValue: 6, newValue: 7, hasUnlockedPremium: false)
-
-				#expect(vm.currentTab == 6)
-				#expect(vm.showProfileRequiredAlert == true)
-			}
-
-			@Test("handleTabChange allows paywall when profile exists")
-			func allowPaywallWithProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-					}
-				}
-
-				let vm = AppOnboardingFlow.ViewModel()
-				vm.currentTab = 7
-				await vm.handleTabChange(oldValue: 6, newValue: 7, hasUnlockedPremium: false)
-
-				// Should stay on paywall tab
-				#expect(vm.currentTab == 7)
-				#expect(vm.showProfileRequiredAlert == false)
-			}
-
-			@Test("handleTabChange skips paywall for premium users")
-			func skipPaywallForPremium() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-					}
-				}
-
-				let vm = AppOnboardingFlow.ViewModel()
-				vm.currentTab = 7
-				await vm.handleTabChange(oldValue: 6, newValue: 7, hasUnlockedPremium: true)
-
-				// Should have navigated to congratulations
-				#expect(vm.navigationPath.count == 1)
 			}
 
 			@Test("navigateAfterProfileCreation goes to paywall for free users")
@@ -105,7 +36,7 @@ extension YouHQTests {
 				let vm = AppOnboardingFlow.ViewModel()
 				vm.navigateAfterProfileCreation(hasUnlockedPremium: false)
 
-				#expect(vm.currentTab == 7)
+				#expect(vm.phase == .paywall)
 			}
 
 			@Test("navigateAfterProfileCreation goes to congratulations for premium users")
@@ -122,7 +53,7 @@ extension YouHQTests {
 
 				// Simulate a manual tab change (no expected tab set)
 				vm.currentTab = 2
-				await vm.handleTabChange(oldValue: 1, newValue: 2, hasUnlockedPremium: false)
+				vm.handleManualTabChange()
 
 				#expect(vm.isTimerActive == false)
 			}

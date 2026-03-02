@@ -96,7 +96,7 @@ extension JobEdit {
 								$0.startDate = startDate
 								$0.endDate = endDate
 								$0.isCurrent = isCurrent
-								$0.salary = salary
+								$0.salary = #bind(salary)
 								$0.employmentType = employmentType
 								$0.url = url
 								$0.notes = notes

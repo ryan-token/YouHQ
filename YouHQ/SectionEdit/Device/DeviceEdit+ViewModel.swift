@@ -90,7 +90,7 @@ extension DeviceEdit {
 								$0.type = type
 								$0.brand = brand
 								$0.model = model
-								$0.serialNumber = serialNumber
+								$0.serialNumber = #bind(serialNumber)
 								$0.purchaseDate = purchaseDate
 								$0.url = url
 								$0.notes = notes

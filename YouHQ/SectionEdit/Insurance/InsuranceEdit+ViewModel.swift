@@ -107,7 +107,7 @@ extension InsuranceEdit {
 								$0.profileID = currentProfileID
 								$0.type = type
 								$0.provider = provider
-								$0.policyNumber = policyNumber
+								$0.policyNumber = #bind(policyNumber)
 								$0.monthlyCost = monthlyCost
 								$0.deductible = deductible
 								$0.coverageAmount = coverageAmount

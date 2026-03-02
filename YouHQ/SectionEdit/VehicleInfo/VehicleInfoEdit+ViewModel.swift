@@ -82,7 +82,7 @@ extension VehicleInfoEdit {
 							$0.year = year.isEmpty ? nil : year
 							$0.color = color.isEmpty ? nil : color
 							$0.backgroundColor = backgroundColor.databaseValue
-							$0.vin = vin.isEmpty ? nil : vin
+							$0.vin = #bind(vin.isEmpty ? nil : vin)
 							$0.monthlyCost = monthlyCost
 							$0.costType = costType
 							$0.url = url

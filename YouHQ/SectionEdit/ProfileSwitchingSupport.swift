@@ -10,7 +10,17 @@ import SQLiteData
 /// Helper function to load all profiles from the database
 /// This is used by SectionEditViewModel implementations that support profile switching
 func loadAllProfiles(from database: any DatabaseReader) -> [ProfileShare] {
-	withErrorReporting {
+	@Dependency(\.context) var context
+
+	if context == .test {
+		return (withErrorReporting {
+			try database.read { db in
+				try Profile.fetchAll(db)
+			}
+		} ?? []).map { ProfileShare(profile: $0, isShared: false, metadata: nil) }
+	}
+
+	return withErrorReporting {
 		try database.read { db in
 			try Profile
 				.group(by: \.id)

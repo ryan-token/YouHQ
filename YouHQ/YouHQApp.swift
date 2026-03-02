@@ -100,6 +100,10 @@ struct YouHQApp: App {
 	}
 
 	private func initializeSQLiteData() {
+		// Initialize the field encryptor before the database so the encryption key
+		// is available for @Column(as:) representations and migrations.
+		_ = FieldEncryptor.shared
+
 		try! prepareDependencies { // swiftlint:disable:this force_try
 			try $0.bootstrapDatabase()
 			$0.defaultSyncEngine = try SyncEngine(

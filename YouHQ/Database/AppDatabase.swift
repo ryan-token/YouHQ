@@ -5,15 +5,18 @@
 //  Created by Ryan Token on 12/29/25.
 //
 
+import Foundation
 import SQLiteData
 
 // swiftlint:disable file_length
 
-func appDatabase() throws -> any DatabaseWriter {
+func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throws -> any DatabaseWriter {
 	var configuration = Configuration()
 	configuration.foreignKeysEnabled = true
 	configuration.prepareDatabase { db in
-		try db.attachMetadatabase()
+		if shouldAttachMetadatabase {
+			try db.attachMetadatabase()
+		}
 
 		#if DEBUG
 			db.trace(options: .profile) {
@@ -31,9 +34,6 @@ func appDatabase() throws -> any DatabaseWriter {
 	)
 
 	var migrator = DatabaseMigrator()
-	#if DEBUG
-		migrator.eraseDatabaseOnSchemaChange = true
-	#endif
 
 	// MARK: - Initial Migration
 
@@ -923,6 +923,48 @@ func appDatabase() throws -> any DatabaseWriter {
 		.execute(db)
 	}
 
+	// MARK: - Encrypt Sensitive Fields
+
+	migrator.registerMigration("Encrypt sensitive fields") { db in
+		let encryptor = FieldEncryptor.shared
+
+		// Encrypt a sensitive column in place.
+		// For non-nullable TEXT columns use whereClause "!= ''" (skip empty defaults).
+		// For nullable columns use "IS NOT NULL".
+		func encryptColumn(table: String, column: String, whereClause: String = "!= ''") throws {
+			let ids = try String.fetchAll(
+				db,
+				sql: "SELECT \"id\" FROM \"\(table)\" WHERE \"\(column)\" \(whereClause)"
+			)
+			for id in ids {
+				let value = try String.fetchOne(
+					db,
+					sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ?",
+					arguments: [id]
+				) ?? ""
+				guard !value.isEmpty else { continue }
+				// Skip already-encrypted values (valid base64 of sufficient length for AES-GCM)
+				if let decoded = Data(base64Encoded: value), decoded.count >= 28 { continue }
+				let encrypted = encryptor.encrypt(value)
+				try db.execute(
+					sql: "UPDATE \"\(table)\" SET \"\(column)\" = ? WHERE \"id\" = ?",
+					arguments: [encrypted, id]
+				)
+			}
+		}
+
+		try encryptColumn(table: "bankAccounts", column: "accountNumber")
+		try encryptColumn(table: "bankAccounts", column: "routingNumber")
+		try encryptColumn(table: "investmentAccounts", column: "accountNumber")
+		try encryptColumn(table: "healthSavingsAccounts", column: "accountNumber")
+		try encryptColumn(table: "insurancePolicies", column: "policyNumber")
+		try encryptColumn(table: "vehicles", column: "vin", whereClause: "IS NOT NULL")
+		try encryptColumn(table: "devices", column: "serialNumber")
+		try encryptColumn(table: "utilities", column: "accountNumber")
+		try encryptColumn(table: "serviceProviders", column: "accountNumber")
+		try encryptColumn(table: "jobs", column: "salary", whereClause: "IS NOT NULL")
+	}
+
 	try migrator.migrate(database)
 	return database
 }
@@ -931,6 +973,6 @@ func appDatabase() throws -> any DatabaseWriter {
 
 extension DependencyValues {
 	mutating func bootstrapDatabase() throws {
-		defaultDatabase = try appDatabase()
+		defaultDatabase = try appDatabase(attachMetadatabase: context != .test)
 	}
 }

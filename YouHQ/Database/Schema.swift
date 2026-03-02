@@ -124,7 +124,7 @@ import SQLiteData
 	let residenceID: Residence.ID
 	var type: UtilityType = .electric
 	var provider: String = ""
-	var accountNumber: String = ""
+	@Column(as: EncryptedString.self) var accountNumber: String = ""
 	var approximateMonthlyCost: Double?
 	var backgroundColor: String = "blue"
 	var url: String = ""
@@ -212,7 +212,7 @@ extension MaintenanceItem {
 	var model: String = ""
 	var year: String?
 	var color: String?
-	var vin: String?
+	@Column(as: EncryptedString?.self) var vin: String?
 	var monthlyCost: Double?
 	var costType: VehicleCostType = .owned
 	var backgroundColor: String = "teal"
@@ -241,8 +241,8 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var bankName: String = ""
 	var accountType: BankAccountType = .checking
-	var accountNumber: String = "" // Last 4 digits
-	var routingNumber: String = ""
+	@Column(as: EncryptedString.self) var accountNumber: String = ""
+	@Column(as: EncryptedString.self) var routingNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "green"
 	var url: String = ""
@@ -254,7 +254,7 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var institution: String = ""
 	var accountType: InvestmentAccountType = .brokerage
-	var accountNumber: String = "" // Last 4 digits
+	@Column(as: EncryptedString.self) var accountNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "mint"
 	var url: String = ""
@@ -266,7 +266,7 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var accountType: HealthSavingsAccountType = .hsa
 	var institution: String = ""
-	var accountNumber: String = ""
+	@Column(as: EncryptedString.self) var accountNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "cyan"
 	var url: String = ""
@@ -281,7 +281,7 @@ extension MaintenanceItem {
 	var providerType: ServiceProviderType = .internet
 	var name: String = ""
 	var monthlyCost: Double?
-	var accountNumber: String = ""
+	@Column(as: EncryptedString.self) var accountNumber: String = ""
 	var backgroundColor: String = "purple"
 	var url: String = ""
 	var notes: String = ""
@@ -293,7 +293,7 @@ extension MaintenanceItem {
 	var type: DeviceType = .computer
 	var brand: String = ""
 	var model: String = ""
-	var serialNumber: String = ""
+	@Column(as: EncryptedString.self) var serialNumber: String = ""
 	var purchaseDate: Date?
 	var backgroundColor: String = "pink"
 	var url: String = ""
@@ -324,7 +324,7 @@ extension MaintenanceItem {
 	var startDate: Date?
 	var endDate: Date?
 	var isCurrent: Bool = false
-	var salary: Double?
+	@Column(as: EncryptedDouble?.self) var salary: Double?
 	var employmentType: EmploymentType = .fullTime
 	var backgroundColor: String = "blue"
 	var url: String = ""
@@ -340,7 +340,7 @@ extension MaintenanceItem {
 	var vehicleID: Vehicle.ID?
 	var type: InsurancePolicyType = .health
 	var provider: String = ""
-	var policyNumber: String = ""
+	@Column(as: EncryptedString.self) var policyNumber: String = ""
 	var monthlyCost: Double?
 	var deductible: Double?
 	var coverageAmount: Double?
