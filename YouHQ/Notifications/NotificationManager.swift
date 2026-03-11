@@ -166,8 +166,8 @@ final class NotificationManager: Sendable {
 
 		// Build date components for the trigger based on interval
 		var dateComponents = DateComponents()
-		dateComponents.hour = 10
-		dateComponents.minute = 23
+		dateComponents.hour = 9
+		dateComponents.minute = 0
 
 		var repeats = true
 
