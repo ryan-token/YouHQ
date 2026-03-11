@@ -965,6 +965,30 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		try encryptColumn(table: "jobs", column: "salary", whereClause: "IS NOT NULL")
 	}
 
+	// MARK: - App Settings
+
+	migrator.registerMigration("Create app settings table") { db in
+		try #sql(
+			"""
+			CREATE TABLE "appSettings" (
+				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+				"reminderInterval" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'None',
+				"reminderNotificationIdentifier" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+			) STRICT
+			"""
+		)
+		.execute(db)
+
+		// Seed with a default row so code can always assume the row exists
+		try #sql(
+			"""
+			INSERT INTO "appSettings" ("id", "reminderInterval", "reminderNotificationIdentifier")
+			VALUES (uuid(), 'None', '')
+			"""
+		)
+		.execute(db)
+	}
+
 	try migrator.migrate(database)
 	return database
 }

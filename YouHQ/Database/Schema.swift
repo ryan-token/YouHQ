@@ -382,6 +382,14 @@ extension MaintenanceItem {
 	let imageData: Data
 }
 
+// MARK: - App Settings
+
+@Table("appSettings") nonisolated struct AppSettings: Identifiable {
+	let id: UUID
+	var reminderInterval: ReminderInterval = .none
+	var reminderNotificationIdentifier: String = ""
+}
+
 // MARK: - Raw Representable Structs
 // These are raw representable structs instead of enums to support backwards compatibility
 // when syncing via iCloud. New cases can be added without breaking old app versions.
@@ -656,4 +664,26 @@ nonisolated struct OtherCategory: RawRepresentable, Hashable, QueryBindable {
 	static let allCases: [Self] = [
 		.homes, .vehicles, .money, .media, .career
 	]
+}
+
+nonisolated struct ReminderInterval: RawRepresentable, Hashable, QueryBindable {
+	let rawValue: String
+
+	static let none = Self(rawValue: "None")
+	static let daily = Self(rawValue: "Daily")
+	static let weekly = Self(rawValue: "Weekly")
+	static let monthly = Self(rawValue: "Monthly")
+	static let quarterly = Self(rawValue: "Quarterly")
+	static let annually = Self(rawValue: "Annually")
+
+	static let allCases: [Self] = [
+		.none, .daily, .weekly, .monthly, .quarterly, .annually
+	]
+
+	var displayName: String {
+		switch self {
+		case .none: "Never"
+		default: rawValue
+		}
+	}
 }

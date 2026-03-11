@@ -9,12 +9,6 @@ import SQLiteData
 import SwiftUI
 import UserNotifications
 
-#if canImport(UIKit)
-	import UIKit
-#elseif canImport(AppKit)
-	import AppKit
-#endif
-
 extension MaintenanceItemEdit {
 	@Observable
 	final class ViewModel: SectionEditViewModel {
@@ -168,8 +162,7 @@ extension MaintenanceItemEdit {
 
 					if let savedItem {
 						Task {
-							_ = try await NotificationManager.shared
-								.scheduleNotification(for: savedItem)
+							_ = try await NotificationManager.shared.scheduleNotification(for: savedItem)
 						}
 					}
 				}
@@ -215,17 +208,14 @@ extension MaintenanceItemEdit {
 			// If user is enabling notifications for the first time
 			if shouldNotify && !previousShouldNotify {
 				Task {
-					let status = await NotificationManager.shared
-						.checkAuthorizationStatus()
+					let status = await NotificationManager.shared.checkAuthorizationStatus()
 
 					switch status {
 					case .notDetermined:
 						// Request permission for the first time
 						do {
-							try await NotificationManager.shared
-								.requestAuthorization()
-							let newStatus = await NotificationManager.shared
-								.checkAuthorizationStatus()
+							try await NotificationManager.shared.requestAuthorization()
+							let newStatus = await NotificationManager.shared.checkAuthorizationStatus()
 							if newStatus != .authorized {
 								// User denied permission
 								await MainActor.run {
@@ -260,18 +250,7 @@ extension MaintenanceItemEdit {
 		}
 
 		func openNotificationSettings() {
-			#if os(iOS)
-				if let url = URL(string: UIApplication.openSettingsURLString) {
-					UIApplication.shared.open(url)
-				}
-			#elseif os(macOS)
-				if let url = URL(
-					string:
-						"x-apple.systempreferences:com.apple.preference.notifications"
-				) {
-					NSWorkspace.shared.open(url)
-				}
-			#endif
+			NotificationManager.shared.openNotificationSettings()
 		}
 
 		private func loadExistingPhotoData() {

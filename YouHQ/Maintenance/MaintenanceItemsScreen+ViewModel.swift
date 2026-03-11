@@ -157,8 +157,7 @@ extension MaintenanceItemsScreen {
 
 				if let updatedItem {
 					Task {
-						_ = try await NotificationManager.shared
-							.scheduleNotification(for: updatedItem)
+						_ = try await NotificationManager.shared.scheduleNotification(for: updatedItem)
 					}
 				}
 			}

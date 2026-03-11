@@ -107,9 +107,16 @@ struct AppOnboardingFlow: View {
 				.tag(5)
 
 				OnboardingProfileCreationView {
-					vm.navigateAfterProfileCreation(hasUnlockedPremium: paywallManager.hasUnlockedPremium)
+					withAnimation {
+						vm.currentTab = 7
+					}
 				}
 				.tag(6)
+
+				OnboardingReminderView {
+					vm.navigateAfterProfileCreation(hasUnlockedPremium: paywallManager.hasUnlockedPremium)
+				}
+				.tag(7)
 			}
 			#if !os(macOS)
 				.tabViewStyle(.page(indexDisplayMode: .never))

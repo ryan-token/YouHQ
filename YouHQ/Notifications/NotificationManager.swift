@@ -9,6 +9,12 @@ import Dependencies
 import SQLiteData
 import UserNotifications
 
+#if canImport(UIKit)
+	import UIKit
+#elseif canImport(AppKit)
+	import AppKit
+#endif
+
 @Observable
 final class NotificationManager: Sendable {
 	@ObservationIgnored
@@ -103,10 +109,115 @@ final class NotificationManager: Sendable {
 		center.removePendingNotificationRequests(withIdentifiers: [identifier])
 	}
 
-	/// Refresh notifications for all maintenance items
-	/// This should be called after CloudKit sync or on app launch
+	// MARK: - Update Reminder Notifications
+
+	/// Schedule a recurring reminder notification to update YouHQ info.
+	/// Returns the notification identifier (new or existing).
+	func scheduleReminderNotification(
+		interval: ReminderInterval,
+		existingIdentifier: String
+	) async throws -> String {
+		// If interval is .none, cancel any existing and return empty
+		guard interval != .none else {
+			if existingIdentifier.isNotEmpty {
+				center.removePendingNotificationRequests(withIdentifiers: [existingIdentifier])
+			}
+			return ""
+		}
+
+		let status = await checkAuthorizationStatus()
+		guard status == .authorized else { return existingIdentifier }
+
+		let identifier = existingIdentifier.isEmpty ? UUID().uuidString : existingIdentifier
+
+		// Remove any existing reminder notification first
+		center.removePendingNotificationRequests(withIdentifiers: [identifier])
+
+		// Create notification content
+		let content = UNMutableNotificationContent()
+		content.title = "Time to Update YouHQ"
+		content.body = "Keep your info up to date so it's there when you need it."
+		content.sound = .default
+
+		// Build date components for the trigger based on interval
+		var dateComponents = DateComponents()
+		dateComponents.hour = 9
+		dateComponents.minute = 0
+
+		var repeats = true
+
+		switch interval {
+		case .daily:
+			// Every day at 9 AM — hour+minute only
+			break
+		case .weekly:
+			dateComponents.weekday = 2 // Monday
+		case .monthly:
+			dateComponents.day = 1
+		case .quarterly:
+			// UNCalendarNotificationTrigger can't express "every 3 months"
+			// with repeats: true. Use a non-repeating trigger for the next
+			// quarter start; refreshAllNotifications() reschedules on each launch.
+			let nextQuarterDate = Self.nextQuarterStartDate()
+			dateComponents = Calendar.current.dateComponents(
+				[.year, .month, .day], from: nextQuarterDate
+			)
+			dateComponents.hour = 9
+			dateComponents.minute = 0
+			repeats = false
+		case .annually:
+			dateComponents.month = 1
+			dateComponents.day = 1
+		default:
+			return ""
+		}
+
+		let trigger = UNCalendarNotificationTrigger(
+			dateMatching: dateComponents,
+			repeats: repeats
+		)
+
+		let request = UNNotificationRequest(
+			identifier: identifier,
+			content: content,
+			trigger: trigger
+		)
+
+		try await center.add(request)
+		return identifier
+	}
+
+	/// Cancel the update reminder notification
+	func cancelReminderNotification(identifier: String) {
+		guard identifier.isNotEmpty else { return }
+		center.removePendingNotificationRequests(withIdentifiers: [identifier])
+	}
+
+	// MARK: - Open System Settings
+
+	/// Opens the system notification settings for this app
+	func openNotificationSettings() {
+		#if os(iOS) || os(visionOS)
+			if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+				UIApplication.shared.open(url)
+			}
+		#elseif os(macOS)
+			if let url = URL(
+				string:
+					"x-apple.systempreferences:com.apple.preference.notifications?id=com.ryantoken.YouHQ"
+			) {
+				NSWorkspace.shared.open(url)
+			}
+		#endif
+	}
+
+	// MARK: - Refresh All
+
+	/// Refresh notifications for all maintenance items and the update reminder.
+	/// This should be called after CloudKit sync or on app launch.
 	func refreshAllNotifications() async {
 		await withErrorReporting {
+			// Refresh maintenance item notifications
 			let items = try await database.read { db in
 				try MaintenanceItem.fetchAll(db)
 			}
@@ -114,6 +225,47 @@ final class NotificationManager: Sendable {
 			for item in items {
 				_ = try await scheduleNotification(for: item)
 			}
+
+			// Refresh the update reminder notification
+			let settings = try await database.read { db in
+				try AppSettings.fetchAll(db).first
+			}
+
+			if let settings, settings.reminderInterval != .none {
+				let newIdentifier = try await scheduleReminderNotification(
+					interval: settings.reminderInterval,
+					existingIdentifier: settings.reminderNotificationIdentifier
+				)
+				// Update the identifier in DB if it changed
+				if newIdentifier != settings.reminderNotificationIdentifier {
+					try await database.write { db in
+						try AppSettings.find(settings.id)
+							.update {
+								$0.reminderNotificationIdentifier = newIdentifier
+							}
+							.execute(db)
+					}
+				}
+			}
 		}
+	}
+
+	// MARK: - Helpers
+
+	private static func nextQuarterStartDate() -> Date {
+		let calendar = Calendar.current
+		let now = Date()
+		let currentMonth = calendar.component(.month, from: now)
+		let quarterStartMonths = [1, 4, 7, 10]
+		let nextQuarterMonth = quarterStartMonths.first(where: { $0 > currentMonth })
+			?? quarterStartMonths[0]
+		var components = calendar.dateComponents([.year], from: now)
+		components.month = nextQuarterMonth
+		components.day = 1
+		components.hour = 9
+		if nextQuarterMonth <= currentMonth {
+			components.year = (components.year ?? 2026) + 1
+		}
+		return calendar.date(from: components) ?? now
 	}
 }

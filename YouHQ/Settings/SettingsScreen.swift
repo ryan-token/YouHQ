@@ -11,6 +11,7 @@ struct SettingsScreen: View {
 	enum SettingsOption {
 		case premium
 		case profiles
+		case notifications
 		case onboarding
 	}
 
@@ -37,6 +38,13 @@ struct SettingsScreen: View {
 						iconColor: iconColor(for: .profiles)
 					)
 					.tag(SettingsOption.profiles)
+
+					SettingsNavLabel(
+						labelText: "Notifications",
+						iconName: "bell.square.fill",
+						iconColor: iconColor(for: .notifications)
+					)
+					.tag(SettingsOption.notifications)
 				}
 
 				Section("More") {
@@ -85,6 +93,8 @@ struct SettingsScreen: View {
 					#endif
 				case .profiles:
 					ProfileSettingsView()
+				case .notifications:
+					NotificationSettingsView()
 				case .onboarding:
 					AppOnboardingFlow(fromSettings: true)
 				case nil:
@@ -129,6 +139,8 @@ struct SettingsScreen: View {
 				.indigo
 			case .profiles:
 				.blue
+			case .notifications:
+				.green
 			case .onboarding:
 				.orange
 			}

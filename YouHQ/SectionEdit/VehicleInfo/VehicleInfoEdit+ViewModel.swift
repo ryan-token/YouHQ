@@ -121,9 +121,7 @@ extension VehicleInfoEdit {
 				// Cancel notifications for all maintenance items
 				Task {
 					for item in maintenanceItems {
-						await NotificationManager.shared.cancelNotification(
-							for: item
-						)
+						await NotificationManager.shared.cancelNotification(for: item)
 					}
 				}
 
