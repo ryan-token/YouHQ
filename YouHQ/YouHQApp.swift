@@ -125,8 +125,7 @@ struct YouHQApp: App {
 				MaintenanceCompletion.self,
 				PaintColor.self,
 				Other.self,
-				Asset.self,
-				AppSettings.self
+				Asset.self
 			)
 		}
 	}

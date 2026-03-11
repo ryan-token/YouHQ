@@ -80,17 +80,12 @@ extension OnboardingReminderView {
 					try AppSettings.fetchAll(db).first
 				}) else { return }
 
-				let identifier = try await NotificationManager.shared
-					.scheduleReminderNotification(
-						interval: interval,
-						existingIdentifier: settings.reminderNotificationIdentifier
-					)
+				try await NotificationManager.shared.scheduleReminderNotification(interval: interval)
 
 				try await database.write { db in
 					try AppSettings.find(settings.id)
 						.update {
 							$0.reminderInterval = interval
-							$0.reminderNotificationIdentifier = identifier
 						}
 						.execute(db)
 				}

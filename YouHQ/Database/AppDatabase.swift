@@ -972,8 +972,7 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 			"""
 			CREATE TABLE "appSettings" (
 				"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
-				"reminderInterval" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'None',
-				"reminderNotificationIdentifier" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT ''
+				"reminderInterval" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'None'
 			) STRICT
 			"""
 		)
@@ -982,8 +981,8 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		// Seed with a default row so code can always assume the row exists
 		try #sql(
 			"""
-			INSERT INTO "appSettings" ("id", "reminderInterval", "reminderNotificationIdentifier")
-			VALUES (uuid(), 'None', '')
+			INSERT INTO "appSettings" ("id", "reminderInterval")
+			VALUES (uuid(), 'None')
 			"""
 		)
 		.execute(db)

@@ -387,7 +387,6 @@ extension MaintenanceItem {
 @Table("appSettings") nonisolated struct AppSettings: Identifiable {
 	let id: UUID
 	var reminderInterval: ReminderInterval = .none
-	var reminderNotificationIdentifier: String = ""
 }
 
 // MARK: - Raw Representable Structs

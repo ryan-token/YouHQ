@@ -41,14 +41,14 @@ extension NotificationSettingsView {
 					appSettingsID = settings.id
 
 					if !isAuthorized && settings.reminderInterval != .none {
-						// Permissions were revoked — reset to .none
+						// Permissions were revoked — reset to .none and cancel notification
 						selectedInterval = .none
 						previousInterval = .none
+						NotificationManager.shared.cancelReminderNotification()
 						try database.write { db in
 							try AppSettings.find(settings.id)
 								.update {
 									$0.reminderInterval = ReminderInterval.none
-									$0.reminderNotificationIdentifier = ""
 								}
 								.execute(db)
 						}
@@ -115,22 +115,12 @@ extension NotificationSettingsView {
 			guard let appSettingsID else { return }
 			let interval = selectedInterval
 			await withErrorReporting {
-				let settings = try await database.read { db in
-					try AppSettings.find(appSettingsID).fetchOne(db)
-				}
-				guard let settings else { return }
-
-				let identifier = try await NotificationManager.shared
-					.scheduleReminderNotification(
-						interval: interval,
-						existingIdentifier: settings.reminderNotificationIdentifier
-					)
+				try await NotificationManager.shared.scheduleReminderNotification(interval: interval)
 
 				try await database.write { db in
 					try AppSettings.find(appSettingsID)
 						.update {
 							$0.reminderInterval = interval
-							$0.reminderNotificationIdentifier = identifier
 						}
 						.execute(db)
 				}

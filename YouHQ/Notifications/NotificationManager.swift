@@ -15,15 +15,41 @@ import UserNotifications
 	import AppKit
 #endif
 
+// MARK: - NotificationCenterProtocol
+
+/// Abstracts `UNUserNotificationCenter` for testability.
+protocol NotificationCenterProtocol: Sendable {
+	func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool
+	func authorizationStatus() async -> UNAuthorizationStatus
+	func add(_ request: UNNotificationRequest) async throws
+	func removePendingNotificationRequests(withIdentifiers identifiers: [String])
+	func pendingNotificationRequests() async -> [UNNotificationRequest]
+}
+
+extension UNUserNotificationCenter: NotificationCenterProtocol {
+	func authorizationStatus() async -> UNAuthorizationStatus {
+		await notificationSettings().authorizationStatus
+	}
+}
+
+// MARK: - NotificationManager
+
 @Observable
 final class NotificationManager: Sendable {
 	@ObservationIgnored
 	@Dependency(\.defaultDatabase) private var database
 
-	private let center = UNUserNotificationCenter.current()
+	private let center: any NotificationCenterProtocol
 	static let shared = NotificationManager()
 
-	private init() {}
+	private init() {
+		self.center = UNUserNotificationCenter.current()
+	}
+
+	/// Test-only initializer that accepts a mock notification center.
+	init(center: any NotificationCenterProtocol) {
+		self.center = center
+	}
 
 	/// Request notification permissions from the user
 	func requestAuthorization() async throws {
@@ -34,7 +60,7 @@ final class NotificationManager: Sendable {
 
 	/// Check if notifications are authorized
 	func checkAuthorizationStatus() async -> UNAuthorizationStatus {
-		await center.notificationSettings().authorizationStatus
+		await center.authorizationStatus()
 	}
 
 	/// Schedule a notification for a maintenance item
@@ -111,24 +137,23 @@ final class NotificationManager: Sendable {
 
 	// MARK: - Update Reminder Notifications
 
+	/// Fixed identifier for the update reminder notification.
+	/// Using a deterministic identifier guarantees that at most one reminder
+	/// notification is ever pending
+	static let reminderNotificationIdentifier = "com.ryantoken.YouHQ.updateReminder"
+
 	/// Schedule a recurring reminder notification to update YouHQ info.
-	/// Returns the notification identifier (new or existing).
-	func scheduleReminderNotification(
-		interval: ReminderInterval,
-		existingIdentifier: String
-	) async throws -> String {
-		// If interval is .none, cancel any existing and return empty
+	func scheduleReminderNotification(interval: ReminderInterval) async throws {
+		// If interval is .none, cancel any existing and return
 		guard interval != .none else {
-			if existingIdentifier.isNotEmpty {
-				center.removePendingNotificationRequests(withIdentifiers: [existingIdentifier])
-			}
-			return ""
+			cancelReminderNotification()
+			return
 		}
 
 		let status = await checkAuthorizationStatus()
-		guard status == .authorized else { return existingIdentifier }
+		guard status == .authorized else { return }
 
-		let identifier = existingIdentifier.isEmpty ? UUID().uuidString : existingIdentifier
+		let identifier = Self.reminderNotificationIdentifier
 
 		// Remove any existing reminder notification first
 		center.removePendingNotificationRequests(withIdentifiers: [identifier])
@@ -141,8 +166,8 @@ final class NotificationManager: Sendable {
 
 		// Build date components for the trigger based on interval
 		var dateComponents = DateComponents()
-		dateComponents.hour = 9
-		dateComponents.minute = 0
+		dateComponents.hour = 10
+		dateComponents.minute = 23
 
 		var repeats = true
 
@@ -169,7 +194,7 @@ final class NotificationManager: Sendable {
 			dateComponents.month = 1
 			dateComponents.day = 1
 		default:
-			return ""
+			return
 		}
 
 		let trigger = UNCalendarNotificationTrigger(
@@ -184,13 +209,11 @@ final class NotificationManager: Sendable {
 		)
 
 		try await center.add(request)
-		return identifier
 	}
 
 	/// Cancel the update reminder notification
-	func cancelReminderNotification(identifier: String) {
-		guard identifier.isNotEmpty else { return }
-		center.removePendingNotificationRequests(withIdentifiers: [identifier])
+	func cancelReminderNotification() {
+		center.removePendingNotificationRequests(withIdentifiers: [Self.reminderNotificationIdentifier])
 	}
 
 	// MARK: - Open System Settings
@@ -217,11 +240,27 @@ final class NotificationManager: Sendable {
 	/// This should be called after CloudKit sync or on app launch.
 	func refreshAllNotifications() async {
 		await withErrorReporting {
-			// Refresh maintenance item notifications
 			let items = try await database.read { db in
 				try MaintenanceItem.fetchAll(db)
 			}
 
+			// Build the set of identifiers we expect to be pending so we can
+			// remove any stale ones left over from the old random-UUID scheme.
+			var knownIdentifiers: Set<String> = [Self.reminderNotificationIdentifier]
+			for item in items {
+				let id = item.notificationIdentifier.isEmpty
+					? item.id.uuidString : item.notificationIdentifier
+				knownIdentifiers.insert(id)
+			}
+
+			// Cancel any pending notifications whose identifiers we don't recognize.
+			let pending = await center.pendingNotificationRequests()
+			let staleIdentifiers = pending.map(\.identifier).filter { !knownIdentifiers.contains($0) }
+			if staleIdentifiers.isNotEmpty {
+				center.removePendingNotificationRequests(withIdentifiers: staleIdentifiers)
+			}
+
+			// Refresh maintenance item notifications
 			for item in items {
 				_ = try await scheduleNotification(for: item)
 			}
@@ -232,29 +271,17 @@ final class NotificationManager: Sendable {
 			}
 
 			if let settings, settings.reminderInterval != .none {
-				let newIdentifier = try await scheduleReminderNotification(
-					interval: settings.reminderInterval,
-					existingIdentifier: settings.reminderNotificationIdentifier
-				)
-				// Update the identifier in DB if it changed
-				if newIdentifier != settings.reminderNotificationIdentifier {
-					try await database.write { db in
-						try AppSettings.find(settings.id)
-							.update {
-								$0.reminderNotificationIdentifier = newIdentifier
-							}
-							.execute(db)
-					}
-				}
+				try await scheduleReminderNotification(interval: settings.reminderInterval)
+			} else {
+				cancelReminderNotification()
 			}
 		}
 	}
 
 	// MARK: - Helpers
 
-	private static func nextQuarterStartDate() -> Date {
+	static func nextQuarterStartDate(from now: Date = Date()) -> Date {
 		let calendar = Calendar.current
-		let now = Date()
 		let currentMonth = calendar.component(.month, from: now)
 		let quarterStartMonths = [1, 4, 7, 10]
 		let nextQuarterMonth = quarterStartMonths.first(where: { $0 > currentMonth })

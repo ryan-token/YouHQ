@@ -49,13 +49,13 @@ struct NotificationSettingsView: View {
 				HQText("Info Update Reminder")
 			} footer: {
 				HQText(
-					"Get a recurring notification to remind you to keep your YouHQ info up to date."
+					"Get a recurring notification as a reminder to keep your info up to date."
 				)
 				.listRowSeparator(.hidden)
 			}
 
 			VStack(alignment: .leading, spacing: 12) {
-				Text("Use **Notifications** to remind you to update your YouHQ info on a regular schedule.")
+				Text("Use **Notifications** as reminders to update your info on a regular schedule.")
 
 				Text("You can also set notifications on **maintenance items** for your residences and vehicles.")
 			}
