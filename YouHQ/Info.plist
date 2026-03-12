@@ -10,6 +10,8 @@
 	<string>Allow YouHQ to access your photo library.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Allow YouHQ to save photos to your library.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
