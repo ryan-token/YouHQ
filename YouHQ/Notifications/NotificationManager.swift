@@ -160,7 +160,7 @@ final class NotificationManager: Sendable {
 
 		// Create notification content
 		let content = UNMutableNotificationContent()
-		content.title = "Time to Update YouHQ"
+		content.title = "Time to Update YouHQ Info"
 		content.body = "Keep your info up to date so it's there when you need it."
 		content.sound = .default
 
