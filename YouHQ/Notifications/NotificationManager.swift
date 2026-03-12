@@ -166,14 +166,14 @@ final class NotificationManager: Sendable {
 
 		// Build date components for the trigger based on interval
 		var dateComponents = DateComponents()
-		dateComponents.hour = 9
+		dateComponents.hour = 8
 		dateComponents.minute = 0
 
 		var repeats = true
 
 		switch interval {
 		case .daily:
-			// Every day at 9 AM — hour+minute only
+			// Every day at 8 AM — hour+minute only
 			break
 		case .weekly:
 			dateComponents.weekday = 2 // Monday
@@ -187,7 +187,7 @@ final class NotificationManager: Sendable {
 			dateComponents = Calendar.current.dateComponents(
 				[.year, .month, .day], from: nextQuarterDate
 			)
-			dateComponents.hour = 9
+			dateComponents.hour = 8
 			dateComponents.minute = 0
 			repeats = false
 		case .annually:
@@ -289,7 +289,7 @@ final class NotificationManager: Sendable {
 		var components = calendar.dateComponents([.year], from: now)
 		components.month = nextQuarterMonth
 		components.day = 1
-		components.hour = 9
+		components.hour = 8
 		if nextQuarterMonth <= currentMonth {
 			components.year = (components.year ?? 2026) + 1
 		}
