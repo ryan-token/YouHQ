@@ -72,6 +72,9 @@ struct Paywall: View {
 				)
 			}
 		}
+		.if(fromOnboarding) {
+			$0.padding(.top)
+		}
 		.ignoresSafeArea(.all, edges: .vertical)
 		.task {
 			try? await Task.sleep(for: .seconds(0.5))

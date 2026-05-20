@@ -27,19 +27,10 @@ struct AppOnboardingFlow: View {
 
 	var body: some View {
 		NavigationStack(path: $vm.navigationPath) {
-			Group {
-				switch vm.phase {
-				case .tabView:
-					tabViewPhase
-				case .paywall:
-					paywallPhase
+			carousel
+				.navigationDestination(for: Destination.self) { destination in
+					destinationView(for: destination)
 				}
-			}
-			.navigationDestination(for: String.self) { destination in
-				if destination == "congratulations" {
-					OnboardingCongratulationsView()
-				}
-			}
 		}
 		#if !os(macOS)
 			.toolbar(.hidden, for: .navigationBar)
@@ -55,9 +46,9 @@ struct AppOnboardingFlow: View {
 		}
 	}
 
-	// MARK: - Tab View Phase
+	// MARK: - Carousel
 
-	private var tabViewPhase: some View {
+	private var carousel: some View {
 		VStack(spacing: 8) {
 			VStack(spacing: 0) {
 				ScalableImage("AppIcon-1024", height: 90)
@@ -100,23 +91,9 @@ struct AppOnboardingFlow: View {
 				}
 
 				OnboardingSummaryView {
-					withAnimation {
-						vm.currentTab = 6
-					}
+					vm.navigationPath.append(.profileCreation)
 				}
 				.tag(5)
-
-				OnboardingProfileCreationView {
-					withAnimation {
-						vm.currentTab = 7
-					}
-				}
-				.tag(6)
-
-				OnboardingReminderView {
-					vm.navigateAfterProfileCreation(hasUnlockedPremium: paywallManager.hasUnlockedPremium)
-				}
-				.tag(7)
 			}
 			#if !os(macOS)
 				.tabViewStyle(.page(indexDisplayMode: .never))
@@ -133,19 +110,37 @@ struct AppOnboardingFlow: View {
 		}
 	}
 
-	// MARK: - Paywall Phase
+	// MARK: - Navigation destinations
 
 	@ViewBuilder
-	private var paywallPhase: some View {
+	private func destinationView(for destination: Destination) -> some View {
+		switch destination {
+		case .profileCreation:
+			OnboardingProfileCreationView {
+				vm.navigationPath.append(.reminder)
+			}
+		case .reminder:
+			OnboardingReminderView {
+				vm.navigateAfterReminder(hasUnlockedPremium: paywallManager.hasUnlockedPremium)
+			}
+		case .paywall:
+			paywallView
+		case .congratulations:
+			OnboardingCongratulationsView()
+		}
+	}
+
+	@ViewBuilder
+	private var paywallView: some View {
 		#if os(macOS)
 			ScrollView {
 				Paywall(fromOnboarding: true, shouldShowSkipButton: true, shouldShowDismissButton: false) {
-					vm.navigationPath.append("congratulations")
+					vm.navigationPath.append(.congratulations)
 				}
 			}
 		#else
 			Paywall(fromOnboarding: true, shouldShowSkipButton: true, shouldShowDismissButton: false) {
-				vm.navigationPath.append("congratulations")
+				vm.navigationPath.append(.congratulations)
 			}
 			.background(PaywallGradient())
 		#endif

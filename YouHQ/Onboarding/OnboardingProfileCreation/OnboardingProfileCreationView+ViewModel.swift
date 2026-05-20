@@ -15,15 +15,19 @@ extension OnboardingProfileCreationView {
 		@Dependency(\.defaultDatabase) private var database
 
 		@ObservationIgnored
+		@Dependency(\.date.now) private var now
+
+		@ObservationIgnored
 		@AppStorage("selectedProfileID") var selectedProfileIDString: String = ""
 
 		var showAddResidence = false
 		var showAddVehicle = false
 		var showAddJob = false
-		var showCreateProfileSheet = false
+		var isShowingCreateProfileAlert = false
 		var showPaywallSheet = false
 		var hasAnyProfile = false
 		var existingProfileName = ""
+		var newProfileName = ""
 		var createdNewProfile = false
 		var createdProfileName = ""
 		var residencesCount = 0
@@ -32,6 +36,10 @@ extension OnboardingProfileCreationView {
 
 		var selectedProfileID: UUID? {
 			UUID(uuidString: selectedProfileIDString)
+		}
+
+		var isProfileNameEmpty: Bool {
+			newProfileName.trimmingCharacters(in: .whitespaces).isEmpty
 		}
 
 		func checkForProfile() async {
@@ -86,6 +94,32 @@ extension OnboardingProfileCreationView {
 				residencesCount = 0
 				vehiclesCount = 0
 				jobsCount = 0
+			}
+		}
+
+		func createProfile(named profileName: String) {
+			do {
+				let id = UUID()
+				try database.write { db in
+					try Profile.insert {
+						Profile.Draft(
+							id: id,
+							name: profileName,
+							createdAt: now,
+							updatedAt: now
+						)
+					}
+					.execute(db)
+					Analytics.sendSignal(.profileCreated)
+				}
+
+				selectedProfileIDString = id.uuidString
+				createdNewProfile = true
+				createdProfileName = profileName
+				notifyProfileChanged()
+			} catch {
+				Analytics.logError(id: .profileSaveFailed, message: error.localizedDescription)
+				reportIssue(error)
 			}
 		}
 

@@ -5,22 +5,22 @@
 //  Created by Ryan Token on 2/11/26.
 //
 
-import SQLiteData
 import SwiftUI
 
 extension AppOnboardingFlow {
-	enum OnboardingPhase {
-		case tabView
+	enum Destination: Hashable {
+		case profileCreation
+		case reminder
 		case paywall
+		case congratulations
 	}
 
 	@Observable
 	@MainActor
 	class ViewModel {
 		var currentTab: Int = 0
-		var phase: OnboardingPhase = .tabView
 		var isStartingOnboarding = true
-		var navigationPath = NavigationPath()
+		var navigationPath: [Destination] = []
 		var isTimerActive = true
 		var initialTimerCounter = 0
 		var mainTimerCounter = 0
@@ -61,11 +61,11 @@ extension AppOnboardingFlow {
 			}
 		}
 
-		func navigateAfterProfileCreation(hasUnlockedPremium: Bool) {
+		func navigateAfterReminder(hasUnlockedPremium: Bool) {
 			if hasUnlockedPremium {
-				navigationPath.append("congratulations")
+				navigationPath.append(.congratulations)
 			} else {
-				phase = .paywall
+				navigationPath.append(.paywall)
 			}
 		}
 	}

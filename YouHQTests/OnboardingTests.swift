@@ -31,20 +31,20 @@ extension YouHQTests {
 				#expect(vm.isTimerActive == true)
 			}
 
-			@Test("navigateAfterProfileCreation goes to paywall for free users")
+			@Test("navigateAfterReminder pushes paywall for free users")
 			func navigateToPaywall() {
 				let vm = AppOnboardingFlow.ViewModel()
-				vm.navigateAfterProfileCreation(hasUnlockedPremium: false)
+				vm.navigateAfterReminder(hasUnlockedPremium: false)
 
-				#expect(vm.phase == .paywall)
+				#expect(vm.navigationPath.last == .paywall)
 			}
 
-			@Test("navigateAfterProfileCreation goes to congratulations for premium users")
+			@Test("navigateAfterReminder pushes congratulations for premium users")
 			func navigateToCongratulations() {
 				let vm = AppOnboardingFlow.ViewModel()
-				vm.navigateAfterProfileCreation(hasUnlockedPremium: true)
+				vm.navigateAfterReminder(hasUnlockedPremium: true)
 
-				#expect(vm.navigationPath.count == 1)
+				#expect(vm.navigationPath.last == .congratulations)
 			}
 
 			@Test("Manual swipe disables timer")

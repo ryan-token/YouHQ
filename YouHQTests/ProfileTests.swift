@@ -75,7 +75,7 @@ extension YouHQTests {
 			}
 		}
 
-		// MARK: - OnboardingProfileSetup.ViewModel Tests
+		// MARK: - OnboardingProfileCreationView.ViewModel profile creation tests
 
 		@Suite("Profile setup")
 		struct ProfileSetup {
@@ -83,7 +83,7 @@ extension YouHQTests {
 
 			@Test("isProfileNameEmpty rejects whitespace-only names")
 			func profileNameValidation() {
-				let vm = OnboardingProfileSetup.ViewModel()
+				let vm = OnboardingProfileCreationView.ViewModel()
 
 				vm.newProfileName = ""
 				#expect(vm.isProfileNameEmpty)
@@ -95,31 +95,18 @@ extension YouHQTests {
 				#expect(!vm.isProfileNameEmpty)
 			}
 
-			@Test("checkProfileCount returns correct count")
-			func checkProfileCount() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Alice", createdAt: Date(), updatedAt: Date())
-						Profile.Draft(id: UUID(-2), name: "Bob", createdAt: Date(), updatedAt: Date())
-					}
-				}
-
-				let vm = OnboardingProfileSetup.ViewModel()
-				await vm.checkProfileCount()
-
-				#expect(vm.profileCount == 2)
-			}
-
-			@Test("createProfile inserts into database and sets selected ID")
+			@Test("createProfile inserts into database, sets selected ID, and marks creation flags")
 			func createProfile() async throws {
-				let vm = OnboardingProfileSetup.ViewModel()
+				let vm = OnboardingProfileCreationView.ViewModel()
 				vm.createProfile(named: "New Profile")
 
 				let count = try await database.read { db in try Profile.fetchCount(db) }
 				#expect(count == 1)
 
-				// Verify the profile was auto-selected
+				// Verify the profile was auto-selected and the view-model flags reflect it
 				#expect(!vm.selectedProfileIDString.isEmpty)
+				#expect(vm.createdNewProfile)
+				#expect(vm.createdProfileName == "New Profile")
 			}
 		}
 

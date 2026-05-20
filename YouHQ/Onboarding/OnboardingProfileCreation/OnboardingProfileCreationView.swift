@@ -32,8 +32,30 @@ struct OnboardingProfileCreationView: View {
 							.font(.title2)
 							.fontWeight(.semibold)
 
-						HQText("Profiles hold residences, vehicles, money, media, and career info.")
+						if !vm.hasAnyProfile {
+							VStack(alignment: .leading, spacing: 12) {
+								Text("A **Profile** holds residences, vehicles, money, media, and career info.")
+
+								Text(
+									"""
+									**Create additional profiles** to manage data for someone else, \
+									or to isolate your own data more cleanly.
+									"""
+								)
+
+								Text("You can **switch between profiles** at any time.")
+
+								Text(
+									"""
+									Profiles can be **shared** with others. Sharing a profile \
+									with someone else means all data in that profile \
+									will be synced seamlessly between all participants.
+									"""
+								)
+							}
 							.foregroundStyle(.secondary)
+							.fontDesign(.rounded)
+						}
 
 						// Show limitation card if free user has existing profile
 						if vm.hasAnyProfile && !paywallManager.hasUnlockedPremium {
@@ -53,14 +75,14 @@ struct OnboardingProfileCreationView: View {
 							.controlSize(.large)
 						} else {
 							Button {
-								vm.showCreateProfileSheet = true
+								vm.isShowingCreateProfileAlert = true
 							} label: {
-								HQText(vm.hasAnyProfile ? "Create New Profile" : "Create Profile")
-									.fontWeight(.medium)
-									.frame(maxWidth: .infinity)
+								AddMoreButtonLabel(
+									text: vm.hasAnyProfile ? "Create New Profile" : "Create Profile",
+									backgroundColor: .indigo
+								)
 							}
-							.buttonStyle(.borderedProminent)
-							.controlSize(.large)
+							.buttonStyle(.plain)
 						}
 					}
 				}
@@ -156,18 +178,22 @@ struct OnboardingProfileCreationView: View {
 				await vm.checkForProfile()
 			}
 		}
-		.sheet(
-			isPresented: $vm.showCreateProfileSheet,
-			onDismiss: {
-				Task {
-					await vm.checkForProfile()
-				}
+		.alert("Create Profile", isPresented: $vm.isShowingCreateProfileAlert) {
+			TextField("Profile Name", text: $vm.newProfileName)
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+			Button {
+				vm.createProfile(named: vm.newProfileName)
+			} label: {
+				HQText("Create")
 			}
-		) {
-			OnboardingProfileSetup(
-				createdNewProfile: $vm.createdNewProfile,
-				createdProfileName: $vm.createdProfileName
-			)
+			.disabled(vm.isProfileNameEmpty)
+			Button(role: .cancel) {
+				vm.newProfileName = ""
+			}
+		} message: {
+			HQText("Profiles hold residences, vehicles, money, media, and career info.")
 		}
 		.sheet(isPresented: $vm.showPaywallSheet) {
 			Paywall(fromOnboarding: true) {
