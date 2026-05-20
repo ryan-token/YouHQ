@@ -18,22 +18,25 @@ struct MediaScreen: View {
 			Group {
 				SharingStatus(for: vm.selectedProfile)
 
-				if hasNoData {
-					NoMediaView(vm: vm)
-				} else {
-					HideCostsToggle(hideCosts: $hideMediaCosts)
+				Group {
+					if hasNoData {
+						NoMediaView(vm: vm)
+					} else {
+						HideCostsToggle(hideCosts: $hideMediaCosts)
 
-					if vm.totalMonthlyCost > 0 {
-						MonthlyMediaCostRow(
-							totalCost: vm.totalMonthlyCost,
-							serviceProviders: vm.serviceProviderViewModel.serviceProviders,
-							subscriptions: vm.subscriptionViewModel.subscriptions,
-							blurred: hideMediaCosts
-						)
+						if vm.totalMonthlyCost > 0 {
+							MonthlyMediaCostRow(
+								totalCost: vm.totalMonthlyCost,
+								serviceProviders: vm.serviceProviderViewModel.serviceProviders,
+								subscriptions: vm.subscriptionViewModel.subscriptions,
+								blurred: hideMediaCosts
+							)
+						}
+
+						MediaInfo(vm: vm, hideCosts: hideMediaCosts)
 					}
-
-					MediaInfo(vm: vm, hideCosts: hideMediaCosts)
 				}
+				.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
 			}
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)

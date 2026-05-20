@@ -11,7 +11,7 @@ import SwiftUI
 
 extension VehicleScreen {
 	@Observable
-	class ViewModel: ProfileSelection {
+	class ViewModel: ProfileSelection, InitialLoadTracking {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
 
@@ -84,6 +84,7 @@ extension VehicleScreen {
 		var sheetTransitionSourceID: String = "addButton"
 		var isNavigatingToMaintenanceItems = false
 		var isNavigatingToPaintColors = false
+		var hasCompletedInitialLoad = false
 
 		private var loadDataTask: Task<Void, Never>?
 
@@ -112,6 +113,7 @@ extension VehicleScreen {
 		func loadVehicleData() async {
 			await loadVehicles()
 			await restoreSelection()
+			await markInitialLoadComplete()
 		}
 
 		func handleProfileChange() async {

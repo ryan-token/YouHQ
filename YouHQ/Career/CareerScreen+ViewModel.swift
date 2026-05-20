@@ -11,7 +11,7 @@ import SwiftUI
 
 extension CareerScreen {
 	@Observable
-	class ViewModel: ProfileSelection {
+	class ViewModel: ProfileSelection, InitialLoadTracking {
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
@@ -42,6 +42,7 @@ extension CareerScreen {
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 		var sheetTransitionSourceID: String = "addButton"
+		var hasCompletedInitialLoad = false
 
 		var sortedJobs: [Job] {
 			let currentJob = jobViewModel.jobs.filter { $0.isCurrent }
@@ -77,10 +78,12 @@ extension CareerScreen {
 		// MARK: CAREER DATA FUNCTIONS
 
 		func loadCareerData() async {
-			guard let profileID = selectedProfile?.profile.id else { return }
-			async let jobs: Void = jobViewModel.load(for: profileID)
-			async let others: Void = otherViewModel.loadCategory(for: .career, profileID: profileID)
-			_ = await (jobs, others)
+			if let profileID = selectedProfile?.profile.id {
+				async let jobs: Void = jobViewModel.load(for: profileID)
+				async let others: Void = otherViewModel.loadCategory(for: .career, profileID: profileID)
+				_ = await (jobs, others)
+			}
+			await markInitialLoadComplete()
 		}
 
 		// MARK: SHEET PRESENTATION

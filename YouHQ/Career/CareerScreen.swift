@@ -18,67 +18,70 @@ struct CareerScreen: View {
 			Group {
 				SharingStatus(for: vm.selectedProfile)
 
-				if vm.sortedJobs.isEmpty && vm.otherViewModel.others.isEmpty {
-					NoJobsView(vm: vm)
-				} else {
-					HideSalariesToggle(hideSalaries: $hideSalaries)
+				Group {
+					if vm.sortedJobs.isEmpty && vm.otherViewModel.others.isEmpty {
+						NoJobsView(vm: vm)
+					} else {
+						HideSalariesToggle(hideSalaries: $hideSalaries)
 
-					SalaryChart(jobs: vm.sortedJobs, hideSalaries: hideSalaries)
+						SalaryChart(jobs: vm.sortedJobs, hideSalaries: hideSalaries)
 
-					ForEach(vm.sortedJobs) { job in
-						JobSection(
-							job: job,
-							hideSalaries: hideSalaries,
-							onColorChange: { newColor in
-								vm.jobViewModel.updateBackgroundColor(
-									newColor,
-									for: job
-								)
-							},
-							onTap: {
-								vm.sheetTransitionSourceID = job.id.uuidString
-								vm.sectionToEdit = .job(job)
-								vm.isShowingSectionEditSheet = true
-							}
-						)
-						.matchedTransitionSource(id: job.id.uuidString, in: addButtonNamespace)
-						.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-							Button(role: .destructive) {
-								vm.jobViewModel.delete(job)
-							} label: {
-								Label("Delete", systemImage: "trash")
-							}
-						}
-					}
-
-					ForEach(vm.otherViewModel.others) { other in
-						OtherSection(
-							other: other,
-							hideCosts: hideSalaries,
-							onColorChange: { newColor in
-								vm.otherViewModel.updateBackgroundColor(
-									newColor,
-									for: other
-								)
-							},
-							onTap: {
-								vm.sheetTransitionSourceID = other.id.uuidString
-								vm.sectionToEdit = .other(other)
-								vm.isShowingSectionEditSheet = true
-							}
-						)
-						.matchedTransitionSource(id: other.id.uuidString, in: addButtonNamespace)
-						.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-							Button(role: .destructive) {
-								vm.otherViewModel.delete(other)
-							} label: {
-								Label("Delete", systemImage: "trash")
+						ForEach(vm.sortedJobs) { job in
+							JobSection(
+								job: job,
+								hideSalaries: hideSalaries,
+								onColorChange: { newColor in
+									vm.jobViewModel.updateBackgroundColor(
+										newColor,
+										for: job
+									)
+								},
+								onTap: {
+									vm.sheetTransitionSourceID = job.id.uuidString
+									vm.sectionToEdit = .job(job)
+									vm.isShowingSectionEditSheet = true
+								}
+							)
+							.matchedTransitionSource(id: job.id.uuidString, in: addButtonNamespace)
+							.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+								Button(role: .destructive) {
+									vm.jobViewModel.delete(job)
+								} label: {
+									Label("Delete", systemImage: "trash")
+								}
 							}
 						}
-					}
 
-					AddMoreButton(vm: vm)
+						ForEach(vm.otherViewModel.others) { other in
+							OtherSection(
+								other: other,
+								hideCosts: hideSalaries,
+								onColorChange: { newColor in
+									vm.otherViewModel.updateBackgroundColor(
+										newColor,
+										for: other
+									)
+								},
+								onTap: {
+									vm.sheetTransitionSourceID = other.id.uuidString
+									vm.sectionToEdit = .other(other)
+									vm.isShowingSectionEditSheet = true
+								}
+							)
+							.matchedTransitionSource(id: other.id.uuidString, in: addButtonNamespace)
+							.swipeActions(edge: .trailing, allowsFullSwipe: true) {
+								Button(role: .destructive) {
+									vm.otherViewModel.delete(other)
+								} label: {
+									Label("Delete", systemImage: "trash")
+								}
+							}
+						}
+
+						AddMoreButton(vm: vm)
+					}
 				}
+				.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
 			}
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)

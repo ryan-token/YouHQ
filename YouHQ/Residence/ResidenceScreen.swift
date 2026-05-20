@@ -20,26 +20,28 @@ struct ResidenceScreen: View {
 			Group {
 				SharingStatus(for: vm.selectedProfile)
 
-				if vm.residences.isEmpty {
-					NoResidencesView(
-						isSynchronizing: syncEngine.isSynchronizing,
-						onAddResidenceTapped: { vm.showCreateResidenceSheet(sourceID: "emptyStateButton") }
-					)
-				} else {
-					MacOSResidencePicker(residences: vm.residences, selectedResidence: $vm.selectedResidence)
-
-					HideCostsToggle(hideCosts: $hideResidenceCosts)
-
-					if vm.hasMappableAddresses {
-						ResidenceMap(
-							residences: vm.residences,
-							selectedResidence: $vm.selectedResidence
+				Group {
+					if vm.residences.isEmpty {
+						NoResidencesView(
+							onAddResidenceTapped: { vm.showCreateResidenceSheet(sourceID: "emptyStateButton") }
 						)
-					}
+					} else {
+						MacOSResidencePicker(residences: vm.residences, selectedResidence: $vm.selectedResidence)
 
-					ResidenceInfo(vm: vm, hideCosts: hideResidenceCosts)
-						.id(vm.selectedResidence?.id)
+						HideCostsToggle(hideCosts: $hideResidenceCosts)
+
+						if vm.hasMappableAddresses {
+							ResidenceMap(
+								residences: vm.residences,
+								selectedResidence: $vm.selectedResidence
+							)
+						}
+
+						ResidenceInfo(vm: vm, hideCosts: hideResidenceCosts)
+							.id(vm.selectedResidence?.id)
+					}
 				}
+				.opacity(isResolvedContentVisible ? 1 : 0)
 			}
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)
@@ -101,6 +103,10 @@ struct ResidenceScreen: View {
 		#if !os(visionOS)
 			.scrollDismissesKeyboard(.immediately)
 		#endif
+	}
+
+	private var isResolvedContentVisible: Bool {
+		vm.hasCompletedInitialLoad && !(vm.residences.isEmpty && syncEngine.isSynchronizing)
 	}
 }
 

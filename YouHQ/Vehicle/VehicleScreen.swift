@@ -18,16 +18,21 @@ struct VehicleScreen: View {
 			Group {
 				SharingStatus(for: vm.selectedProfile)
 
-				if vm.vehicles.isEmpty {
-					NoVehiclesView(onAddVehicleTapped: { vm.showCreateVehicleSheet(sourceID: "emptyStateButton") })
-				} else {
-					MacOSVehiclePicker(vehicles: vm.vehicles, selectedVehicle: $vm.selectedVehicle)
+				Group {
+					if vm.vehicles.isEmpty {
+						NoVehiclesView(
+							onAddVehicleTapped: { vm.showCreateVehicleSheet(sourceID: "emptyStateButton") }
+						)
+					} else {
+						MacOSVehiclePicker(vehicles: vm.vehicles, selectedVehicle: $vm.selectedVehicle)
 
-					HideCostsToggle(hideCosts: $hideVehicleCosts)
+						HideCostsToggle(hideCosts: $hideVehicleCosts)
 
-					VehicleInfo(vm: vm, hideCosts: hideVehicleCosts)
-						.id(vm.selectedVehicle?.id)
+						VehicleInfo(vm: vm, hideCosts: hideVehicleCosts)
+							.id(vm.selectedVehicle?.id)
+					}
 				}
+				.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
 			}
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)

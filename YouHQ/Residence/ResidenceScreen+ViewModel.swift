@@ -11,7 +11,7 @@ import SwiftUI
 
 extension ResidenceScreen {
 	@Observable
-	class ViewModel: ProfileSelection {
+	class ViewModel: ProfileSelection, InitialLoadTracking {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database
 
@@ -90,6 +90,7 @@ extension ResidenceScreen {
 		var sheetTransitionSourceID: String = "addButton"
 		var isNavigatingToMaintenanceItems = false
 		var isNavigatingToPaintColors = false
+		var hasCompletedInitialLoad = false
 
 		private var loadDataTask: Task<Void, Never>?
 
@@ -118,6 +119,7 @@ extension ResidenceScreen {
 		func loadResidenceData() async {
 			await loadResidences()
 			await restoreSelection()
+			await markInitialLoadComplete()
 		}
 
 		func handleProfileChange() async {

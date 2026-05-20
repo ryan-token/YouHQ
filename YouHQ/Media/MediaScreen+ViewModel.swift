@@ -11,7 +11,7 @@ import SwiftUI
 
 extension MediaScreen {
 	@Observable
-	class ViewModel: ProfileSelection {
+	class ViewModel: ProfileSelection, InitialLoadTracking {
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
@@ -45,6 +45,7 @@ extension MediaScreen {
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 		var sheetTransitionSourceID: String = "addButton"
+		var hasCompletedInitialLoad = false
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -57,8 +58,10 @@ extension MediaScreen {
 		// MARK: MEDIA DATA FUNCTIONS
 
 		func loadMediaData() async {
-			guard let profileID = selectedProfile?.profile.id else { return }
-			await loadAllData(for: profileID)
+			if let profileID = selectedProfile?.profile.id {
+				await loadAllData(for: profileID)
+			}
+			await markInitialLoadComplete()
 		}
 
 		private func loadAllData(for profileID: UUID) async {

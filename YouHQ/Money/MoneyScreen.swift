@@ -19,22 +19,25 @@ struct MoneyScreen: View {
 				Group {
 					SharingStatus(for: vm.selectedProfile)
 
-					if hasNoAccounts {
-						NoAccountsView(vm: vm)
-					} else {
-						Toggle(isOn: $hideAccountNumbers) {
-							HQText("Hide Account Numbers")
-								.foregroundStyle(.secondary)
-								.font(.headline)
+					Group {
+						if hasNoAccounts {
+							NoAccountsView(vm: vm)
+						} else {
+							Toggle(isOn: $hideAccountNumbers) {
+								HQText("Hide Account Numbers")
+									.foregroundStyle(.secondary)
+									.font(.headline)
+							}
+							#if os(macOS)
+								.padding(.vertical, 4)
+							#endif
+
+							MoneyInfo(vm: vm, hideAccountNumbers: hideAccountNumbers)
+
+							AddMoreButton(vm: vm)
 						}
-						#if os(macOS)
-							.padding(.vertical, 4)
-						#endif
-
-						MoneyInfo(vm: vm, hideAccountNumbers: hideAccountNumbers)
-
-						AddMoreButton(vm: vm)
 					}
+					.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
 				}
 				.listRowSeparator(.hidden)
 				.listRowBackground(Color.clear)

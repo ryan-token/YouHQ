@@ -11,7 +11,7 @@ import SwiftUI
 
 extension MoneyScreen {
 	@Observable
-	class ViewModel: ProfileSelection {
+	class ViewModel: ProfileSelection, InitialLoadTracking {
 		@ObservationIgnored
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
@@ -47,6 +47,7 @@ extension MoneyScreen {
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 		var sheetTransitionSourceID: String = "addButton"
+		var hasCompletedInitialLoad = false
 
 		// MARK: PROFILE FUNCTIONS
 
@@ -59,8 +60,10 @@ extension MoneyScreen {
 		// MARK: MONEY ACCOUNT FUNCTIONS
 
 		func loadMoneyData() async {
-			guard let profileID = selectedProfile?.profile.id else { return }
-			await loadAllData(for: profileID)
+			if let profileID = selectedProfile?.profile.id {
+				await loadAllData(for: profileID)
+			}
+			await markInitialLoadComplete()
 		}
 
 		private func loadAllData(for profileID: UUID) async {

@@ -11,6 +11,7 @@ import SwiftUI
 extension CareerScreen {
 	struct NoJobsView: View {
 		let vm: ViewModel
+
 		@Environment(\.sheetNamespace) private var namespace
 
 		var body: some View {
