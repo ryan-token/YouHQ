@@ -34,9 +34,7 @@ extension ResidenceScreen {
 		@ObservationIgnored
 		@Shared(.appStorage("selectedResidenceID")) var selectedResidenceID: String?
 
-		init() {
-			residenceNotes = ""
-		}
+		init() {}
 
 		func setSelectedProfileIDString(_ value: String) {
 			$selectedProfileIDString.withLock { $0 = value }
@@ -60,8 +58,6 @@ extension ResidenceScreen {
 						Analytics.sendSignal(.residenceSwitched)
 					}
 				}
-				residenceNotes = selectedResidence?.notes ?? ""
-
 				// Load data for the new residence when ID changes
 				if selectedResidence?.id != oldValue?.id {
 					loadDataTask?.cancel()
@@ -94,9 +90,7 @@ extension ResidenceScreen {
 		var sheetTransitionSourceID: String = "addButton"
 		var isNavigatingToMaintenanceItems = false
 		var isNavigatingToPaintColors = false
-		var residenceNotes: String
 
-		private var notesDebounceTask: Task<Void, Never>?
 		private var loadDataTask: Task<Void, Never>?
 
 		// MARK: PROFILE FUNCTIONS
@@ -137,11 +131,12 @@ extension ResidenceScreen {
 
 		private func loadAllData() async {
 			guard let residenceID = selectedResidence?.id else { return }
-			await utilityViewModel.load(for: residenceID)
-			await insuranceViewModel.load(for: residenceID)
-			await maintenanceViewModel.load(for: residenceID)
-			await paintColorViewModel.load(for: residenceID)
-			await otherViewModel.loadResidence(for: residenceID)
+			async let utilities: Void = utilityViewModel.load(for: residenceID)
+			async let insurance: Void = insuranceViewModel.load(for: residenceID)
+			async let maintenance: Void = maintenanceViewModel.load(for: residenceID)
+			async let paintColors: Void = paintColorViewModel.load(for: residenceID)
+			async let others: Void = otherViewModel.loadResidence(for: residenceID)
+			_ = await (utilities, insurance, maintenance, paintColors, others)
 		}
 
 		func restoreSelection() async {

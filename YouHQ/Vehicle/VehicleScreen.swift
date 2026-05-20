@@ -59,12 +59,11 @@ struct VehicleScreen: View {
 			await vm.loadProfiles()
 			await vm.loadVehicleData()
 		}
-		.onChange(of: vm.profiles.count) {
-			Task { await vm.loadVehicleData() }
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
-			Task { await vm.handleProfileChange() }
-		}
+		.reloadOnProfileChange(
+			profileCount: vm.profiles.count,
+			initialLoad: vm.loadVehicleData,
+			onProfileChanged: vm.handleProfileChange
+		)
 		.onChange(of: vm.vehicles) {
 			vm.updateSelectedVehicle()
 		}

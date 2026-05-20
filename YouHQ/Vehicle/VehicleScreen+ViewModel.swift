@@ -33,9 +33,7 @@ extension VehicleScreen {
 		@ObservationIgnored
 		@Shared(.appStorage("selectedVehicleID")) var selectedVehicleID: String?
 
-		init() {
-			vehicleNotes = ""
-		}
+		init() {}
 
 		func setSelectedProfileIDString(_ value: String) {
 			$selectedProfileIDString.withLock { $0 = value }
@@ -59,8 +57,6 @@ extension VehicleScreen {
 						Analytics.sendSignal(.vehicleSwitched)
 					}
 				}
-				vehicleNotes = selectedVehicle?.notes ?? ""
-
 				// Load data for the new vehicle when ID changes
 				if selectedVehicle?.id != oldValue?.id {
 					loadDataTask?.cancel()
@@ -88,9 +84,7 @@ extension VehicleScreen {
 		var sheetTransitionSourceID: String = "addButton"
 		var isNavigatingToMaintenanceItems = false
 		var isNavigatingToPaintColors = false
-		var vehicleNotes: String
 
-		private var notesDebounceTask: Task<Void, Never>?
 		private var loadDataTask: Task<Void, Never>?
 
 		// MARK: PROFILE FUNCTIONS
@@ -131,10 +125,11 @@ extension VehicleScreen {
 
 		private func loadAllData() async {
 			guard let vehicleID = selectedVehicle?.id else { return }
-			await insuranceViewModel.loadVehicle(for: vehicleID)
-			await maintenanceViewModel.loadVehicle(for: vehicleID)
-			await paintColorViewModel.loadVehicle(for: vehicleID)
-			await otherViewModel.loadVehicle(for: vehicleID)
+			async let insurance: Void = insuranceViewModel.loadVehicle(for: vehicleID)
+			async let maintenance: Void = maintenanceViewModel.loadVehicle(for: vehicleID)
+			async let paintColors: Void = paintColorViewModel.loadVehicle(for: vehicleID)
+			async let others: Void = otherViewModel.loadVehicle(for: vehicleID)
+			_ = await (insurance, maintenance, paintColors, others)
 		}
 
 		func restoreSelection() async {

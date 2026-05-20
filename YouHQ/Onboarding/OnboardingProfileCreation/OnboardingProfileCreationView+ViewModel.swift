@@ -56,7 +56,7 @@ extension OnboardingProfileCreationView {
 					await loadItemCounts()
 				}
 			} catch {
-				print("Error checking for profiles: \(error.localizedDescription)")
+				reportIssue(error)
 				hasAnyProfile = false
 				existingProfileName = ""
 			}
@@ -91,7 +91,7 @@ extension OnboardingProfileCreationView {
 				vehiclesCount = counts.1
 				jobsCount = counts.2
 			} catch {
-				print("Error loading item counts: \(error.localizedDescription)")
+				reportIssue(error)
 				residencesCount = 0
 				vehiclesCount = 0
 				jobsCount = 0

@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 12/29/25.
 //
 
+import Dependencies
 import Foundation
 import SQLiteData
 
@@ -19,8 +20,16 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		}
 
 		#if DEBUG
-			db.trace(options: .profile) {
-				print("[DEBUG] \($0.expandedDescription)")
+			@Dependency(\.context) var context
+			db.trace(options: .profile) { event in
+				let description = event.expandedDescription
+				// Skip sync engine queries and internal trigger/comment lines
+				guard
+					!SyncEngine.isSynchronizing,
+					!description.hasPrefix("--"),
+					context != .test
+				else { return }
+				print("[DEBUG] \(description)")
 			}
 		#endif
 	}

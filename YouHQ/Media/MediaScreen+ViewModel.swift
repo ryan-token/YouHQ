@@ -62,10 +62,11 @@ extension MediaScreen {
 		}
 
 		private func loadAllData(for profileID: UUID) async {
-			await deviceViewModel.load(for: profileID)
-			await serviceProviderViewModel.load(for: profileID)
-			await subscriptionViewModel.load(for: profileID)
-			await otherViewModel.loadCategory(for: .media, profileID: profileID)
+			async let devices: Void = deviceViewModel.load(for: profileID)
+			async let providers: Void = serviceProviderViewModel.load(for: profileID)
+			async let subscriptions: Void = subscriptionViewModel.load(for: profileID)
+			async let others: Void = otherViewModel.loadCategory(for: .media, profileID: profileID)
+			_ = await (devices, providers, subscriptions, others)
 		}
 
 		// MARK: MONTHLY COST CALCULATION

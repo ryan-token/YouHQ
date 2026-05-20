@@ -64,12 +64,12 @@ extension MoneyScreen {
 		}
 
 		private func loadAllData(for profileID: UUID) async {
-			await bankAccountViewModel.load(for: profileID)
-			await investmentAccountViewModel.load(for: profileID)
-			await healthSavingsAccountViewModel.load(for: profileID)
+			async let banks: Void = bankAccountViewModel.load(for: profileID)
+			async let investments: Void = investmentAccountViewModel.load(for: profileID)
+			async let hsas: Void = healthSavingsAccountViewModel.load(for: profileID)
 
 			// Load standalone insurance policies (not tied to residence or vehicle)
-			_ = await withErrorReporting {
+			async let policies: Void? = withErrorReporting {
 				try await insuranceViewModel.$insurancePolicies.load(
 					InsurancePolicy
 						.where {
@@ -83,7 +83,9 @@ extension MoneyScreen {
 			}
 
 			// Load 'Other' items tied to Money category
-			await otherViewModel.loadCategory(for: .money, profileID: profileID)
+			async let others: Void = otherViewModel.loadCategory(for: .money, profileID: profileID)
+
+			_ = await (banks, investments, hsas, policies, others)
 		}
 
 		// MARK: SHEET PRESENTATION

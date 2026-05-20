@@ -30,7 +30,6 @@ extension ProfileShare {
 	/// its sharing state. Pass to `$profiles.load(...)` in view models.
 	static var allWithSyncMetadata: some StructuredQueriesCore.Statement<ProfileShare> & Sendable {
 		Profile
-			.group(by: \.id)
 			.leftJoin(SyncMetadata.all) {
 				$0.syncMetadataID.eq($1.id)
 			}

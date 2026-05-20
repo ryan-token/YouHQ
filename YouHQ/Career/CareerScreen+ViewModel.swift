@@ -78,8 +78,9 @@ extension CareerScreen {
 
 		func loadCareerData() async {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			await jobViewModel.load(for: profileID)
-			await otherViewModel.loadCategory(for: .career, profileID: profileID)
+			async let jobs: Void = jobViewModel.load(for: profileID)
+			async let others: Void = otherViewModel.loadCategory(for: .career, profileID: profileID)
+			_ = await (jobs, others)
 		}
 
 		// MARK: SHEET PRESENTATION
