@@ -16,7 +16,6 @@ extension AppOnboardingFlow {
 	}
 
 	@Observable
-	@MainActor
 	class ViewModel {
 		var currentTab: Int = 0
 		var isStartingOnboarding = true

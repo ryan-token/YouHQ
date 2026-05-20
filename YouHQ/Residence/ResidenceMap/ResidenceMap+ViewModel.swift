@@ -5,7 +5,7 @@
 //  Created by Ryan Token on 2/6/26.
 //
 
-@preconcurrency import MapKit
+import MapKit
 import SwiftUI
 
 extension ResidenceMap {

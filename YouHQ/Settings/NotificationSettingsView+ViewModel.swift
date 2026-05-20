@@ -12,7 +12,6 @@ import UserNotifications
 
 extension NotificationSettingsView {
 	@Observable
-	@MainActor
 	class ViewModel {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database

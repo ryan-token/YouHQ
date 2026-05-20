@@ -91,7 +91,7 @@ class PaywallManager {
 		}
 	}
 
-	deinit {
+	isolated deinit {
 		observerTask?.cancel()
 	}
 }

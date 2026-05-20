@@ -229,25 +229,19 @@ extension MaintenanceItemEdit {
 							let newStatus = await NotificationManager.shared.checkAuthorizationStatus()
 							if newStatus != .authorized {
 								// User denied permission
-								await MainActor.run {
-									isShowingPermissionAlert = true
-									shouldNotify = false
-								}
+								isShowingPermissionAlert = true
+								shouldNotify = false
 							}
 						} catch {
 							// Error requesting permission
-							await MainActor.run {
-								shouldNotify = false
-							}
+							shouldNotify = false
 							Analytics.logError(id: .notificationsRequestFailed, message: error.localizedDescription)
 						}
 
 					case .denied:
 						// Show alert to go to settings
-						await MainActor.run {
-							isShowingPermissionAlert = true
-							shouldNotify = false
-						}
+						isShowingPermissionAlert = true
+						shouldNotify = false
 
 					case .authorized, .provisional, .ephemeral:
 						// Permission already granted

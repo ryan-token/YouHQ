@@ -12,7 +12,6 @@ import UserNotifications
 
 extension OnboardingReminderView {
 	@Observable
-	@MainActor
 	class ViewModel {
 		@ObservationIgnored
 		@Dependency(\.defaultDatabase) private var database

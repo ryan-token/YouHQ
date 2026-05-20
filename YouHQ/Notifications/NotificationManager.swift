@@ -35,7 +35,7 @@ extension UNUserNotificationCenter: NotificationCenterProtocol {
 // MARK: - NotificationManager
 
 @Observable
-final class NotificationManager: Sendable {
+final class NotificationManager {
 	@ObservationIgnored
 	@Dependency(\.defaultDatabase) private var database
 

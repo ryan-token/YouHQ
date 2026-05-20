@@ -26,9 +26,7 @@ final class PhotoPickerViewModel {
 		guard let newItem else { return }
 		Task {
 			if let data = try? await newItem.loadTransferable(type: Data.self) {
-				await MainActor.run {
-					self.photoData = data
-				}
+				photoData = data
 			}
 		}
 	}

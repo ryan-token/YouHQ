@@ -40,11 +40,7 @@ final class ImageSaver {
 			return status
 		}
 
-		return await withCheckedContinuation { continuation in
-			PHPhotoLibrary.requestAuthorization(for: .addOnly) { newStatus in
-				continuation.resume(returning: newStatus)
-			}
-		}
+		return await PHPhotoLibrary.requestAuthorization(for: .addOnly)
 	}
 }
 

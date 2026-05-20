@@ -36,7 +36,9 @@ import SQLiteData
 			userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata
 		) {
 			Task {
-				try await syncEngine.acceptShare(metadata: cloudKitShareMetadata)
+				await withErrorReporting {
+					try await syncEngine.acceptShare(metadata: cloudKitShareMetadata)
+				}
 			}
 		}
 
@@ -47,7 +49,9 @@ import SQLiteData
 		) {
 			guard let cloudKitShareMetadata = connectionOptions.cloudKitShareMetadata else { return }
 			Task {
-				try await syncEngine.acceptShare(metadata: cloudKitShareMetadata)
+				await withErrorReporting {
+					try await syncEngine.acceptShare(metadata: cloudKitShareMetadata)
+				}
 			}
 		}
 	}
@@ -63,7 +67,9 @@ import SQLiteData
 			userDidAcceptCloudKitShareWith metadata: CKShare.Metadata
 		) {
 			Task {
-				try await syncEngine.acceptShare(metadata: metadata)
+				await withErrorReporting {
+					try await syncEngine.acceptShare(metadata: metadata)
+				}
 			}
 		}
 
