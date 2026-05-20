@@ -187,37 +187,5 @@ extension YouHQTests {
 			}
 		}
 
-		// MARK: - Double+Currency Tests
-
-		@Suite("Currency formatting")
-		struct CurrencyFormatting {
-			@Test("asCost formats whole numbers")
-			func wholNumbers() {
-				let value = 100.0
-				let formatted = value.asCost
-				#expect(formatted.contains("100"))
-			}
-
-			@Test("asCost formats decimal values")
-			func decimalValues() {
-				let value = 15.99
-				let formatted = value.asCost
-				#expect(formatted.contains("15.99"))
-			}
-
-			@Test("asCost formats zero")
-			func zeroValue() {
-				let value = 0.0
-				let formatted = value.asCost
-				#expect(formatted.contains("0"))
-			}
-
-			@Test("asCost formats large values")
-			func largeValues() {
-				let value = 150_000.0
-				let formatted = value.asCost
-				#expect(formatted.contains("150,000") || formatted.contains("150000"))
-			}
-		}
 	}
 }

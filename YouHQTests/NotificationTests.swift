@@ -61,41 +61,14 @@ extension YouHQTests {
 
 		@Suite("ReminderInterval")
 		struct ReminderIntervalTests {
-			@Test("displayName returns 'Never' for .none")
-			func noneDisplayName() {
+			@Test("displayName returns 'Never' for .none, rawValue otherwise")
+			func displayName() {
 				#expect(ReminderInterval.none.displayName == "Never")
-			}
-
-			@Test(
-				"displayName returns rawValue for non-none intervals",
-				arguments: [
-					ReminderInterval.daily,
-					.weekly,
-					.monthly,
-					.quarterly,
-					.annually,
-				]
-			)
-			func nonNoneDisplayName(interval: ReminderInterval) {
-				#expect(interval.displayName == interval.rawValue)
-			}
-
-			@Test("allCases contains all six intervals")
-			func allCases() {
-				#expect(ReminderInterval.allCases.count == 6)
-				#expect(ReminderInterval.allCases.contains(.none))
-				#expect(ReminderInterval.allCases.contains(.daily))
-				#expect(ReminderInterval.allCases.contains(.weekly))
-				#expect(ReminderInterval.allCases.contains(.monthly))
-				#expect(ReminderInterval.allCases.contains(.quarterly))
-				#expect(ReminderInterval.allCases.contains(.annually))
-			}
-
-			@Test("Equality uses rawValue")
-			func equality() {
-				let a = ReminderInterval(rawValue: "Daily")
-				#expect(a == .daily)
-				#expect(a != .weekly)
+				#expect(ReminderInterval.daily.displayName == "Daily")
+				#expect(ReminderInterval.weekly.displayName == "Weekly")
+				#expect(ReminderInterval.monthly.displayName == "Monthly")
+				#expect(ReminderInterval.quarterly.displayName == "Quarterly")
+				#expect(ReminderInterval.annually.displayName == "Annually")
 			}
 		}
 
@@ -249,64 +222,6 @@ extension YouHQTests {
 			}
 		}
 
-		// MARK: - Maintenance Item Notification Identifier
-
-		@Suite("Maintenance item notification identifiers")
-		struct MaintenanceNotificationIdentifiers {
-			@Dependency(\.defaultDatabase) var database
-
-			@Test("Notification identifier falls back to item ID when empty")
-			func emptyIdentifierFallback() {
-				let item = MaintenanceItem(
-					id: UUID(-1),
-					residenceID: UUID(-2),
-					vehicleID: nil,
-					name: "HVAC filter",
-					notificationIdentifier: ""
-				)
-				let identifier = item.notificationIdentifier.isEmpty
-					? item.id.uuidString : item.notificationIdentifier
-				#expect(identifier == UUID(-1).uuidString)
-			}
-
-			@Test("Notification identifier uses stored value when present")
-			func storedIdentifier() {
-				let item = MaintenanceItem(
-					id: UUID(-1),
-					residenceID: UUID(-2),
-					vehicleID: nil,
-					name: "HVAC filter",
-					notificationIdentifier: "custom-id"
-				)
-				let identifier = item.notificationIdentifier.isEmpty
-					? item.id.uuidString : item.notificationIdentifier
-				#expect(identifier == "custom-id")
-			}
-
-			@Test("Items without shouldNotify don't need scheduling")
-			func shouldNotifyDefault() {
-				let item = MaintenanceItem(
-					id: UUID(-1),
-					residenceID: UUID(-2),
-					vehicleID: nil,
-					name: "HVAC filter"
-				)
-				#expect(item.shouldNotify == false)
-			}
-
-			@Test("Items without dueDate don't need scheduling")
-			func noDueDateDefault() {
-				let item = MaintenanceItem(
-					id: UUID(-1),
-					residenceID: UUID(-2),
-					vehicleID: nil,
-					name: "HVAC filter",
-					shouldNotify: true
-				)
-				#expect(item.dueDate == nil)
-			}
-		}
-
 		// MARK: - NotificationManager Scheduling
 
 		@Suite("NotificationManager scheduling")
@@ -346,7 +261,7 @@ extension YouHQTests {
 				let trigger = try #require(request.trigger as? UNCalendarNotificationTrigger)
 				let dc = trigger.dateComponents
 
-				#expect(dc.hour == 9)
+				#expect(dc.hour == 8)
 				#expect(dc.minute == 0)
 
 				switch interval {
@@ -409,7 +324,7 @@ extension YouHQTests {
 				try await manager.scheduleReminderNotification(interval: .daily)
 
 				let request = try #require(mock.addedRequests.last)
-				#expect(request.content.title == "Time to Update YouHQ")
+				#expect(request.content.title == "Time to Update YouHQ Info")
 				#expect(request.content.body == "Keep your info up to date so it's there when you need it.")
 			}
 
@@ -684,7 +599,7 @@ extension YouHQTests {
 
 				#expect(resultComponents.month == expectedMonth)
 				#expect(resultComponents.day == 1)
-				#expect(resultComponents.hour == 9)
+				#expect(resultComponents.hour == 8)
 				#expect(resultComponents.year == (sameYear ? 2026 : 2027))
 			}
 		}

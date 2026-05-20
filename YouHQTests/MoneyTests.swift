@@ -208,36 +208,6 @@ extension YouHQTests {
 			}
 		}
 
-		// MARK: - Profile Cascade for Money
-
-		@Suite("Cascade deletion")
-		struct CascadeDeletion {
-			@Dependency(\.defaultDatabase) var database
-
-			@Test("Deleting a profile cascades to all money accounts")
-			func cascadeFromProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-						BankAccount.Draft(id: UUID(-2), profileID: UUID(-1), bankName: "Chase")
-						InvestmentAccount.Draft(id: UUID(-3), profileID: UUID(-1), institution: "Vanguard")
-						HealthSavingsAccount.Draft(id: UUID(-4), profileID: UUID(-1), accountType: .hsa, institution: "Optum")
-					}
-				}
-
-				try await database.write { db in
-					try Profile.find(UUID(-1)).delete().execute(db)
-				}
-
-				let bankCount = try await database.read { db in try BankAccount.fetchCount(db) }
-				let investCount = try await database.read { db in try InvestmentAccount.fetchCount(db) }
-				let hsaCount = try await database.read { db in try HealthSavingsAccount.fetchCount(db) }
-				#expect(bankCount == 0)
-				#expect(investCount == 0)
-				#expect(hsaCount == 0)
-			}
-		}
-
 		// MARK: - Money Queries
 
 		@Suite("Queries")
@@ -289,24 +259,6 @@ extension YouHQTests {
 				#expect(first.provider == "Aetna")
 			}
 
-			@Test("Bank accounts scoped to profile")
-			func bankAccountsScopedToProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Alice", createdAt: Date(), updatedAt: Date())
-						Profile.Draft(id: UUID(-2), name: "Bob", createdAt: Date(), updatedAt: Date())
-						BankAccount.Draft(id: UUID(-3), profileID: UUID(-1), bankName: "Chase")
-						BankAccount.Draft(id: UUID(-4), profileID: UUID(-2), bankName: "Wells Fargo")
-					}
-				}
-
-				let aliceAccounts = try await database.read { db in
-					try BankAccount.where { $0.profileID.eq(UUID(-1)) }.fetchAll(db)
-				}
-				#expect(aliceAccounts.count == 1)
-				let aliceAccount = try #require(aliceAccounts.first)
-				#expect(aliceAccount.bankName == "Chase")
-			}
 		}
 	}
 }

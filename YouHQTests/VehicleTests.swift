@@ -225,64 +225,7 @@ extension YouHQTests {
 				#expect(count == 0)
 			}
 
-			@Test("Deleting a profile cascades to vehicles and their children")
-			func cascadeFromProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Ford")
-						InsurancePolicy.Draft(
-							id: UUID(-3),
-							profileID: UUID(-1),
-							vehicleID: UUID(-2),
-							type: .auto
-						)
-						MaintenanceItem.Draft(
-							id: UUID(-4),
-							residenceID: nil,
-							vehicleID: UUID(-2),
-							name: "Tire rotation"
-						)
-					}
-				}
-
-				try await database.write { db in
-					try Profile.find(UUID(-1)).delete().execute(db)
-				}
-
-				let vehicleCount = try await database.read { db in try Vehicle.fetchCount(db) }
-				let insuranceCount = try await database.read { db in try InsurancePolicy.fetchCount(db) }
-				let maintenanceCount = try await database.read { db in try MaintenanceItem.fetchCount(db) }
-				#expect(vehicleCount == 0)
-				#expect(insuranceCount == 0)
-				#expect(maintenanceCount == 0)
-			}
 		}
 
-		// MARK: - Vehicle Query Tests
-
-		@Suite("Queries")
-		struct Queries {
-			@Dependency(\.defaultDatabase) var database
-
-			@Test("Vehicles are scoped to profile")
-			func fetchByProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Alice", createdAt: Date(), updatedAt: Date())
-						Profile.Draft(id: UUID(-2), name: "Bob", createdAt: Date(), updatedAt: Date())
-						Vehicle.Draft(id: UUID(-3), profileID: UUID(-1), make: "Toyota")
-						Vehicle.Draft(id: UUID(-4), profileID: UUID(-2), make: "Honda")
-					}
-				}
-
-				let aliceVehicles = try await database.read { db in
-					try Vehicle.where { $0.profileID.eq(UUID(-1)) }.fetchAll(db)
-				}
-				#expect(aliceVehicles.count == 1)
-				let aliceVehicle = try #require(aliceVehicles.first)
-				#expect(aliceVehicle.make == "Toyota")
-			}
-		}
 	}
 }

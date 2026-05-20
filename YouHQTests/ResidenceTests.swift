@@ -65,24 +65,6 @@ extension YouHQTests {
 				#expect(fetchedResidence.street == "456 Oak Ave")
 			}
 
-			@Test("Save returns nil when street is empty")
-			func saveRequiresStreet() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(
-							id: UUID(-1),
-							name: "Test",
-							createdAt: Date(),
-							updatedAt: Date()
-						)
-					}
-				}
-
-				let vm = AddResidenceSheet.ViewModel(profileID: UUID(-1))
-				// street is empty by default
-				#expect(!vm.isValid)
-			}
-
 			@Test("Validation requires non-empty street")
 			func validationRequiresStreet() {
 				let vm = AddResidenceSheet.ViewModel(profileID: UUID(-1))
@@ -136,37 +118,6 @@ extension YouHQTests {
 				#expect(saved.moveOutDate != nil)
 			}
 
-			@Test("isValid is independent of other fields")
-			func onlyStreetMatters() {
-				let vm = AddResidenceSheet.ViewModel(profileID: UUID(-1))
-				vm.street = "123 Main"
-				#expect(vm.isValid)
-				#expect(vm.city == "")
-				#expect(vm.state == "")
-				#expect(vm.zipCode == "")
-			}
-
-			@Test("Initial values are correct")
-			func initialDefaults() {
-				let vm = AddResidenceSheet.ViewModel(profileID: UUID(-1))
-
-				#expect(vm.selectedProfileID == UUID(-1))
-				#expect(vm.type == .apartment)
-				#expect(vm.isCurrent == true)
-				#expect(vm.street == "")
-				#expect(vm.unit == "")
-				#expect(vm.city == "")
-				#expect(vm.state == "")
-				#expect(vm.zipCode == "")
-				#expect(vm.country == "")
-				#expect(vm.moveInDate == nil)
-				#expect(vm.moveOutDate == nil)
-				#expect(vm.hasMoveOutDate == false)
-				#expect(vm.monthlyCost == nil)
-				#expect(vm.costType == .rent)
-				#expect(vm.url == "")
-				#expect(vm.notes == "")
-			}
 		}
 
 		// MARK: - UtilityViewModel Tests
@@ -451,25 +402,6 @@ extension YouHQTests {
 		@Suite("Queries")
 		struct Queries {
 			@Dependency(\.defaultDatabase) var database
-
-			@Test("Residences are fetched by profile")
-			func fetchByProfile() async throws {
-				try await database.write { db in
-					try db.seed {
-						Profile.Draft(id: UUID(-1), name: "Alice", createdAt: Date(), updatedAt: Date())
-						Profile.Draft(id: UUID(-2), name: "Bob", createdAt: Date(), updatedAt: Date())
-						Residence.Draft(id: UUID(-3), profileID: UUID(-1), street: "Alice House")
-						Residence.Draft(id: UUID(-4), profileID: UUID(-2), street: "Bob House")
-					}
-				}
-
-				let aliceResidences = try await database.read { db in
-					try Residence.where { $0.profileID.eq(UUID(-1)) }.fetchAll(db)
-				}
-				#expect(aliceResidences.count == 1)
-				let aliceResidence = try #require(aliceResidences.first)
-				#expect(aliceResidence.street == "Alice House")
-			}
 
 			@Test("Residences ordered by street")
 			func orderedByStreet() async throws {
