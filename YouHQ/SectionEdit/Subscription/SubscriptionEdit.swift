@@ -32,23 +32,21 @@ struct SubscriptionEdit: View {
 				#endif
 
 				LabeledField("Category", shouldOverrideTap: false) {
-					Picker(selection: $vm.category) {
+					Picker("", selection: $vm.category) {
 						ForEach(SubscriptionCategory.allCases, id: \.self) { category in
 							HQText(category.rawValue).tag(category)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Billing Cycle", shouldOverrideTap: false) {
-					Picker(selection: $vm.billingCycle) {
+					Picker("", selection: $vm.billingCycle) {
 						ForEach(BillingCycle.allCases, id: \.self) { cycle in
 							HQText(cycle.rawValue).tag(cycle)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField(vm.billingCycle == .annual ? "Annual Cost" : "Monthly Cost") {
@@ -94,9 +92,8 @@ struct SubscriptionEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}

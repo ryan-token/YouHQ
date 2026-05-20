@@ -81,25 +81,13 @@ struct PhotoViewer: View {
 		}
 		.alert(
 			"Download Failed",
-			isPresented: Binding(
-				get: { downloadErrorMessage != nil },
-				set: { isPresented in
-					if !isPresented {
-						downloadErrorMessage = nil
-					}
-				}
-			)
-		) {
-			Button("OK") {
-				downloadErrorMessage = nil
-			}
-		} message: {
-			if let downloadErrorMessage {
-				HQText(downloadErrorMessage)
-			}
+			isPresented: $downloadErrorMessage.isPresent(),
+			presenting: downloadErrorMessage
+		) { _ in
+		} message: { message in
+			HQText(message)
 		}
 		.alert("Success", isPresented: $isShowingSaveSuccess) {
-			Button("OK") {}
 		} message: {
 			HQText("Photo saved to your library.")
 		}

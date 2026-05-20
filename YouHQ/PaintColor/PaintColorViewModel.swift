@@ -13,8 +13,6 @@ class PaintColorViewModel {
 	@ObservationIgnored
 	@FetchAll(PaintColor.none, animation: .default) var paintColors
 
-	var draftPaintColor: PaintColor?
-
 	func load(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $paintColors.load(

@@ -18,18 +18,14 @@ struct PhotoPickerSection: View {
 		@State private var cameraPresentation: CameraPresentation?
 	#endif
 
-	private var hasPhoto: Bool {
-		viewModel.photoData != nil
-	}
-
 	var body: some View {
 		Section(title) {
-			thumbnailButton
-			libraryPicker
+			PhotoThumbnailButton(viewModel: viewModel)
+			PhotoLibraryPickerButton(viewModel: viewModel)
 			#if os(iOS)
-				cameraButton
+				PhotoCameraButton(viewModel: viewModel, cameraPresentation: $cameraPresentation)
 			#endif
-			removeButton
+			PhotoRemoveButton(viewModel: viewModel)
 		}
 		#if os(iOS)
 			.preference(
@@ -45,66 +41,6 @@ struct PhotoPickerSection: View {
 			viewModel.handlePhotoItemChange(newItem)
 		}
 	}
-
-	// MARK: - Subviews
-
-	@ViewBuilder
-	private var thumbnailButton: some View {
-		if let photoData = viewModel.photoData {
-			Button {
-				withAnimation {
-					viewModel.viewerPayload = PhotoViewerPayload(
-						data: photoData
-					)
-				}
-			} label: {
-				PhotoThumbnail(data: photoData)
-			}
-			.buttonStyle(.plain)
-		}
-	}
-
-	private var libraryPicker: some View {
-		let labelText =
-			hasPhoto ? "Choose Different Image" : "Choose from Library"
-		return PhotosPicker(
-			selection: $viewModel.photoItem,
-			matching: .not(.videos)
-		) {
-			Label(labelText, systemImage: "photo.on.rectangle")
-		}
-	}
-
-	#if os(iOS)
-		private var cameraButton: some View {
-			Button {
-				cameraPresentation = CameraPresentation(
-					id: UUID(),
-					onImageCaptured: { imageData in
-						viewModel.photoData = imageData
-					},
-					onDismiss: {
-						cameraPresentation = nil
-					}
-				)
-			} label: {
-				Label("Take Photo", systemImage: "camera")
-			}
-		}
-	#endif
-
-	@ViewBuilder
-	private var removeButton: some View {
-		if hasPhoto {
-			Button("Remove Image", role: .destructive) {
-				withAnimation {
-					viewModel.clearPhoto()
-				}
-			}
-		}
-	}
-
-	// MARK: - Preferences
 
 	private var photoViewerPresentation: PhotoViewerPresentation? {
 		viewModel.viewerPayload.map { payload in

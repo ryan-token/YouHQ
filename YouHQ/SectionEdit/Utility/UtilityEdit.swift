@@ -22,13 +22,12 @@ struct UtilityEdit: View {
 			@Bindable var vm = utilityVM
 			Section("Utility Info") {
 				LabeledField("Type", shouldOverrideTap: false) {
-					Picker(selection: $vm.type) {
+					Picker("", selection: $vm.type) {
 						ForEach(UtilityType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Provider") {
@@ -74,9 +73,8 @@ struct UtilityEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}
@@ -86,18 +84,6 @@ struct UtilityEdit: View {
 
 #Preview("Utility") {
 	SectionEditSheet(
-		section: .utility(Utility.sampleData),
-		draftUtility: .constant(nil),
-		draftInsurancePolicy: .constant(nil),
-		draftMaintenanceItem: .constant(nil),
-		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil),
-		draftJob: .constant(nil),
-		draftDevice: .constant(nil),
-		draftServiceProvider: .constant(nil),
-		draftSubscription: .constant(nil),
-		draftBankAccount: .constant(nil),
-		draftInvestmentAccount: .constant(nil),
-		draftHealthSavingsAccount: .constant(nil)
+		section: .utility(Utility.sampleData)
 	)
 }

@@ -38,38 +38,36 @@ struct ResidenceInfoSection: View {
 		self.onColorChange = onColorChange
 	}
 
-	var totalMonthlyCost: Double {
-		var total: Double = 0
+	private var costLineItems: [CostLineItem] {
+		var items: [CostLineItem] = []
 
-		// Add residence monthly cost (rent/mortgage) - but not if owned
-		if let residenceCost = residence.monthlyCost,
-			residence.costType != .owned
-		{
-			total += residenceCost
+		if let residenceCost = residence.monthlyCost, residence.costType != .owned {
+			items.append(CostLineItem(label: residence.costType.rawValue, cost: residenceCost))
 		}
 
-		// Add utility costs
 		for utility in utilities {
-			if let utilityCost = utility.approximateMonthlyCost {
-				total += utilityCost
+			if let cost = utility.approximateMonthlyCost {
+				items.append(CostLineItem(label: utility.type.rawValue, cost: cost))
 			}
 		}
 
-		// Add insurance policy costs
 		for policy in insurancePolicies {
-			if let policyCost = policy.monthlyCost {
-				total += policyCost
+			if let cost = policy.monthlyCost {
+				items.append(CostLineItem(label: "\(policy.type.rawValue) Insurance", cost: cost))
 			}
 		}
 
-		// Add other costs
 		for other in others {
-			if let otherCost = other.monthlyCost {
-				total += otherCost
+			if let cost = other.monthlyCost {
+				items.append(CostLineItem(label: other.name, cost: cost))
 			}
 		}
 
-		return total
+		return items
+	}
+
+	private var totalMonthlyCost: Double {
+		costLineItems.reduce(0) { $0 + $1.cost }
 	}
 
 	var body: some View {
@@ -115,16 +113,13 @@ struct ResidenceInfoSection: View {
 			}
 
 			if totalMonthlyCost > 0 {
-				MonthlyTCORow(
-					"Monthly TCO:",
-					totalCost: totalMonthlyCost,
-					residenceCost: residence.monthlyCost,
-					residenceCostType: residence.costType,
-					utilities: utilities,
-					insurancePolicies: insurancePolicies,
-					others: others,
-					blurred: hideCosts
-				)
+				MonthlyCostRow("Monthly TCO:", totalCost: totalMonthlyCost, blurred: hideCosts) {
+					CostBreakdownView(
+						title: "Monthly Total Cost of Ownership",
+						lineItems: costLineItems,
+						totalCost: totalMonthlyCost
+					)
+				}
 			}
 
 			if residence.url.isNotEmpty {

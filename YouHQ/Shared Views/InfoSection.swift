@@ -51,17 +51,17 @@ struct InfoSection<Content: View>: View {
 				}
 			}
 
-			VStack(alignment: .leading, spacing: 4) {
-				content
-			}
-			.frame(maxWidth: .infinity, alignment: .leading)
-			.if(onTap != nil) { view in
-				Button(action: onTap!) {
-					view
-						.frame(minHeight: 24)
-						.contentShape(.rect)
+			Group {
+				if let onTap {
+					Button(action: onTap) {
+						contentStack
+							.frame(minHeight: 24)
+							.contentShape(.rect)
+					}
+					.buttonStyle(.plain)
+				} else {
+					contentStack
 				}
-				.buttonStyle(.plain)
 			}
 			.cardStyle(backgroundColor: backgroundColor)
 		}
@@ -69,37 +69,12 @@ struct InfoSection<Content: View>: View {
 			backgroundColor = newColor
 		}
 	}
-}
 
-struct InfoRow: View {
-	let label: String
-	let value: String
-	let isSelectable: Bool
-	let blurred: Bool
-
-	init(
-		_ label: String,
-		value: String,
-		isSelectable: Bool = true,
-		blurred: Bool = false
-	) {
-		self.label = label
-		self.value = value
-		self.isSelectable = isSelectable
-		self.blurred = blurred
-	}
-
-	var body: some View {
-		HStack(alignment: .top) {
-			HQText(label)
-				.font(.headline)
-			HQText(value)
-				.if(isSelectable) {
-					$0.textSelection(.enabled)
-				}
-				.blur(radius: blurred ? 4 : 0)
+	private var contentStack: some View {
+		VStack(alignment: .leading, spacing: 4) {
+			content
 		}
-		.foregroundStyle(.white)
+		.frame(maxWidth: .infinity, alignment: .leading)
 	}
 }
 

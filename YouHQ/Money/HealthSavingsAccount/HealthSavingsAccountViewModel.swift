@@ -16,8 +16,6 @@ class HealthSavingsAccountViewModel {
 	@ObservationIgnored
 	@FetchAll(HealthSavingsAccount.none, animation: .default) var healthSavingsAccounts
 
-	var draftHealthSavingsAccount: HealthSavingsAccount?
-
 	func load(for profileID: UUID) async {
 		_ = await withErrorReporting {
 			try await $healthSavingsAccounts.load(

@@ -26,7 +26,8 @@ extension DeviceEdit {
 		var notes: String
 
 		// Profile switching support
-		var profiles: [ProfileShare] = []
+		@ObservationIgnored
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
 		var currentProfileID: UUID
 		var supportsProfileSwitching: Bool { true }
 		var itemNameForProfilePicker: String {
@@ -58,7 +59,12 @@ extension DeviceEdit {
 			self.url = device.url
 			self.notes = device.notes
 			self.currentProfileID = device.profileID
-			self.profiles = loadAllProfiles(from: database)
+		}
+
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
+			}
 		}
 
 		func save() {

@@ -16,8 +16,6 @@ class JobViewModel {
 	@ObservationIgnored
 	@FetchAll(Job.none, animation: .default) var jobs
 
-	var draftJob: Job?
-
 	func load(for profileID: UUID) async {
 		_ = await withErrorReporting {
 			try await $jobs.load(

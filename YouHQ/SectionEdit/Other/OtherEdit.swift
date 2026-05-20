@@ -77,9 +77,8 @@ struct OtherEdit: View {
 			)
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}
@@ -89,18 +88,6 @@ struct OtherEdit: View {
 
 #Preview("Other") {
 	SectionEditSheet(
-		section: .other(Other.sampleData),
-		draftUtility: .constant(nil),
-		draftInsurancePolicy: .constant(nil),
-		draftMaintenanceItem: .constant(nil),
-		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil),
-		draftJob: .constant(nil),
-		draftDevice: .constant(nil),
-		draftServiceProvider: .constant(nil),
-		draftSubscription: .constant(nil),
-		draftBankAccount: .constant(nil),
-		draftInvestmentAccount: .constant(nil),
-		draftHealthSavingsAccount: .constant(nil)
+		section: .other(Other.sampleData)
 	)
 }

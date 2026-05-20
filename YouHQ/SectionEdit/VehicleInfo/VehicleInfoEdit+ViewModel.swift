@@ -31,7 +31,8 @@ extension VehicleInfoEdit {
 		var photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
-		var profiles: [ProfileShare] = []
+		@ObservationIgnored
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
 		var currentProfileID: UUID
 		var supportsProfileSwitching: Bool { true }
 		var itemNameForProfilePicker: String {
@@ -65,8 +66,13 @@ extension VehicleInfoEdit {
 			self.url = vehicle.url
 			self.notes = vehicle.notes
 			self.currentProfileID = vehicle.profileID
-			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
+			}
 		}
 
 		func save() {

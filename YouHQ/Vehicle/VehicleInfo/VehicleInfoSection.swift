@@ -35,31 +35,30 @@ struct VehicleInfoSection: View {
 		self.onColorChange = onColorChange
 	}
 
-	var totalMonthlyCost: Double {
-		var total: Double = 0
+	private var costLineItems: [CostLineItem] {
+		var items: [CostLineItem] = []
 
-		// Add vehicle monthly cost (payment) - but not if owned
-		if let vehicleCost = vehicle.monthlyCost,
-			vehicle.costType != .owned
-		{
-			total += vehicleCost
+		if let vehicleCost = vehicle.monthlyCost, vehicle.costType != .owned {
+			items.append(CostLineItem(label: vehicle.costType.rawValue, cost: vehicleCost))
 		}
 
-		// Add insurance policy costs
 		for policy in insurancePolicies {
-			if let policyCost = policy.monthlyCost {
-				total += policyCost
+			if let cost = policy.monthlyCost {
+				items.append(CostLineItem(label: "\(policy.type.rawValue) Insurance", cost: cost))
 			}
 		}
 
-		// Add other costs
 		for other in others {
-			if let otherCost = other.monthlyCost {
-				total += otherCost
+			if let cost = other.monthlyCost {
+				items.append(CostLineItem(label: other.name, cost: cost))
 			}
 		}
 
-		return total
+		return items
+	}
+
+	private var totalMonthlyCost: Double {
+		costLineItems.reduce(0) { $0 + $1.cost }
 	}
 
 	var body: some View {
@@ -96,15 +95,13 @@ struct VehicleInfoSection: View {
 			}
 
 			if totalMonthlyCost > 0 {
-				VehicleMonthlyCostRow(
-					"Monthly TCO:",
-					totalCost: totalMonthlyCost,
-					vehicleCost: vehicle.monthlyCost,
-					vehicleCostType: vehicle.costType,
-					insurancePolicies: insurancePolicies,
-					others: others,
-					blurred: hideCosts
-				)
+				MonthlyCostRow("Monthly TCO:", totalCost: totalMonthlyCost, blurred: hideCosts) {
+					CostBreakdownView(
+						title: "Monthly Total Cost of Ownership",
+						lineItems: costLineItems,
+						totalCost: totalMonthlyCost
+					)
+				}
 			}
 
 			if vehicle.url.isNotEmpty {

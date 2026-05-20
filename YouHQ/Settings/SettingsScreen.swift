@@ -72,11 +72,10 @@ struct SettingsScreen: View {
 				.navigationBarTitleDisplayMode(.inline)
 				.toolbar {
 					ToolbarItem(placement: .navigation) {
-						Button {
+						Button("Close", systemImage: "xmark") {
 							dismiss()
-						} label: {
-							Image(systemName: "xmark")
 						}
+						.labelStyle(.iconOnly)
 					}
 				}
 			#endif

@@ -8,6 +8,7 @@
 import Dependencies
 import DependenciesTestSupport
 import Foundation
+import Sharing
 import SQLiteData
 import SwiftUI
 import Testing
@@ -44,7 +45,7 @@ extension YouHQTests {
 				}
 
 				let vm = CareerScreen.ViewModel()
-				vm.selectedProfileIDString = UUID(-1).uuidString
+				vm.setSelectedProfileIDString(UUID(-1).uuidString)
 				await vm.jobViewModel.load(for: UUID(-1))
 
 				let sorted = vm.sortedJobs

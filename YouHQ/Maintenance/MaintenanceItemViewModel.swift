@@ -13,8 +13,6 @@ class MaintenanceItemViewModel {
 	@ObservationIgnored
 	@FetchAll(MaintenanceItem.none, animation: .default) var maintenanceItems
 
-	var draftMaintenanceItem: MaintenanceItem?
-
 	func load(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $maintenanceItems.load(

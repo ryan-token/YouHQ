@@ -8,6 +8,7 @@
 import Dependencies
 import DependenciesTestSupport
 import Foundation
+import Sharing
 import SQLiteData
 import SwiftUI
 import Testing
@@ -119,7 +120,7 @@ extension YouHQTests {
 			@Test("loadItemCounts returns zero when no profile selected")
 			func loadCountsNoProfile() async {
 				let vm = OnboardingProfileCreationView.ViewModel()
-				vm.selectedProfileIDString = ""
+				vm.$selectedProfileIDString.withLock { $0 = "" }
 				await vm.loadItemCounts()
 
 				#expect(vm.residencesCount == 0)
@@ -142,7 +143,7 @@ extension YouHQTests {
 				}
 
 				let vm = OnboardingProfileCreationView.ViewModel()
-				vm.selectedProfileIDString = UUID(-1).uuidString
+				vm.$selectedProfileIDString.withLock { $0 = UUID(-1).uuidString }
 				await vm.loadItemCounts()
 
 				#expect(vm.residencesCount == 2)

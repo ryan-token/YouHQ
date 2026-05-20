@@ -34,7 +34,8 @@ extension ResidenceInfoEdit {
 		var photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
-		var profiles: [ProfileShare] = []
+		@ObservationIgnored
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
 		var currentProfileID: UUID
 		var supportsProfileSwitching: Bool { true }
 		var itemNameForProfilePicker: String {
@@ -72,8 +73,13 @@ extension ResidenceInfoEdit {
 			self.url = residence.url
 			self.notes = residence.notes
 			self.currentProfileID = residence.profileID
-			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
+			}
 		}
 
 		func save() {

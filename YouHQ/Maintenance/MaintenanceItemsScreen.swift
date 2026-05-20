@@ -123,17 +123,7 @@ struct MaintenanceItemsScreen: View {
 		.sheet(isPresented: $vm.isShowingEditSheet) {
 			if let draftItem = vm.draftMaintenanceItem {
 				SectionEditSheet(
-					section: vm.isNewItem
-						? .maintenanceItemDraft : .maintenanceItem(draftItem),
-					draftUtility: .constant(nil),
-					draftInsurancePolicy: .constant(nil),
-					draftMaintenanceItem: $vm.draftMaintenanceItem,
-					draftPaintColor: .constant(nil),
-					draftOther: .constant(nil),
-					draftJob: .constant(nil),
-					draftDevice: .constant(nil),
-					draftServiceProvider: .constant(nil),
-					draftSubscription: .constant(nil)
+					section: vm.isNewItem ? .maintenanceItemDraft(draftItem) : .maintenanceItem(draftItem)
 				)
 				#if !os(macOS)
 					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))

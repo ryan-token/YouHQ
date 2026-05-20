@@ -19,7 +19,7 @@ struct PhotoViewerPresentation {
 }
 
 struct PhotoViewerPresentationPreferenceKey: PreferenceKey {
-	static var defaultValue: PhotoViewerPresentation?
+	static let defaultValue: PhotoViewerPresentation? = nil
 
 	static func reduce(
 		value: inout PhotoViewerPresentation?,
@@ -31,17 +31,10 @@ struct PhotoViewerPresentationPreferenceKey: PreferenceKey {
 
 // MARK: - Environment Value
 
-/// Environment key to communicate when the photo viewer overlay is visible.
-/// Used on macOS to hide the parent sheet's toolbar buttons.
-private struct PhotoViewerVisibleKey: EnvironmentKey {
-	static let defaultValue = false
-}
-
 extension EnvironmentValues {
-	var isPhotoViewerVisible: Bool {
-		get { self[PhotoViewerVisibleKey.self] }
-		set { self[PhotoViewerVisibleKey.self] = newValue }
-	}
+	/// Set when the photo viewer overlay is visible. Used on macOS to hide the
+	/// parent sheet's toolbar buttons.
+	@Entry var isPhotoViewerVisible: Bool = false
 }
 
 // MARK: - View Modifier

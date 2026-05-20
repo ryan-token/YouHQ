@@ -25,6 +25,10 @@ extension YouHQTests {
 				self.profiles = profiles
 				self.selectedProfileIDString = selectedProfileIDString
 			}
+
+			func setSelectedProfileIDString(_ value: String) {
+				selectedProfileIDString = value
+			}
 		}
 
 		// MARK: - currentProfileID
@@ -57,7 +61,7 @@ extension YouHQTests {
 			func setterStoresUUID() {
 				let id = UUID(-1)
 				let selection = MockProfileSelection()
-				selection.currentProfileID = id
+				selection.setCurrentProfileID(id)
 				#expect(selection.selectedProfileIDString == id.uuidString)
 			}
 
@@ -65,7 +69,7 @@ extension YouHQTests {
 			func setterClearsOnNil() {
 				let selection = MockProfileSelection()
 				selection.selectedProfileIDString = UUID(-1).uuidString
-				selection.currentProfileID = nil
+				selection.setCurrentProfileID(nil)
 				#expect(selection.selectedProfileIDString == "")
 			}
 		}

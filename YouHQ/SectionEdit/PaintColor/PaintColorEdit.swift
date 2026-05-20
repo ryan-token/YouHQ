@@ -68,13 +68,12 @@ struct PaintColorEdit: View {
 				}
 
 				LabeledField("Finish", shouldOverrideTap: false) {
-					Picker(selection: $vm.finish) {
+					Picker("", selection: $vm.finish) {
 						ForEach(PaintFinish.allCases, id: \.self) { finish in
 							HQText(finish.rawValue).tag(finish)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Surface Type") {
@@ -137,9 +136,8 @@ struct PaintColorEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}

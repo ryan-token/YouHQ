@@ -22,13 +22,12 @@ struct HealthSavingsAccountEdit: View {
 			@Bindable var vm = hsaVM
 			Section("Account Info") {
 				LabeledField("Account Type", shouldOverrideTap: false) {
-					Picker(selection: $vm.accountType) {
+					Picker("", selection: $vm.accountType) {
 						ForEach(HealthSavingsAccountType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Institution") {
@@ -67,9 +66,8 @@ struct HealthSavingsAccountEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}

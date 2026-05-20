@@ -16,8 +16,6 @@ class OtherItemViewModel {
 	@ObservationIgnored
 	@FetchAll(Other.none, animation: .default) var others
 
-	var draftOther: Other?
-
 	func loadResidence(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $others.load(

@@ -71,21 +71,15 @@ struct ResidenceScreen: View {
 			await vm.loadProfiles()
 			await vm.loadResidenceData()
 		}
-		.onChange(of: vm.profiles.count) { oldCount, newCount in
-			if oldCount == 0 && newCount > 0 { // so we load the default profile on initial sync
-				Task { await vm.loadResidenceData() }
-			}
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
-			Task { await vm.handleProfileChange() }
-		}
+		.reloadOnProfileChange(
+			profileCount: vm.profiles.count,
+			initialLoad: vm.loadResidenceData,
+			onProfileChanged: vm.handleProfileChange
+		)
 		.onChange(of: vm.residences) {
 			vm.updateSelectedResidence()
 		}
-		.sheet(isPresented: Binding(
-			get: { vm.isShowingAddResidenceSheet && vm.selectedProfile?.profile.id != nil },
-			set: { vm.isShowingAddResidenceSheet = $0 }
-		)) {
+		.sheet(isPresented: $vm.isShowingAddResidenceSheet) {
 			if let profileID = vm.selectedProfile?.profile.id {
 				AddResidenceSheet(
 					profileID: profileID,
@@ -98,16 +92,7 @@ struct ResidenceScreen: View {
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
 			if let sectionToEdit = vm.sectionToEdit {
-				SectionEditSheet(
-					section: sectionToEdit,
-					draftUtility: $vm.utilityViewModel.draftUtility,
-					draftInsurancePolicy: $vm.insuranceViewModel
-						.draftInsurancePolicy,
-					draftMaintenanceItem: $vm.maintenanceViewModel
-						.draftMaintenanceItem,
-					draftPaintColor: $vm.paintColorViewModel.draftPaintColor,
-					draftOther: $vm.otherViewModel.draftOther
-				)
+				SectionEditSheet(section: sectionToEdit)
 				#if !os(macOS)
 					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
 				#endif

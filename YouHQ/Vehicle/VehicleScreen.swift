@@ -68,10 +68,7 @@ struct VehicleScreen: View {
 		.onChange(of: vm.vehicles) {
 			vm.updateSelectedVehicle()
 		}
-		.sheet(isPresented: Binding(
-			get: { vm.isShowingAddVehicleSheet && vm.selectedProfile?.profile.id != nil },
-			set: { vm.isShowingAddVehicleSheet = $0 }
-		)) {
+		.sheet(isPresented: $vm.isShowingAddVehicleSheet) {
 			if let profileID = vm.selectedProfile?.profile.id {
 				AddVehicleSheet(
 					profileID: profileID,
@@ -84,15 +81,7 @@ struct VehicleScreen: View {
 		}
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
 			if let sectionToEdit = vm.sectionToEdit {
-				SectionEditSheet(
-					section: sectionToEdit,
-					draftInsurancePolicy: $vm.insuranceViewModel
-						.draftInsurancePolicy,
-					draftMaintenanceItem: $vm.maintenanceViewModel
-						.draftMaintenanceItem,
-					draftPaintColor: $vm.paintColorViewModel.draftPaintColor,
-					draftOther: $vm.otherViewModel.draftOther
-				)
+				SectionEditSheet(section: sectionToEdit)
 				#if !os(macOS)
 					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
 				#endif

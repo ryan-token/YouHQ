@@ -45,108 +45,60 @@ struct ProfileRow: View {
 		}
 		.buttonStyle(.plain)
 		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-			Button {
+			Button("Delete", systemImage: "trash", role: .destructive) {
 				vm.confirmProfileDelete(for: profile.profile)
-			} label: {
-				Image(systemName: "trash")
-					.tint(.red)
 			}
+			.tint(.red)
 
-			Button {
+			Button("Rename", systemImage: "pencil") {
 				vm.confirmProfileRename(for: profile.profile)
-			} label: {
-				Image(systemName: "pencil")
-					.tint(.orange)
 			}
+			.tint(.orange)
 		}
 
 		.alert(
 			"Switch Profile",
-			isPresented: .init(
-				get: { vm.profileSwitchAlert != .empty },
-				set: { if !$0 { vm.profileSwitchAlert = .empty } }
-			)
-		) {
-			switch vm.profileSwitchAlert {
-			case .empty:
-				EmptyView()
-			case .confirmSwitch(let profile):
-				Button("Switch Profile") {
-					vm.switchProfile(to: profile)
-				}
-				Button("Cancel", role: .cancel) {
-					vm.profileSwitchAlert = .empty
-				}
-			}
-		} message: {
-			switch vm.profileSwitchAlert {
-			case .empty:
-				HQText("")
-			case .confirmSwitch(let profile):
-				HQText("Switch to \(profile.name)?")
-			}
+			isPresented: $vm.profileToConfirmSwitch.isPresent(),
+			presenting: vm.profileToConfirmSwitch
+		) { profile in
+			Button("Switch Profile") { vm.switchProfile(to: profile) }
+			Button("Cancel", role: .cancel) { vm.profileToConfirmSwitch = nil }
+		} message: { profile in
+			HQText("Switch to \(profile.name)?")
 		}
 
 		.alert(
 			"Delete Profile",
-			isPresented: .init(
-				get: { vm.profileDeletionAlert != .empty },
-				set: { if !$0 { vm.profileDeletionAlert = .empty } }
-			)
+			isPresented: $vm.profileToConfirmDelete.isPresent(),
+			presenting: vm.profileToConfirmDelete
+		) { profile in
+			Button("Delete", role: .destructive) { vm.deleteProfile(profile) }
+			Button("Cancel", role: .cancel) { vm.profileToConfirmDelete = nil }
+		} message: { profile in
+			HQText("Delete \(profile.name) Profile?")
+		}
+
+		.alert(
+			"Cannot Delete Profile",
+			isPresented: $vm.isShowingCannotDeleteLastProfile
 		) {
-			switch vm.profileDeletionAlert {
-			case .empty:
-				EmptyView()
-			case .cannotDeleteLastProfile:
-				Button("OK") {
-					vm.profileDeletionAlert = .empty
-				}
-			case .confirmDelete(let profile):
-				Button("Delete", role: .destructive) {
-					vm.deleteProfile(profile)
-				}
-				Button("Cancel", role: .cancel) {
-					vm.profileDeletionAlert = .empty
-				}
-			}
 		} message: {
-			switch vm.profileDeletionAlert {
-			case .empty:
-				HQText("")
-			case .cannotDeleteLastProfile:
-				HQText("You must have at least one profile")
-			case .confirmDelete(let profile):
-				HQText("Delete \(profile.name) Profile?")
-			}
+			HQText("You must have at least one profile")
 		}
 
 		.alert(
 			"Rename Profile",
-			isPresented: .init(
-				get: { vm.profileRenameAlert != .empty },
-				set: { if !$0 { vm.profileRenameAlert = .empty } }
-			)
-		) {
-			switch vm.profileRenameAlert {
-			case .empty:
-				EmptyView()
-			case .confirmRename(let profile):
-				TextField("Profile Name", text: $vm.renameProfileText)
-				Button("Rename") {
-					vm.renameProfile(profile, to: vm.renameProfileText)
-				}
-				Button("Cancel", role: .cancel) {
-					vm.renameProfileText = ""
-					vm.profileRenameAlert = .empty
-				}
+			isPresented: $vm.profileToConfirmRename.isPresent(),
+			presenting: vm.profileToConfirmRename
+		) { profile in
+			TextField("Profile Name", text: $vm.renameProfileText)
+			Button("Rename") { vm.renameProfile(profile, to: vm.renameProfileText) }
+			Button("Cancel", role: .cancel) {
+				vm.renameProfileText = ""
+				vm.profileToConfirmRename = nil
 			}
-		} message: {
-			switch vm.profileRenameAlert {
-			case .empty:
-				HQText("")
-			case .confirmRename:
-				HQText("")
-			}
+		} message: { _ in
+			HQText("")
 		}
 	}
 }

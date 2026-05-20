@@ -82,6 +82,9 @@ struct AddVehicleSheet: View {
 				}
 			}
 		}
+		.task {
+			await vm.loadProfiles()
+		}
 		.photoViewerOverlayHost()
 		#if os(iOS)
 			.cameraOverlayHost()

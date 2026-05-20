@@ -25,7 +25,8 @@ extension ServiceProviderEdit {
 		var notes: String
 
 		// Profile switching support
-		var profiles: [ProfileShare] = []
+		@ObservationIgnored
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
 		var currentProfileID: UUID
 		var supportsProfileSwitching: Bool { true }
 		var itemNameForProfilePicker: String {
@@ -55,7 +56,12 @@ extension ServiceProviderEdit {
 			self.url = serviceProvider.url
 			self.notes = serviceProvider.notes
 			self.currentProfileID = serviceProvider.profileID
-			self.profiles = loadAllProfiles(from: database)
+		}
+
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
+			}
 		}
 
 		func save() {

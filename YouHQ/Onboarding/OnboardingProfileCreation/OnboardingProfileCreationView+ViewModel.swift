@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 2/15/26.
 //
 
+import Sharing
 import SQLiteData
 import SwiftUI
 
@@ -18,7 +19,7 @@ extension OnboardingProfileCreationView {
 		@Dependency(\.date.now) private var now
 
 		@ObservationIgnored
-		@AppStorage("selectedProfileID") var selectedProfileIDString: String = ""
+		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
 
 		var showAddResidence = false
 		var showAddVehicle = false
@@ -113,7 +114,7 @@ extension OnboardingProfileCreationView {
 					Analytics.sendSignal(.profileCreated)
 				}
 
-				selectedProfileIDString = id.uuidString
+				$selectedProfileIDString.withLock { $0 = id.uuidString }
 				createdNewProfile = true
 				createdProfileName = profileName
 				notifyProfileChanged()

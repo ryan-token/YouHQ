@@ -24,7 +24,7 @@ struct MediaScreen: View {
 					HideCostsToggle(hideCosts: $hideMediaCosts)
 
 					if vm.totalMonthlyCost > 0 {
-						MonthlyCostRow(
+						MonthlyMediaCostRow(
 							totalCost: vm.totalMonthlyCost,
 							serviceProviders: vm.serviceProviderViewModel.serviceProviders,
 							subscriptions: vm.subscriptionViewModel.subscriptions,
@@ -43,7 +43,6 @@ struct MediaScreen: View {
 		.animation(.default, value: vm.subscriptionViewModel.subscriptions.count)
 		.animation(.default, value: vm.otherViewModel.others.count)
 		.navigationTitle("Media")
-		.navigationTitle("Career")
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
@@ -55,23 +54,13 @@ struct MediaScreen: View {
 			await vm.loadProfiles()
 			await vm.loadMediaData()
 		}
-		.onChange(of: vm.profiles.count) { oldCount, newCount in
-			if oldCount == 0 && newCount > 0 { // so we load the default profile on initial sync
-				Task { await vm.loadMediaData() }
-			}
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
-			Task { await vm.loadMediaData() }
-		}
+		.reloadOnProfileChange(
+			profileCount: vm.profiles.count,
+			initialLoad: vm.loadMediaData
+		)
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
 			if let sectionToEdit = vm.sectionToEdit {
-				SectionEditSheet(
-					section: sectionToEdit,
-					draftOther: $vm.otherViewModel.draftOther,
-					draftDevice: $vm.deviceViewModel.draftDevice,
-					draftServiceProvider: $vm.serviceProviderViewModel.draftServiceProvider,
-					draftSubscription: $vm.subscriptionViewModel.draftSubscription
-				)
+				SectionEditSheet(section: sectionToEdit)
 				#if !os(macOS)
 					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
 				#endif

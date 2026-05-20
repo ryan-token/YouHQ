@@ -73,13 +73,12 @@ struct ResidenceFormFields: View {
 	var body: some View {
 		Section("Basic Info") {
 			LabeledField("Type", shouldOverrideTap: false) {
-				Picker(selection: $type) {
+				Picker("", selection: $type) {
 					ForEach(ResidenceType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
 					}
-				} label: {
-					EmptyView()
 				}
+				.labelsHidden()
 			}
 
 			LabeledField("Current Residence") {
@@ -172,13 +171,12 @@ struct ResidenceFormFields: View {
 
 		Section("Cost") {
 			LabeledField("Cost Type", shouldOverrideTap: false) {
-				Picker(selection: $costType) {
+				Picker("", selection: $costType) {
 					ForEach(ResidenceCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
 					}
-				} label: {
-					EmptyView()
 				}
+				.labelsHidden()
 			}
 
 			if costType != .owned {
@@ -208,9 +206,8 @@ struct ResidenceFormFields: View {
 		)
 
 		Section("Notes") {
-			TextEditor(text: $notes)
-				.frame(minHeight: 100)
-				.scrollContentBackground(.hidden)
+			TextField("Notes", text: $notes, axis: .vertical)
+				.lineLimit(5...)
 				.focused($focusedField, equals: .notes)
 				.onSubmit { focusedField = nil }
 		}

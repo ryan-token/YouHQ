@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/24/26.
 //
 
+import Sharing
 import SQLiteData
 import SwiftUI
 
@@ -15,7 +16,7 @@ extension MoneyScreen {
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
 		@ObservationIgnored
-		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
+		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
 
 		// Child view models for entity-specific operations
 		var bankAccountViewModel = BankAccountViewModel()
@@ -25,6 +26,10 @@ extension MoneyScreen {
 		var otherViewModel = OtherItemViewModel()
 
 		init() {}
+
+		func setSelectedProfileIDString(_ value: String) {
+			$selectedProfileIDString.withLock { $0 = value }
+		}
 
 		var selectedProfile: ProfileShare? {
 			getSelectedProfile()
@@ -47,21 +52,7 @@ extension MoneyScreen {
 
 		func loadProfiles() async {
 			_ = await withErrorReporting {
-				try await $profiles.load(
-					Profile
-						.group(by: \.id)
-						.leftJoin(SyncMetadata.all) {
-							$0.syncMetadataID.eq($1.id)
-						}
-						.select {
-							ProfileShare.Columns(
-								profile: $0,
-								isShared: $1.isShared.ifnull(false),
-								metadata: $1
-							)
-						},
-					animation: .default
-				)
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
 			}
 		}
 
@@ -99,49 +90,41 @@ extension MoneyScreen {
 
 		func showAddBankAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			bankAccountViewModel.draftBankAccount =
-				bankAccountViewModel.createDraft(for: profileID)
-			sectionToEdit = .bankAccountDraft
+			sectionToEdit = .bankAccountDraft(bankAccountViewModel.createDraft(for: profileID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddInvestmentAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			investmentAccountViewModel.draftInvestmentAccount =
-				investmentAccountViewModel.createDraft(for: profileID)
-			sectionToEdit = .investmentAccountDraft
+			sectionToEdit = .investmentAccountDraft(investmentAccountViewModel.createDraft(for: profileID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddHealthSavingsAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			healthSavingsAccountViewModel.draftHealthSavingsAccount =
+			sectionToEdit = .healthSavingsAccountDraft(
 				healthSavingsAccountViewModel.createDraft(for: profileID)
-			sectionToEdit = .healthSavingsAccountDraft
+			)
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			insuranceViewModel.draftInsurancePolicy =
-				InsurancePolicy(
-					id: UUID(),
-					profileID: profileID,
-					type: .health
-				)
-			sectionToEdit = .insurancePolicyDraft
+			sectionToEdit = .insurancePolicyDraft(
+				InsurancePolicy(id: UUID(), profileID: profileID, type: .health)
+			)
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			otherViewModel.draftOther =
+			sectionToEdit = .otherDraft(
 				otherViewModel.createCategoryDraft(for: .money, profileID: profileID)
-			sectionToEdit = .otherDraft
+			)
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}

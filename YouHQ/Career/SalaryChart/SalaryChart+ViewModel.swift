@@ -54,11 +54,13 @@ extension SalaryChart {
 
 		func formatCompactSalary(_ value: Double) -> String {
 			if value >= 1_000_000 {
-				return String(format: "$%.1fM", value / 1_000_000)
+				let millions = (value / 1_000_000).formatted(.number.precision(.fractionLength(1)))
+				return "$\(millions)M"
 			} else if value >= 1000 {
-				return String(format: "$%.0fK", value / 1000)
+				let thousands = (value / 1000).formatted(.number.precision(.fractionLength(0)))
+				return "$\(thousands)K"
 			} else {
-				return String(format: "$%.0f", value)
+				return value.formatted(.currency(code: "USD").precision(.fractionLength(0)))
 			}
 		}
 

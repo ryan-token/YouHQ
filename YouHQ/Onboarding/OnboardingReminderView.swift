@@ -29,13 +29,12 @@ struct OnboardingReminderView: View {
 
 				HStack {
 					HQText("Remind me")
-					Picker(selection: $vm.selectedInterval) {
+					Picker("", selection: $vm.selectedInterval) {
 						ForEach(ReminderInterval.allCases, id: \.self) { interval in
 							HQText(interval.displayName).tag(interval)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 					Spacer()
 				}
 				.fontWeight(.medium)

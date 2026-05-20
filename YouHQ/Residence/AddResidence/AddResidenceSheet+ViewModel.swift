@@ -34,7 +34,8 @@ extension AddResidenceSheet {
 		var photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
-		var profiles: [ProfileShare] = []
+		@ObservationIgnored
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
 		var isValid: Bool {
 			street.trimmingCharacters(in: .whitespaces).isNotEmpty
@@ -47,7 +48,12 @@ extension AddResidenceSheet {
 		init(profileID: UUID) {
 			self.originalProfileID = profileID
 			self.selectedProfileID = profileID
-			self.profiles = loadAllProfiles(from: database)
+		}
+
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
+			}
 		}
 
 		func save() -> Residence? {

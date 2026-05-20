@@ -86,23 +86,17 @@ struct SalaryChart: View {
 						.transition(.opacity.combined(with: .scale(scale: 0.9)))
 					}
 				}
-				#if os(macOS)
-					.background(
-						Color(.secondarySystemFill).opacity(0.2)
-							.overlay(
-								RoundedRectangle(cornerRadius: 12)
-									.stroke(Color.primary.opacity(0.2), lineWidth: 1)
-							)
-					)
-				#else
-					.background(
-						Color(.secondarySystemGroupedBackground)
-							.overlay(
-								RoundedRectangle(cornerRadius: 12)
-									.stroke(Color.primary.opacity(0.1), lineWidth: 1)
-							)
-					)
-				#endif
+				.background {
+					#if os(macOS)
+						RoundedRectangle(cornerRadius: 12)
+							.fill(.fill.tertiary)
+							.stroke(.primary.opacity(0.2), lineWidth: 1)
+					#else
+						RoundedRectangle(cornerRadius: 12)
+							.fill(.background.secondary)
+							.stroke(.primary.opacity(0.1), lineWidth: 1)
+					#endif
+				}
 
 				.clipShape(.rect(cornerRadius: 12))
 				.shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)

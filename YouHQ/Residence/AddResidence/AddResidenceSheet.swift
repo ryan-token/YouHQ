@@ -85,6 +85,9 @@ struct AddResidenceSheet: View {
 				}
 			}
 		}
+		.task {
+			await vm.loadProfiles()
+		}
 		.photoViewerOverlayHost()
 		#if os(iOS)
 			.cameraOverlayHost()

@@ -42,13 +42,12 @@ struct JobEdit: View {
 				#endif
 
 				LabeledField("Employment Type", shouldOverrideTap: false) {
-					Picker(selection: $vm.employmentType) {
+					Picker("", selection: $vm.employmentType) {
 						ForEach(EmploymentType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Current Job") {
@@ -111,9 +110,8 @@ struct JobEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}

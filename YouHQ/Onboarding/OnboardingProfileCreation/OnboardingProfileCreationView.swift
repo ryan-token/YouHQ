@@ -203,24 +203,20 @@ struct OnboardingProfileCreationView: View {
 				}
 			}
 		}
-		.sheet(isPresented: Binding(
-			get: { vm.showAddResidence && vm.selectedProfileID != nil },
-			set: { vm.showAddResidence = $0 }
-		)) {
+		.sheet(isPresented: $vm.showAddResidence) {
 			if let selectedProfileID = vm.selectedProfileID {
 				AddResidenceSheet(profileID: selectedProfileID, selectedResidence: $selectedResidence)
 			}
 		}
-		.sheet(isPresented: Binding(
-			get: { vm.showAddVehicle && vm.selectedProfileID != nil },
-			set: { vm.showAddVehicle = $0 }
-		)) {
+		.sheet(isPresented: $vm.showAddVehicle) {
 			if let selectedProfileID = vm.selectedProfileID {
 				AddVehicleSheet(profileID: selectedProfileID, selectedVehicle: $selectedVehicle)
 			}
 		}
 		.sheet(isPresented: $vm.showAddJob) {
-			SectionEditSheet(section: .jobDraft, draftJob: $draftJob)
+			if let draftJob {
+				SectionEditSheet(section: .jobDraft(draftJob))
+			}
 		}
 		.onChange(of: selectedResidence) { _, newValue in
 			if newValue != nil { onComplete() }

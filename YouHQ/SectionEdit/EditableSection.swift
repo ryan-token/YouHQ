@@ -7,33 +7,36 @@
 
 import Foundation
 
+/// Identifies which section the `SectionEditSheet` is editing and carries the
+/// in-memory record to edit. Draft cases carry a freshly constructed value the
+/// sheet will insert on save; non-draft cases carry the existing record.
 enum EditableSection {
 	case residenceInfo(Residence)
 	case vehicleInfo(Vehicle)
 	case utility(Utility)
-	case utilityDraft
+	case utilityDraft(Utility)
 	case insurancePolicy(InsurancePolicy)
-	case insurancePolicyDraft
+	case insurancePolicyDraft(InsurancePolicy)
 	case maintenanceItem(MaintenanceItem)
-	case maintenanceItemDraft
+	case maintenanceItemDraft(MaintenanceItem)
 	case paintColor(PaintColor)
-	case paintColorDraft
+	case paintColorDraft(PaintColor)
 	case other(Other)
-	case otherDraft
+	case otherDraft(Other)
 	case device(Device)
-	case deviceDraft
+	case deviceDraft(Device)
 	case serviceProvider(ServiceProvider)
-	case serviceProviderDraft
+	case serviceProviderDraft(ServiceProvider)
 	case subscription(Subscription)
-	case subscriptionDraft
+	case subscriptionDraft(Subscription)
 	case job(Job)
-	case jobDraft
+	case jobDraft(Job)
 	case bankAccount(BankAccount)
-	case bankAccountDraft
+	case bankAccountDraft(BankAccount)
 	case investmentAccount(InvestmentAccount)
-	case investmentAccountDraft
+	case investmentAccountDraft(InvestmentAccount)
 	case healthSavingsAccount(HealthSavingsAccount)
-	case healthSavingsAccountDraft
+	case healthSavingsAccountDraft(HealthSavingsAccount)
 
 	var isDraft: Bool {
 		switch self {

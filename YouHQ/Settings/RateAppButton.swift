@@ -35,7 +35,6 @@ struct RateAppButton: View {
 			"YouHQ Is Not Live",
 			isPresented: $isShowingNotLiveAlert
 		) {
-			Button("OK", role: .close) {}
 		} message: {
 			HQText(
 				"Once YouHQ is live on the App Store, this button will take you there to rate & review it."

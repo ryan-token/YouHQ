@@ -57,24 +57,13 @@ struct MoneyScreen: View {
 			await vm.loadProfiles()
 			await vm.loadMoneyData()
 		}
-		.onChange(of: vm.profiles.count) { oldCount, newCount in
-			if oldCount == 0 && newCount > 0 { // so we load the default profile on initial sync
-				Task { await vm.loadMoneyData() }
-			}
-		}
-		.onReceive(NotificationCenter.default.publisher(for: .profileDidChange)) { _ in
-			Task { await vm.loadMoneyData() }
-		}
+		.reloadOnProfileChange(
+			profileCount: vm.profiles.count,
+			initialLoad: vm.loadMoneyData
+		)
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
 			if let sectionToEdit = vm.sectionToEdit {
-				SectionEditSheet(
-					section: sectionToEdit,
-					draftInsurancePolicy: $vm.insuranceViewModel.draftInsurancePolicy,
-					draftOther: $vm.otherViewModel.draftOther,
-					draftBankAccount: $vm.bankAccountViewModel.draftBankAccount,
-					draftInvestmentAccount: $vm.investmentAccountViewModel.draftInvestmentAccount,
-					draftHealthSavingsAccount: $vm.healthSavingsAccountViewModel.draftHealthSavingsAccount
-				)
+				SectionEditSheet(section: sectionToEdit)
 				#if !os(macOS)
 					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
 				#endif

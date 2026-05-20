@@ -25,15 +25,14 @@ struct AddMoreButtonLabel: View {
 		}
 		.frame(maxWidth: .infinity)
 		.padding()
-		.if(backgroundColor != nil) {
-			$0.background(backgroundColor)
+		.background {
+			if let backgroundColor {
+				backgroundColor
+			} else {
+				Rectangle().fill(.ultraThinMaterial)
+			}
 		}
-		.if(backgroundColor != nil) {
-			$0.foregroundStyle(.white)
-		}
-		.if(backgroundColor == nil) {
-			$0.background(.ultraThinMaterial)
-		}
+		.foregroundStyle(backgroundColor == nil ? AnyShapeStyle(.primary) : AnyShapeStyle(Color.white))
 		.clipShape(.rect(cornerRadius: 12))
 	}
 }

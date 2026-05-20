@@ -16,8 +16,6 @@ class InsurancePolicyViewModel {
 	@ObservationIgnored
 	@FetchAll(InsurancePolicy.none, animation: .default) var insurancePolicies
 
-	var draftInsurancePolicy: InsurancePolicy?
-
 	func load(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $insurancePolicies.load(

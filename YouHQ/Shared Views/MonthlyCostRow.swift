@@ -1,5 +1,5 @@
 //
-//  MonthlyTCORow.swift
+//  MonthlyCostRow.swift
 //  YouHQ
 //
 //  Created by Ryan Token on 1/12/26.
@@ -7,36 +7,29 @@
 
 import SwiftUI
 
-struct MonthlyTCORow: View {
+/// A row that shows a label + total cost button, with a popover breakdown.
+///
+/// Used by residence, vehicle, and media tabs to display their respective
+/// monthly cost totals. The breakdown content is built by the caller so each
+/// domain can supply its own title and line items.
+struct MonthlyCostRow: View {
 	let label: String
 	let totalCost: Double
-	let residenceCost: Double?
-	let residenceCostType: ResidenceCostType
-	let utilities: [Utility]
-	let insurancePolicies: [InsurancePolicy]
-	let others: [Other]
 	let blurred: Bool
+	@ViewBuilder let breakdown: CostBreakdownView
 
 	@State private var showPopover = false
 
 	init(
 		_ label: String,
 		totalCost: Double,
-		residenceCost: Double?,
-		residenceCostType: ResidenceCostType,
-		utilities: [Utility],
-		insurancePolicies: [InsurancePolicy],
-		others: [Other],
-		blurred: Bool = false
+		blurred: Bool = false,
+		@ViewBuilder breakdown: () -> CostBreakdownView
 	) {
 		self.label = label
 		self.totalCost = totalCost
-		self.residenceCost = residenceCost
-		self.residenceCostType = residenceCostType
-		self.utilities = utilities
-		self.insurancePolicies = insurancePolicies
-		self.others = others
 		self.blurred = blurred
+		self.breakdown = breakdown()
 	}
 
 	var body: some View {
@@ -56,165 +49,28 @@ struct MonthlyTCORow: View {
 			}
 			.buttonStyle(.plain)
 			.popover(isPresented: $showPopover) {
-				CostBreakdownView(
-					residenceCost: residenceCost,
-					residenceCostType: residenceCostType,
-					utilities: utilities,
-					insurancePolicies: insurancePolicies,
-					others: others,
-					totalCost: totalCost
-				)
+				breakdown
 			}
 		}
 		.foregroundStyle(.white)
 	}
 }
 
-struct CostBreakdownView: View {
-	@Environment(\.colorScheme) var colorScheme
-
-	let residenceCost: Double?
-	let residenceCostType: ResidenceCostType
-	let utilities: [Utility]
-	let insurancePolicies: [InsurancePolicy]
-	let others: [Other]
-	let totalCost: Double
-
-	var body: some View {
-		ScrollView {
-			VStack(alignment: .leading, spacing: 12) {
-				HQText("Monthly Total Cost of Ownership")
-					.font(.title2)
-					.fontWeight(.semibold)
-					.padding(.bottom, 4)
-
-				VStack(alignment: .leading, spacing: 8) {
-					// Residence cost (rent/mortgage) - but not if owned
-					if let residenceCost, residenceCostType != .owned {
-						HStack {
-							HQText(residenceCostType.rawValue)
-							Spacer()
-							HQText(residenceCost.asCost)
-								.fontWeight(.medium)
-						}
-						.font(.body)
-					}
-
-					// Utilities
-					ForEach(utilities) { utility in
-						if let cost = utility.approximateMonthlyCost {
-							HStack {
-								HQText("+ \(utility.type.rawValue)")
-								Spacer()
-								HQText(cost.asCost)
-									.fontWeight(.medium)
-							}
-							.font(.body)
-						}
-					}
-
-					// Insurance policies
-					ForEach(insurancePolicies) { policy in
-						if let cost = policy.monthlyCost {
-							HStack {
-								HQText("+ \(policy.type.rawValue) Insurance")
-								Spacer()
-								HQText(cost.asCost)
-									.fontWeight(.medium)
-							}
-							.font(.body)
-						}
-					}
-
-					// Others
-					ForEach(others) { other in
-						if let cost = other.monthlyCost {
-							HStack {
-								HQText("+ \(other.name)")
-								Spacer()
-								HQText(cost.asCost)
-									.fontWeight(.medium)
-							}
-							.font(.body)
-						}
-					}
-
-					Divider()
-						.padding(.vertical, 4)
-
-					// Total
-					HStack {
-						HQText("Total")
-							.fontWeight(.semibold)
-						Spacer()
-						HQText(totalCost.asCost)
-							.fontWeight(.bold)
-					}
-					.font(.title3)
-				}
-			}
-			.padding()
-			.frame(minWidth: 300)
-		}
-		.foregroundStyle(colorScheme == .light ? .black : .white)
-	}
-}
-
 #Preview {
-	VStack(spacing: 20) {
-		MonthlyTCORow(
-			"Monthly TCO:",
-			totalCost: 2500.00,
-			residenceCost: 2000.00,
-			residenceCostType: .rent,
-			utilities: [
-				Utility(
-					id: UUID(),
-					residenceID: UUID(),
-					type: .electric,
-					provider: "Electric Co",
-					accountNumber: "123",
-					approximateMonthlyCost: 150.00,
-					backgroundColor: "blue",
-					url: "",
-					notes: ""
-				),
-				Utility(
-					id: UUID(),
-					residenceID: UUID(),
-					type: .internet,
-					provider: "ISP",
-					accountNumber: "456",
-					approximateMonthlyCost: 100.00,
-					backgroundColor: "blue",
-					url: "",
-					notes: ""
-				)
+	MonthlyCostRow("Monthly TCO:", totalCost: 2500) {
+		CostBreakdownView(
+			title: "Monthly Total Cost of Ownership",
+			lineItems: [
+				CostLineItem(label: "Mortgage", cost: 2000),
+				CostLineItem(label: "Electric", cost: 150),
+				CostLineItem(label: "Internet", cost: 100),
+				CostLineItem(label: "Renters Insurance", cost: 250)
 			],
-			insurancePolicies: [
-				InsurancePolicy(
-					id: UUID(),
-					profileID: UUID(),
-					residenceID: UUID(),
-					type: .renters,
-					provider: "Insurance Co",
-					policyNumber: "789",
-					monthlyCost: 250.00,
-					deductible: nil,
-					coverageAmount: nil,
-					startDate: nil,
-					renewalDate: nil,
-					isActive: true,
-					backgroundColor: "red",
-					url: "",
-					notes: ""
-				)
-			],
-			others: []
+			totalCost: 2500
 		)
-		.padding()
-		.background(.indigo)
-		.clipShape(.rect(cornerRadius: 16))
 	}
+	.padding()
+	.background(.indigo)
+	.clipShape(.rect(cornerRadius: 16))
 	.padding()
 }

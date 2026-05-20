@@ -16,8 +16,6 @@ class SubscriptionViewModel {
 	@ObservationIgnored
 	@FetchAll(Subscription.none, animation: .default) var subscriptions
 
-	var draftSubscription: Subscription?
-
 	func load(for profileID: UUID) async {
 		_ = await withErrorReporting {
 			try await $subscriptions.load(

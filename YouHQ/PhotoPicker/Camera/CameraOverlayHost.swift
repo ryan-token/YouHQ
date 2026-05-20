@@ -29,7 +29,7 @@
 	}
 
 	struct CameraPresentationPreferenceKey: PreferenceKey {
-		static var defaultValue: CameraPresentation?
+		static let defaultValue: CameraPresentation? = nil
 
 		static func reduce(
 			value: inout CameraPresentation?,

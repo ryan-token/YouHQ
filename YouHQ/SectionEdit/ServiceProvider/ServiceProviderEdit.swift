@@ -22,13 +22,12 @@ struct ServiceProviderEdit: View {
 			@Bindable var vm = serviceProviderVM
 			Section("Service Provider Info") {
 				LabeledField("Type", shouldOverrideTap: false) {
-					Picker(selection: $vm.providerType) {
+					Picker("", selection: $vm.providerType) {
 						ForEach(ServiceProviderType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Name") {
@@ -74,9 +73,8 @@ struct ServiceProviderEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}

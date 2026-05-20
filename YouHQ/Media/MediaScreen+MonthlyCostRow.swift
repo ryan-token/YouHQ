@@ -8,41 +8,42 @@
 import SwiftUI
 
 extension MediaScreen {
-	struct MonthlyCostRow: View {
+	struct MonthlyMediaCostRow: View {
 		let totalCost: Double
 		let serviceProviders: [ServiceProvider]
 		let subscriptions: [Subscription]
 		let blurred: Bool
 
-		@State private var showPopover = false
+		private var costLineItems: [CostLineItem] {
+			var items: [CostLineItem] = []
+
+			for provider in serviceProviders {
+				if let cost = provider.monthlyCost {
+					let label = provider.name.isEmpty ? provider.providerType.rawValue : provider.name
+					items.append(CostLineItem(label: label, cost: cost))
+				}
+			}
+
+			for subscription in subscriptions where subscription.isActive {
+				if let cost = subscription.monthlyCost {
+					let normalized = subscription.billingCycle == .annual ? cost / 12 : cost
+					items.append(CostLineItem(label: subscription.name, cost: normalized))
+				}
+			}
+
+			return items
+		}
 
 		var body: some View {
-			HStack(alignment: .center) {
-				HQText("Monthly Media Cost:")
-					.font(.headline)
-				Button {
-					showPopover.toggle()
-				} label: {
-					HQText(totalCost.asCost)
-						.lineLimit(1)
-						.blur(radius: blurred ? 4 : 0)
-						.padding(.horizontal, 12)
-						.padding(.vertical, 4)
-						.background(.white.opacity(0.3))
-						.clipShape(.rect(cornerRadius: 8))
-				}
-				.buttonStyle(.plain)
-				.popover(isPresented: $showPopover) {
-					MediaCostBreakdownView(
-						serviceProviders: serviceProviders,
-						subscriptions: subscriptions,
-						totalCost: totalCost
-					)
-				}
+			MonthlyCostRow("Monthly Media Cost:", totalCost: totalCost, blurred: blurred) {
+				CostBreakdownView(
+					title: "Monthly Media Cost",
+					lineItems: costLineItems,
+					totalCost: totalCost
+				)
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.padding()
-			.foregroundStyle(.white)
 			.background(.teal.gradient)
 			.clipShape(.rect(cornerRadius: 12))
 		}
@@ -50,7 +51,7 @@ extension MediaScreen {
 }
 
 #Preview {
-	MediaScreen.MonthlyCostRow(
+	MediaScreen.MonthlyMediaCostRow(
 		totalCost: 280,
 		serviceProviders: [ServiceProvider.sampleData],
 		subscriptions: [Subscription.sampleData],

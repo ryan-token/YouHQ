@@ -16,8 +16,6 @@ class ServiceProviderViewModel {
 	@ObservationIgnored
 	@FetchAll(ServiceProvider.none, animation: .default) var serviceProviders
 
-	var draftServiceProvider: ServiceProvider?
-
 	func load(for profileID: UUID) async {
 		_ = await withErrorReporting {
 			try await $serviceProviders.load(

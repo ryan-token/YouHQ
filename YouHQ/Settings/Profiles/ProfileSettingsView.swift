@@ -17,7 +17,7 @@ struct ProfileSettingsView: View {
 		List {
 			Group {
 				Section("Profiles") {
-					ForEach(vm.profiles, id: \.profile.id) { profile in
+					ForEach(vm.profiles) { profile in
 						ProfileRow(profile: profile, vm: vm)
 					}
 				}

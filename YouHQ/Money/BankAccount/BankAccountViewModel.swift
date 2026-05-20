@@ -16,8 +16,6 @@ class BankAccountViewModel {
 	@ObservationIgnored
 	@FetchAll(BankAccount.none, animation: .default) var bankAccounts
 
-	var draftBankAccount: BankAccount?
-
 	func load(for profileID: UUID) async {
 		_ = await withErrorReporting {
 			try await $bankAccounts.load(

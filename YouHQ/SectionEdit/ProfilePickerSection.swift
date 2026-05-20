@@ -23,7 +23,7 @@ struct ProfilePickerSection: View {
 		if profiles.count > 1 {
 			Section("Profile") {
 				Picker("Profile", selection: pickerBinding) {
-					ForEach(profiles, id: \.profile.id) { profileShare in
+					ForEach(profiles) { profileShare in
 						HQText(profileShare.profile.name)
 							.tag(profileShare.profile.id)
 					}

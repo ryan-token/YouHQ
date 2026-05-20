@@ -7,15 +7,8 @@
 
 import SwiftUI
 
-private struct SheetNamespaceKey: EnvironmentKey {
-	static let defaultValue: Namespace.ID? = nil
-}
-
 extension EnvironmentValues {
-	var sheetNamespace: Namespace.ID? {
-		get { self[SheetNamespaceKey.self] }
-		set { self[SheetNamespaceKey.self] = newValue }
-	}
+	@Entry var sheetNamespace: Namespace.ID?
 }
 
 extension View {

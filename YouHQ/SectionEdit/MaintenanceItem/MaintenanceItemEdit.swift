@@ -65,38 +65,20 @@ struct MaintenanceItemEdit: View {
 				#endif
 
 				LabeledField("Unit", shouldOverrideTap: false) {
-					Picker(selection: $vm.intervalType) {
+					Picker("", selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
 							HQText(
 								vm.intervalValue == 1
 									? type.rawValue : "\(type.rawValue)s"
 							).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Next Due Date") {
-					DatePicker(
-						"",
-						selection: Binding(
-							get: {
-								if vm.isUsingManualDueDate {
-									return vm.dueDate
-										?? vm.calculatedNextDueDate
-								} else {
-									return vm.calculatedNextDueDate
-								}
-							},
-							set: {
-								vm.dueDate = $0
-								vm.isUsingManualDueDate = true
-							}
-						),
-						displayedComponents: .date
-					)
-					.labelsHidden()
+					DatePicker("", selection: $vm.displayedDueDate, displayedComponents: .date)
+						.labelsHidden()
 				}
 
 				if vm.isUsingManualDueDate {
@@ -148,9 +130,8 @@ struct MaintenanceItemEdit: View {
 			)
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}
@@ -160,36 +141,12 @@ struct MaintenanceItemEdit: View {
 
 #Preview("Residence Maintenance Item") {
 	SectionEditSheet(
-		section: .maintenanceItem(MaintenanceItem.residenceSampleData),
-		draftUtility: .constant(nil),
-		draftInsurancePolicy: .constant(nil),
-		draftMaintenanceItem: .constant(nil),
-		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil),
-		draftJob: .constant(nil),
-		draftDevice: .constant(nil),
-		draftServiceProvider: .constant(nil),
-		draftSubscription: .constant(nil),
-		draftBankAccount: .constant(nil),
-		draftInvestmentAccount: .constant(nil),
-		draftHealthSavingsAccount: .constant(nil)
+		section: .maintenanceItem(MaintenanceItem.residenceSampleData)
 	)
 }
 
 #Preview("Vehicle Maintenance Item") {
 	SectionEditSheet(
-		section: .maintenanceItem(MaintenanceItem.vehicleSampleData),
-		draftUtility: .constant(nil),
-		draftInsurancePolicy: .constant(nil),
-		draftMaintenanceItem: .constant(nil),
-		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil),
-		draftJob: .constant(nil),
-		draftDevice: .constant(nil),
-		draftServiceProvider: .constant(nil),
-		draftSubscription: .constant(nil),
-		draftBankAccount: .constant(nil),
-		draftInvestmentAccount: .constant(nil),
-		draftHealthSavingsAccount: .constant(nil)
+		section: .maintenanceItem(MaintenanceItem.vehicleSampleData)
 	)
 }

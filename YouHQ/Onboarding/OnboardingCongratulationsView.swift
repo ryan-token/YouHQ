@@ -5,14 +5,11 @@
 //  Created by Ryan Token on 2/7/26.
 //
 
-import Combine
 import SwiftUI
 
 struct OnboardingCongratulationsView: View {
 	@AppStorage("hasLaunchedApp") var hasLaunchedApp = false
 	@Environment(\.dismiss) var dismiss
-	@State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-	@State private var countdown = 3
 
 	var body: some View {
 		VStack(spacing: 32) {
@@ -20,7 +17,9 @@ struct OnboardingCongratulationsView: View {
 
 			VStack(spacing: 16) {
 				Image(systemName: "checkmark.circle.fill")
-					.font(.system(size: 80))
+					.font(.system(.largeTitle))
+					.imageScale(.large)
+					.dynamicTypeSize(.xxxLarge)
 					.foregroundStyle(.green)
 
 				HQText("Congratulations!")
@@ -37,14 +36,11 @@ struct OnboardingCongratulationsView: View {
 		}
 		.navigationBarBackButtonHidden(true)
 		.padding()
-		.onReceive(timer) { _ in
-			if countdown > 0 {
-				countdown -= 1
-			} else {
-				withAnimation {
-					hasLaunchedApp = true
-					notifyOnboardingCompleted()
-				}
+		.task {
+			try? await Task.sleep(for: .seconds(3))
+			withAnimation {
+				hasLaunchedApp = true
+				notifyOnboardingCompleted()
 			}
 		}
 	}

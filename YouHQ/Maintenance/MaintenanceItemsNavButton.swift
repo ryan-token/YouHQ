@@ -59,11 +59,7 @@ struct MaintenanceItemsNavButton: View {
 					.foregroundStyle(.white.opacity(0.6))
 			}
 			.padding()
-			#if !os(macOS)
-				.background(colorScheme == .light ? .black.opacity(0.75) : Color(uiColor: UIColor.darkGray).opacity(0.8))
-			#elseif os(macOS)
-				.background(colorScheme == .light ? .black.opacity(0.75) : Color(nsColor: NSColor.darkGray).opacity(0.8))
-			#endif
+			.background(colorScheme == .light ? .black.opacity(0.75) : .gray.opacity(0.8))
 			.foregroundStyle(.white)
 			.clipShape(.rect(cornerRadius: 12))
 		}

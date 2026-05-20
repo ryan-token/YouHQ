@@ -53,7 +53,8 @@ struct SharingStatus: View {
 					if isShared {
 						SharedLabel(sharedRecord: $sharedRecord, participantsCount: sharedParticipantsCount)
 					} else {
-						Image(systemName: "square.and.arrow.up")
+						Label("Share Profile", systemImage: "square.and.arrow.up")
+							.labelStyle(.iconOnly)
 					}
 				}
 				.buttonStyle(.plain)
@@ -93,44 +94,6 @@ struct SharingStatus: View {
 		}
 	}
 }
-
-struct SharedLabel: View {
-	@Binding var sharedRecord: SharedRecord?
-	let participantsCount: Int
-
-	var body: some View {
-		HStack {
-			Image(systemName: "network")
-			HQText(participantsCount > 0 ? "Shared With \(participantsCount)" : "Shareable")
-		}
-		.padding(.vertical, 6)
-		.padding(.horizontal, 12)
-		.background(participantsCount > 0 ? .indigo : .indigo.opacity(0.6))
-		.foregroundStyle(.white)
-		.clipShape(.capsule)
-		#if !os(macOS)
-			.modifier(SharePresentationModifier(sharedRecord: $sharedRecord))
-		#endif
-	}
-}
-
-#if !os(macOS)
-	struct SharePresentationModifier: ViewModifier {
-		@Binding var sharedRecord: SharedRecord?
-
-		func body(content: Content) -> some View {
-			if UIDevice.current.userInterfaceIdiom == .phone {
-				content.sheet(item: $sharedRecord) { sharedRecord in
-					CloudSharingView(sharedRecord: sharedRecord)
-				}
-			} else {
-				content.popover(item: $sharedRecord) { sharedRecord in
-					CloudSharingView(sharedRecord: sharedRecord)
-				}
-			}
-		}
-	}
-#endif
 
 #Preview {
 	SharingStatus(for: ProfileShare(profile: Profile.sampleData, isShared: true, metadata: nil))

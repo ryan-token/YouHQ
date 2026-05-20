@@ -22,7 +22,7 @@ struct InsuranceEdit: View {
 			@Bindable var vm = insuranceVM
 			Section("Policy Info") {
 				LabeledField("Type", shouldOverrideTap: false) {
-					Picker(selection: $vm.type) {
+					Picker("", selection: $vm.type) {
 						ForEach(
 							InsurancePolicyType.allCases.filter {
 								if vm.policy.vehicleID != nil {
@@ -35,9 +35,8 @@ struct InsuranceEdit: View {
 						) { type in
 							HQText(type.rawValue).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 					.disabled(vm.policy.vehicleID != nil)
 				}
 
@@ -136,9 +135,8 @@ struct InsuranceEdit: View {
 			)
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}
@@ -148,18 +146,6 @@ struct InsuranceEdit: View {
 
 #Preview("Insurance") {
 	SectionEditSheet(
-		section: .insurancePolicy(InsurancePolicy.sampleData),
-		draftUtility: .constant(nil),
-		draftInsurancePolicy: .constant(nil),
-		draftMaintenanceItem: .constant(nil),
-		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil),
-		draftJob: .constant(nil),
-		draftDevice: .constant(nil),
-		draftServiceProvider: .constant(nil),
-		draftSubscription: .constant(nil),
-		draftBankAccount: .constant(nil),
-		draftInvestmentAccount: .constant(nil),
-		draftHealthSavingsAccount: .constant(nil)
+		section: .insurancePolicy(InsurancePolicy.sampleData)
 	)
 }

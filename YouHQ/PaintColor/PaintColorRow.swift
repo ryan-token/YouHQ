@@ -17,11 +17,8 @@ struct PaintColorRow: View {
 				// Color swatch
 				RoundedRectangle(cornerRadius: 8)
 					.fill(Color(databaseValue: paintColor.backgroundColor))
+					.stroke(.separator, lineWidth: 1)
 					.frame(width: 40, height: 40)
-					.overlay {
-						RoundedRectangle(cornerRadius: 8)
-							.stroke(.separator, lineWidth: 1)
-					}
 
 				VStack(alignment: .leading, spacing: 4) {
 					HQText(paintColor.room.isNotEmpty ? paintColor.room : "No Room")

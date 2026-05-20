@@ -30,7 +30,8 @@ extension InsuranceEdit {
 		var photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
-		var profiles: [ProfileShare] = []
+		@ObservationIgnored
+		@FetchAll(ProfileShare.none, animation: .default) var profiles
 		var currentProfileID: UUID
 		var supportsProfileSwitching: Bool { true }
 		var itemNameForProfilePicker: String {
@@ -64,8 +65,13 @@ extension InsuranceEdit {
 			self.url = policy.url
 			self.notes = policy.notes
 			self.currentProfileID = policy.profileID
-			self.profiles = loadAllProfiles(from: database)
 			loadExistingPhotoData()
+		}
+
+		func loadProfiles() async {
+			_ = await withErrorReporting {
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
+			}
 		}
 
 		func save() {

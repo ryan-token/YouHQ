@@ -14,20 +14,22 @@ struct ResidenceMap: View {
 	@State private var vm = ViewModel()
 
 	var body: some View {
-		ResidenceMapView(
-			cameraPosition: $vm.cameraPosition,
-			mapLocations: vm.mapLocations,
-			selectedResidence: selectedResidence,
-			selectedMapLocation: $vm.selectedMapLocation,
-			showControls: false
-		)
-		.frame(height: vm.mapHeight)
-		.clipShape(.rect(cornerRadius: 12))
-		.contentShape(.rect)
-		.matchedTransitionSource(id: "residenceMap", in: namespace)
-		.onTapGesture {
+		Button {
 			vm.isShowingFullScreenMap = true
+		} label: {
+			ResidenceMapView(
+				cameraPosition: $vm.cameraPosition,
+				mapLocations: vm.mapLocations,
+				selectedResidence: selectedResidence,
+				selectedMapLocation: $vm.selectedMapLocation,
+				showControls: false
+			)
+			.frame(height: vm.mapHeight)
+			.clipShape(.rect(cornerRadius: 12))
 		}
+		.buttonStyle(.plain)
+		.accessibilityLabel("Open full-screen map")
+		.matchedTransitionSource(id: "residenceMap", in: namespace)
 		.task {
 			await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id)
 		}

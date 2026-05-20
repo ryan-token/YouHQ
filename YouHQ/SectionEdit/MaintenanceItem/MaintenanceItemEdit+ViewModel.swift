@@ -33,6 +33,17 @@ extension MaintenanceItemEdit {
 		var isShowingPermissionAlert = false
 		private var previousShouldNotify: Bool
 
+		/// Date shown in the next-due-date picker. Reading it returns the manual
+		/// override when set, otherwise the automatically calculated value.
+		/// Writing it stores the manual value and switches to manual mode.
+		var displayedDueDate: Date {
+			get { isUsingManualDueDate ? (dueDate ?? calculatedNextDueDate) : calculatedNextDueDate }
+			set {
+				dueDate = newValue
+				isUsingManualDueDate = true
+			}
+		}
+
 		var calculatedNextDueDate: Date {
 			let calendar = Calendar.current
 			let component = intervalType.calendarComponent

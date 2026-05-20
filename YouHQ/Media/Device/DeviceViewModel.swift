@@ -16,8 +16,6 @@ class DeviceViewModel {
 	@ObservationIgnored
 	@FetchAll(Device.none, animation: .default) var devices
 
-	var draftDevice: Device?
-
 	func load(for profileID: UUID) async {
 		_ = await withErrorReporting {
 			try await $devices.load(

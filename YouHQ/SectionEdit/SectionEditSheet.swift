@@ -12,38 +12,8 @@ struct SectionEditSheet: View {
 	@State private var vm: ViewModel
 	@State private var isShowingDeleteConfirmation = false
 
-	init(
-		section: EditableSection,
-		draftUtility: Binding<Utility?> = .constant(nil),
-		draftInsurancePolicy: Binding<InsurancePolicy?> = .constant(nil),
-		draftMaintenanceItem: Binding<MaintenanceItem?> = .constant(nil),
-		draftPaintColor: Binding<PaintColor?> = .constant(nil),
-		draftOther: Binding<Other?> = .constant(nil),
-		draftJob: Binding<Job?> = .constant(nil),
-		draftDevice: Binding<Device?> = .constant(nil),
-		draftServiceProvider: Binding<ServiceProvider?> = .constant(nil),
-		draftSubscription: Binding<Subscription?> = .constant(nil),
-		draftBankAccount: Binding<BankAccount?> = .constant(nil),
-		draftInvestmentAccount: Binding<InvestmentAccount?> = .constant(nil),
-		draftHealthSavingsAccount: Binding<HealthSavingsAccount?> = .constant(nil)
-	) {
-		_vm = State(
-			wrappedValue: ViewModel(
-				section: section,
-				draftUtility: draftUtility,
-				draftInsurancePolicy: draftInsurancePolicy,
-				draftMaintenanceItem: draftMaintenanceItem,
-				draftOther: draftOther,
-				draftPaintColor: draftPaintColor,
-				draftJob: draftJob,
-				draftDevice: draftDevice,
-				draftServiceProvider: draftServiceProvider,
-				draftSubscription: draftSubscription,
-				draftBankAccount: draftBankAccount,
-				draftInvestmentAccount: draftInvestmentAccount,
-				draftHealthSavingsAccount: draftHealthSavingsAccount
-			)
-		)
+	init(section: EditableSection) {
+		_vm = State(wrappedValue: ViewModel(section: section))
 	}
 
 	var body: some View {
@@ -157,6 +127,9 @@ struct SectionEditSheet: View {
 				)
 			}
 			.interactiveDismissDisabled(vm.section.isDraft)
+		}
+		.task {
+			await vm.sectionViewModel.loadProfiles()
 		}
 		.photoViewerOverlayHost()
 		#if os(iOS)

@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 12/30/25.
 //
 
+import Sharing
 import SQLiteData
 import SwiftUI
 
@@ -18,7 +19,7 @@ extension ResidenceScreen {
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
 		@ObservationIgnored
-		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
+		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
 
 		@ObservationIgnored
 		@FetchAll(Residence.none, animation: .default) var residences
@@ -31,10 +32,18 @@ extension ResidenceScreen {
 		var maintenanceViewModel = MaintenanceItemViewModel()
 
 		@ObservationIgnored
-		@AppStorage("selectedResidenceID") var selectedResidenceID: String?
+		@Shared(.appStorage("selectedResidenceID")) var selectedResidenceID: String?
 
 		init() {
 			residenceNotes = ""
+		}
+
+		func setSelectedProfileIDString(_ value: String) {
+			$selectedProfileIDString.withLock { $0 = value }
+		}
+
+		private func setSelectedResidenceID(_ value: String?) {
+			$selectedResidenceID.withLock { $0 = value }
 		}
 
 		var selectedProfile: ProfileShare? {
@@ -43,10 +52,10 @@ extension ResidenceScreen {
 
 		var selectedResidence: Residence? {
 			didSet {
-				// Only persist to AppStorage if actually changed (prevent cycle)
+				// Only persist if actually changed (prevent cycle)
 				let newID = selectedResidence?.id.uuidString
 				if newID != selectedResidenceID {
-					selectedResidenceID = newID
+					setSelectedResidenceID(newID)
 					if oldValue != nil && selectedResidence != nil {
 						Analytics.sendSignal(.residenceSwitched)
 					}
@@ -94,21 +103,7 @@ extension ResidenceScreen {
 
 		func loadProfiles() async {
 			_ = await withErrorReporting {
-				try await $profiles.load(
-					Profile
-						.group(by: \.id)
-						.leftJoin(SyncMetadata.all) {
-							$0.syncMetadataID.eq($1.id)
-						}
-						.select {
-							ProfileShare.Columns(
-								profile: $0,
-								isShared: $1.isShared.ifnull(false),
-								metadata: $1
-							)
-						},
-					animation: .default
-				)
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
 			}
 		}
 
@@ -220,10 +215,7 @@ extension ResidenceScreen {
 
 		func showAddUtilitySheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
-			utilityViewModel.draftUtility = utilityViewModel.createDraft(
-				for: residenceID
-			)
-			sectionToEdit = .utilityDraft
+			sectionToEdit = .utilityDraft(utilityViewModel.createDraft(for: residenceID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
@@ -232,30 +224,23 @@ extension ResidenceScreen {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			insuranceViewModel.draftInsurancePolicy =
-				insuranceViewModel.createDraft(
-					for: residenceID,
-					profileID: profileID
-				)
-			sectionToEdit = .insurancePolicyDraft
+			sectionToEdit = .insurancePolicyDraft(
+				insuranceViewModel.createDraft(for: residenceID, profileID: profileID)
+			)
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddMaintenanceItemSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
-			maintenanceViewModel.draftMaintenanceItem =
-				maintenanceViewModel.createDraft(for: residenceID)
-			sectionToEdit = .maintenanceItemDraft
+			sectionToEdit = .maintenanceItemDraft(maintenanceViewModel.createDraft(for: residenceID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddPaintColorSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
-			paintColorViewModel.draftPaintColor =
-				paintColorViewModel.createDraft(for: residenceID)
-			sectionToEdit = .paintColorDraft
+			sectionToEdit = .paintColorDraft(paintColorViewModel.createDraft(for: residenceID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
@@ -264,11 +249,9 @@ extension ResidenceScreen {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			otherViewModel.draftOther = otherViewModel.createResidenceDraft(
-				for: residenceID,
-				profileID: profileID
+			sectionToEdit = .otherDraft(
+				otherViewModel.createResidenceDraft(for: residenceID, profileID: profileID)
 			)
-			sectionToEdit = .otherDraft
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}

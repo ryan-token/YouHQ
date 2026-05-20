@@ -70,17 +70,7 @@ struct PaintColorsScreen: View {
 		.sheet(isPresented: $vm.isShowingEditSheet) {
 			if let draftItem = vm.draftPaintColor {
 				SectionEditSheet(
-					section: vm.isNewItem
-						? .paintColorDraft : .paintColor(draftItem),
-					draftUtility: .constant(nil),
-					draftInsurancePolicy: .constant(nil),
-					draftMaintenanceItem: .constant(nil),
-					draftPaintColor: $vm.draftPaintColor,
-					draftOther: .constant(nil),
-					draftJob: .constant(nil),
-					draftDevice: .constant(nil),
-					draftServiceProvider: .constant(nil),
-					draftSubscription: .constant(nil)
+					section: vm.isNewItem ? .paintColorDraft(draftItem) : .paintColor(draftItem)
 				)
 				#if !os(macOS)
 					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))

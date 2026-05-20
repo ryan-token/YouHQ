@@ -22,13 +22,12 @@ struct DeviceEdit: View {
 			@Bindable var vm = deviceVM
 			Section("Device Info") {
 				LabeledField("Type", shouldOverrideTap: false) {
-					Picker(selection: $vm.type) {
+					Picker("", selection: $vm.type) {
 						ForEach(DeviceType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
 						}
-					} label: {
-						EmptyView()
 					}
+					.labelsHidden()
 				}
 
 				LabeledField("Brand") {
@@ -84,9 +83,8 @@ struct DeviceEdit: View {
 			}
 
 			Section("Notes") {
-				TextEditor(text: $vm.notes)
-					.frame(minHeight: 100)
-					.scrollContentBackground(.hidden)
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
 					.focused($focusedField, equals: .notes)
 					.onSubmit { focusedField = nil }
 			}

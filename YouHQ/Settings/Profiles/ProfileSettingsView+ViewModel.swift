@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/26/26.
 //
 
+import Sharing
 import SQLiteData
 import SwiftUI
 
@@ -21,7 +22,11 @@ extension ProfileSettingsView {
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
 		@ObservationIgnored
-		@AppStorage("selectedProfileID") var selectedProfileIDString: String = ""
+		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
+
+		func setSelectedProfileIDString(_ value: String) {
+			$selectedProfileIDString.withLock { $0 = value }
+		}
 
 		var selectedProfile: ProfileShare? {
 			guard let selectedID = currentProfileID else { return nil }
@@ -32,30 +37,16 @@ extension ProfileSettingsView {
 			profiles.count > 1
 		}
 
-		var profileSwitchAlert: ProfileSwitchAlert = .empty
-
-		enum ProfileSwitchAlert: Equatable { // swiftlint:disable:this nesting
-			case empty
-			case confirmSwitch(Profile)
-		}
+		var profileToConfirmSwitch: Profile?
 
 		var isShowingCreateProfileAlert = false
 		var newProfileName = ""
 
-		// Replace all the delete-related booleans with a single enum state
-		var profileDeletionAlert: ProfileDeletionAlert = .empty
-		enum ProfileDeletionAlert: Equatable { // swiftlint:disable:this nesting
-			case empty
-			case cannotDeleteLastProfile
-			case confirmDelete(Profile)
-		}
+		var profileToConfirmDelete: Profile?
+		var isShowingCannotDeleteLastProfile = false
 
 		var renameProfileText = ""
-		var profileRenameAlert: ProfileRenameAlert = .empty
-		enum ProfileRenameAlert: Equatable { // swiftlint:disable:this nesting
-			case empty
-			case confirmRename(Profile)
-		}
+		var profileToConfirmRename: Profile?
 
 		func onAppear() async {
 			await loadProfiles()
@@ -63,31 +54,17 @@ extension ProfileSettingsView {
 
 		private func loadProfiles() async {
 			_ = await withErrorReporting {
-				try await $profiles.load(
-					Profile
-						.group(by: \.id)
-						.leftJoin(SyncMetadata.all) {
-							$0.syncMetadataID.eq($1.id)
-						}
-						.select {
-							ProfileShare.Columns(
-								profile: $0,
-								isShared: $1.isShared.ifnull(false),
-								metadata: $1
-							)
-						},
-					animation: .default
-				)
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
 			}
 		}
 
 		func confirmProfileSwitch(for profile: Profile) {
-			profileSwitchAlert = .confirmSwitch(profile)
+			profileToConfirmSwitch = profile
 		}
 
 		func switchProfile(to profile: Profile) {
-			currentProfileID = profile.id
-			profileSwitchAlert = .empty
+			setCurrentProfileID(profile.id)
+			profileToConfirmSwitch = nil
 			notifyProfileChanged()
 			Analytics.sendSignal(.profileSwitched)
 		}
@@ -117,10 +94,10 @@ extension ProfileSettingsView {
 
 		func confirmProfileDelete(for profile: Profile) {
 			if !hasMultipleProfiles {
-				profileDeletionAlert = .cannotDeleteLastProfile
+				isShowingCannotDeleteLastProfile = true
 				return
 			}
-			profileDeletionAlert = .confirmDelete(profile)
+			profileToConfirmDelete = profile
 		}
 
 		func deleteProfile(_ profile: Profile) {
@@ -135,9 +112,9 @@ extension ProfileSettingsView {
 				if currentProfileID == profile.id {
 					// Switch to first available profile
 					if let firstProfile = profiles.first(where: { $0.profile.id != profile.id }) {
-						currentProfileID = firstProfile.profile.id
+						setCurrentProfileID(firstProfile.profile.id)
 					} else {
-						currentProfileID = nil
+						setCurrentProfileID(nil)
 					}
 					notifyProfileChanged()
 				}
@@ -148,12 +125,12 @@ extension ProfileSettingsView {
 				reportIssue(error)
 			}
 
-			profileDeletionAlert = .empty
+			profileToConfirmDelete = nil
 		}
 
 		func confirmProfileRename(for profile: Profile) {
 			renameProfileText = profile.name
-			profileRenameAlert = .confirmRename(profile)
+			profileToConfirmRename = profile
 		}
 
 		func renameProfile(_ profile: Profile, to newName: String) {
@@ -171,7 +148,7 @@ extension ProfileSettingsView {
 			}
 
 			renameProfileText = ""
-			profileRenameAlert = .empty
+			profileToConfirmRename = nil
 		}
 	}
 }

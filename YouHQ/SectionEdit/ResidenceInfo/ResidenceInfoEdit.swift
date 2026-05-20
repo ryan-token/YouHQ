@@ -39,18 +39,6 @@ struct ResidenceInfoEdit: View {
 
 #Preview("Residence Info") {
 	SectionEditSheet(
-		section: .residenceInfo(Residence.sampleData),
-		draftUtility: .constant(nil),
-		draftInsurancePolicy: .constant(nil),
-		draftMaintenanceItem: .constant(nil),
-		draftPaintColor: .constant(nil),
-		draftOther: .constant(nil),
-		draftJob: .constant(nil),
-		draftDevice: .constant(nil),
-		draftServiceProvider: .constant(nil),
-		draftSubscription: .constant(nil),
-		draftBankAccount: .constant(nil),
-		draftInvestmentAccount: .constant(nil),
-		draftHealthSavingsAccount: .constant(nil)
+		section: .residenceInfo(Residence.sampleData)
 	)
 }

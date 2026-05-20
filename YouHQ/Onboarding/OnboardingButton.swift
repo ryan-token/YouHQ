@@ -14,9 +14,7 @@ struct OnboardingButton: View {
 	let backgroundColor: Color
 
 	var body: some View {
-		Button {
-			action()
-		} label: {
+		Button(action: action) {
 			Label(
 				title: { HQText(text) },
 				icon: { Image(systemName: iconName) }

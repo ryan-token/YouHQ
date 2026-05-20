@@ -64,23 +64,21 @@ struct VehicleFormFields: View {
 	var body: some View {
 		Section("Basic Info") {
 			LabeledField("Type", shouldOverrideTap: false) {
-				Picker(selection: $type) {
+				Picker("", selection: $type) {
 					ForEach(VehicleType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
 					}
-				} label: {
-					EmptyView()
 				}
+				.labelsHidden()
 			}
 
 			LabeledField("Subtype", shouldOverrideTap: false) {
-				Picker(selection: $subType) {
+				Picker("", selection: $subType) {
 					ForEach(VehicleSubType.allCases, id: \.self) { subType in
 						HQText(subType.rawValue).tag(subType)
 					}
-				} label: {
-					EmptyView()
 				}
+				.labelsHidden()
 			}
 		}
 		.onAppear {
@@ -130,13 +128,12 @@ struct VehicleFormFields: View {
 
 		Section("Cost") {
 			LabeledField("Cost Type", shouldOverrideTap: false) {
-				Picker(selection: $costType) {
+				Picker("", selection: $costType) {
 					ForEach(VehicleCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
 					}
-				} label: {
-					EmptyView()
 				}
+				.labelsHidden()
 			}
 
 			if costType != .owned {
@@ -166,9 +163,8 @@ struct VehicleFormFields: View {
 		)
 
 		Section("Notes") {
-			TextEditor(text: $notes)
-				.frame(minHeight: 100)
-				.scrollContentBackground(.hidden)
+			TextField("Notes", text: $notes, axis: .vertical)
+				.lineLimit(5...)
 				.focused($focusedField, equals: .notes)
 				.onSubmit { focusedField = nil }
 		}

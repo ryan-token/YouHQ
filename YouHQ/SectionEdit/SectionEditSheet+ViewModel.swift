@@ -18,6 +18,7 @@ protocol SectionEditViewModel: AnyObject, Observable {
 	func save()
 	func cancel()
 	func delete()
+	func loadProfiles() async
 }
 
 // Default implementations for items that don't support profile switching
@@ -29,6 +30,7 @@ extension SectionEditViewModel {
 	}
 	var itemNameForProfilePicker: String { "" }
 	var supportsProfileSwitching: Bool { false }
+	func loadProfiles() async {}
 }
 
 extension SectionEditSheet {
@@ -37,236 +39,94 @@ extension SectionEditSheet {
 		let section: EditableSection
 		let sectionViewModel: any SectionEditViewModel
 
-		var title: String {
-			sectionViewModel.title
-		}
-
-		var isValid: Bool {
-			sectionViewModel.isValid
-		}
-
-		var deleteConfirmationMessage: String {
-			sectionViewModel.deleteConfirmationMessage
-		}
+		var title: String { sectionViewModel.title }
+		var isValid: Bool { sectionViewModel.isValid }
+		var deleteConfirmationMessage: String { sectionViewModel.deleteConfirmationMessage }
 
 		let sectionString: String
 
-		// swiftlint:disable:next cyclomatic_complexity
-		init(
-			section: EditableSection,
-			draftUtility: Binding<Utility?>,
-			draftInsurancePolicy: Binding<InsurancePolicy?>,
-			draftMaintenanceItem: Binding<MaintenanceItem?>,
-			draftOther: Binding<Other?>,
-			draftPaintColor: Binding<PaintColor?>,
-			draftJob: Binding<Job?>,
-			draftDevice: Binding<Device?>,
-			draftServiceProvider: Binding<ServiceProvider?>,
-			draftSubscription: Binding<Subscription?>,
-			draftBankAccount: Binding<BankAccount?>,
-			draftInvestmentAccount: Binding<InvestmentAccount?>,
-			draftHealthSavingsAccount: Binding<HealthSavingsAccount?>
-		) {
+		// swiftlint:disable:next function_body_length
+		init(section: EditableSection) {
 			self.section = section
 
 			switch section {
 			case .residenceInfo(let residence):
-				sectionViewModel = ResidenceInfoEdit.ViewModel(
-					residence: residence
-				)
+				sectionViewModel = ResidenceInfoEdit.ViewModel(residence: residence)
 				sectionString = "Residence"
 			case .vehicleInfo(let vehicle):
-				sectionViewModel = VehicleInfoEdit.ViewModel(
-					vehicle: vehicle
-				)
+				sectionViewModel = VehicleInfoEdit.ViewModel(vehicle: vehicle)
 				sectionString = "Vehicle"
 			case .utility(let utility):
-				sectionViewModel = UtilityEdit.ViewModel(
-					utility: utility,
-					isNew: false
-				)
+				sectionViewModel = UtilityEdit.ViewModel(utility: utility, isNew: false)
 				sectionString = "Utility"
-			case .utilityDraft:
-				guard let utility = draftUtility.wrappedValue else {
-					fatalError(
-						"Draft utility must exist for .utilityDraft case"
-					)
-				}
-				sectionViewModel = UtilityEdit.ViewModel(
-					utility: utility,
-					isNew: true
-				)
+			case .utilityDraft(let utility):
+				sectionViewModel = UtilityEdit.ViewModel(utility: utility, isNew: true)
 				sectionString = "Utility"
 			case .insurancePolicy(let policy):
-				sectionViewModel = InsuranceEdit.ViewModel(
-					policy: policy,
-					isNew: false
-				)
+				sectionViewModel = InsuranceEdit.ViewModel(policy: policy, isNew: false)
 				sectionString = "Policy"
-			case .insurancePolicyDraft:
-				guard let policy = draftInsurancePolicy.wrappedValue else {
-					fatalError(
-						"Draft policy must exist for .insurancePolicyDraft case"
-					)
-				}
-				sectionViewModel = InsuranceEdit.ViewModel(
-					policy: policy,
-					isNew: true
-				)
+			case .insurancePolicyDraft(let policy):
+				sectionViewModel = InsuranceEdit.ViewModel(policy: policy, isNew: true)
 				sectionString = "Policy"
 			case .maintenanceItem(let item):
-				sectionViewModel = MaintenanceItemEdit.ViewModel(
-					item: item,
-					isNew: false
-				)
+				sectionViewModel = MaintenanceItemEdit.ViewModel(item: item, isNew: false)
 				sectionString = "Maintenance Item"
-			case .maintenanceItemDraft:
-				guard let item = draftMaintenanceItem.wrappedValue else {
-					fatalError(
-						"Draft maintenance item must exist for .maintenanceItemDraft case"
-					)
-				}
-				sectionViewModel = MaintenanceItemEdit.ViewModel(
-					item: item,
-					isNew: true
-				)
+			case .maintenanceItemDraft(let item):
+				sectionViewModel = MaintenanceItemEdit.ViewModel(item: item, isNew: true)
 				sectionString = "Maintenance Item"
 			case .paintColor(let paintColor):
-				sectionViewModel = PaintColorEdit.ViewModel(
-					paintColor: paintColor,
-					isNew: false
-				)
+				sectionViewModel = PaintColorEdit.ViewModel(paintColor: paintColor, isNew: false)
 				sectionString = "Paint Color"
-			case .paintColorDraft:
-				guard let paintColor = draftPaintColor.wrappedValue else {
-					fatalError(
-						"Draft paint color must exist for .paintColorDraft case"
-					)
-				}
-				sectionViewModel = PaintColorEdit.ViewModel(
-					paintColor: paintColor,
-					isNew: true
-				)
+			case .paintColorDraft(let paintColor):
+				sectionViewModel = PaintColorEdit.ViewModel(paintColor: paintColor, isNew: true)
 				sectionString = "Paint Color"
 			case .other(let other):
-				sectionViewModel = OtherEdit.ViewModel(
-					other: other,
-					isNew: false
-				)
+				sectionViewModel = OtherEdit.ViewModel(other: other, isNew: false)
 				sectionString = other.name
-			case .otherDraft:
-				guard let other = draftOther.wrappedValue else {
-					fatalError("Draft other must exist for .otherDraft case")
-				}
-				sectionViewModel = OtherEdit.ViewModel(
-					other: other,
-					isNew: true
-				)
+			case .otherDraft(let other):
+				sectionViewModel = OtherEdit.ViewModel(other: other, isNew: true)
 				sectionString = other.name
 			case .job(let job):
-				sectionViewModel = JobEdit.ViewModel(
-					job: job,
-					isNew: false
-				)
+				sectionViewModel = JobEdit.ViewModel(job: job, isNew: false)
 				sectionString = "Job"
-			case .jobDraft:
-				guard let job = draftJob.wrappedValue else {
-					fatalError("Draft job must exist for .jobDraft case")
-				}
-				sectionViewModel = JobEdit.ViewModel(
-					job: job,
-					isNew: true
-				)
+			case .jobDraft(let job):
+				sectionViewModel = JobEdit.ViewModel(job: job, isNew: true)
 				sectionString = "Job"
 			case .device(let device):
-				sectionViewModel = DeviceEdit.ViewModel(
-					device: device,
-					isNew: false
-				)
+				sectionViewModel = DeviceEdit.ViewModel(device: device, isNew: false)
 				sectionString = "Device"
-			case .deviceDraft:
-				guard let device = draftDevice.wrappedValue else {
-					fatalError("Draft device must exist for .deviceDraft case")
-				}
-				sectionViewModel = DeviceEdit.ViewModel(
-					device: device,
-					isNew: true
-				)
+			case .deviceDraft(let device):
+				sectionViewModel = DeviceEdit.ViewModel(device: device, isNew: true)
 				sectionString = "Device"
 			case .serviceProvider(let serviceProvider):
-				sectionViewModel = ServiceProviderEdit.ViewModel(
-					serviceProvider: serviceProvider,
-					isNew: false
-				)
+				sectionViewModel = ServiceProviderEdit.ViewModel(serviceProvider: serviceProvider, isNew: false)
 				sectionString = "Service Provider"
-			case .serviceProviderDraft:
-				guard let serviceProvider = draftServiceProvider.wrappedValue else {
-					fatalError("Draft service provider must exist for .serviceProviderDraft case")
-				}
-				sectionViewModel = ServiceProviderEdit.ViewModel(
-					serviceProvider: serviceProvider,
-					isNew: true
-				)
+			case .serviceProviderDraft(let serviceProvider):
+				sectionViewModel = ServiceProviderEdit.ViewModel(serviceProvider: serviceProvider, isNew: true)
 				sectionString = "Service Provider"
 			case .subscription(let subscription):
-				sectionViewModel = SubscriptionEdit.ViewModel(
-					subscription: subscription,
-					isNew: false
-				)
+				sectionViewModel = SubscriptionEdit.ViewModel(subscription: subscription, isNew: false)
 				sectionString = "Subscription"
-			case .subscriptionDraft:
-				guard let subscription = draftSubscription.wrappedValue else {
-					fatalError("Draft subscription must exist for .subscriptionDraft case")
-				}
-				sectionViewModel = SubscriptionEdit.ViewModel(
-					subscription: subscription,
-					isNew: true
-				)
+			case .subscriptionDraft(let subscription):
+				sectionViewModel = SubscriptionEdit.ViewModel(subscription: subscription, isNew: true)
 				sectionString = "Subscription"
 			case .bankAccount(let account):
-				sectionViewModel = BankAccountEdit.ViewModel(
-					account: account,
-					isNew: false
-				)
+				sectionViewModel = BankAccountEdit.ViewModel(account: account, isNew: false)
 				sectionString = "Bank Account"
-			case .bankAccountDraft:
-				guard let account = draftBankAccount.wrappedValue else {
-					fatalError("Draft bank account must exist for .bankAccountDraft case")
-				}
-				sectionViewModel = BankAccountEdit.ViewModel(
-					account: account,
-					isNew: true
-				)
+			case .bankAccountDraft(let account):
+				sectionViewModel = BankAccountEdit.ViewModel(account: account, isNew: true)
 				sectionString = "Bank Account"
 			case .investmentAccount(let account):
-				sectionViewModel = InvestmentAccountEdit.ViewModel(
-					account: account,
-					isNew: false
-				)
+				sectionViewModel = InvestmentAccountEdit.ViewModel(account: account, isNew: false)
 				sectionString = "Investment Account"
-			case .investmentAccountDraft:
-				guard let account = draftInvestmentAccount.wrappedValue else {
-					fatalError("Draft investment account must exist for .investmentAccountDraft case")
-				}
-				sectionViewModel = InvestmentAccountEdit.ViewModel(
-					account: account,
-					isNew: true
-				)
+			case .investmentAccountDraft(let account):
+				sectionViewModel = InvestmentAccountEdit.ViewModel(account: account, isNew: true)
 				sectionString = "Investment Account"
 			case .healthSavingsAccount(let account):
-				sectionViewModel = HealthSavingsAccountEdit.ViewModel(
-					account: account,
-					isNew: false
-				)
+				sectionViewModel = HealthSavingsAccountEdit.ViewModel(account: account, isNew: false)
 				sectionString = "HSA/FSA"
-			case .healthSavingsAccountDraft:
-				guard let account = draftHealthSavingsAccount.wrappedValue else {
-					fatalError("Draft HSA/FSA must exist for .healthSavingsAccountDraft case")
-				}
-				sectionViewModel = HealthSavingsAccountEdit.ViewModel(
-					account: account,
-					isNew: true
-				)
+			case .healthSavingsAccountDraft(let account):
+				sectionViewModel = HealthSavingsAccountEdit.ViewModel(account: account, isNew: true)
 				sectionString = "HSA/FSA"
 			}
 		}

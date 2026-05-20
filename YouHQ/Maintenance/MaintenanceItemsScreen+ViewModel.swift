@@ -32,16 +32,28 @@ extension MaintenanceItemsScreen {
 			self.vehicleID = vehicleID
 		}
 
-		var pastDueItems: [MaintenanceItem] {
-			maintenanceItems.filter { $0.isPastDue }
+		var pastDueItems: [MaintenanceItem] { groupedItems.pastDue }
+		var upcomingItems: [MaintenanceItem] { groupedItems.upcoming }
+		var otherItems: [MaintenanceItem] { groupedItems.other }
+
+		private var groupedItems: GroupedMaintenanceItems {
+			var groups = GroupedMaintenanceItems()
+			for item in maintenanceItems {
+				if item.isPastDue {
+					groups.pastDue.append(item)
+				} else if item.isUpcoming {
+					groups.upcoming.append(item)
+				} else {
+					groups.other.append(item)
+				}
+			}
+			return groups
 		}
 
-		var upcomingItems: [MaintenanceItem] {
-			maintenanceItems.filter { $0.isUpcoming && !$0.isPastDue }
-		}
-
-		var otherItems: [MaintenanceItem] {
-			maintenanceItems.filter { !$0.isPastDue && !$0.isUpcoming }
+		private struct GroupedMaintenanceItems { // swiftlint:disable:this nesting
+			var pastDue: [MaintenanceItem] = []
+			var upcoming: [MaintenanceItem] = []
+			var other: [MaintenanceItem] = []
 		}
 
 		func loadData() async {

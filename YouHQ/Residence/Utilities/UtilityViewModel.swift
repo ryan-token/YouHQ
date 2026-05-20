@@ -16,8 +16,6 @@ class UtilityViewModel {
 	@ObservationIgnored
 	@FetchAll(Utility.none, animation: .default) var utilities
 
-	var draftUtility: Utility?
-
 	func load(for residenceID: UUID) async {
 		_ = await withErrorReporting {
 			try await $utilities.load(

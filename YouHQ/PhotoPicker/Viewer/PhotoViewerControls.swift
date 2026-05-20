@@ -15,28 +15,19 @@ struct PhotoViewerControls: View {
 
 	var body: some View {
 		HStack {
-			Button {
-				onClose()
-			} label: {
-				Image(systemName: "xmark")
-					.foregroundStyle(.white)
-			}
+			Button("Close", systemImage: "xmark", action: onClose)
+				.labelStyle(.iconOnly)
+				.foregroundStyle(.white)
 
 			Spacer()
 
-			Button {
-				onDownload()
-			} label: {
-				Image(systemName: "square.and.arrow.down")
-					.foregroundStyle(.white)
-			}
+			Button("Download", systemImage: "square.and.arrow.down", action: onDownload)
+				.labelStyle(.iconOnly)
+				.foregroundStyle(.white)
 
-			Button {
-				onReset()
-			} label: {
-				Image(systemName: "arrow.uturn.backward")
-					.foregroundStyle(.white)
-			}
+			Button("Reset Zoom", systemImage: "arrow.uturn.backward", action: onReset)
+				.labelStyle(.iconOnly)
+				.foregroundStyle(.white)
 		}
 		#if !os(visionOS)
 			.buttonStyle(.glassProminent)

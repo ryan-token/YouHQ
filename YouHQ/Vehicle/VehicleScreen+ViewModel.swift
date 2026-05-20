@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/24/26.
 //
 
+import Sharing
 import SQLiteData
 import SwiftUI
 
@@ -18,7 +19,7 @@ extension VehicleScreen {
 		@FetchAll(ProfileShare.none, animation: .default) var profiles
 
 		@ObservationIgnored
-		@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
+		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
 
 		@ObservationIgnored
 		@FetchAll(Vehicle.none, animation: .default) var vehicles
@@ -30,10 +31,18 @@ extension VehicleScreen {
 		var maintenanceViewModel = MaintenanceItemViewModel()
 
 		@ObservationIgnored
-		@AppStorage("selectedVehicleID") var selectedVehicleID: String?
+		@Shared(.appStorage("selectedVehicleID")) var selectedVehicleID: String?
 
 		init() {
 			vehicleNotes = ""
+		}
+
+		func setSelectedProfileIDString(_ value: String) {
+			$selectedProfileIDString.withLock { $0 = value }
+		}
+
+		private func setSelectedVehicleID(_ value: String?) {
+			$selectedVehicleID.withLock { $0 = value }
 		}
 
 		var selectedProfile: ProfileShare? {
@@ -42,10 +51,10 @@ extension VehicleScreen {
 
 		var selectedVehicle: Vehicle? {
 			didSet {
-				// Only persist to AppStorage if actually changed (prevent cycle)
+				// Only persist if actually changed (prevent cycle)
 				let newID = selectedVehicle?.id.uuidString
 				if newID != selectedVehicleID {
-					selectedVehicleID = newID
+					setSelectedVehicleID(newID)
 					if oldValue != nil && selectedVehicle != nil {
 						Analytics.sendSignal(.vehicleSwitched)
 					}
@@ -88,21 +97,7 @@ extension VehicleScreen {
 
 		func loadProfiles() async {
 			_ = await withErrorReporting {
-				try await $profiles.load(
-					Profile
-						.group(by: \.id)
-						.leftJoin(SyncMetadata.all) {
-							$0.syncMetadataID.eq($1.id)
-						}
-						.select {
-							ProfileShare.Columns(
-								profile: $0,
-								isShared: $1.isShared.ifnull(false),
-								metadata: $1
-							)
-						},
-					animation: .default
-				)
+				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
 			}
 		}
 
@@ -215,30 +210,23 @@ extension VehicleScreen {
 			guard let vehicleID = selectedVehicle?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			insuranceViewModel.draftInsurancePolicy =
-				insuranceViewModel.createVehicleDraft(
-					for: vehicleID,
-					profileID: profileID
-				)
-			sectionToEdit = .insurancePolicyDraft
+			sectionToEdit = .insurancePolicyDraft(
+				insuranceViewModel.createVehicleDraft(for: vehicleID, profileID: profileID)
+			)
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddMaintenanceItemSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id else { return }
-			maintenanceViewModel.draftMaintenanceItem =
-				maintenanceViewModel.createVehicleDraft(for: vehicleID)
-			sectionToEdit = .maintenanceItemDraft
+			sectionToEdit = .maintenanceItemDraft(maintenanceViewModel.createVehicleDraft(for: vehicleID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
 
 		func showAddPaintColorSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id else { return }
-			paintColorViewModel.draftPaintColor =
-				paintColorViewModel.createVehicleDraft(for: vehicleID)
-			sectionToEdit = .paintColorDraft
+			sectionToEdit = .paintColorDraft(paintColorViewModel.createVehicleDraft(for: vehicleID))
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
@@ -247,11 +235,9 @@ extension VehicleScreen {
 			guard let vehicleID = selectedVehicle?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			otherViewModel.draftOther = otherViewModel.createVehicleDraft(
-				for: vehicleID,
-				profileID: profileID
+			sectionToEdit = .otherDraft(
+				otherViewModel.createVehicleDraft(for: vehicleID, profileID: profileID)
 			)
-			sectionToEdit = .otherDraft
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
 		}
