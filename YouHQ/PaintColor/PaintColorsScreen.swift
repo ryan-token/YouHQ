@@ -9,7 +9,6 @@ import SQLiteData
 import SwiftUI
 
 struct PaintColorsScreen: View {
-	@Environment(PaywallManager.self) private var paywallManager
 	@Namespace private var addButtonNamespace
 	@State private var vm: ViewModel
 
@@ -18,7 +17,6 @@ struct PaintColorsScreen: View {
 	}
 
 	var body: some View {
-		@Bindable var paywallManager = paywallManager
 		List {
 			if vm.$paintColors.isLoading, vm.paintColors.isEmpty {
 				ContentUnavailableView {
@@ -54,14 +52,13 @@ struct PaintColorsScreen: View {
 		#endif
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.paintColors.count < Constants.paywallPaintColorsThreshold {
-						vm.showAddPaintColorSheet()
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add", systemImage: "plus")
+				PaywalledButton(
+					title: "Add",
+					systemImage: "plus",
+					currentCount: vm.paintColors.count,
+					threshold: Constants.paywallPaintColorsThreshold
+				) {
+					vm.showAddPaintColorSheet()
 				}
 				.matchedTransitionSource(id: "addButton", in: addButtonNamespace)
 			}

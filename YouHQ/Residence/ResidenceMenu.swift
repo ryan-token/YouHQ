@@ -21,7 +21,7 @@ struct ResidenceMenu: View {
 	var body: some View {
 		Group {
 			if includeAddResidence {
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Residence",
 					systemImage: "house.fill",
 					currentCount: vm.residences.count,
@@ -34,7 +34,7 @@ struct ResidenceMenu: View {
 			}
 
 			if !vm.residences.isEmpty {
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Utility",
 					systemImage: "bolt.fill",
 					currentCount: vm.residenceItemsCount,
@@ -43,7 +43,7 @@ struct ResidenceMenu: View {
 					vm.showAddUtilitySheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Insurance Policy",
 					systemImage: "shield.fill",
 					currentCount: vm.residenceItemsCount,
@@ -52,7 +52,7 @@ struct ResidenceMenu: View {
 					vm.showAddInsurancePolicySheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Paint Color",
 					systemImage: "paintbrush.fill",
 					currentCount: vm.paintColorViewModel.paintColors.count,
@@ -61,7 +61,7 @@ struct ResidenceMenu: View {
 					vm.showAddPaintColorSheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Maintenance Item",
 					systemImage: "wrench.and.screwdriver.fill",
 					currentCount: vm.maintenanceViewModel.maintenanceItems.count,
@@ -70,7 +70,7 @@ struct ResidenceMenu: View {
 					vm.showAddMaintenanceItemSheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Other",
 					systemImage: "ellipsis.circle.fill",
 					currentCount: vm.residenceItemsCount,

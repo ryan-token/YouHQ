@@ -17,7 +17,7 @@ struct CareerMenu: View {
 	}
 
 	var body: some View {
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Job",
 			systemImage: "briefcase.fill",
 			currentCount: vm.careerItemsCount,
@@ -26,7 +26,7 @@ struct CareerMenu: View {
 			vm.showAddJobSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Other",
 			systemImage: "ellipsis.circle.fill",
 			currentCount: vm.careerItemsCount,

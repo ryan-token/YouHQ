@@ -187,5 +187,41 @@ extension YouHQTests {
 			}
 		}
 
+		// MARK: - Cascade Schema Canary
+
+		/// Sanity check that `ON DELETE CASCADE` is wired up on the Profile foreign keys for the
+		/// main child tables. Catches a future migration that accidentally drops CASCADE.
+		@Suite("Profile cascade canary")
+		struct ProfileCascadeCanary {
+			@Dependency(\.defaultDatabase) var database
+
+			@Test("Deleting a profile cascades to its core children")
+			func cascadeFromProfile() async throws {
+				try await database.write { db in
+					try db.seed {
+						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
+						Job.Draft(id: UUID(-2), profileID: UUID(-1), company: "Acme")
+						BankAccount.Draft(id: UUID(-3), profileID: UUID(-1), bankName: "Chase")
+						Subscription.Draft(id: UUID(-4), profileID: UUID(-1), name: "Netflix")
+						Vehicle.Draft(id: UUID(-5), profileID: UUID(-1), make: "Honda")
+					}
+				}
+
+				try await database.write { db in
+					try Profile.find(UUID(-1)).delete().execute(db)
+				}
+
+				let jobs = try await database.read { db in try Job.fetchCount(db) }
+				let banks = try await database.read { db in try BankAccount.fetchCount(db) }
+				let subs = try await database.read { db in try Subscription.fetchCount(db) }
+				let vehicles = try await database.read { db in try Vehicle.fetchCount(db) }
+
+				#expect(jobs == 0)
+				#expect(banks == 0)
+				#expect(subs == 0)
+				#expect(vehicles == 0)
+			}
+		}
+
 	}
 }

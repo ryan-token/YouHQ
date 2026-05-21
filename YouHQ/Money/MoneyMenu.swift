@@ -17,7 +17,7 @@ struct MoneyMenu: View {
 	}
 
 	var body: some View {
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Bank Account",
 			systemImage: "building.columns.fill",
 			currentCount: vm.moneyItemsCount,
@@ -26,7 +26,7 @@ struct MoneyMenu: View {
 			vm.showAddBankAccountSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Investment Account",
 			systemImage: "chart.line.uptrend.xyaxis",
 			currentCount: vm.moneyItemsCount,
@@ -35,7 +35,7 @@ struct MoneyMenu: View {
 			vm.showAddInvestmentAccountSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add HSA/FSA",
 			systemImage: "cross.case.fill",
 			currentCount: vm.moneyItemsCount,
@@ -44,7 +44,7 @@ struct MoneyMenu: View {
 			vm.showAddHealthSavingsAccountSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Insurance Policy",
 			systemImage: "shield.fill",
 			currentCount: vm.moneyItemsCount,
@@ -53,7 +53,7 @@ struct MoneyMenu: View {
 			vm.showAddInsurancePolicySheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Other",
 			systemImage: "ellipsis.circle.fill",
 			currentCount: vm.moneyItemsCount,

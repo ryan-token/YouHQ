@@ -17,7 +17,7 @@ struct MediaMenu: View {
 	}
 
 	var body: some View {
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Service Provider",
 			systemImage: "network",
 			currentCount: vm.mediaItemsCount,
@@ -26,7 +26,7 @@ struct MediaMenu: View {
 			vm.showAddServiceProviderSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Subscription",
 			systemImage: "rectangle.stack",
 			currentCount: vm.mediaItemsCount,
@@ -35,7 +35,7 @@ struct MediaMenu: View {
 			vm.showAddSubscriptionSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Device",
 			systemImage: "desktopcomputer",
 			currentCount: vm.mediaItemsCount,
@@ -44,7 +44,7 @@ struct MediaMenu: View {
 			vm.showAddDeviceSheet(sourceID: sourceID)
 		}
 
-		PaywalledMenuButton(
+		PaywalledButton(
 			title: "Add Other",
 			systemImage: "ellipsis.circle.fill",
 			currentCount: vm.mediaItemsCount,

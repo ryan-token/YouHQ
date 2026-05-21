@@ -83,5 +83,111 @@ extension YouHQTests {
 
 		}
 
+		// MARK: - SalaryChart.ViewModel Tests
+
+		@Suite("Salary chart")
+		struct SalaryChartTests {
+			@Test("Prepare chart data filters out jobs without salary")
+			func filtersNullSalary() throws {
+				let vm = SalaryChart.ViewModel()
+				let jobs = [
+					Job(id: UUID(-1), profileID: UUID(-2), company: "Acme", startDate: Date(timeIntervalSince1970: 100), salary: 80_000),
+					Job(id: UUID(-3), profileID: UUID(-2), company: "NoSalary"),
+					Job(id: UUID(-4), profileID: UUID(-2), company: "BigCo", startDate: Date(timeIntervalSince1970: 200), salary: 120_000)
+				]
+
+				let chartData = vm.prepareChartData(from: jobs)
+				#expect(chartData.count == 2)
+				let first = try #require(chartData.first)
+				let last = try #require(chartData.last)
+				#expect(first.salary == 80_000)
+				#expect(last.salary == 120_000)
+			}
+
+			@Test("Chart data sorts by start date ascending")
+			func sortsByStartDate() throws {
+				let vm = SalaryChart.ViewModel()
+				let jobs = [
+					Job(
+						id: UUID(-1), profileID: UUID(-2), company: "Later",
+						startDate: Date(timeIntervalSince1970: 200), salary: 100_000
+					),
+					Job(
+						id: UUID(-3), profileID: UUID(-2), company: "Earlier",
+						startDate: Date(timeIntervalSince1970: 100), salary: 80_000
+					)
+				]
+
+				let chartData = vm.prepareChartData(from: jobs)
+				let first = try #require(chartData.first)
+				let last = try #require(chartData.last)
+				#expect(first.xLabel == "Earlier")
+				#expect(last.xLabel == "Later")
+			}
+
+			@Test("Empty company name becomes Untitled")
+			func emptyCompanyBecomesUntitled() throws {
+				let vm = SalaryChart.ViewModel()
+				let jobs = [
+					Job(id: UUID(-1), profileID: UUID(-2), company: "", salary: 50_000)
+				]
+
+				let chartData = vm.prepareChartData(from: jobs)
+				let first = try #require(chartData.first)
+				#expect(first.xLabel == "Untitled")
+			}
+
+			@Test("Format compact salary handles various ranges")
+			func formatCompactSalary() {
+				let vm = SalaryChart.ViewModel()
+
+				#expect(vm.formatCompactSalary(1_500_000) == "$1.5M")
+				#expect(vm.formatCompactSalary(120_000) == "$120K")
+				#expect(vm.formatCompactSalary(500) == "$500")
+			}
+
+			@Test("Chart label includes index")
+			func chartLabel() {
+				let vm = SalaryChart.ViewModel()
+				let data = SalaryChart.JobChartData(
+					id: UUID(-1),
+					xLabel: "Acme",
+					salary: 100_000,
+					backgroundColor: "blue",
+					index: 2
+				)
+
+				#expect(vm.chartLabel(for: data) == "Acme (3)")
+			}
+
+			@Test("Format X axis label strips index suffix")
+			func formatXAxisLabel() {
+				let vm = SalaryChart.ViewModel()
+
+				#expect(vm.formatXAxisLabel("Acme (1)") == "Acme")
+				#expect(vm.formatXAxisLabel("BigCo (12)") == "BigCo")
+				#expect(vm.formatXAxisLabel("NoIndex") == "NoIndex")
+			}
+
+			@Test("Selected job updates from label via didSet")
+			func selectedJobFromLabel() {
+				let vm = SalaryChart.ViewModel()
+				let jobs = [
+					Job(id: UUID(-1), profileID: UUID(-2), company: "Acme", startDate: Date(timeIntervalSince1970: 100), salary: 80_000),
+					Job(id: UUID(-3), profileID: UUID(-2), company: "BigCo", startDate: Date(timeIntervalSince1970: 200), salary: 120_000)
+				]
+
+				_ = vm.prepareChartData(from: jobs)
+
+				// Set label to match first job
+				vm.selectedJobLabel = "Acme (1)"
+				#expect(vm.selectedJob?.xLabel == "Acme")
+				#expect(vm.selectedJob?.salary == 80_000)
+
+				// Set to nil clears selection
+				vm.selectedJobLabel = nil
+				#expect(vm.selectedJob == nil)
+			}
+		}
 	}
 }

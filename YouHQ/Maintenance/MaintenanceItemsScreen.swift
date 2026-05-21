@@ -9,7 +9,6 @@ import SQLiteData
 import SwiftUI
 
 struct MaintenanceItemsScreen: View {
-	@Environment(PaywallManager.self) private var paywallManager
 	@Namespace private var addButtonNamespace
 	@State private var vm: ViewModel
 
@@ -18,7 +17,6 @@ struct MaintenanceItemsScreen: View {
 	}
 
 	var body: some View {
-		@Bindable var paywallManager = paywallManager
 		List {
 			if vm.$maintenanceItems.isLoading, vm.maintenanceItems.isEmpty {
 				ContentUnavailableView {
@@ -107,14 +105,13 @@ struct MaintenanceItemsScreen: View {
 		#endif
 		.toolbar {
 			ToolbarItem(placement: .primaryAction) {
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold {
-						vm.showAddMaintenanceItemSheet()
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add", systemImage: "plus")
+				PaywalledButton(
+					title: "Add",
+					systemImage: "plus",
+					currentCount: vm.maintenanceItems.count,
+					threshold: Constants.paywallMaintenanceItemsThreshold
+				) {
+					vm.showAddMaintenanceItemSheet()
 				}
 				.matchedTransitionSource(id: "addButton", in: addButtonNamespace)
 			}

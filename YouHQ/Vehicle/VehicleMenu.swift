@@ -21,7 +21,7 @@ struct VehicleMenu: View {
 	var body: some View {
 		Group {
 			if includeAddVehicle {
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Vehicle",
 					systemImage: "car.2.fill",
 					currentCount: vm.vehicles.count,
@@ -34,7 +34,7 @@ struct VehicleMenu: View {
 			}
 
 			if !vm.vehicles.isEmpty {
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Insurance Policy",
 					systemImage: "shield.fill",
 					currentCount: vm.vehicleItemsCount,
@@ -43,7 +43,7 @@ struct VehicleMenu: View {
 					vm.showAddInsurancePolicySheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Paint Color",
 					systemImage: "paintbrush.fill",
 					currentCount: vm.paintColorViewModel.paintColors.count,
@@ -52,7 +52,7 @@ struct VehicleMenu: View {
 					vm.showAddPaintColorSheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Maintenance Item",
 					systemImage: "wrench.and.screwdriver.fill",
 					currentCount: vm.maintenanceViewModel.maintenanceItems.count,
@@ -61,7 +61,7 @@ struct VehicleMenu: View {
 					vm.showAddMaintenanceItemSheet(sourceID: sourceID)
 				}
 
-				PaywalledMenuButton(
+				PaywalledButton(
 					title: "Add Other",
 					systemImage: "ellipsis.circle.fill",
 					currentCount: vm.vehicleItemsCount,
