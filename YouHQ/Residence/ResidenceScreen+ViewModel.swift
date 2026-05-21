@@ -5,8 +5,8 @@
 //  Created by Ryan Token on 12/30/25.
 //
 
-import Sharing
 import SQLiteData
+import Sharing
 import SwiftUI
 
 extension ResidenceScreen {
@@ -97,9 +97,7 @@ extension ResidenceScreen {
 		// MARK: PROFILE FUNCTIONS
 
 		func loadProfiles() async {
-			_ = await withErrorReporting {
-				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
-			}
+			await ProfileShare.reload(into: $profiles)
 		}
 
 		// MARK: RESIDENCE FUNCTIONS

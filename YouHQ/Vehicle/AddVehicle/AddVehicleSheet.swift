@@ -72,7 +72,7 @@ struct AddVehicleSheet: View {
 				ToolbarItem(placement: .confirmationAction) {
 					Button("Save") {
 						if let newVehicle = vm.save(),
-						   vm.isSavingToOriginalProfile
+							vm.isSavingToOriginalProfile
 						{
 							selectedVehicle = newVehicle
 						}

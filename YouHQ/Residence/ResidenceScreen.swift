@@ -95,9 +95,9 @@ struct ResidenceScreen: View {
 		.sheet(isPresented: $vm.isShowingSectionEditSheet) {
 			if let sectionToEdit = vm.sectionToEdit {
 				SectionEditSheet(section: sectionToEdit)
-				#if !os(macOS)
-					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
-				#endif
+					#if !os(macOS)
+						.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+					#endif
 			}
 		}
 		#if !os(visionOS)

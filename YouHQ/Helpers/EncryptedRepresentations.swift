@@ -20,25 +20,25 @@ private nonisolated struct InvalidEncryptedDouble: Error {}
 /// }
 /// ```
 nonisolated struct EncryptedString: QueryBindable, QueryDecodable, QueryRepresentable {
-    var queryOutput: String
+	var queryOutput: String
 
-    init(queryOutput: String) {
-        self.queryOutput = queryOutput
-    }
+	init(queryOutput: String) {
+		self.queryOutput = queryOutput
+	}
 
-    init?(queryBinding: QueryBinding) {
-        guard case .text(let ciphertext) = queryBinding else { return nil }
-        self.queryOutput = FieldEncryptor.shared.decrypt(ciphertext)
-    }
+	init?(queryBinding: QueryBinding) {
+		guard case .text(let ciphertext) = queryBinding else { return nil }
+		self.queryOutput = FieldEncryptor.shared.decrypt(ciphertext)
+	}
 
-    var queryBinding: QueryBinding {
-        .text(FieldEncryptor.shared.encrypt(queryOutput))
-    }
+	var queryBinding: QueryBinding {
+		.text(FieldEncryptor.shared.encrypt(queryOutput))
+	}
 
-    init(decoder: inout some QueryDecoder) throws {
-        let ciphertext = try String(decoder: &decoder)
-        self.queryOutput = FieldEncryptor.shared.decrypt(ciphertext)
-    }
+	init(decoder: inout some QueryDecoder) throws {
+		let ciphertext = try String(decoder: &decoder)
+		self.queryOutput = FieldEncryptor.shared.decrypt(ciphertext)
+	}
 }
 
 /// A `QueryRepresentable` type that transparently encrypts `Double` values
@@ -53,35 +53,35 @@ nonisolated struct EncryptedString: QueryBindable, QueryDecodable, QueryRepresen
 /// }
 /// ```
 nonisolated struct EncryptedDouble: QueryBindable, QueryDecodable, QueryRepresentable {
-    var queryOutput: Double
+	var queryOutput: Double
 
-    init(queryOutput: Double) {
-        self.queryOutput = queryOutput
-    }
+	init(queryOutput: Double) {
+		self.queryOutput = queryOutput
+	}
 
-    init?(queryBinding: QueryBinding) {
-        guard case .text(let ciphertext) = queryBinding else { return nil }
-        let decrypted = FieldEncryptor.shared.decrypt(ciphertext)
-        guard let value = Double(decrypted) else { return nil }
-        self.queryOutput = value
-    }
+	init?(queryBinding: QueryBinding) {
+		guard case .text(let ciphertext) = queryBinding else { return nil }
+		let decrypted = FieldEncryptor.shared.decrypt(ciphertext)
+		guard let value = Double(decrypted) else { return nil }
+		self.queryOutput = value
+	}
 
-    var queryBinding: QueryBinding {
-        let plaintext = String(queryOutput)
-        return .text(FieldEncryptor.shared.encrypt(plaintext))
-    }
+	var queryBinding: QueryBinding {
+		let plaintext = String(queryOutput)
+		return .text(FieldEncryptor.shared.encrypt(plaintext))
+	}
 
-    init(decoder: inout some QueryDecoder) throws {
-        let ciphertext = try String(decoder: &decoder)
-        let decrypted = FieldEncryptor.shared.decrypt(ciphertext)
-        guard let value = Double(decrypted) else {
-            // Fall back: maybe it's stored as an unencrypted numeric TEXT from before encryption
-            guard let fallback = Double(ciphertext) else {
-                throw InvalidEncryptedDouble()
-            }
-            self.queryOutput = fallback
-            return
-        }
-        self.queryOutput = value
-    }
+	init(decoder: inout some QueryDecoder) throws {
+		let ciphertext = try String(decoder: &decoder)
+		let decrypted = FieldEncryptor.shared.decrypt(ciphertext)
+		guard let value = Double(decrypted) else {
+			// Fall back: maybe it's stored as an unencrypted numeric TEXT from before encryption
+			guard let fallback = Double(ciphertext) else {
+				throw InvalidEncryptedDouble()
+			}
+			self.queryOutput = fallback
+			return
+		}
+		self.queryOutput = value
+	}
 }

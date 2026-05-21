@@ -119,15 +119,15 @@ struct SettingsScreen: View {
 			dismiss()
 		}
 		#if os(macOS)
-		.sheet(isPresented: $paywallManager.isShowingPaywallInSettingsWindow) {
-			Paywall()
-		}
-		#else
-		.onChange(of: paywallManager.needsSettingsDismissalBeforePaywall) {
-			if paywallManager.needsSettingsDismissalBeforePaywall {
-				dismiss()
+			.sheet(isPresented: $paywallManager.isShowingPaywallInSettingsWindow) {
+				Paywall()
 			}
-		}
+		#else
+			.onChange(of: paywallManager.needsSettingsDismissalBeforePaywall) {
+				if paywallManager.needsSettingsDismissalBeforePaywall {
+					dismiss()
+				}
+			}
 		#endif
 	}
 

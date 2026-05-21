@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct CareerMenu: View {
-	@Environment(PaywallManager.self) private var paywallManager
-
 	let vm: CareerScreen.ViewModel
 	let sourceID: String
 
@@ -19,24 +17,22 @@ struct CareerMenu: View {
 	}
 
 	var body: some View {
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.careerItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddJobSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Job", systemImage: "briefcase.fill")
+		PaywalledMenuButton(
+			title: "Add Job",
+			systemImage: "briefcase.fill",
+			currentCount: vm.careerItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddJobSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.careerItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddOtherSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Other", systemImage: "ellipsis.circle.fill")
+		PaywalledMenuButton(
+			title: "Add Other",
+			systemImage: "ellipsis.circle.fill",
+			currentCount: vm.careerItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddOtherSheet(sourceID: sourceID)
 		}
 	}
 }

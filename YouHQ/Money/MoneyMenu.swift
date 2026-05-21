@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct MoneyMenu: View {
-	@Environment(PaywallManager.self) private var paywallManager
-
 	let vm: MoneyScreen.ViewModel
 	let sourceID: String
 
@@ -19,54 +17,49 @@ struct MoneyMenu: View {
 	}
 
 	var body: some View {
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddBankAccountSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Bank Account", systemImage: "building.columns.fill")
+		PaywalledMenuButton(
+			title: "Add Bank Account",
+			systemImage: "building.columns.fill",
+			currentCount: vm.moneyItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddBankAccountSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddInvestmentAccountSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Investment Account", systemImage: "chart.line.uptrend.xyaxis")
+		PaywalledMenuButton(
+			title: "Add Investment Account",
+			systemImage: "chart.line.uptrend.xyaxis",
+			currentCount: vm.moneyItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddInvestmentAccountSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddHealthSavingsAccountSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add HSA/FSA", systemImage: "cross.case.fill")
+		PaywalledMenuButton(
+			title: "Add HSA/FSA",
+			systemImage: "cross.case.fill",
+			currentCount: vm.moneyItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddHealthSavingsAccountSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddInsurancePolicySheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Insurance Policy", systemImage: "shield.fill")
+		PaywalledMenuButton(
+			title: "Add Insurance Policy",
+			systemImage: "shield.fill",
+			currentCount: vm.moneyItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddInsurancePolicySheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.moneyItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddOtherSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Other", systemImage: "ellipsis.circle.fill")
+		PaywalledMenuButton(
+			title: "Add Other",
+			systemImage: "ellipsis.circle.fill",
+			currentCount: vm.moneyItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddOtherSheet(sourceID: sourceID)
 		}
 	}
 }

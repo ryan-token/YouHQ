@@ -7,6 +7,7 @@
 
 import CloudKit
 import SQLiteData
+import SwiftUI
 
 // Join: Get all profiles, whether they are shared or not, and the sync metadata for shared participants
 @Selection
@@ -40,5 +41,15 @@ extension ProfileShare {
 					metadata: $1
 				)
 			}
+	}
+
+	/// Loads `allWithSyncMetadata` into a deferred `@FetchAll(ProfileShare.none)` projection.
+	///
+	/// Profile-switching view models declare `@FetchAll(ProfileShare.none) var profiles` so the
+	/// query is empty until the view appears, then call this in a `.task { }` to hydrate it.
+	static func reload(into fetchAll: FetchAll<ProfileShare>) async {
+		_ = await withErrorReporting {
+			try await fetchAll.load(ProfileShare.allWithSyncMetadata, animation: .default)
+		}
 	}
 }

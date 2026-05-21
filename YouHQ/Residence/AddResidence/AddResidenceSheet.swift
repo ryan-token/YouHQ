@@ -75,7 +75,7 @@ struct AddResidenceSheet: View {
 				ToolbarItem(placement: .confirmationAction) {
 					Button("Save") {
 						if let newResidence = vm.save(),
-						   vm.isSavingToOriginalProfile
+							vm.isSavingToOriginalProfile
 						{
 							selectedResidence = newResidence
 						}

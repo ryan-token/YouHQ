@@ -41,12 +41,15 @@ struct SettingsToolbarItem: ToolbarContent {
 				} label: {
 					Image(systemName: "gear")
 				}
-				.sheet(isPresented: $isShowingSettingsSheet, onDismiss: {
-					if paywallManager.needsSettingsDismissalBeforePaywall {
-						paywallManager.needsSettingsDismissalBeforePaywall = false
-						paywallManager.showPaywall()
+				.sheet(
+					isPresented: $isShowingSettingsSheet,
+					onDismiss: {
+						if paywallManager.needsSettingsDismissalBeforePaywall {
+							paywallManager.needsSettingsDismissalBeforePaywall = false
+							paywallManager.showPaywall()
+						}
 					}
-				}) {
+				) {
 					SettingsScreen()
 				}
 			}

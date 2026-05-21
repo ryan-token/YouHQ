@@ -45,7 +45,7 @@ extension Paywall {
 			}
 			.padding(.top)
 			#if !os(macOS)
-			.padding(.top, 40)
+				.padding(.top, 40)
 			#endif
 		}
 	}

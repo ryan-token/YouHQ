@@ -946,11 +946,12 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 				sql: "SELECT \"id\" FROM \"\(table)\" WHERE \"\(column)\" \(whereClause)"
 			)
 			for id in ids {
-				let value = try String.fetchOne(
-					db,
-					sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ?",
-					arguments: [id]
-				) ?? ""
+				let value =
+					try String.fetchOne(
+						db,
+						sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ?",
+						arguments: [id]
+					) ?? ""
 				guard !value.isEmpty else { continue }
 				// Skip already-encrypted values (valid base64 of sufficient length for AES-GCM)
 				if let decoded = Data(base64Encoded: value), decoded.count >= 28 { continue }

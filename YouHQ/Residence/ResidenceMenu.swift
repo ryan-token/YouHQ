@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ResidenceMenu: View {
-	@Environment(PaywallManager.self) private var paywallManager
-
 	let vm: ResidenceScreen.ViewModel
 	let includeAddResidence: Bool
 	let sourceID: String
@@ -23,71 +21,62 @@ struct ResidenceMenu: View {
 	var body: some View {
 		Group {
 			if includeAddResidence {
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.residences.count < Constants.paywallResidencesThreshold {
-						vm.showCreateResidenceSheet()
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add Residence", systemImage: "house.fill")
+				PaywalledMenuButton(
+					title: "Add Residence",
+					systemImage: "house.fill",
+					currentCount: vm.residences.count,
+					threshold: Constants.paywallResidencesThreshold
+				) {
+					vm.showCreateResidenceSheet()
 				}
 
 				Divider()
 			}
 
 			if !vm.residences.isEmpty {
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddUtilitySheet(sourceID: sourceID)
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add Utility", systemImage: "bolt.fill")
+				PaywalledMenuButton(
+					title: "Add Utility",
+					systemImage: "bolt.fill",
+					currentCount: vm.residenceItemsCount,
+					threshold: Constants.paywallCoreItemsThreshold
+				) {
+					vm.showAddUtilitySheet(sourceID: sourceID)
 				}
 
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddInsurancePolicySheet(sourceID: sourceID)
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add Insurance Policy", systemImage: "shield.fill")
+				PaywalledMenuButton(
+					title: "Add Insurance Policy",
+					systemImage: "shield.fill",
+					currentCount: vm.residenceItemsCount,
+					threshold: Constants.paywallCoreItemsThreshold
+				) {
+					vm.showAddInsurancePolicySheet(sourceID: sourceID)
 				}
 
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.paintColorViewModel.paintColors.count < Constants.paywallPaintColorsThreshold
-					{
-						vm.showAddPaintColorSheet(sourceID: sourceID)
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add Paint Color", systemImage: "paintbrush.fill")
+				PaywalledMenuButton(
+					title: "Add Paint Color",
+					systemImage: "paintbrush.fill",
+					currentCount: vm.paintColorViewModel.paintColors.count,
+					threshold: Constants.paywallPaintColorsThreshold
+				) {
+					vm.showAddPaintColorSheet(sourceID: sourceID)
 				}
 
-				Button {
-					if paywallManager.hasUnlockedPremium
-						|| vm.maintenanceViewModel.maintenanceItems.count < Constants.paywallMaintenanceItemsThreshold
-					{
-						vm.showAddMaintenanceItemSheet(sourceID: sourceID)
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add Maintenance Item", systemImage: "wrench.and.screwdriver.fill")
+				PaywalledMenuButton(
+					title: "Add Maintenance Item",
+					systemImage: "wrench.and.screwdriver.fill",
+					currentCount: vm.maintenanceViewModel.maintenanceItems.count,
+					threshold: Constants.paywallMaintenanceItemsThreshold
+				) {
+					vm.showAddMaintenanceItemSheet(sourceID: sourceID)
 				}
 
-				Button {
-					if paywallManager.hasUnlockedPremium || vm.residenceItemsCount < Constants.paywallCoreItemsThreshold {
-						vm.showAddOtherSheet(sourceID: sourceID)
-					} else {
-						paywallManager.showPaywall()
-					}
-				} label: {
-					Label("Add Other", systemImage: "ellipsis.circle.fill")
+				PaywalledMenuButton(
+					title: "Add Other",
+					systemImage: "ellipsis.circle.fill",
+					currentCount: vm.residenceItemsCount,
+					threshold: Constants.paywallCoreItemsThreshold
+				) {
+					vm.showAddOtherSheet(sourceID: sourceID)
 				}
 			}
 		}

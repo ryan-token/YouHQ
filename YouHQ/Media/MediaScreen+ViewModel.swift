@@ -5,8 +5,8 @@
 //  Created by Ryan Token on 1/24/26.
 //
 
-import Sharing
 import SQLiteData
+import Sharing
 import SwiftUI
 
 extension MediaScreen {
@@ -50,9 +50,7 @@ extension MediaScreen {
 		// MARK: PROFILE FUNCTIONS
 
 		func loadProfiles() async {
-			_ = await withErrorReporting {
-				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
-			}
+			await ProfileShare.reload(into: $profiles)
 		}
 
 		// MARK: MEDIA DATA FUNCTIONS

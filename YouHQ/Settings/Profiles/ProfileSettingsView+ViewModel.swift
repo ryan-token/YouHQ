@@ -5,8 +5,8 @@
 //  Created by Ryan Token on 1/26/26.
 //
 
-import Sharing
 import SQLiteData
+import Sharing
 import SwiftUI
 
 extension ProfileSettingsView {
@@ -53,9 +53,7 @@ extension ProfileSettingsView {
 		}
 
 		private func loadProfiles() async {
-			_ = await withErrorReporting {
-				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
-			}
+			await ProfileShare.reload(into: $profiles)
 		}
 
 		func confirmProfileSwitch(for profile: Profile) {

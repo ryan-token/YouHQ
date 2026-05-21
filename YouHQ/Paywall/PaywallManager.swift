@@ -37,9 +37,9 @@ class PaywallManager {
 	func showPaywallFromSettings() {
 		Analytics.sendSignal(.paywallPresented)
 		#if os(macOS)
-		isShowingPaywallInSettingsWindow = true
+			isShowingPaywallInSettingsWindow = true
 		#else
-		needsSettingsDismissalBeforePaywall = true
+			needsSettingsDismissalBeforePaywall = true
 		#endif
 	}
 

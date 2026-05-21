@@ -10,7 +10,6 @@ import SwiftUI
 
 extension VehicleScreen {
 	struct Toolbar: ToolbarContent {
-		@Dependency(\.defaultSyncEngine) var syncEngine
 		@Bindable var vm: VehicleScreen.ViewModel
 		let namespace: Namespace.ID
 
@@ -36,19 +35,8 @@ extension VehicleScreen {
 				}
 			}
 
-			if vm.vehicles.isEmpty && syncEngine.isSynchronizing {
-				ToolbarItem(placement: .primaryAction) {
-					ProgressView()
-				}
-			} else {
-				ToolbarItem(placement: .primaryAction) {
-					Menu {
-						VehicleMenu(vm: vm, includeAddVehicle: true)
-					} label: {
-						Label("Add", systemImage: "plus")
-					}
-					.matchedTransitionSource(id: "addButton", in: namespace)
-				}
+			AddMenuToolbarItem(showProgressViewIfSyncing: vm.vehicles.isEmpty, namespace: namespace) {
+				VehicleMenu(vm: vm, includeAddVehicle: true)
 			}
 		}
 	}

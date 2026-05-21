@@ -14,7 +14,8 @@ struct PhotoLibraryPickerButton: View {
 	@Bindable var viewModel: PhotoPickerViewModel
 
 	var body: some View {
-		let labelText = viewModel.photoData != nil
+		let labelText =
+			viewModel.photoData != nil
 			? "Choose Different Image"
 			: "Choose from Library"
 		PhotosPicker(

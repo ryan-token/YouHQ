@@ -20,7 +20,8 @@ extension View {
 		onProfileChanged: (() async -> Void)? = nil
 	) -> some View {
 		let onChange = onProfileChanged ?? initialLoad
-		return self
+		return
+			self
 			.onChange(of: profileCount) { oldCount, newCount in
 				if oldCount == 0, newCount > 0 {
 					Task { await initialLoad() }

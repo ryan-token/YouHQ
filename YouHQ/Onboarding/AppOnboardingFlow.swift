@@ -38,7 +38,7 @@ struct AppOnboardingFlow: View {
 			.overlay(alignment: .topLeading) {
 				if fromSettings && UIDevice.current.userInterfaceIdiom == .phone {
 					OnboardingBackButton()
-						.padding()
+					.padding()
 				}
 			}
 		#endif

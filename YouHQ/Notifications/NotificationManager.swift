@@ -248,7 +248,8 @@ final class NotificationManager {
 			// remove any stale ones left over from the old random-UUID scheme.
 			var knownIdentifiers: Set<String> = [Self.reminderNotificationIdentifier]
 			for item in items {
-				let id = item.notificationIdentifier.isEmpty
+				let id =
+					item.notificationIdentifier.isEmpty
 					? item.id.uuidString : item.notificationIdentifier
 				knownIdentifiers.insert(id)
 			}
@@ -284,7 +285,8 @@ final class NotificationManager {
 		let calendar = Calendar.current
 		let currentMonth = calendar.component(.month, from: now)
 		let quarterStartMonths = [1, 4, 7, 10]
-		let nextQuarterMonth = quarterStartMonths.first(where: { $0 > currentMonth })
+		let nextQuarterMonth =
+			quarterStartMonths.first(where: { $0 > currentMonth })
 			?? quarterStartMonths[0]
 		var components = calendar.dateComponents([.year], from: now)
 		components.month = nextQuarterMonth

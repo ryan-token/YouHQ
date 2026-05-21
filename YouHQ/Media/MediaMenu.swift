@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct MediaMenu: View {
-	@Environment(PaywallManager.self) private var paywallManager
-
 	let vm: MediaScreen.ViewModel
 	let sourceID: String
 
@@ -19,44 +17,40 @@ struct MediaMenu: View {
 	}
 
 	var body: some View {
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddServiceProviderSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Service Provider", systemImage: "network")
+		PaywalledMenuButton(
+			title: "Add Service Provider",
+			systemImage: "network",
+			currentCount: vm.mediaItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddServiceProviderSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddSubscriptionSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Subscription", systemImage: "rectangle.stack")
+		PaywalledMenuButton(
+			title: "Add Subscription",
+			systemImage: "rectangle.stack",
+			currentCount: vm.mediaItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddSubscriptionSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddDeviceSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Device", systemImage: "desktopcomputer")
+		PaywalledMenuButton(
+			title: "Add Device",
+			systemImage: "desktopcomputer",
+			currentCount: vm.mediaItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddDeviceSheet(sourceID: sourceID)
 		}
 
-		Button {
-			if paywallManager.hasUnlockedPremium || vm.mediaItemsCount < Constants.paywallCoreItemsThreshold {
-				vm.showAddOtherSheet(sourceID: sourceID)
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label("Add Other", systemImage: "ellipsis.circle.fill")
+		PaywalledMenuButton(
+			title: "Add Other",
+			systemImage: "ellipsis.circle.fill",
+			currentCount: vm.mediaItemsCount,
+			threshold: Constants.paywallCoreItemsThreshold
+		) {
+			vm.showAddOtherSheet(sourceID: sourceID)
 		}
 	}
 }

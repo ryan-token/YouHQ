@@ -56,9 +56,7 @@ extension OtherEdit {
 		}
 
 		func loadProfiles() async {
-			_ = await withErrorReporting {
-				try await $profiles.load(ProfileShare.allWithSyncMetadata, animation: .default)
-			}
+			await ProfileShare.reload(into: $profiles)
 		}
 
 		func save() {

@@ -75,9 +75,11 @@ extension OnboardingReminderView {
 		private func saveAndSchedule() async {
 			let interval = selectedInterval
 			await withErrorReporting {
-				guard let settings = try await database.read({ db in
-					try AppSettings.fetchAll(db).first
-				}) else { return }
+				guard
+					let settings = try await database.read({ db in
+						try AppSettings.fetchAll(db).first
+					})
+				else { return }
 
 				try await NotificationManager.shared.scheduleReminderNotification(interval: interval)
 
