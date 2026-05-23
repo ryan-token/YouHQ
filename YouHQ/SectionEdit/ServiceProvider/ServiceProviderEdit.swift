@@ -21,7 +21,7 @@ struct ServiceProviderEdit: View {
 		if let serviceProviderVM = coordinator.serviceProviderViewModel {
 			@Bindable var vm = serviceProviderVM
 			Section("Service Provider Info") {
-				LabeledField("Type", shouldOverrideTap: false) {
+				LabeledField("Type") {
 					Picker("", selection: $vm.providerType) {
 						ForEach(ServiceProviderType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)

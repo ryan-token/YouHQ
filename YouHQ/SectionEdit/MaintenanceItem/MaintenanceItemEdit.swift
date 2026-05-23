@@ -64,7 +64,7 @@ struct MaintenanceItemEdit: View {
 					.keyboardType(.numberPad)
 				#endif
 
-				LabeledField("Unit", shouldOverrideTap: false) {
+				LabeledField("Unit") {
 					Picker("", selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
 							HQText(

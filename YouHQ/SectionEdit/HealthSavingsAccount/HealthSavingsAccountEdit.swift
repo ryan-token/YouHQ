@@ -21,7 +21,7 @@ struct HealthSavingsAccountEdit: View {
 		if let hsaVM = coordinator.healthSavingsAccountViewModel {
 			@Bindable var vm = hsaVM
 			Section("Account Info") {
-				LabeledField("Account Type", shouldOverrideTap: false) {
+				LabeledField("Account Type") {
 					Picker("", selection: $vm.accountType) {
 						ForEach(HealthSavingsAccountType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)

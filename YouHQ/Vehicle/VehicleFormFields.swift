@@ -63,7 +63,7 @@ struct VehicleFormFields: View {
 
 	var body: some View {
 		Section("Basic Info") {
-			LabeledField("Type", shouldOverrideTap: false) {
+			LabeledField("Type") {
 				Picker("", selection: $type) {
 					ForEach(VehicleType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
@@ -72,7 +72,7 @@ struct VehicleFormFields: View {
 				.labelsHidden()
 			}
 
-			LabeledField("Subtype", shouldOverrideTap: false) {
+			LabeledField("Subtype") {
 				Picker("", selection: $subType) {
 					ForEach(VehicleSubType.allCases, id: \.self) { subType in
 						HQText(subType.rawValue).tag(subType)
@@ -127,7 +127,7 @@ struct VehicleFormFields: View {
 		}
 
 		Section("Cost") {
-			LabeledField("Cost Type", shouldOverrideTap: false) {
+			LabeledField("Cost Type") {
 				Picker("", selection: $costType) {
 					ForEach(VehicleCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)

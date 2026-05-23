@@ -21,7 +21,7 @@ struct InsuranceEdit: View {
 		if let insuranceVM = coordinator.insuranceViewModel {
 			@Bindable var vm = insuranceVM
 			Section("Policy Info") {
-				LabeledField("Type", shouldOverrideTap: false) {
+				LabeledField("Type") {
 					Picker("", selection: $vm.type) {
 						ForEach(
 							InsurancePolicyType.allCases.filter {

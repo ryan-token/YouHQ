@@ -21,7 +21,7 @@ struct DeviceEdit: View {
 		if let deviceVM = coordinator.deviceViewModel {
 			@Bindable var vm = deviceVM
 			Section("Device Info") {
-				LabeledField("Type", shouldOverrideTap: false) {
+				LabeledField("Type") {
 					Picker("", selection: $vm.type) {
 						ForEach(DeviceType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)

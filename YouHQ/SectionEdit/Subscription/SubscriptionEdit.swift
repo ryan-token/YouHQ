@@ -31,7 +31,7 @@ struct SubscriptionEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField("Category", shouldOverrideTap: false) {
+				LabeledField("Category") {
 					Picker("", selection: $vm.category) {
 						ForEach(SubscriptionCategory.allCases, id: \.self) { category in
 							HQText(category.rawValue).tag(category)
@@ -40,7 +40,7 @@ struct SubscriptionEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField("Billing Cycle", shouldOverrideTap: false) {
+				LabeledField("Billing Cycle") {
 					Picker("", selection: $vm.billingCycle) {
 						ForEach(BillingCycle.allCases, id: \.self) { cycle in
 							HQText(cycle.rawValue).tag(cycle)
