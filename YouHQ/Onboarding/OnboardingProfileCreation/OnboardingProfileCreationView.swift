@@ -10,6 +10,7 @@ import SwiftUI
 
 struct OnboardingProfileCreationView: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
 	@State private var vm = ViewModel()
 
 	@State private var selectedResidence: Residence?
@@ -27,6 +28,7 @@ struct OnboardingProfileCreationView: View {
 							.font(.title2)
 							.fontWeight(.semibold)
 							.frame(maxWidth: .infinity, alignment: .leading)
+							.transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .top)))
 					} else {
 						HQText("Let's set up your profile.")
 							.font(.title2)
@@ -87,7 +89,6 @@ struct OnboardingProfileCreationView: View {
 					}
 				}
 
-				// Show "Get started" section only if user created a new profile
 				if vm.createdNewProfile {
 					VStack(alignment: .leading, spacing: 12) {
 						HQText("Now add your first residence, vehicle, or job:")
@@ -136,6 +137,7 @@ struct OnboardingProfileCreationView: View {
 							backgroundColor: .blue
 						)
 					}
+					.transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
 				}
 
 				// Show Skip button if user has any profiles

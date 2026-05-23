@@ -115,8 +115,10 @@ extension OnboardingProfileCreationView {
 				}
 
 				$selectedProfileIDString.withLock { $0 = id.uuidString }
-				createdNewProfile = true
 				createdProfileName = profileName
+				withAnimation(.easeInOut(duration: 0.4)) {
+					createdNewProfile = true
+				}
 				notifyProfileChanged()
 			} catch {
 				Analytics.logError(id: .profileSaveFailed, message: error.localizedDescription)

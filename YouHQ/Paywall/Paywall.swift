@@ -72,7 +72,6 @@ struct Paywall: View {
 				)
 			}
 		}
-		.padding(.top, fromOnboarding ? nil : 0)
 		.ignoresSafeArea(.all, edges: .vertical)
 		.task {
 			try? await Task.sleep(for: .seconds(0.5))
