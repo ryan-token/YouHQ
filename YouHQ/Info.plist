@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CKSharingSupported</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow YouHQ to take photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow YouHQ to access your photo library.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow YouHQ to save photos to your library.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>TelemetryDeckAPIKey</key>
+	<string>$(TELEMETRY_DECK_API_KEY)</string>
+</dict>
+</plist>

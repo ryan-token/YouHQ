@@ -1,0 +1,146 @@
+//
+//  PaintColorEdit.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 1/20/26.
+//
+
+import SwiftUI
+
+struct PaintColorEdit: View {
+	enum Field: Hashable {
+		case room, manufacturer, colorName, colorCode, surfaceType, purchasedFrom, url, notes
+	}
+
+	let coordinator: SectionEditSheet.ViewModel
+	let autoFocus: Bool
+	@FocusState private var focusedField: Field?
+	@State private var hasAppeared = false
+
+	var body: some View {
+		if let paintColorVM = coordinator.paintColorViewModel {
+			@Bindable var vm = paintColorVM
+			Section("Paint Info") {
+				LabeledField(vm.paintColor.residenceID != nil ? "Room" : "Part of Car") {
+					TextField("", text: $vm.room)
+						.focused($focusedField, equals: .room)
+						.onSubmit { focusedField = .manufacturer }
+						.multilineTextAlignment(.trailing)
+				}
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+
+				LabeledField("Manufacturer") {
+					TextField("", text: $vm.manufacturer)
+						.focused($focusedField, equals: .manufacturer)
+						.onSubmit { focusedField = .colorName }
+						.multilineTextAlignment(.trailing)
+				}
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+
+				LabeledField("Color Name") {
+					TextField("", text: $vm.colorName)
+						.focused($focusedField, equals: .colorName)
+						.onSubmit { focusedField = .colorCode }
+						.multilineTextAlignment(.trailing)
+				}
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+
+				LabeledField("Color Code") {
+					TextField("", text: $vm.colorCode)
+						.focused($focusedField, equals: .colorCode)
+						.onSubmit { focusedField = .surfaceType }
+						.multilineTextAlignment(.trailing)
+				}
+
+				LabeledField("Appx Color") {
+					ColorPicker(
+						"Paint Color",
+						selection: $vm.backgroundColor,
+						supportsOpacity: false
+					)
+					.labelsHidden()
+				}
+
+				LabeledField("Finish", shouldOverrideTap: false) {
+					Picker("", selection: $vm.finish) {
+						ForEach(PaintFinish.allCases, id: \.self) { finish in
+							HQText(finish.rawValue).tag(finish)
+						}
+					}
+					.labelsHidden()
+				}
+
+				LabeledField("Surface Type") {
+					TextField("", text: $vm.surfaceType)
+						.focused($focusedField, equals: .surfaceType)
+						.onSubmit { focusedField = .purchasedFrom }
+						.multilineTextAlignment(.trailing)
+				}
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+			}
+			.onAppear {
+				if autoFocus, !hasAppeared {
+					hasAppeared = true
+					focusedField = .room
+				}
+			}
+
+			Section("Purchase Details") {
+				LabeledField("Purchased From") {
+					TextField("", text: $vm.storePurchasedFrom)
+						.focused($focusedField, equals: .purchasedFrom)
+						.onSubmit { focusedField = .url }
+						.multilineTextAlignment(.trailing)
+				}
+				#if !os(macOS)
+					.textInputAutocapitalization(.words)
+				#endif
+
+				LabeledField("Purchase Date") {
+					DatePicker(
+						"",
+						selection: Binding(
+							get: { vm.purchaseDate ?? Date() },
+							set: { vm.purchaseDate = $0 }
+						),
+						displayedComponents: .date
+					)
+					.labelsHidden()
+				}
+
+				LabeledField("Application Date") {
+					DatePicker(
+						"",
+						selection: Binding(
+							get: { vm.applicationDate ?? Date() },
+							set: { vm.applicationDate = $0 }
+						),
+						displayedComponents: .date
+					)
+					.labelsHidden()
+				}
+			}
+
+			Section("Website") {
+				URLTextField(text: $vm.url)
+					.focused($focusedField, equals: .url)
+					.onSubmit { focusedField = .notes }
+			}
+
+			Section("Notes") {
+				TextField("Notes", text: $vm.notes, axis: .vertical)
+					.lineLimit(5...)
+					.focused($focusedField, equals: .notes)
+					.onSubmit { focusedField = nil }
+			}
+		}
+	}
+}

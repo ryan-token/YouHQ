@@ -1,0 +1,107 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "A8E102AE",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6744900328",
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "DJAHJZFYK7",
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 792091732.31735694,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21913578",
+      "localizations" : [
+
+      ],
+      "name" : "YouHQ Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6758558973",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock multiple profiles, residences, vehicles, & more",
+              "displayName" : "YouHQ Premium - Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.ryantoken.YouHQ.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "YouHQ Premium - Monthly",
+          "subscriptionGroupID" : "21913578",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6758559588",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock multiple profiles, residences, vehicles, & more",
+              "displayName" : "YouHQ Premium - Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.ryantoken.YouHQ.premium.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "YouHQ Premium - Yearly",
+          "subscriptionGroupID" : "21913578",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

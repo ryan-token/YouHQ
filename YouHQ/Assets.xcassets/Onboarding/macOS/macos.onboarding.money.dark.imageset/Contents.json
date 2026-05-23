@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "mac.onboarding.money.dark.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
