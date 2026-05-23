@@ -21,7 +21,7 @@ struct UtilityEdit: View {
 		if let utilityVM = coordinator.utilityViewModel {
 			@Bindable var vm = utilityVM
 			Section("Utility Info") {
-				LabeledField("Type", shouldOverrideTap: false) {
+				LabeledField("Type") {
 					Picker("", selection: $vm.type) {
 						ForEach(UtilityType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)

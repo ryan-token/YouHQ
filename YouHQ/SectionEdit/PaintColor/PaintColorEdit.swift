@@ -67,7 +67,7 @@ struct PaintColorEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField("Finish", shouldOverrideTap: false) {
+				LabeledField("Finish") {
 					Picker("", selection: $vm.finish) {
 						ForEach(PaintFinish.allCases, id: \.self) { finish in
 							HQText(finish.rawValue).tag(finish)

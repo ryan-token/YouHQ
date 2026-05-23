@@ -21,14 +21,16 @@ struct InsuranceEdit: View {
 		if let insuranceVM = coordinator.insuranceViewModel {
 			@Bindable var vm = insuranceVM
 			Section("Policy Info") {
-				LabeledField("Type", shouldOverrideTap: false) {
+				LabeledField("Type") {
 					Picker("", selection: $vm.type) {
 						ForEach(
 							InsurancePolicyType.allCases.filter {
 								if vm.policy.vehicleID != nil {
 									return $0 == .auto
-								} else {
+								} else if vm.policy.residenceID != nil {
 									return $0 == .home || $0 == .renters
+								} else {
+									return $0 != .home && $0 != .renters && $0 != .auto
 								}
 							},
 							id: \.self

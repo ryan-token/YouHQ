@@ -41,7 +41,7 @@ struct JobEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField("Employment Type", shouldOverrideTap: false) {
+				LabeledField("Employment Type") {
 					Picker("", selection: $vm.employmentType) {
 						ForEach(EmploymentType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)

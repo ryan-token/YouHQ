@@ -11,16 +11,13 @@ struct LabeledField<Content: View>: View {
 	@FocusState private var isFocused: Bool
 
 	let label: String
-	let shouldOverrideTap: Bool
 	@ViewBuilder let content: Content
 
 	init(
 		_ label: String,
-		shouldOverrideTap: Bool = true,
 		@ViewBuilder content: () -> Content
 	) {
 		self.label = label
-		self.shouldOverrideTap = shouldOverrideTap
 		self.content = content()
 	}
 
@@ -31,12 +28,10 @@ struct LabeledField<Content: View>: View {
 		} label: {
 			HQText(label)
 				.foregroundStyle(.secondary)
-		}
-		.contentShape(.rect)
-		.onTapGesture {
-			if shouldOverrideTap {
-				isFocused = true
-			}
+				.contentShape(.rect)
+				.onTapGesture {
+					isFocused = true
+				}
 		}
 	}
 }

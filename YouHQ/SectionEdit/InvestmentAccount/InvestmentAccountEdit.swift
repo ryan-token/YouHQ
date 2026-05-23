@@ -31,7 +31,7 @@ struct InvestmentAccountEdit: View {
 					.textInputAutocapitalization(.words)
 				#endif
 
-				LabeledField("Account Type", shouldOverrideTap: false) {
+				LabeledField("Account Type") {
 					Picker("", selection: $vm.accountType) {
 						ForEach(InvestmentAccountType.allCases, id: \.self) { type in
 							HQText(type.rawValue).tag(type)

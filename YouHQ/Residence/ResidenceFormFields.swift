@@ -72,7 +72,7 @@ struct ResidenceFormFields: View {
 
 	var body: some View {
 		Section("Basic Info") {
-			LabeledField("Type", shouldOverrideTap: false) {
+			LabeledField("Type") {
 				Picker("", selection: $type) {
 					ForEach(ResidenceType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
@@ -170,7 +170,7 @@ struct ResidenceFormFields: View {
 		}
 
 		Section("Cost") {
-			LabeledField("Cost Type", shouldOverrideTap: false) {
+			LabeledField("Cost Type") {
 				Picker("", selection: $costType) {
 					ForEach(ResidenceCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)

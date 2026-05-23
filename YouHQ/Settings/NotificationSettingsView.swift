@@ -35,7 +35,7 @@ struct NotificationSettingsView: View {
 			}
 
 			Section {
-				LabeledField("Remind Me", shouldOverrideTap: false) {
+				LabeledField("Remind Me") {
 					Picker("", selection: $vm.selectedInterval) {
 						ForEach(ReminderInterval.allCases, id: \.self) { interval in
 							HQText(interval.displayName).tag(interval)
