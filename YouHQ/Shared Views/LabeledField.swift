@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct LabeledField<Content: View>: View {
+	@FocusState private var isFocused: Bool
+
 	let label: String
 	@ViewBuilder let content: Content
 
@@ -22,9 +24,14 @@ struct LabeledField<Content: View>: View {
 	var body: some View {
 		LabeledContent {
 			content
+				.focused($isFocused)
 		} label: {
 			HQText(label)
 				.foregroundStyle(.secondary)
+				.contentShape(.rect)
+				.onTapGesture {
+					isFocused = true
+				}
 		}
 	}
 }
