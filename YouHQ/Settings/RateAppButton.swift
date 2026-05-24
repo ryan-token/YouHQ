@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct RateAppButton: View {
-	@State private var isShowingNotLiveAlert = false
+	@Environment(\.openURL) var openURL
 
 	var body: some View {
 		Button {
-			// TODO: Link to rate in the App Store
-			isShowingNotLiveAlert = true
+			openURL(Constants.appStoreURL)
 		} label: {
 			HStack {
 				Label {
@@ -31,15 +30,6 @@ struct RateAppButton: View {
 			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
-		.alert(
-			"YouHQ Is Not Live",
-			isPresented: $isShowingNotLiveAlert
-		) {
-		} message: {
-			HQText(
-				"Once YouHQ is live on the App Store, this button will take you there to rate & review it."
-			)
-		}
 	}
 }
 

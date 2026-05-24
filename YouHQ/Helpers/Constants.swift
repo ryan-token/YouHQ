@@ -21,6 +21,7 @@ struct Constants {
 	static let termsOfUseURL = URL(string: "https://www.ryantoken.com/terms-of-use")!
 
 	// MARK: - Other
+	static let appStoreURL = URL(string: "https://apps.apple.com/app/id6744900328")!
 	static let ryantokenURL = URL(string: "https://www.ryantoken.com")!
 	static let telemetryDeckAPIKey = Bundle.main.infoDictionary?["TelemetryDeckAPIKey"] as? String ?? ""
 }

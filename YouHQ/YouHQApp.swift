@@ -7,15 +7,19 @@
 
 import Dependencies
 import SQLiteData
+import StoreKit
 import SwiftUI
 import TelemetryDeck
 import UserNotifications
 
 @main
 struct YouHQApp: App {
+	@AppStorage("timesUserHasLaunchedApp") private var timesUserHasLaunchedApp = 0
 	@Dependency(\.context) var context
 	@Environment(\.openWindow) private var openWindow
+	@Environment(\.requestReview) private var requestReview
 	@Environment(\.scenePhase) private var scenePhase
+	@State private var isColdLaunch = true
 	@State private var paywallManager = PaywallManager()
 
 	let settingsWindowFrame: CGFloat = 680
@@ -40,6 +44,7 @@ struct YouHQApp: App {
 				.task(id: scenePhase) {
 					await paywallManager.setup()
 					await refreshNotifications()
+					checkForReviewRequest()
 				}
 
 				#if os(macOS)
@@ -137,6 +142,18 @@ struct YouHQApp: App {
 		let status = await NotificationManager.shared.checkAuthorizationStatus()
 		if status == .authorized {
 			await NotificationManager.shared.refreshAllNotifications()
+		}
+	}
+
+	private func checkForReviewRequest() {
+		guard isColdLaunch else { return }
+		isColdLaunch = false
+
+		timesUserHasLaunchedApp += 1
+		let luckyNumber = Int.random(in: 1...3)
+
+		if timesUserHasLaunchedApp > 3 && luckyNumber == 2 {
+			requestReview()
 		}
 	}
 }
