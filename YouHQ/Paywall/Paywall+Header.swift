@@ -27,7 +27,11 @@ extension Paywall {
 								.frame(width: 20, height: 30)
 								.contentShape(Circle())
 						}
-						#if !os(visionOS)
+						#if os(visionOS)
+							.buttonStyle(.bordered)
+							.buttonBorderShape(.circle)
+							.padding(.trailing)
+						#else
 							.buttonStyle(.glass)
 						#endif
 						.padding(4)
