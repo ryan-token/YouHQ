@@ -12,6 +12,7 @@ struct SettingsScreen: View {
 		case premium
 		case profiles
 		case notifications
+		case currency
 		case onboarding
 		#if DEBUG
 			case sampleData
@@ -48,6 +49,13 @@ struct SettingsScreen: View {
 						iconColor: iconColor(for: .notifications)
 					)
 					.tag(SettingsOption.notifications)
+
+					SettingsNavLabel(
+						labelText: "Currency",
+						iconName: "coloncurrencysign.square.fill",
+						iconColor: iconColor(for: .currency)
+					)
+					.tag(SettingsOption.currency)
 				}
 
 				Section("More") {
@@ -108,6 +116,8 @@ struct SettingsScreen: View {
 					ProfileSettingsView()
 				case .notifications:
 					NotificationSettingsView()
+				case .currency:
+					CurrencySettingsView()
 				case .onboarding:
 					AppOnboardingFlow(fromSettings: true)
 				#if DEBUG
@@ -158,6 +168,8 @@ struct SettingsScreen: View {
 				.blue
 			case .notifications:
 				.green
+			case .currency:
+				.mint
 			case .onboarding:
 				.orange
 			#if DEBUG

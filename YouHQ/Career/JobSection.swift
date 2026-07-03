@@ -12,6 +12,11 @@ struct JobSection: View {
 	let hideSalaries: Bool
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		job.currencyCode ?? defaultCurrencyCode
+	}
 
 	var body: some View {
 		InfoSection(
@@ -58,7 +63,7 @@ struct JobSection: View {
 			if let salary = job.salary {
 				InfoRow(
 					"Salary:",
-					value: salary.asCost,
+					value: salary.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideSalaries
 				)
 			}

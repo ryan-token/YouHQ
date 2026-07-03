@@ -23,6 +23,7 @@ extension JobEdit {
 		var endDate: Date?
 		var isCurrent: Bool
 		var salary: Double?
+		var currencyCode: String?
 		var employmentType: EmploymentType
 		var url: String
 		var notes: String
@@ -57,6 +58,7 @@ extension JobEdit {
 			self.endDate = job.endDate
 			self.isCurrent = job.isCurrent
 			self.salary = job.salary
+			self.currencyCode = job.currencyCode
 			self.employmentType = job.employmentType
 			self.url = job.url
 			self.notes = job.notes
@@ -82,6 +84,7 @@ extension JobEdit {
 								endDate: endDate,
 								isCurrent: isCurrent,
 								salary: salary,
+								currencyCode: currencyCode,
 								employmentType: employmentType,
 								backgroundColor: job.backgroundColor,
 								url: url,
@@ -101,6 +104,7 @@ extension JobEdit {
 								$0.endDate = endDate
 								$0.isCurrent = isCurrent
 								$0.salary = #bind(salary)
+								$0.currencyCode = currencyCode
 								$0.employmentType = employmentType
 								$0.url = url
 								$0.notes = notes

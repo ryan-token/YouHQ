@@ -67,41 +67,13 @@ struct InsuranceEdit: View {
 			}
 
 			Section("Cost") {
-				LabeledField("Monthly Cost") {
-					TextField(
-						"",
-						value: $vm.monthlyCost,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Monthly Cost", amount: $vm.monthlyCost)
 
-				LabeledField("Deductible") {
-					TextField(
-						"",
-						value: $vm.deductible,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Deductible", amount: $vm.deductible)
 
-				LabeledField("Coverage Amount") {
-					TextField(
-						"",
-						value: $vm.coverageAmount,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Coverage Amount", amount: $vm.coverageAmount)
+
+				CurrencySelectorRow(currencyCode: $vm.currencyCode)
 			}
 
 			Section("Dates") {

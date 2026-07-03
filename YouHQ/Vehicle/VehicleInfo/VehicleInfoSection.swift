@@ -16,6 +16,11 @@ struct VehicleInfoSection: View {
 	let backgroundColor: Color
 	let onTap: ((Vehicle) -> Void)?
 	let onColorChange: (Color) -> Void
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		vehicle.currencyCode ?? defaultCurrencyCode
+	}
 
 	init(
 		vehicle: Vehicle,
@@ -89,7 +94,7 @@ struct VehicleInfoSection: View {
 			{
 				InfoRow(
 					"Monthly \(vehicle.costType.rawValue.lowercased()):",
-					value: "\(monthlyCost.asCost)",
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}

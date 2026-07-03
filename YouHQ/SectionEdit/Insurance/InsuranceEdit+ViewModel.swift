@@ -23,6 +23,7 @@ extension InsuranceEdit {
 		var monthlyCost: Double?
 		var deductible: Double?
 		var coverageAmount: Double?
+		var currencyCode: String?
 		var renewalDate: Date?
 		var hasRenewalDate: Bool
 		var url: String
@@ -60,6 +61,7 @@ extension InsuranceEdit {
 			self.monthlyCost = policy.monthlyCost
 			self.deductible = policy.deductible
 			self.coverageAmount = policy.coverageAmount
+			self.currencyCode = policy.currencyCode
 			self.renewalDate = policy.renewalDate
 			self.hasRenewalDate = policy.renewalDate != nil
 			self.url = policy.url
@@ -89,6 +91,7 @@ extension InsuranceEdit {
 								monthlyCost: monthlyCost,
 								deductible: deductible,
 								coverageAmount: coverageAmount,
+								currencyCode: currencyCode,
 								startDate: nil,
 								renewalDate: hasRenewalDate ? renewalDate : nil,
 								isActive: policy.isActive,
@@ -115,6 +118,7 @@ extension InsuranceEdit {
 								$0.monthlyCost = monthlyCost
 								$0.deductible = deductible
 								$0.coverageAmount = coverageAmount
+								$0.currencyCode = currencyCode
 								$0.renewalDate =
 									hasRenewalDate ? renewalDate : nil
 								$0.url = url

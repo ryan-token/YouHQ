@@ -20,6 +20,7 @@ struct CostLineItem: Identifiable {
 /// items get a `+` prefix.
 struct CostBreakdownView: View {
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	let title: String
 	let lineItems: [CostLineItem]
@@ -38,7 +39,7 @@ struct CostBreakdownView: View {
 						HStack {
 							HQText(index == 0 ? item.label : "+ \(item.label)")
 							Spacer()
-							HQText(item.cost.asCost)
+							HQText(item.cost.formatted(currencyCode: defaultCurrencyCode))
 								.fontWeight(.medium)
 						}
 						.font(.body)
@@ -51,7 +52,7 @@ struct CostBreakdownView: View {
 						HQText("Total")
 							.fontWeight(.semibold)
 						Spacer()
-						HQText(totalCost.asCost)
+						HQText(totalCost.formatted(currencyCode: defaultCurrencyCode))
 							.fontWeight(.bold)
 					}
 					.font(.title3)

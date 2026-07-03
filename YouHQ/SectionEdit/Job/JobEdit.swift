@@ -84,17 +84,9 @@ struct JobEdit: View {
 					}
 				}
 
-				LabeledField("Salary") {
-					TextField(
-						"",
-						value: $vm.salary,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Salary", amount: $vm.salary)
+
+				CurrencySelectorRow(currencyCode: $vm.currencyCode)
 			}
 			.onAppear {
 				if autoFocus, !hasAppeared {

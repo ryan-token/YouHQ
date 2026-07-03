@@ -5,10 +5,12 @@
 //  Created by Ryan Token on 2/7/26.
 //
 
+import SQLiteData
 import SwiftUI
 
 struct AppTabView: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@FetchOne private var appSettings: AppSettings?
 	@State private var selectedTab: AppTab = .home
 
 	enum AppTab: String, Hashable {
@@ -65,6 +67,7 @@ struct AppTabView: View {
 				}
 			}
 		}
+		.environment(\.defaultCurrencyCode, Currency.resolvedDefault(appSettings?.currencyCode))
 		.onChange(of: selectedTab) {
 			logTabSelection(for: selectedTab)
 		}

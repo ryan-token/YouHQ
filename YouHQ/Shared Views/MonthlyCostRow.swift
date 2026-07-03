@@ -18,6 +18,7 @@ struct MonthlyCostRow: View {
 	let blurred: Bool
 	@ViewBuilder let breakdown: CostBreakdownView
 
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 	@State private var showPopover = false
 
 	init(
@@ -39,7 +40,7 @@ struct MonthlyCostRow: View {
 			Button {
 				showPopover.toggle()
 			} label: {
-				HQText(totalCost.asCost)
+				HQText(totalCost.formatted(currencyCode: defaultCurrencyCode))
 					.lineLimit(1)
 					.blur(radius: blurred ? 4 : 0)
 					.padding(.horizontal, 12)

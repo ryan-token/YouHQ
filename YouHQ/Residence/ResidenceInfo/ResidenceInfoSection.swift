@@ -17,6 +17,11 @@ struct ResidenceInfoSection: View {
 	let backgroundColor: Color
 	let onTap: ((Residence) -> Void)?
 	let onColorChange: (Color) -> Void
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		residence.currencyCode ?? defaultCurrencyCode
+	}
 
 	init(
 		residence: Residence,
@@ -107,7 +112,7 @@ struct ResidenceInfoSection: View {
 			{
 				InfoRow(
 					"Monthly \(residence.costType.rawValue.lowercased()):",
-					value: "\(monthlyCost.asCost)",
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}

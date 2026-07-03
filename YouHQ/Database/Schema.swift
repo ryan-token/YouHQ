@@ -35,6 +35,7 @@ import SQLiteData
 	var moveOutDate: Date?
 	var isCurrent: Bool = true
 	var monthlyCost: Double?
+	var currencyCode: String?
 	var costType: ResidenceCostType = .rent
 	var backgroundColor: String = "indigo"
 	var url: String = ""
@@ -126,6 +127,7 @@ import SQLiteData
 	var provider: String = ""
 	@Column(as: EncryptedString.self) var accountNumber: String = ""
 	var approximateMonthlyCost: Double?
+	var currencyCode: String?
 	var backgroundColor: String = "blue"
 	var url: String = ""
 	var notes: String = ""
@@ -214,6 +216,7 @@ extension MaintenanceItem {
 	var color: String?
 	@Column(as: EncryptedString?.self) var vin: String?
 	var monthlyCost: Double?
+	var currencyCode: String?
 	var costType: VehicleCostType = .owned
 	var backgroundColor: String = "teal"
 	var url: String = ""
@@ -281,6 +284,7 @@ extension MaintenanceItem {
 	var providerType: ServiceProviderType = .internet
 	var name: String = ""
 	var monthlyCost: Double?
+	var currencyCode: String?
 	@Column(as: EncryptedString.self) var accountNumber: String = ""
 	var backgroundColor: String = "purple"
 	var url: String = ""
@@ -306,6 +310,7 @@ extension MaintenanceItem {
 	var name: String = ""
 	var category: SubscriptionCategory = .streaming
 	var monthlyCost: Double?
+	var currencyCode: String?
 	var billingCycle: BillingCycle = .monthly
 	var renewalDate: Date?
 	var isActive: Bool = true
@@ -325,6 +330,7 @@ extension MaintenanceItem {
 	var endDate: Date?
 	var isCurrent: Bool = false
 	@Column(as: EncryptedDouble?.self) var salary: Double?
+	var currencyCode: String?
 	var employmentType: EmploymentType = .fullTime
 	var backgroundColor: String = "blue"
 	var url: String = ""
@@ -344,6 +350,7 @@ extension MaintenanceItem {
 	var monthlyCost: Double?
 	var deductible: Double?
 	var coverageAmount: Double?
+	var currencyCode: String?
 	var startDate: Date?
 	var renewalDate: Date?
 	var isActive: Bool = true
@@ -363,6 +370,7 @@ extension MaintenanceItem {
 	var name: String = ""
 	var otherDescription: String = ""
 	var monthlyCost: Double?
+	var currencyCode: String?
 	var backgroundColor: String = "gray"
 	var url: String = ""
 	var notes: String = ""
@@ -387,6 +395,9 @@ extension MaintenanceItem {
 @Table("appSettings") nonisolated struct AppSettings: Identifiable {
 	let id: UUID
 	var reminderInterval: ReminderInterval = .none
+	/// The app-wide default currency code (ISO 4217, e.g. "USD", "AUD").
+	/// `nil` means "follow the device locale" — see `Currency.resolvedDefault`.
+	var currencyCode: String?
 }
 
 // MARK: - Raw Representable Structs

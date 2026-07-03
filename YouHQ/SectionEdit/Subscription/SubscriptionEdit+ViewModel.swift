@@ -20,6 +20,7 @@ extension SubscriptionEdit {
 		var name: String
 		var category: SubscriptionCategory
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var billingCycle: BillingCycle
 		var renewalDate: Date?
 		var isActive: Bool
@@ -53,6 +54,7 @@ extension SubscriptionEdit {
 			self.name = subscription.name
 			self.category = subscription.category
 			self.monthlyCost = subscription.monthlyCost
+			self.currencyCode = subscription.currencyCode
 			self.billingCycle = subscription.billingCycle
 			self.renewalDate = subscription.renewalDate
 			self.isActive = subscription.isActive
@@ -77,6 +79,7 @@ extension SubscriptionEdit {
 								name: name,
 								category: category,
 								monthlyCost: monthlyCost,
+								currencyCode: currencyCode,
 								billingCycle: billingCycle,
 								renewalDate: renewalDate,
 								isActive: isActive,
@@ -95,6 +98,7 @@ extension SubscriptionEdit {
 								$0.name = name
 								$0.category = category
 								$0.monthlyCost = monthlyCost
+								$0.currencyCode = currencyCode
 								$0.billingCycle = billingCycle
 								$0.renewalDate = renewalDate
 								$0.isActive = isActive

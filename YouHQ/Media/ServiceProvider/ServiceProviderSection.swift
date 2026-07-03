@@ -12,6 +12,11 @@ struct ServiceProviderSection: View {
 	let hideCosts: Bool
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		serviceProvider.currencyCode ?? defaultCurrencyCode
+	}
 
 	var body: some View {
 		InfoSection(
@@ -32,7 +37,7 @@ struct ServiceProviderSection: View {
 			if let monthlyCost = serviceProvider.monthlyCost {
 				InfoRow(
 					"Monthly cost:",
-					value: "\(monthlyCost.asCost)",
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}

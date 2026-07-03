@@ -29,6 +29,7 @@ extension AddResidenceSheet {
 		var hasMoveOutDate: Bool = false
 		var costType: ResidenceCostType = .rent
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var url: String = ""
 		var notes: String = ""
 		var photoPicker = PhotoPickerViewModel()
@@ -74,6 +75,7 @@ extension AddResidenceSheet {
 							moveOutDate: hasMoveOutDate ? moveOutDate : nil,
 							isCurrent: isCurrent,
 							monthlyCost: monthlyCost,
+							currencyCode: currencyCode,
 							costType: costType,
 							url: url,
 							notes: notes

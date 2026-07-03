@@ -20,6 +20,7 @@ extension OtherEdit {
 		var name: String
 		var otherDescription: String
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var url: String
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
@@ -49,6 +50,7 @@ extension OtherEdit {
 			self.name = other.name
 			self.otherDescription = other.otherDescription
 			self.monthlyCost = other.monthlyCost
+			self.currencyCode = other.currencyCode
 			self.url = other.url
 			self.notes = other.notes
 			self.currentProfileID = other.profileID
@@ -74,6 +76,7 @@ extension OtherEdit {
 								name: name,
 								otherDescription: otherDescription,
 								monthlyCost: monthlyCost,
+								currencyCode: currencyCode,
 								backgroundColor: other.backgroundColor,
 								url: url,
 								notes: notes

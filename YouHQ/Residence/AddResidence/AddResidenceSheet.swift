@@ -45,6 +45,7 @@ struct AddResidenceSheet: View {
 					hasMoveOutDate: $vm.hasMoveOutDate,
 					costType: $vm.costType,
 					monthlyCost: $vm.monthlyCost,
+					currencyCode: $vm.currencyCode,
 					url: $vm.url,
 					notes: $vm.notes,
 					photoPicker: vm.photoPicker,

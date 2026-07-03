@@ -20,6 +20,7 @@ extension ServiceProviderEdit {
 		var providerType: ServiceProviderType
 		var name: String
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var accountNumber: String
 		var url: String
 		var notes: String
@@ -52,6 +53,7 @@ extension ServiceProviderEdit {
 			self.providerType = serviceProvider.providerType
 			self.name = serviceProvider.name
 			self.monthlyCost = serviceProvider.monthlyCost
+			self.currencyCode = serviceProvider.currencyCode
 			self.accountNumber = serviceProvider.accountNumber
 			self.url = serviceProvider.url
 			self.notes = serviceProvider.notes
@@ -74,6 +76,7 @@ extension ServiceProviderEdit {
 								providerType: providerType,
 								name: name,
 								monthlyCost: monthlyCost,
+								currencyCode: currencyCode,
 								accountNumber: accountNumber,
 								backgroundColor: serviceProvider.backgroundColor,
 								url: url,
@@ -90,6 +93,7 @@ extension ServiceProviderEdit {
 								$0.providerType = providerType
 								$0.name = name
 								$0.monthlyCost = monthlyCost
+								$0.currencyCode = currencyCode
 								$0.accountNumber = #bind(accountNumber)
 								$0.url = url
 								$0.notes = notes

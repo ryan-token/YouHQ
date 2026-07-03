@@ -47,17 +47,9 @@ struct ServiceProviderEdit: View {
 						.multilineTextAlignment(.trailing)
 				}
 
-				LabeledField("Monthly Cost") {
-					TextField(
-						"",
-						value: $vm.monthlyCost,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Monthly Cost", amount: $vm.monthlyCost)
+
+				CurrencySelectorRow(currencyCode: $vm.currencyCode)
 			}
 			.onAppear {
 				if autoFocus, !hasAppeared {

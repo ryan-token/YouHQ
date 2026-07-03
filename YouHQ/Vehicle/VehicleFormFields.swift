@@ -22,6 +22,7 @@ struct VehicleFormFields: View {
 	@Binding var vin: String
 	@Binding var costType: VehicleCostType
 	@Binding var monthlyCost: Double?
+	@Binding var currencyCode: String?
 	@Binding var url: String
 	@Binding var notes: String
 	let photoPicker: PhotoPickerViewModel
@@ -40,6 +41,7 @@ struct VehicleFormFields: View {
 		vin: Binding<String>,
 		costType: Binding<VehicleCostType>,
 		monthlyCost: Binding<Double?>,
+		currencyCode: Binding<String?>,
 		url: Binding<String>,
 		notes: Binding<String>,
 		photoPicker: PhotoPickerViewModel,
@@ -55,6 +57,7 @@ struct VehicleFormFields: View {
 		_vin = vin
 		_costType = costType
 		_monthlyCost = monthlyCost
+		_currencyCode = currencyCode
 		_url = url
 		_notes = notes
 		self.photoPicker = photoPicker
@@ -137,17 +140,9 @@ struct VehicleFormFields: View {
 			}
 
 			if costType != .owned {
-				LabeledField("Monthly Cost") {
-					TextField(
-						"",
-						value: $monthlyCost,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Monthly Cost", amount: $monthlyCost)
+
+				CurrencySelectorRow(currencyCode: $currencyCode)
 			}
 		}
 

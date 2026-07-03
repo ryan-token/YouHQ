@@ -52,15 +52,16 @@ extension SalaryChart {
 			"\(data.xLabel) (\(data.index + 1))"
 		}
 
-		func formatCompactSalary(_ value: Double) -> String {
+		func formatCompactSalary(_ value: Double, currencyCode: String) -> String {
+			let symbol = Currency.symbol(for: currencyCode)
 			if value >= 1_000_000 {
 				let millions = (value / 1_000_000).formatted(.number.precision(.fractionLength(1)))
-				return "$\(millions)M"
+				return "\(symbol)\(millions)M"
 			} else if value >= 1000 {
 				let thousands = (value / 1000).formatted(.number.precision(.fractionLength(0)))
-				return "$\(thousands)K"
+				return "\(symbol)\(thousands)K"
 			} else {
-				return value.formatted(.currency(code: "USD").precision(.fractionLength(0)))
+				return value.formatted(.currency(code: currencyCode).precision(.fractionLength(0)))
 			}
 		}
 

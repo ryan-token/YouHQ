@@ -26,6 +26,7 @@ extension AddVehicleSheet {
 		var vin: String = ""
 		var costType: VehicleCostType = .owned
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var url: String = ""
 		var notes: String = ""
 		var photoPicker = PhotoPickerViewModel()
@@ -68,6 +69,7 @@ extension AddVehicleSheet {
 							color: color.isEmpty ? nil : color,
 							vin: vin.isEmpty ? nil : vin,
 							monthlyCost: monthlyCost,
+							currencyCode: currencyCode,
 							costType: costType,
 							backgroundColor: backgroundColor.databaseValue,
 							url: url,
