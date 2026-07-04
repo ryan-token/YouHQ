@@ -76,11 +76,11 @@ struct SalaryChart: View {
 						}
 						.padding(.horizontal, 12)
 						.padding(.vertical, 8)
+						.legibleForeground(on: Color(databaseValue: selectedJob.backgroundColor))
 						.background(
 							Color(databaseValue: selectedJob.backgroundColor)
 								.opacity(0.9)
 						)
-						.foregroundStyle(.white)
 						.clipShape(.rect(cornerRadius: 8))
 						.shadow(radius: 4)
 						.padding(.top, 8)

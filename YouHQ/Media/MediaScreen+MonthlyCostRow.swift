@@ -42,6 +42,7 @@ extension MediaScreen {
 					totalCost: totalCost
 				)
 			}
+			.legibleForeground(on: .teal)
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.padding()
 			.background(.teal.gradient)

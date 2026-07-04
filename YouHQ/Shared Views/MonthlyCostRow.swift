@@ -19,6 +19,7 @@ struct MonthlyCostRow: View {
 	@ViewBuilder let breakdown: CostBreakdownView
 
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+	@Environment(\.cardForegroundColor) private var cardForegroundColor
 	@State private var showPopover = false
 
 	init(
@@ -45,7 +46,7 @@ struct MonthlyCostRow: View {
 					.blur(radius: blurred ? 4 : 0)
 					.padding(.horizontal, 12)
 					.padding(.vertical, 4)
-					.background(.white.opacity(0.3))
+					.background(cardForegroundColor.opacity(0.2))
 					.clipShape(.rect(cornerRadius: 8))
 			}
 			.buttonStyle(.plain)
@@ -53,7 +54,6 @@ struct MonthlyCostRow: View {
 				breakdown
 			}
 		}
-		.foregroundStyle(.white)
 	}
 }
 

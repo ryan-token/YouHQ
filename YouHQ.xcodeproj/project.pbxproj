@@ -34,6 +34,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Secrets.xcconfig,
 			);
 			target = F489E7DA2F034A8E00EB50D4 /* YouHQ */;
 		};
@@ -155,7 +156,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2630;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					F489E7DA2F034A8E00EB50D4 = {
 						CreatedOnToolsVersion = 26.2;

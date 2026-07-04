@@ -135,9 +135,7 @@ struct ResidenceInfoSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(residence.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

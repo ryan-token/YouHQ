@@ -117,9 +117,7 @@ struct VehicleInfoSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(vehicle.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

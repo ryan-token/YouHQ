@@ -76,9 +76,7 @@ struct JobSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(job.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

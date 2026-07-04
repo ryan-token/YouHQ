@@ -50,9 +50,7 @@ struct UtilitySection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(utility.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

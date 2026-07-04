@@ -12,6 +12,7 @@ struct CardStyle: ViewModifier {
 
 	func body(content: Content) -> some View {
 		content
+			.legibleForeground(on: backgroundColor)
 			.padding()
 			.background {
 				LinearGradient(

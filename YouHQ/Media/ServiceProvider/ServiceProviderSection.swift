@@ -50,9 +50,7 @@ struct ServiceProviderSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(serviceProvider.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

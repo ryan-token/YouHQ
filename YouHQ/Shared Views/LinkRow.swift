@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LinkRow: View {
 	@Environment(\.openURL) private var openURL
+	@Environment(\.cardForegroundColor) private var cardForegroundColor
 
 	let label: String?
 	let url: String
@@ -50,7 +51,7 @@ struct LinkRow: View {
 						.background(
 							showOnPlainBackground
 								? Color.blue.opacity(0.6)
-								: .white.opacity(0.3)
+								: cardForegroundColor.opacity(0.2)
 						)
 						.clipShape(.rect(cornerRadius: 8))
 				}
@@ -64,7 +65,6 @@ struct LinkRow: View {
 					.opacity(0.6)
 			}
 		}
-		.foregroundStyle(.white)
 	}
 }
 

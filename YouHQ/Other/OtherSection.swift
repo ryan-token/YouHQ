@@ -50,9 +50,7 @@ struct OtherSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(other.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}
