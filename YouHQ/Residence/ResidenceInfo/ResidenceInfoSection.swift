@@ -20,7 +20,7 @@ struct ResidenceInfoSection: View {
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	private var resolvedCurrencyCode: String {
-		residence.currencyCode ?? defaultCurrencyCode
+		Currency.resolved(residence.currencyCode, default: defaultCurrencyCode)
 	}
 
 	init(
@@ -118,11 +118,17 @@ struct ResidenceInfoSection: View {
 			}
 
 			if totalMonthlyCost > 0 {
-				MonthlyCostRow("Monthly TCO:", totalCost: totalMonthlyCost, blurred: hideCosts) {
+				MonthlyCostRow(
+					"Monthly TCO:",
+					totalCost: totalMonthlyCost,
+					currencyCode: resolvedCurrencyCode,
+					blurred: hideCosts
+				) {
 					CostBreakdownView(
 						title: "Monthly Total Cost of Ownership",
 						lineItems: costLineItems,
-						totalCost: totalMonthlyCost
+						totalCost: totalMonthlyCost,
+						currencyCode: resolvedCurrencyCode
 					)
 				}
 			}

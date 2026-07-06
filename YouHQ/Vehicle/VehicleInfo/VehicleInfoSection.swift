@@ -19,7 +19,7 @@ struct VehicleInfoSection: View {
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	private var resolvedCurrencyCode: String {
-		vehicle.currencyCode ?? defaultCurrencyCode
+		Currency.resolved(vehicle.currencyCode, default: defaultCurrencyCode)
 	}
 
 	init(
@@ -100,11 +100,17 @@ struct VehicleInfoSection: View {
 			}
 
 			if totalMonthlyCost > 0 {
-				MonthlyCostRow("Monthly TCO:", totalCost: totalMonthlyCost, blurred: hideCosts) {
+				MonthlyCostRow(
+					"Monthly TCO:",
+					totalCost: totalMonthlyCost,
+					currencyCode: resolvedCurrencyCode,
+					blurred: hideCosts
+				) {
 					CostBreakdownView(
 						title: "Monthly Total Cost of Ownership",
 						lineItems: costLineItems,
-						totalCost: totalMonthlyCost
+						totalCost: totalMonthlyCost,
+						currencyCode: resolvedCurrencyCode
 					)
 				}
 			}

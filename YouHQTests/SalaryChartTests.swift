@@ -153,6 +153,34 @@ extension YouHQTests {
 			#expect(chartData[2].index == 2)
 		}
 
+		@Test("prepareChartData carries each job's own currency code")
+		func propagatesCurrencyCode() {
+			let vm = SalaryChart.ViewModel()
+			let jobs = [
+				Job(
+					id: UUID(-1),
+					profileID: UUID(-1),
+					company: "Euro Job",
+					startDate: Date(timeIntervalSince1970: 100),
+					salary: 60_000,
+					currencyCode: "EUR",
+					backgroundColor: "blue"
+				),
+				Job(
+					id: UUID(-2),
+					profileID: UUID(-1),
+					company: "Default Job",
+					startDate: Date(timeIntervalSince1970: 200),
+					salary: 70_000,
+					backgroundColor: "green"
+				)
+			]
+
+			let chartData = vm.prepareChartData(from: jobs)
+			#expect(chartData[0].currencyCode == "EUR")
+			#expect(chartData[1].currencyCode == nil)
+		}
+
 		// MARK: - formatCompactSalary
 
 		@Test(
@@ -218,6 +246,7 @@ extension YouHQTests {
 				id: UUID(-1),
 				xLabel: "Apple",
 				salary: 150_000,
+				currencyCode: nil,
 				backgroundColor: "blue",
 				index: 0
 			)

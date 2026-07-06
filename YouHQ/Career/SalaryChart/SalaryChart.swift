@@ -70,9 +70,14 @@ struct SalaryChart: View {
 							Text(selectedJob.xLabel)
 								.font(.caption)
 								.bold()
-							Text(selectedJob.salary, format: .currency(code: defaultCurrencyCode))
-								.font(.caption)
-								.blur(radius: hideSalaries ? 4 : 0)
+							Text(
+								selectedJob.salary,
+								format: .currency(
+									code: Currency.resolved(selectedJob.currencyCode, default: defaultCurrencyCode)
+								)
+							)
+							.font(.caption)
+							.blur(radius: hideSalaries ? 4 : 0)
 						}
 						.padding(.horizontal, 12)
 						.padding(.vertical, 8)

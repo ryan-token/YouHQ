@@ -153,6 +153,7 @@ extension YouHQTests {
 					id: UUID(-1),
 					xLabel: "Acme",
 					salary: 100_000,
+					currencyCode: nil,
 					backgroundColor: "blue",
 					index: 2
 				)

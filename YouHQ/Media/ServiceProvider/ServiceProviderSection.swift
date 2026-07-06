@@ -15,7 +15,7 @@ struct ServiceProviderSection: View {
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	private var resolvedCurrencyCode: String {
-		serviceProvider.currencyCode ?? defaultCurrencyCode
+		Currency.resolved(serviceProvider.currencyCode, default: defaultCurrencyCode)
 	}
 
 	var body: some View {

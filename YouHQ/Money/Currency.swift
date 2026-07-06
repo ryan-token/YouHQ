@@ -25,6 +25,12 @@ enum Currency {
 		appSetting ?? deviceDefault
 	}
 
+	/// Resolves a money record's currency code, falling back to the app-wide
+	/// default when the record has no per-record override.
+	static func resolved(_ recordCode: String?, default defaultCode: String) -> String {
+		recordCode ?? defaultCode
+	}
+
 	/// All currency codes known to the system, sorted alphabetically.
 	static let allCodes: [String] = Locale.commonISOCurrencyCodes.sorted()
 

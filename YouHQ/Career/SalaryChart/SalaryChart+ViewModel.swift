@@ -40,6 +40,7 @@ extension SalaryChart {
 					id: job.id,
 					xLabel: job.company.isNotEmpty ? job.company : "Untitled",
 					salary: job.salary ?? 0,
+					currencyCode: job.currencyCode,
 					backgroundColor: job.backgroundColor,
 					index: index
 				)
@@ -82,6 +83,8 @@ extension SalaryChart {
 		let id: UUID
 		let xLabel: String
 		let salary: Double
+		/// The job's own currency code, or `nil` to follow the app-wide default.
+		let currencyCode: String?
 		let backgroundColor: String
 		let index: Int
 	}

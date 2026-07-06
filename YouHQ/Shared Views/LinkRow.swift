@@ -46,6 +46,7 @@ struct LinkRow: View {
 					HQText(url)
 						.lineLimit(1)
 						.truncationMode(.middle)
+						.foregroundStyle(showOnPlainBackground ? .white : cardForegroundColor)
 						.padding(.horizontal, 12)
 						.padding(.vertical, 4)
 						.background(

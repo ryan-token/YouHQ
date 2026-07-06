@@ -15,7 +15,7 @@ struct SubscriptionSection: View {
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	private var resolvedCurrencyCode: String {
-		subscription.currencyCode ?? defaultCurrencyCode
+		Currency.resolved(subscription.currencyCode, default: defaultCurrencyCode)
 	}
 
 	var body: some View {

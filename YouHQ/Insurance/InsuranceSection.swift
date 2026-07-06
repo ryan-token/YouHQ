@@ -15,7 +15,7 @@ struct InsuranceSection: View {
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	private var resolvedCurrencyCode: String {
-		policy.currencyCode ?? defaultCurrencyCode
+		Currency.resolved(policy.currencyCode, default: defaultCurrencyCode)
 	}
 
 	var body: some View {
