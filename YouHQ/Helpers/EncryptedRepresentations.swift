@@ -26,6 +26,8 @@ nonisolated struct EncryptedString: QueryBindable, QueryDecodable, QueryRepresen
 		self.queryOutput = queryOutput
 	}
 
+	// QueryBindable witness invoked by SQLiteData at runtime; not seen by static analysis.
+	// periphery:ignore
 	init?(queryBinding: QueryBinding) {
 		guard case .text(let ciphertext) = queryBinding else { return nil }
 		self.queryOutput = FieldEncryptor.shared.decrypt(ciphertext)
@@ -59,6 +61,8 @@ nonisolated struct EncryptedDouble: QueryBindable, QueryDecodable, QueryRepresen
 		self.queryOutput = queryOutput
 	}
 
+	// QueryBindable witness invoked by SQLiteData at runtime; not seen by static analysis.
+	// periphery:ignore
 	init?(queryBinding: QueryBinding) {
 		guard case .text(let ciphertext) = queryBinding else { return nil }
 		let decrypted = FieldEncryptor.shared.decrypt(ciphertext)
