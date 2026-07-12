@@ -670,10 +670,6 @@ nonisolated struct OtherCategory: RawRepresentable, Hashable, QueryBindable {
 	static let money = Self(rawValue: "Money")
 	static let media = Self(rawValue: "Media")
 	static let career = Self(rawValue: "Career")
-
-	static let allCases: [Self] = [
-		.homes, .vehicles, .money, .media, .career
-	]
 }
 
 nonisolated struct ReminderInterval: RawRepresentable, Hashable, QueryBindable {
