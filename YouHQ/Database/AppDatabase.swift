@@ -19,6 +19,10 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 			try db.attachMetadatabase()
 		}
 
+		// The profile triggers' `WHEN NOT ...` guards call this function; register it on
+		// every connection so it resolves even in tests/previews (where it reports `false`).
+		db.add(function: SyncEngine.$isSynchronizing)
+
 		#if DEBUG
 			@Dependency(\.context) var context
 			db.trace(options: .profile) { event in
@@ -1067,6 +1071,215 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		try #sql(
 			"""
 			ALTER TABLE "appSettings" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+	}
+
+	// MARK: - Rename Encrypted Salary Column
+
+	migrator.registerMigration("Rename jobs.salary for CloudKit type compatibility") { db in
+		// `EncryptedDouble` writes an encrypted string, but the original `salary` CloudKit
+		// field is a legacy `DOUBLE` that rejected it. Renaming forces a fresh
+		// encrypted-string field; the old `DOUBLE` field is left unused.
+		try #sql(
+			"""
+			ALTER TABLE "jobs" RENAME COLUMN "salary" TO "salaryEncrypted"
+			"""
+		)
+		.execute(db)
+	}
+
+	// MARK: - Guard Profile Triggers Against Sync
+
+	migrator.registerMigration("Guard profile triggers against sync writes") { db in
+		// Unguarded, these triggers also fired on sync-engine writes, so applying a remote
+		// change bumped `profiles.updatedAt` and re-uploaded the profile — an endless loop.
+		// Recreate each with a `WHEN NOT <syncing>` guard so they run only for local edits
+		// (`ensure_default_profile` too, so a synced delete can't resurrect a profile).
+
+		try #sql(
+			"""
+			DROP TRIGGER IF EXISTS "ensure_default_profile"
+			"""
+		)
+		.execute(db)
+		try #sql(
+			"""
+			CREATE TRIGGER "ensure_default_profile"
+			AFTER DELETE ON "profiles"
+			WHEN (SELECT COUNT(*) FROM "profiles") = 0 AND NOT \(SyncEngine.$isSynchronizing)
+			BEGIN
+				INSERT INTO "profiles" ("name") VALUES ('Default');
+			END
+			"""
+		)
+		.execute(db)
+
+		// Tables with a direct `profileID`. The trigger-name infix matches the existing
+		// (legacy) names — note `residence` is singular while the table is `residences`.
+		let directProfileTables: [(infix: String, table: String)] = [
+			("residence", "residences"),
+			("bankAccounts", "bankAccounts"),
+			("investmentAccounts", "investmentAccounts"),
+			("healthSavingsAccounts", "healthSavingsAccounts"),
+			("serviceProviders", "serviceProviders"),
+			("vehicles", "vehicles"),
+			("devices", "devices"),
+			("subscriptions", "subscriptions"),
+			("jobs", "jobs"),
+			("insurancePolicies", "insurancePolicies"),
+			("others", "others"),
+			("assets", "assets")
+		]
+
+		for (infix, table) in directProfileTables {
+			for event in ["insert", "update", "delete"] {
+				try #sql(
+					"""
+					DROP TRIGGER IF EXISTS "update_profile_on_\(raw: infix)_\(raw: event)"
+					"""
+				)
+				.execute(db)
+			}
+			try #sql(
+				"""
+				CREATE TRIGGER "update_profile_on_\(raw: infix)_insert"
+				AFTER INSERT ON "\(raw: table)"
+				WHEN NOT \(SyncEngine.$isSynchronizing)
+				BEGIN
+					UPDATE "profiles" SET "updatedAt" = datetime('now') WHERE "id" = NEW."profileID";
+				END
+				"""
+			)
+			.execute(db)
+			try #sql(
+				"""
+				CREATE TRIGGER "update_profile_on_\(raw: infix)_update"
+				AFTER UPDATE ON "\(raw: table)"
+				WHEN NOT \(SyncEngine.$isSynchronizing)
+				BEGIN
+					UPDATE "profiles" SET "updatedAt" = datetime('now') WHERE "id" = NEW."profileID";
+				END
+				"""
+			)
+			.execute(db)
+			try #sql(
+				"""
+				CREATE TRIGGER "update_profile_on_\(raw: infix)_delete"
+				AFTER DELETE ON "\(raw: table)"
+				WHEN NOT \(SyncEngine.$isSynchronizing)
+				BEGIN
+					UPDATE "profiles" SET "updatedAt" = datetime('now') WHERE "id" = OLD."profileID";
+				END
+				"""
+			)
+			.execute(db)
+		}
+
+		// paintColors and maintenanceItems resolve `profileID` through their residence or
+		// vehicle parent.
+		for table in ["paintColors", "maintenanceItems"] {
+			for event in ["insert", "update", "delete"] {
+				try #sql(
+					"""
+					DROP TRIGGER IF EXISTS "update_profile_on_\(raw: table)_\(raw: event)"
+					"""
+				)
+				.execute(db)
+			}
+			try #sql(
+				"""
+				CREATE TRIGGER "update_profile_on_\(raw: table)_insert"
+				AFTER INSERT ON "\(raw: table)"
+				WHEN NOT \(SyncEngine.$isSynchronizing)
+				BEGIN
+					UPDATE "profiles" SET "updatedAt" = datetime('now')
+					WHERE "id" IN (
+						SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"
+						UNION
+						SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID"
+					);
+				END
+				"""
+			)
+			.execute(db)
+			try #sql(
+				"""
+				CREATE TRIGGER "update_profile_on_\(raw: table)_update"
+				AFTER UPDATE ON "\(raw: table)"
+				WHEN NOT \(SyncEngine.$isSynchronizing)
+				BEGIN
+					UPDATE "profiles" SET "updatedAt" = datetime('now')
+					WHERE "id" IN (
+						SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"
+						UNION
+						SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID"
+					);
+				END
+				"""
+			)
+			.execute(db)
+			try #sql(
+				"""
+				CREATE TRIGGER "update_profile_on_\(raw: table)_delete"
+				AFTER DELETE ON "\(raw: table)"
+				WHEN NOT \(SyncEngine.$isSynchronizing)
+				BEGIN
+					UPDATE "profiles" SET "updatedAt" = datetime('now')
+					WHERE "id" IN (
+						SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID"
+						UNION
+						SELECT "profileID" FROM "vehicles" WHERE "id" = OLD."vehicleID"
+					);
+				END
+				"""
+			)
+			.execute(db)
+		}
+
+		// utilities resolves `profileID` through its residence parent.
+		for event in ["insert", "update", "delete"] {
+			try #sql(
+				"""
+				DROP TRIGGER IF EXISTS "update_profile_on_utilities_\(raw: event)"
+				"""
+			)
+			.execute(db)
+		}
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_utilities_insert"
+			AFTER INSERT ON "utilities"
+			WHEN NOT \(SyncEngine.$isSynchronizing)
+			BEGIN
+				UPDATE "profiles" SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_utilities_update"
+			AFTER UPDATE ON "utilities"
+			WHEN NOT \(SyncEngine.$isSynchronizing)
+			BEGIN
+				UPDATE "profiles" SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID");
+			END
+			"""
+		)
+		.execute(db)
+		try #sql(
+			"""
+			CREATE TRIGGER "update_profile_on_utilities_delete"
+			AFTER DELETE ON "utilities"
+			WHEN NOT \(SyncEngine.$isSynchronizing)
+			BEGIN
+				UPDATE "profiles" SET "updatedAt" = datetime('now')
+				WHERE "id" = (SELECT "profileID" FROM "residences" WHERE "id" = OLD."residenceID");
+			END
 			"""
 		)
 		.execute(db)
