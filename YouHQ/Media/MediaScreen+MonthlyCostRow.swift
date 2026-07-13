@@ -13,6 +13,10 @@ extension MediaScreen {
 		let serviceProviders: [ServiceProvider]
 		let subscriptions: [Subscription]
 		let blurred: Bool
+		// The media total spans many records that may each carry their own
+		// currency, so it falls back to the app-wide default rather than any
+		// single record's currency.
+		@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 		private var costLineItems: [CostLineItem] {
 			var items: [CostLineItem] = []
@@ -35,13 +39,20 @@ extension MediaScreen {
 		}
 
 		var body: some View {
-			MonthlyCostRow("Monthly Media Cost:", totalCost: totalCost, blurred: blurred) {
+			MonthlyCostRow(
+				"Monthly Media Cost:",
+				totalCost: totalCost,
+				currencyCode: defaultCurrencyCode,
+				blurred: blurred
+			) {
 				CostBreakdownView(
 					title: "Monthly Media Cost",
 					lineItems: costLineItems,
-					totalCost: totalCost
+					totalCost: totalCost,
+					currencyCode: defaultCurrencyCode
 				)
 			}
+			.legibleForeground(on: .teal)
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.padding()
 			.background(.teal.gradient)

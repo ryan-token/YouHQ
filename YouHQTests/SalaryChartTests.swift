@@ -34,7 +34,7 @@ extension YouHQTests {
 					profileID: UUID(-1),
 					company: "No Salary",
 					backgroundColor: "green"
-				),
+				)
 			]
 
 			let chartData = vm.prepareChartData(from: jobs)
@@ -63,7 +63,7 @@ extension YouHQTests {
 					startDate: earlier,
 					salary: 60_000,
 					backgroundColor: "green"
-				),
+				)
 			]
 
 			let chartData = vm.prepareChartData(from: jobs)
@@ -92,7 +92,7 @@ extension YouHQTests {
 					endDate: earlier,
 					salary: 60_000,
 					backgroundColor: "green"
-				),
+				)
 			]
 
 			let chartData = vm.prepareChartData(from: jobs)
@@ -110,7 +110,7 @@ extension YouHQTests {
 					company: "",
 					salary: 50_000,
 					backgroundColor: "blue"
-				),
+				)
 			]
 
 			let chartData = vm.prepareChartData(from: jobs)
@@ -144,13 +144,41 @@ extension YouHQTests {
 					startDate: Date(timeIntervalSince1970: 300),
 					salary: 90_000,
 					backgroundColor: "red"
-				),
+				)
 			]
 
 			let chartData = vm.prepareChartData(from: jobs)
 			#expect(chartData[0].index == 0)
 			#expect(chartData[1].index == 1)
 			#expect(chartData[2].index == 2)
+		}
+
+		@Test("prepareChartData carries each job's own currency code")
+		func propagatesCurrencyCode() {
+			let vm = SalaryChart.ViewModel()
+			let jobs = [
+				Job(
+					id: UUID(-1),
+					profileID: UUID(-1),
+					company: "Euro Job",
+					startDate: Date(timeIntervalSince1970: 100),
+					salary: 60_000,
+					currencyCode: "EUR",
+					backgroundColor: "blue"
+				),
+				Job(
+					id: UUID(-2),
+					profileID: UUID(-1),
+					company: "Default Job",
+					startDate: Date(timeIntervalSince1970: 200),
+					salary: 70_000,
+					backgroundColor: "green"
+				)
+			]
+
+			let chartData = vm.prepareChartData(from: jobs)
+			#expect(chartData[0].currencyCode == "EUR")
+			#expect(chartData[1].currencyCode == nil)
 		}
 
 		// MARK: - formatCompactSalary
@@ -165,12 +193,33 @@ extension YouHQTests {
 				(75_000.0, "$75K"),
 				(500.0, "$500"),
 				(0.0, "$0"),
-				(50.0, "$50"),
+				(50.0, "$50")
 			] as [(Double, String)]
 		)
 		func formatCompactSalary(value: Double, expected: String) {
 			let vm = SalaryChart.ViewModel()
-			#expect(vm.formatCompactSalary(value) == expected)
+			#expect(vm.formatCompactSalary(value, currencyCode: "USD") == expected)
+		}
+
+		@Test(
+			"formatCompactSalary uses the currency's symbol and compact suffix",
+			arguments: [
+				("USD", "$"),
+				("EUR", "€"),
+				("GBP", "£"),
+				("JPY", "¥")
+			] as [(String, String)]
+		)
+		func compactSalaryUsesCurrencySymbol(code: String, symbol: String) {
+			let vm = SalaryChart.ViewModel()
+
+			let thousands = vm.formatCompactSalary(150_000, currencyCode: code)
+			#expect(thousands.contains(symbol))
+			#expect(thousands.hasSuffix("K"))
+
+			let millions = vm.formatCompactSalary(2_000_000, currencyCode: code)
+			#expect(millions.contains(symbol))
+			#expect(millions.hasSuffix("M"))
 		}
 
 		// MARK: - formatXAxisLabel
@@ -197,6 +246,7 @@ extension YouHQTests {
 				id: UUID(-1),
 				xLabel: "Apple",
 				salary: 150_000,
+				currencyCode: nil,
 				backgroundColor: "blue",
 				index: 0
 			)
@@ -224,7 +274,7 @@ extension YouHQTests {
 					startDate: Date(timeIntervalSince1970: 200),
 					salary: 180_000,
 					backgroundColor: "green"
-				),
+				)
 			]
 
 			_ = vm.prepareChartData(from: jobs)
@@ -244,7 +294,7 @@ extension YouHQTests {
 					company: "Apple",
 					salary: 150_000,
 					backgroundColor: "blue"
-				),
+				)
 			]
 
 			_ = vm.prepareChartData(from: jobs)
@@ -265,7 +315,7 @@ extension YouHQTests {
 					company: "Apple",
 					salary: 150_000,
 					backgroundColor: "blue"
-				),
+				)
 			]
 
 			_ = vm.prepareChartData(from: jobs)
@@ -274,28 +324,54 @@ extension YouHQTests {
 		}
 	}
 
-	@Suite("Double.asCost")
+	@Suite("Double+Currency")
 	struct DoubleCurrencyTests {
 
+		// Exact strings assume the test host's en_US locale, matching the rest of
+		// this suite. The multi-currency tests below assert locale-robust behavior.
 		@Test(
-			"asCost formats values as currency",
+			"formatted(currencyCode:) formats USD amounts",
 			arguments: [
 				(0.0, "$0.00"),
 				(9.99, "$9.99"),
 				(1234.56, "$1,234.56"),
 				(1_000_000.0, "$1,000,000.00"),
-				(0.5, "$0.50"),
+				(0.5, "$0.50")
 			] as [(Double, String)]
 		)
-		func formatsCurrency(value: Double, expected: String) {
-			#expect(value.asCost == expected)
+		func formatsUSD(value: Double, expected: String) {
+			#expect(value.formatted(currencyCode: "USD") == expected)
 		}
 
-		@Test("asCost formats negative values")
+		@Test("formatted(currencyCode:) formats negative values")
 		func formatsNegative() {
-			let result = (-25.99).asCost
-			// NumberFormatter with .currency style uses locale-dependent negative format
+			let result = (-25.99).formatted(currencyCode: "USD")
+			// The currency format style uses a locale-dependent negative format.
 			#expect(result.contains("25.99"))
+		}
+
+		@Test(
+			"formatted(currencyCode:) uses each currency's symbol",
+			arguments: [
+				("USD", "$"),
+				("EUR", "€"),
+				("GBP", "£"),
+				("JPY", "¥")
+			] as [(String, String)]
+		)
+		func usesCurrencySymbol(code: String, symbol: String) {
+			#expect((42.0).formatted(currencyCode: code).contains(symbol))
+		}
+
+		@Test("formatted(currencyCode:) respects currency-specific fraction digits")
+		func honorsFractionDigits() {
+			// JPY has no minor unit, so a fractional amount is rounded to a whole
+			// yen; USD keeps two fraction digits.
+			let yen = (1234.56).formatted(currencyCode: "JPY")
+			#expect(!yen.contains("56"))
+
+			let dollars = (1234.56).formatted(currencyCode: "USD")
+			#expect(dollars.contains("56"))
 		}
 	}
 }

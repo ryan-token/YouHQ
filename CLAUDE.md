@@ -266,9 +266,11 @@ xcodebuild clean -project YouHQ.xcodeproj -scheme YouHQ
 # Format the entire project after every change
 swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ
 
-# Check for unused code via the following command
-periphery scan
+# Check for unused code (always pass a simulator destination — see note below)
+periphery scan -- -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
+
+**Periphery notes (cross-platform app):** A scan only indexes the one platform it builds, so code reachable only from `#if os(macOS)`/visionOS branches or protocol witnesses is false-flagged as unused. Before deleting, confirm zero references on *every* platform (`grep` ignores `#if`). Suppress a verified false positive with `// periphery:ignore` + a one-line reason, not broader config. For full coverage, scan iOS and macOS (`-destination 'platform=macOS'`) separately and delete only what's dead in both.
 
 ### Testing
 Use Swift Testing framework (not XCTest) for new tests:

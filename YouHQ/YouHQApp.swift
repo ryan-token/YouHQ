@@ -22,6 +22,8 @@ struct YouHQApp: App {
 	@State private var isColdLaunch = true
 	@State private var paywallManager = PaywallManager()
 
+	// Used only by the macOS-only Settings `Window` scene below.
+	// periphery:ignore
 	let settingsWindowFrame: CGFloat = 680
 
 	#if !os(macOS)

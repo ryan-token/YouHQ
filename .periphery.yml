@@ -1,3 +1,16 @@
 project: YouHQ.xcodeproj
 schemes:
-- YouHQ
+  - YouHQ
+
+# Count `#Preview` blocks as usage, so preview-only helpers (e.g. `seed()`) aren't
+# reported as dead.
+retain_swift_ui_previews: true
+
+# Sample fixtures are intentional scaffolding — kept even when not currently
+# referenced — so retain the whole file rather than annotating each one.
+retain_files:
+  - "**/Schema+SampleData.swift"
+
+# Report `// periphery:ignore` comments that are no longer needed, so
+# suppressions don't rot as the code changes.
+superfluous_ignore_comments: true

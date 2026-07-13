@@ -202,6 +202,8 @@ struct ZoomablePhoto: View {
 		applyClampedPan(panOffset)
 	}
 
+	// Called only from the macOS magnify gesture handler above.
+	// periphery:ignore
 	private func updateZoomScale(_ newScale: CGFloat) {
 		zoomScale = newScale
 		updatePanBounds()

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SalaryChart: View {
 	@State private var vm = ViewModel()
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
 
 	let jobs: [Job]
 	let hideSalaries: Bool
@@ -43,7 +44,7 @@ struct SalaryChart: View {
 					AxisMarks(position: .leading) { value in
 						AxisValueLabel {
 							if let salary = value.as(Double.self) {
-								HQText(vm.formatCompactSalary(salary))
+								HQText(vm.formatCompactSalary(salary, currencyCode: defaultCurrencyCode))
 									.font(.caption)
 									.blur(radius: hideSalaries ? 4 : 0)
 							}
@@ -69,17 +70,22 @@ struct SalaryChart: View {
 							Text(selectedJob.xLabel)
 								.font(.caption)
 								.bold()
-							Text(selectedJob.salary, format: .currency(code: "USD"))
-								.font(.caption)
-								.blur(radius: hideSalaries ? 4 : 0)
+							Text(
+								selectedJob.salary,
+								format: .currency(
+									code: Currency.resolved(selectedJob.currencyCode, default: defaultCurrencyCode)
+								)
+							)
+							.font(.caption)
+							.blur(radius: hideSalaries ? 4 : 0)
 						}
 						.padding(.horizontal, 12)
 						.padding(.vertical, 8)
+						.legibleForeground(on: Color(databaseValue: selectedJob.backgroundColor))
 						.background(
 							Color(databaseValue: selectedJob.backgroundColor)
 								.opacity(0.9)
 						)
-						.foregroundStyle(.white)
 						.clipShape(.rect(cornerRadius: 8))
 						.shadow(radius: 4)
 						.padding(.top, 8)

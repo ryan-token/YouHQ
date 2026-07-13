@@ -12,6 +12,11 @@ struct InsuranceSection: View {
 	let hideCosts: Bool
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		Currency.resolved(policy.currencyCode, default: defaultCurrencyCode)
+	}
 
 	var body: some View {
 		InfoSection(
@@ -32,7 +37,7 @@ struct InsuranceSection: View {
 			if let monthlyCost = policy.monthlyCost {
 				InfoRow(
 					"Monthly cost:",
-					value: "\(monthlyCost.asCost)",
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
@@ -40,7 +45,7 @@ struct InsuranceSection: View {
 			if let deductible = policy.deductible {
 				InfoRow(
 					"Deductible:",
-					value: "\(deductible.asCost)",
+					value: deductible.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
@@ -48,7 +53,7 @@ struct InsuranceSection: View {
 			if let coverageAmount = policy.coverageAmount {
 				InfoRow(
 					"Coverage amount:",
-					value: "\(coverageAmount.asCost)",
+					value: coverageAmount.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
@@ -71,9 +76,7 @@ struct InsuranceSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(policy.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

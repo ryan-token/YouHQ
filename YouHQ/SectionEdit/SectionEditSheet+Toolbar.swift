@@ -12,6 +12,8 @@ extension SectionEditSheet {
 		let vm: SectionEditSheet.ViewModel
 		@Binding var isShowingDeleteConfirmation: Bool
 		let onDismiss: () -> Void
+		// Read only in the `#if os(macOS)` branch of `body` below.
+		// periphery:ignore
 		@Environment(\.isPhotoViewerVisible) private var isPhotoViewerVisible
 
 		var body: some ToolbarContent {

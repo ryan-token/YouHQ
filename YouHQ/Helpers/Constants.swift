@@ -22,6 +22,8 @@ struct Constants {
 
 	// MARK: - Other
 	static let appStoreURL = URL(string: "https://apps.apple.com/app/id6744900328")!
+	// Referenced only from the macOS-only "About" window scene.
+	// periphery:ignore
 	static let ryantokenURL = URL(string: "https://www.ryantoken.com")!
 	static let telemetryDeckAPIKey = Bundle.main.infoDictionary?["TelemetryDeckAPIKey"] as? String ?? ""
 }

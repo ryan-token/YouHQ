@@ -25,6 +25,7 @@ struct ResidenceFormFields: View {
 	@Binding var hasMoveOutDate: Bool
 	@Binding var costType: ResidenceCostType
 	@Binding var monthlyCost: Double?
+	@Binding var currencyCode: String?
 	@Binding var url: String
 	@Binding var notes: String
 	let photoPicker: PhotoPickerViewModel
@@ -46,6 +47,7 @@ struct ResidenceFormFields: View {
 		hasMoveOutDate: Binding<Bool>,
 		costType: Binding<ResidenceCostType>,
 		monthlyCost: Binding<Double?>,
+		currencyCode: Binding<String?>,
 		url: Binding<String>,
 		notes: Binding<String>,
 		photoPicker: PhotoPickerViewModel,
@@ -64,6 +66,7 @@ struct ResidenceFormFields: View {
 		_hasMoveOutDate = hasMoveOutDate
 		_costType = costType
 		_monthlyCost = monthlyCost
+		_currencyCode = currencyCode
 		_url = url
 		_notes = notes
 		self.photoPicker = photoPicker
@@ -180,17 +183,9 @@ struct ResidenceFormFields: View {
 			}
 
 			if costType != .owned {
-				LabeledField("Monthly Cost") {
-					TextField(
-						"",
-						value: $monthlyCost,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField("Monthly Cost", amount: $monthlyCost)
+
+				CurrencySelectorRow(currencyCode: $currencyCode)
 			}
 		}
 

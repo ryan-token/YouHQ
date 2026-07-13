@@ -12,6 +12,7 @@ struct CardStyle: ViewModifier {
 
 	func body(content: Content) -> some View {
 		content
+			.legibleForeground(on: backgroundColor)
 			.padding()
 			.background {
 				LinearGradient(
@@ -30,6 +31,9 @@ struct CardStyle: ViewModifier {
 			}
 			.clipShape(.rect(cornerRadius: 16))
 			.shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 3)
+			// Inset so the enclosing List row doesn't clip the shadow — most
+			// visible on light cards, where the shadow alone defines the edge.
+			.padding(.horizontal, 8)
 			.padding(.bottom)
 	}
 }
@@ -41,6 +45,17 @@ extension View {
 }
 
 #Preview {
-	HQText("Card Style")
-		.cardStyle(backgroundColor: .indigo)
+	List {
+		Group {
+			HQText("White card")
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.cardStyle(backgroundColor: .white)
+			HQText("Colored card")
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.cardStyle(backgroundColor: .indigo)
+		}
+		.listRowSeparator(.hidden)
+		.listRowBackground(Color.clear)
+	}
+	.scrollContentBackground(.hidden)
 }

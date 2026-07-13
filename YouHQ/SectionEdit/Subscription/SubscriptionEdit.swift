@@ -49,17 +49,12 @@ struct SubscriptionEdit: View {
 					.labelsHidden()
 				}
 
-				LabeledField(vm.billingCycle == .annual ? "Annual Cost" : "Monthly Cost") {
-					TextField(
-						"",
-						value: $vm.monthlyCost,
-						format: .currency(code: "USD")
-					)
-					.multilineTextAlignment(.trailing)
-				}
-				#if !os(macOS)
-					.keyboardType(.decimalPad)
-				#endif
+				MoneyField(
+					vm.billingCycle == .annual ? "Annual Cost" : "Monthly Cost",
+					amount: $vm.monthlyCost
+				)
+
+				CurrencySelectorRow(currencyCode: $vm.currencyCode)
 
 				LabeledField("Renewal Date") {
 					DatePicker(

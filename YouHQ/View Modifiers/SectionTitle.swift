@@ -11,7 +11,6 @@ struct SectionTitle: ViewModifier {
 	func body(content: Content) -> some View {
 		content
 			.font(.title2)
-			.foregroundStyle(.white)
 			.opacity(0.9)
 			.padding(.bottom, 8)
 			.textSelection(.enabled)

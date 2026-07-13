@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct MacOSResidencePicker: View {
+	// Read only in the `#if os(macOS)` body below; an iOS-only scan sees the
+	// assignment but not the read.
+	// periphery:ignore
 	let residences: [Residence]
 	@Binding var selectedResidence: Residence?
 

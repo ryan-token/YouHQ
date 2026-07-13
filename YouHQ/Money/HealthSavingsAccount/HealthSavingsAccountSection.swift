@@ -45,9 +45,7 @@ struct HealthSavingsAccountSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(account.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

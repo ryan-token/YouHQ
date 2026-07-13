@@ -12,6 +12,11 @@ struct SubscriptionSection: View {
 	let hideCosts: Bool
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		Currency.resolved(subscription.currencyCode, default: defaultCurrencyCode)
+	}
 
 	var body: some View {
 		InfoSection(
@@ -28,7 +33,7 @@ struct SubscriptionSection: View {
 			if let monthlyCost = subscription.monthlyCost {
 				InfoRow(
 					subscription.billingCycle == .annual ? "Annual cost:" : "Monthly cost:",
-					value: "\(monthlyCost.asCost)",
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
@@ -55,9 +60,7 @@ struct SubscriptionSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(subscription.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

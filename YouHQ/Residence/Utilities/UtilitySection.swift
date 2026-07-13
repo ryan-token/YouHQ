@@ -12,6 +12,11 @@ struct UtilitySection: View {
 	let hideCosts: Bool
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		Currency.resolved(utility.currencyCode, default: defaultCurrencyCode)
+	}
 
 	var body: some View {
 		InfoSection(
@@ -32,7 +37,7 @@ struct UtilitySection: View {
 			if let appxMonthlyCost = utility.approximateMonthlyCost {
 				InfoRow(
 					"Monthly cost:",
-					value: "\(appxMonthlyCost.asCost)",
+					value: appxMonthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
@@ -45,9 +50,7 @@ struct UtilitySection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(utility.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

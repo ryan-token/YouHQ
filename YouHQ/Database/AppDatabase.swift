@@ -998,6 +998,80 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		.execute(db)
 	}
 
+	// MARK: - Currency Support
+
+	migrator.registerMigration("Add currency code columns") { db in
+		// Per-record currency override. A `NULL` value means the record follows
+		// the app-wide default currency (`AppSettings.currencyCode`), which in
+		// turn falls back to the device locale when unset.
+		//
+		// All columns are nullable with no default so the change is additive and
+		// safe for CloudKit sync: older app versions simply ignore the new field.
+		try #sql(
+			"""
+			ALTER TABLE "residences" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "utilities" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "vehicles" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "serviceProviders" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "subscriptions" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "jobs" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "insurancePolicies" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		try #sql(
+			"""
+			ALTER TABLE "others" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+
+		// App-wide default currency. `NULL` means "follow the device locale".
+		try #sql(
+			"""
+			ALTER TABLE "appSettings" ADD COLUMN "currencyCode" TEXT
+			"""
+		)
+		.execute(db)
+	}
+
 	try migrator.migrate(database)
 	return database
 }

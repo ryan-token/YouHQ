@@ -29,6 +29,7 @@ extension ResidenceInfoEdit {
 		var hasMoveOutDate: Bool
 		var costType: ResidenceCostType
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var url: String
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
@@ -70,6 +71,7 @@ extension ResidenceInfoEdit {
 			self.hasMoveOutDate = residence.moveOutDate != nil
 			self.costType = residence.costType
 			self.monthlyCost = residence.monthlyCost
+			self.currencyCode = residence.currencyCode
 			self.url = residence.url
 			self.notes = residence.notes
 			self.currentProfileID = residence.profileID
@@ -98,6 +100,7 @@ extension ResidenceInfoEdit {
 							$0.moveOutDate = hasMoveOutDate ? moveOutDate : nil
 							$0.costType = costType
 							$0.monthlyCost = monthlyCost
+							$0.currencyCode = currencyCode
 							$0.url = url
 							$0.notes = notes
 						}

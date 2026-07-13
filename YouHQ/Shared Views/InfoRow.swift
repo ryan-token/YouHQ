@@ -38,7 +38,6 @@ struct InfoRow: View {
 			}
 			.blur(radius: blurred ? 4 : 0)
 		}
-		.foregroundStyle(.white)
 	}
 }
 

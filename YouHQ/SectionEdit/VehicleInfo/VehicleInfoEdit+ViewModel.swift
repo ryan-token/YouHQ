@@ -26,6 +26,7 @@ extension VehicleInfoEdit {
 		var vin: String
 		var costType: VehicleCostType
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var url: String
 		var notes: String
 		var photoPicker = PhotoPickerViewModel()
@@ -63,6 +64,7 @@ extension VehicleInfoEdit {
 			self.vin = vehicle.vin ?? ""
 			self.costType = vehicle.costType
 			self.monthlyCost = vehicle.monthlyCost
+			self.currencyCode = vehicle.currencyCode
 			self.url = vehicle.url
 			self.notes = vehicle.notes
 			self.currentProfileID = vehicle.profileID
@@ -88,6 +90,7 @@ extension VehicleInfoEdit {
 							$0.backgroundColor = backgroundColor.databaseValue
 							$0.vin = #bind(vin.isEmpty ? nil : vin)
 							$0.monthlyCost = monthlyCost
+							$0.currencyCode = currencyCode
 							$0.costType = costType
 							$0.url = url
 							$0.notes = notes

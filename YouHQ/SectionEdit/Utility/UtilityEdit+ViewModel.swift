@@ -21,6 +21,7 @@ extension UtilityEdit {
 		var provider: String
 		var accountNumber: String
 		var monthlyCost: Double?
+		var currencyCode: String?
 		var url: String
 		var notes: String
 
@@ -43,6 +44,7 @@ extension UtilityEdit {
 			self.provider = utility.provider
 			self.accountNumber = utility.accountNumber
 			self.monthlyCost = utility.approximateMonthlyCost
+			self.currencyCode = utility.currencyCode
 			self.url = utility.url
 			self.notes = utility.notes
 		}
@@ -60,6 +62,7 @@ extension UtilityEdit {
 								provider: provider,
 								accountNumber: accountNumber,
 								approximateMonthlyCost: monthlyCost,
+								currencyCode: currencyCode,
 								backgroundColor: utility.backgroundColor,
 								url: url,
 								notes: notes
@@ -75,6 +78,7 @@ extension UtilityEdit {
 								$0.provider = provider
 								$0.accountNumber = #bind(accountNumber)
 								$0.approximateMonthlyCost = monthlyCost
+								$0.currencyCode = currencyCode
 								$0.url = url
 								$0.notes = notes
 							}

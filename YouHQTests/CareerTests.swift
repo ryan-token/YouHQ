@@ -141,9 +141,9 @@ extension YouHQTests {
 			func formatCompactSalary() {
 				let vm = SalaryChart.ViewModel()
 
-				#expect(vm.formatCompactSalary(1_500_000) == "$1.5M")
-				#expect(vm.formatCompactSalary(120_000) == "$120K")
-				#expect(vm.formatCompactSalary(500) == "$500")
+				#expect(vm.formatCompactSalary(1_500_000, currencyCode: "USD") == "$1.5M")
+				#expect(vm.formatCompactSalary(120_000, currencyCode: "USD") == "$120K")
+				#expect(vm.formatCompactSalary(500, currencyCode: "USD") == "$500")
 			}
 
 			@Test("Chart label includes index")
@@ -153,6 +153,7 @@ extension YouHQTests {
 					id: UUID(-1),
 					xLabel: "Acme",
 					salary: 100_000,
+					currencyCode: nil,
 					backgroundColor: "blue",
 					index: 2
 				)

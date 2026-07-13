@@ -12,6 +12,11 @@ struct OtherSection: View {
 	let hideCosts: Bool
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		Currency.resolved(other.currencyCode, default: defaultCurrencyCode)
+	}
 
 	var body: some View {
 		InfoSection(
@@ -32,7 +37,7 @@ struct OtherSection: View {
 			if let monthlyCost = other.monthlyCost {
 				InfoRow(
 					"Monthly cost:",
-					value: monthlyCost.asCost,
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
@@ -45,9 +50,7 @@ struct OtherSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(other.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}

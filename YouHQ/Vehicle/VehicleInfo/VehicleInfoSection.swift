@@ -16,6 +16,11 @@ struct VehicleInfoSection: View {
 	let backgroundColor: Color
 	let onTap: ((Vehicle) -> Void)?
 	let onColorChange: (Color) -> Void
+	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+
+	private var resolvedCurrencyCode: String {
+		Currency.resolved(vehicle.currencyCode, default: defaultCurrencyCode)
+	}
 
 	init(
 		vehicle: Vehicle,
@@ -89,17 +94,23 @@ struct VehicleInfoSection: View {
 			{
 				InfoRow(
 					"Monthly \(vehicle.costType.rawValue.lowercased()):",
-					value: "\(monthlyCost.asCost)",
+					value: monthlyCost.formatted(currencyCode: resolvedCurrencyCode),
 					blurred: hideCosts
 				)
 			}
 
 			if totalMonthlyCost > 0 {
-				MonthlyCostRow("Monthly TCO:", totalCost: totalMonthlyCost, blurred: hideCosts) {
+				MonthlyCostRow(
+					"Monthly TCO:",
+					totalCost: totalMonthlyCost,
+					currencyCode: resolvedCurrencyCode,
+					blurred: hideCosts
+				) {
 					CostBreakdownView(
 						title: "Monthly Total Cost of Ownership",
 						lineItems: costLineItems,
-						totalCost: totalMonthlyCost
+						totalCost: totalMonthlyCost,
+						currencyCode: resolvedCurrencyCode
 					)
 				}
 			}
@@ -112,9 +123,7 @@ struct VehicleInfoSection: View {
 				VStack(alignment: .leading, spacing: 4) {
 					HQText("Notes:")
 						.font(.headline)
-						.foregroundStyle(.white)
 					HQText(vehicle.notes)
-						.foregroundStyle(.white)
 				}
 			}
 		}
