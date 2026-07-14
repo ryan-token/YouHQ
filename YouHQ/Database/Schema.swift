@@ -329,7 +329,9 @@ extension MaintenanceItem {
 	var startDate: Date?
 	var endDate: Date?
 	var isCurrent: Bool = false
-	@Column(as: EncryptedDouble?.self) var salary: Double?
+	// Distinct column name so CloudKit creates a fresh encrypted-string field; the legacy
+	// `salary` field is a `DOUBLE` that rejects the encrypted string this sends.
+	@Column("salaryEncrypted", as: EncryptedDouble?.self) var salary: Double?
 	var currencyCode: String?
 	var employmentType: EmploymentType = .fullTime
 	var backgroundColor: String = "blue"
