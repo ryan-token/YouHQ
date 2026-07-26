@@ -168,7 +168,7 @@ extension YouHQTests {
 					(.weekly, "Enable Weekly Reminder"),
 					(.monthly, "Enable Monthly Reminder"),
 					(.quarterly, "Enable Quarterly Reminder"),
-					(.annually, "Enable Annual Reminder"),
+					(.annually, "Enable Annual Reminder")
 				]
 			)
 			func enableButtonText(interval: ReminderInterval, expected: String) async {
@@ -248,7 +248,7 @@ extension YouHQTests {
 					.weekly,
 					.monthly,
 					.quarterly,
-					.annually,
+					.annually
 				]
 			)
 			func reminderTrigger(interval: ReminderInterval) async throws {
@@ -575,14 +575,14 @@ extension YouHQTests {
 			@Test(
 				"nextQuarterStartDate returns correct next quarter",
 				arguments: [
-					(1, 4, true),   // Jan -> Apr same year
-					(3, 4, true),   // Mar -> Apr same year
-					(4, 7, true),   // Apr -> Jul same year
-					(6, 7, true),   // Jun -> Jul same year
-					(7, 10, true),  // Jul -> Oct same year
-					(9, 10, true),  // Sep -> Oct same year
+					(1, 4, true), // Jan -> Apr same year
+					(3, 4, true), // Mar -> Apr same year
+					(4, 7, true), // Apr -> Jul same year
+					(6, 7, true), // Jun -> Jul same year
+					(7, 10, true), // Jul -> Oct same year
+					(9, 10, true), // Sep -> Oct same year
 					(10, 1, false), // Oct -> Jan next year
-					(12, 1, false), // Dec -> Jan next year
+					(12, 1, false) // Dec -> Jan next year
 				]
 			)
 			func nextQuarter(month: Int, expectedMonth: Int, sameYear: Bool) {

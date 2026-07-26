@@ -21,6 +21,11 @@ extension UtilityEdit {
 		var provider: String
 		var accountNumber: String
 		var monthlyCost: Double?
+
+		// Value as loaded, so `save()` can leave the field out of the update when untouched. A
+		// value this device cannot decrypt reads as empty, and writing that back would erase it
+		// for whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedAccountNumber: String
 		var currencyCode: String?
 		var url: String
 		var notes: String
@@ -43,6 +48,7 @@ extension UtilityEdit {
 			self.type = utility.type
 			self.provider = utility.provider
 			self.accountNumber = utility.accountNumber
+			self.loadedAccountNumber = utility.accountNumber
 			self.monthlyCost = utility.approximateMonthlyCost
 			self.currencyCode = utility.currencyCode
 			self.url = utility.url
@@ -76,7 +82,9 @@ extension UtilityEdit {
 							.update {
 								$0.type = type
 								$0.provider = provider
-								$0.accountNumber = #bind(accountNumber)
+								if accountNumber != loadedAccountNumber {
+									$0.accountNumber = #bind(accountNumber)
+								}
 								$0.approximateMonthlyCost = monthlyCost
 								$0.currencyCode = currencyCode
 								$0.url = url

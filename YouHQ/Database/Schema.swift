@@ -125,7 +125,7 @@ import SQLiteData
 	let residenceID: Residence.ID
 	var type: UtilityType = .electric
 	var provider: String = ""
-	@Column(as: EncryptedString.self) var accountNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
 	var approximateMonthlyCost: Double?
 	var currencyCode: String?
 	var backgroundColor: String = "blue"
@@ -214,7 +214,7 @@ extension MaintenanceItem {
 	var model: String = ""
 	var year: String?
 	var color: String?
-	@Column(as: EncryptedString?.self) var vin: String?
+	@Column(as: LegacySensitiveText?.self) var vin: String?
 	var monthlyCost: Double?
 	var currencyCode: String?
 	var costType: VehicleCostType = .owned
@@ -244,8 +244,8 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var bankName: String = ""
 	var accountType: BankAccountType = .checking
-	@Column(as: EncryptedString.self) var accountNumber: String = ""
-	@Column(as: EncryptedString.self) var routingNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var routingNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "green"
 	var url: String = ""
@@ -257,7 +257,7 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var institution: String = ""
 	var accountType: InvestmentAccountType = .brokerage
-	@Column(as: EncryptedString.self) var accountNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "mint"
 	var url: String = ""
@@ -269,7 +269,7 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var accountType: HealthSavingsAccountType = .hsa
 	var institution: String = ""
-	@Column(as: EncryptedString.self) var accountNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
 	var isActive: Bool = true
 	var backgroundColor: String = "cyan"
 	var url: String = ""
@@ -285,7 +285,7 @@ extension MaintenanceItem {
 	var name: String = ""
 	var monthlyCost: Double?
 	var currencyCode: String?
-	@Column(as: EncryptedString.self) var accountNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
 	var backgroundColor: String = "purple"
 	var url: String = ""
 	var notes: String = ""
@@ -297,7 +297,7 @@ extension MaintenanceItem {
 	var type: DeviceType = .computer
 	var brand: String = ""
 	var model: String = ""
-	@Column(as: EncryptedString.self) var serialNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var serialNumber: String = ""
 	var purchaseDate: Date?
 	var backgroundColor: String = "pink"
 	var url: String = ""
@@ -329,9 +329,12 @@ extension MaintenanceItem {
 	var startDate: Date?
 	var endDate: Date?
 	var isCurrent: Bool = false
-	// Distinct column name so CloudKit creates a fresh encrypted-string field; the legacy
-	// `salary` field is a `DOUBLE` that rejects the encrypted string this sends.
-	@Column("salaryEncrypted", as: EncryptedDouble?.self) var salary: Double?
+	// A third column name, because neither earlier one can hold a plain number safely. The
+	// original `salary` is a deployed CloudKit `DOUBLE` whose stale values would be pushed
+	// back over the migrated ones when SQLiteData reconciles the schema change, and
+	// `salaryEncrypted` is a deployed `STRING`. `salaryAmount` starts empty on the server,
+	// so nothing can overwrite what the sweep decrypts into it.
+	@Column("salaryAmount") var salary: Double?
 	var currencyCode: String?
 	var employmentType: EmploymentType = .fullTime
 	var backgroundColor: String = "blue"
@@ -348,7 +351,7 @@ extension MaintenanceItem {
 	var vehicleID: Vehicle.ID?
 	var type: InsurancePolicyType = .health
 	var provider: String = ""
-	@Column(as: EncryptedString.self) var policyNumber: String = ""
+	@Column(as: LegacySensitiveText.self) var policyNumber: String = ""
 	var monthlyCost: Double?
 	var deductible: Double?
 	var coverageAmount: Double?

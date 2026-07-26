@@ -23,6 +23,11 @@ extension ServiceProviderEdit {
 		var currencyCode: String?
 		var accountNumber: String
 		var url: String
+
+		// Value as loaded, so `save()` can leave the field out of the update when untouched. A
+		// value this device cannot decrypt reads as empty, and writing that back would erase it
+		// for whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedAccountNumber: String
 		var notes: String
 
 		// Profile switching support
@@ -55,6 +60,7 @@ extension ServiceProviderEdit {
 			self.monthlyCost = serviceProvider.monthlyCost
 			self.currencyCode = serviceProvider.currencyCode
 			self.accountNumber = serviceProvider.accountNumber
+			self.loadedAccountNumber = serviceProvider.accountNumber
 			self.url = serviceProvider.url
 			self.notes = serviceProvider.notes
 			self.currentProfileID = serviceProvider.profileID
@@ -94,7 +100,9 @@ extension ServiceProviderEdit {
 								$0.name = name
 								$0.monthlyCost = monthlyCost
 								$0.currencyCode = currencyCode
-								$0.accountNumber = #bind(accountNumber)
+								if accountNumber != loadedAccountNumber {
+									$0.accountNumber = #bind(accountNumber)
+								}
 								$0.url = url
 								$0.notes = notes
 							}

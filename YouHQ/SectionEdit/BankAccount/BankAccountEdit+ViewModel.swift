@@ -21,6 +21,12 @@ extension BankAccountEdit {
 		var accountType: BankAccountType
 		var accountNumber: String
 		var routingNumber: String
+
+		// Values as loaded, so `save()` can leave untouched fields out of the update. A value
+		// this device cannot decrypt reads as empty, and writing that back would erase it for
+		// whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedAccountNumber: String
+		private let loadedRoutingNumber: String
 		var isActive: Bool
 		var url: String
 		var notes: String
@@ -54,6 +60,8 @@ extension BankAccountEdit {
 			self.accountType = account.accountType
 			self.accountNumber = account.accountNumber
 			self.routingNumber = account.routingNumber
+			self.loadedAccountNumber = account.accountNumber
+			self.loadedRoutingNumber = account.routingNumber
 			self.isActive = account.isActive
 			self.url = account.url
 			self.notes = account.notes
@@ -92,8 +100,12 @@ extension BankAccountEdit {
 								$0.profileID = currentProfileID
 								$0.bankName = bankName
 								$0.accountType = accountType
-								$0.accountNumber = #bind(accountNumber)
-								$0.routingNumber = #bind(routingNumber)
+								if accountNumber != loadedAccountNumber {
+									$0.accountNumber = #bind(accountNumber)
+								}
+								if routingNumber != loadedRoutingNumber {
+									$0.routingNumber = #bind(routingNumber)
+								}
 								$0.isActive = isActive
 								$0.url = url
 								$0.notes = notes

@@ -8,8 +8,8 @@
 import Dependencies
 import DependenciesTestSupport
 import Foundation
-import Sharing
 import SQLiteData
+import Sharing
 import SwiftUI
 import Testing
 
@@ -443,7 +443,7 @@ extension YouHQTests {
 			@Test("upcomingItems filters items due within 30 days that are not past due")
 			func upcomingItems() async throws {
 				let pastDate = Date(timeIntervalSince1970: 1_000)
-				let upcomingDate = Date(timeIntervalSinceNow: 86400 * 15)  // 15 days from now
+				let upcomingDate = Date(timeIntervalSinceNow: 86400 * 15) // 15 days from now
 				let farFuture = Date(timeIntervalSinceNow: 86400 * 365)
 
 				try await database.write { db in

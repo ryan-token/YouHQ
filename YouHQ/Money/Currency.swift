@@ -47,7 +47,8 @@ enum Currency {
 		let formatted = (0 as Decimal).formatted(
 			.currency(code: code).presentation(.narrow).precision(.fractionLength(0))
 		)
-		let stripped = formatted
+		let stripped =
+			formatted
 			.filter { !$0.isNumber }
 			.trimmingCharacters(in: .whitespaces)
 		return stripped.isEmpty ? code : stripped

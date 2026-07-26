@@ -8,8 +8,8 @@
 import Dependencies
 import DependenciesTestSupport
 import Foundation
-import Sharing
 import SQLiteData
+import Sharing
 import SwiftUI
 import Testing
 

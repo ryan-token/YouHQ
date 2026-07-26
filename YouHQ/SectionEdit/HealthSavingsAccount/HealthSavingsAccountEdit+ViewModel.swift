@@ -21,6 +21,11 @@ extension HealthSavingsAccountEdit {
 		var institution: String
 		var accountNumber: String
 		var isActive: Bool
+
+		// Value as loaded, so `save()` can leave the field out of the update when untouched. A
+		// value this device cannot decrypt reads as empty, and writing that back would erase it
+		// for whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedAccountNumber: String
 		var url: String
 		var notes: String
 
@@ -52,6 +57,7 @@ extension HealthSavingsAccountEdit {
 			self.accountType = account.accountType
 			self.institution = account.institution
 			self.accountNumber = account.accountNumber
+			self.loadedAccountNumber = account.accountNumber
 			self.isActive = account.isActive
 			self.url = account.url
 			self.notes = account.notes
@@ -87,7 +93,9 @@ extension HealthSavingsAccountEdit {
 								$0.profileID = currentProfileID
 								$0.accountType = accountType
 								$0.institution = institution
-								$0.accountNumber = #bind(accountNumber)
+								if accountNumber != loadedAccountNumber {
+									$0.accountNumber = #bind(accountNumber)
+								}
 								$0.isActive = isActive
 								$0.url = url
 								$0.notes = notes

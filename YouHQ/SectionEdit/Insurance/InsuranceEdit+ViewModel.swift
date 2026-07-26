@@ -21,6 +21,11 @@ extension InsuranceEdit {
 		var provider: String
 		var policyNumber: String
 		var monthlyCost: Double?
+
+		// Value as loaded, so `save()` can leave the field out of the update when untouched. A
+		// value this device cannot decrypt reads as empty, and writing that back would erase it
+		// for whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedPolicyNumber: String
 		var deductible: Double?
 		var coverageAmount: Double?
 		var currencyCode: String?
@@ -58,6 +63,7 @@ extension InsuranceEdit {
 			self.type = policy.type
 			self.provider = policy.provider
 			self.policyNumber = policy.policyNumber
+			self.loadedPolicyNumber = policy.policyNumber
 			self.monthlyCost = policy.monthlyCost
 			self.deductible = policy.deductible
 			self.coverageAmount = policy.coverageAmount
@@ -114,7 +120,9 @@ extension InsuranceEdit {
 								$0.profileID = currentProfileID
 								$0.type = type
 								$0.provider = provider
-								$0.policyNumber = #bind(policyNumber)
+								if policyNumber != loadedPolicyNumber {
+									$0.policyNumber = #bind(policyNumber)
+								}
 								$0.monthlyCost = monthlyCost
 								$0.deductible = deductible
 								$0.coverageAmount = coverageAmount

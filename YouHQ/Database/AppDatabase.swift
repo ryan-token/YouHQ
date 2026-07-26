@@ -39,6 +39,7 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 	}
 
 	let database = try SQLiteData.defaultDatabase(configuration: configuration)
+	applyDataProtection(to: database.path)
 	print(
 		"""
 		YouHQ database:
@@ -938,46 +939,11 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 
 	// MARK: - Encrypt Sensitive Fields
 
-	migrator.registerMigration("Encrypt sensitive fields") { db in
-		let encryptor = FieldEncryptor.shared
-
-		// Encrypt a sensitive column in place.
-		// For non-nullable TEXT columns use whereClause "!= ''" (skip empty defaults).
-		// For nullable columns use "IS NOT NULL".
-		func encryptColumn(table: String, column: String, whereClause: String = "!= ''") throws {
-			let ids = try String.fetchAll(
-				db,
-				sql: "SELECT \"id\" FROM \"\(table)\" WHERE \"\(column)\" \(whereClause)"
-			)
-			for id in ids {
-				let value =
-					try String.fetchOne(
-						db,
-						sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ?",
-						arguments: [id]
-					) ?? ""
-				guard !value.isEmpty else { continue }
-				// Skip already-encrypted values (valid base64 of sufficient length for AES-GCM)
-				if let decoded = Data(base64Encoded: value), decoded.count >= 28 { continue }
-				let encrypted = encryptor.encrypt(value)
-				try db.execute(
-					sql: "UPDATE \"\(table)\" SET \"\(column)\" = ? WHERE \"id\" = ?",
-					arguments: [encrypted, id]
-				)
-			}
-		}
-
-		try encryptColumn(table: "bankAccounts", column: "accountNumber")
-		try encryptColumn(table: "bankAccounts", column: "routingNumber")
-		try encryptColumn(table: "investmentAccounts", column: "accountNumber")
-		try encryptColumn(table: "healthSavingsAccounts", column: "accountNumber")
-		try encryptColumn(table: "insurancePolicies", column: "policyNumber")
-		try encryptColumn(table: "vehicles", column: "vin", whereClause: "IS NOT NULL")
-		try encryptColumn(table: "devices", column: "serialNumber")
-		try encryptColumn(table: "utilities", column: "accountNumber")
-		try encryptColumn(table: "serviceProviders", column: "accountNumber")
-		try encryptColumn(table: "jobs", column: "salary", whereClause: "IS NOT NULL")
-	}
+	// This migration used to encrypt sensitive columns in place. The app no longer encrypts
+	// fields itself, so it does nothing now, but it has to stay registered: GRDB records
+	// applied migrations by identifier, and dropping one it has already seen is an error.
+	// `LegacyEncryptedFieldSweep` undoes what this used to do.
+	migrator.registerMigration("Encrypt sensitive fields") { _ in }
 
 	// MARK: - App Settings
 
@@ -1285,8 +1251,50 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		.execute(db)
 	}
 
+	// MARK: - Plaintext Salary Column
+
+	migrator.registerMigration("Add plaintext salary column") { db in
+		// Salaries are no longer encrypted, and neither existing column can hold a plain
+		// number: `salary` is a deployed CloudKit `DOUBLE` and `salaryEncrypted` a deployed
+		// `STRING`. `salaryEncrypted` stays behind rather than being dropped, so
+		// `LegacyEncryptedFieldSweep` still has something to decrypt and so devices on an
+		// older version keep showing a salary until they update.
+		try #sql(
+			"""
+			ALTER TABLE "jobs" ADD COLUMN "salaryAmount" REAL
+			"""
+		)
+		.execute(db)
+	}
+
 	try migrator.migrate(database)
 	return database
+}
+
+// MARK: - Data Protection
+
+/// Marks the database and its write-ahead log as encrypted at rest until the device has
+/// been unlocked once after a restart.
+///
+/// This is the same class the app container already gives its files, so it changes no
+/// behavior. It is written down because the guarantee matters: sensitive fields are no
+/// longer encrypted by the app itself, and this is what protects them on disk.
+///
+/// A stronger class is deliberately not used. `.complete` and `.completeUnlessOpen` make a
+/// file unreadable whenever the device is locked, and CloudKit wakes the app to sync while
+/// it is locked, which would turn every background sync into a failure.
+private nonisolated func applyDataProtection(to path: String) {
+	#if !os(macOS)
+		let urls = [URL(filePath: path)] + ["-wal", "-shm"].map { URL(filePath: path + $0) }
+		for url in urls where FileManager.default.fileExists(atPath: url.path()) {
+			withErrorReporting {
+				try FileManager.default.setAttributes(
+					[.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
+					ofItemAtPath: url.path()
+				)
+			}
+		}
+	#endif
 }
 
 // MARK: - Bootstrap

@@ -151,7 +151,7 @@ extension YouHQTests {
 				let bob = Profile(id: UUID(-2), name: "Bob")
 				let shares = [
 					ProfileShare(profile: alice, isShared: false, metadata: nil),
-					ProfileShare(profile: bob, isShared: false, metadata: nil),
+					ProfileShare(profile: bob, isShared: false, metadata: nil)
 				]
 				let selection = MockProfileSelection(
 					profiles: shares,
