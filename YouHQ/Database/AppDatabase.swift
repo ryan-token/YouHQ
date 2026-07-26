@@ -1285,12 +1285,15 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 /// it is locked, which would turn every background sync into a failure.
 private nonisolated func applyDataProtection(to path: String) {
 	#if !os(macOS)
-		let urls = [URL(filePath: path)] + ["-wal", "-shm"].map { URL(filePath: path + $0) }
-		for url in urls where FileManager.default.fileExists(atPath: url.path()) {
+		// Plain string paths, not a URL round-trip: `URL.path()` percent-encodes, and the
+		// database lives under "Application Support", so the encoded path never matches a
+		// real file and every attribute write would be silently skipped.
+		for filePath in [path, path + "-wal", path + "-shm"]
+		where FileManager.default.fileExists(atPath: filePath) {
 			withErrorReporting {
 				try FileManager.default.setAttributes(
 					[.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
-					ofItemAtPath: url.path()
+					ofItemAtPath: filePath
 				)
 			}
 		}

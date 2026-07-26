@@ -95,7 +95,7 @@ nonisolated struct LegacyEncryptedFieldSweep {
 		return rewritten
 	}
 
-	/// Moves salaries out of the encrypted `salaryEncrypted` column and into `salaryAmount`.
+	/// Moves salaries out of the retired `salaryEncrypted` column and into `salaryAmount`.
 	///
 	/// `salaryEncrypted` is cleared as each row is converted. Without that, a salary the user
 	/// later deletes would reappear on the next launch, because the old ciphertext would
@@ -114,12 +114,7 @@ nonisolated struct LegacyEncryptedFieldSweep {
 
 		var rewritten = 0
 		for (id, stored) in rows {
-			guard
-				let plaintext = decryptor.decrypt(stored),
-				let salary = Double(plaintext)
-			else {
-				continue
-			}
+			guard let salary = convertibleSalary(from: stored) else { continue }
 			try #sql(
 				"""
 				UPDATE "jobs" SET "salaryAmount" = \(bind: salary), "salaryEncrypted" = NULL
@@ -130,5 +125,21 @@ nonisolated struct LegacyEncryptedFieldSweep {
 			rewritten += 1
 		}
 		return rewritten
+	}
+
+	/// The salary a stored `salaryEncrypted` value represents, or `nil` when it is not this
+	/// device's to convert.
+	///
+	/// Besides ciphertext this device can authenticate, a bare numeric string also converts:
+	/// builds that predate field encryption stored the salary that way, and the no-op that
+	/// replaced the encryption migration leaves it in place for anyone updating straight
+	/// from one of them. Ciphertext this device cannot authenticate is rejected before the
+	/// numeric parse, so it can never be misread as a number.
+	private func convertibleSalary(from stored: String) -> Double? {
+		if let plaintext = decryptor.decrypt(stored) {
+			return Double(plaintext)
+		}
+		guard !LegacyFieldDecryptor.isLegacyCiphertext(stored) else { return nil }
+		return Double(stored)
 	}
 }

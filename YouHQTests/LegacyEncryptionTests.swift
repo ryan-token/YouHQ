@@ -184,6 +184,25 @@ extension YouHQTests {
 				#expect(storedCiphertext == nil)
 			}
 
+			@Test("A pre-encryption plaintext salary is converted even on a keyless device")
+			func movesPreEncryptionPlaintextSalary() async throws {
+				try await seedJob(in: database)
+				try await setRawValue("125000.5", column: "salaryEncrypted", table: "jobs", in: database)
+
+				let rewritten = await LegacyEncryptedFieldSweep(
+					decryptor: LegacyFieldDecryptor(key: nil)
+				)
+				.run()
+
+				#expect(rewritten == 1)
+				let job = try await database.read { db in
+					try #require(try Job.find(UUID(-2)).fetchOne(db))
+				}
+				#expect(job.salary == 125_000.5)
+				let stored = try await rawValue(column: "salaryEncrypted", table: "jobs", in: database)
+				#expect(stored == nil)
+			}
+
 			@Test("A salary already converted is not overwritten by stale ciphertext")
 			func doesNotOverwriteConvertedSalary() async throws {
 				let key = SymmetricKey(size: .bits256)
