@@ -31,6 +31,7 @@ extension YouHQTests {
 							id: UUID(-3),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							type: .renters,
 							provider: "State Farm"
 						)
@@ -38,6 +39,7 @@ extension YouHQTests {
 							id: UUID(-4),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							type: .home,
 							provider: "Allstate"
 						)
@@ -75,6 +77,7 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-3),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							type: .auto,
 							provider: "Geico"
@@ -109,7 +112,8 @@ extension YouHQTests {
 				try await database.write { db in
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-						InsurancePolicy.Draft(id: UUID(-2), profileID: UUID(-1), type: .health, provider: "Aetna")
+						InsurancePolicy.Draft(
+							id: UUID(-2), profileID: UUID(-1), residenceID: nil, vehicleID: nil, type: .health, provider: "Aetna")
 					}
 				}
 
@@ -139,6 +143,7 @@ extension YouHQTests {
 						id: UUID(-3),
 						profileID: UUID(-1),
 						residenceID: UUID(-2),
+						vehicleID: nil,
 						category: .homes,
 						name: "HOA Fees"
 					)
@@ -160,6 +165,7 @@ extension YouHQTests {
 					Other.Draft(
 						id: UUID(-3),
 						profileID: UUID(-1),
+						residenceID: nil,
 						vehicleID: UUID(-2),
 						category: .vehicles,
 						name: "Parking Permit"
@@ -178,9 +184,10 @@ extension YouHQTests {
 			try await database.write { db in
 				try db.seed {
 					Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
-					Other.Draft(id: UUID(-2), profileID: UUID(-1), category: .media, name: "Media item")
-					Other.Draft(id: UUID(-3), profileID: UUID(-1), category: .career, name: "Career item")
-					Other.Draft(id: UUID(-4), profileID: UUID(-1), category: .media, name: "Another media")
+					Other.Draft(id: UUID(-2), profileID: UUID(-1), residenceID: nil, vehicleID: nil, category: .media, name: "Media item")
+					Other.Draft(id: UUID(-3), profileID: UUID(-1), residenceID: nil, vehicleID: nil, category: .career, name: "Career item")
+					Other.Draft(
+						id: UUID(-4), profileID: UUID(-1), residenceID: nil, vehicleID: nil, category: .media, name: "Another media")
 				}
 			}
 
@@ -233,6 +240,7 @@ extension YouHQTests {
 						id: UUID(-3),
 						profileID: UUID(-1),
 						residenceID: UUID(-2),
+						vehicleID: nil,
 						category: .homes,
 						name: "HOA"
 					)
@@ -258,6 +266,7 @@ extension YouHQTests {
 						id: UUID(-3),
 						profileID: UUID(-1),
 						residenceID: UUID(-2),
+						vehicleID: nil,
 						category: .homes,
 						name: "HOA Fees"
 					)

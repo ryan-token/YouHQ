@@ -72,6 +72,7 @@ extension YouHQTests {
 						PaintColor.Draft(
 							id: UUID(-3),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							manufacturer: "Behr",
 							colorName: "Swiss Coffee"
 						)
@@ -98,7 +99,7 @@ extension YouHQTests {
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
-						PaintColor.Draft(id: UUID(-3), residenceID: UUID(-2))
+						PaintColor.Draft(id: UUID(-3), residenceID: UUID(-2), vehicleID: nil)
 					}
 				}
 

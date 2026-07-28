@@ -157,6 +157,7 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-3),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							type: .auto,
 							provider: "State Farm"

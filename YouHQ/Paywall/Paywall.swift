@@ -13,7 +13,6 @@ struct Paywall: View {
 
 	@State private var showContent = false
 	@State private var shouldRainConfetti = false
-	@State private var refreshTrigger = UUID()
 
 	let fromOnboarding: Bool
 	let shouldShowSkipButton: Bool
@@ -45,12 +44,13 @@ struct Paywall: View {
 			.opacity(showContent ? 1 : 0)
 			.storeButton(.hidden, for: .cancellation)
 			.storeButton(.visible, for: .restorePurchases)
-			.id(refreshTrigger)
-			.onAppear {
-				refreshTrigger = UUID() // SubscriptionStoreView loses the active plan without this
-			}
 			.onInAppPurchaseCompletion { _, result in
-				handleIAPResult(result)
+				await handleIAPResult(result)
+			}
+			.subscriptionStatusTask(for: paywallManager.subscriptionGroupID) { _ in
+				// Catches what never arrives as a purchase result: restores, renewals, lapses,
+				// and purchases made on the customer's other devices.
+				await paywallManager.refreshEntitlements()
 			}
 
 			if shouldRainConfetti {
@@ -84,11 +84,21 @@ struct Paywall: View {
 		}
 	}
 
-	private func handleIAPResult(_ result: Result<Product.PurchaseResult, any Error>) {
+	private func handleIAPResult(_ result: Result<Product.PurchaseResult, any Error>) async {
 		switch result {
-		case .success(.success(let transaction)):
-			rainConfetti()
-			logStoreKitTransaction(transaction)
+		case .success(.success(let verificationResult)):
+			if case .unverified(_, let error) = verificationResult {
+				Analytics.logError(id: .IAPUnverified, message: error.localizedDescription)
+			}
+
+			// Only celebrate once the entitlement has actually landed, since a purchase
+			// succeeding and the app unlocking came apart badly enough to be worth checking.
+			if await paywallManager.record(verificationResult) {
+				rainConfetti()
+			}
+
+			// Advance either way. The customer has been charged by this point, so stranding
+			// them on the paywall step helps nobody.
 			if fromOnboarding {
 				onComplete?()
 			}
@@ -109,15 +119,6 @@ struct Paywall: View {
 		Task {
 			try? await Task.sleep(for: .seconds(animationDuration))
 			shouldRainConfetti = false
-		}
-	}
-
-	private func logStoreKitTransaction(_ transaction: VerificationResult<StoreKit.Transaction>) {
-		do {
-			let verifiedTransaction = try transaction.payloadValue
-			Analytics.trackPurchase(for: verifiedTransaction)
-		} catch {
-			Analytics.logError(id: .IAPUnverified, message: error.localizedDescription)
 		}
 	}
 }

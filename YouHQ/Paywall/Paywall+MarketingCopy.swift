@@ -30,6 +30,12 @@ extension Paywall {
 						Spacer()
 						ThankYouBadge()
 							.animation(.default, value: paywallManager.hasUnlockedPremium)
+						// Onboarding hides the dismiss button, so without this a customer who
+						// unlocks premium here, most easily by restoring, has no way forward.
+						if shouldShowSkipButton {
+							SkipButton(title: "Continue", onComplete: onComplete)
+						}
+						Spacer()
 					}
 				} else {
 					VStack(spacing: 8) {

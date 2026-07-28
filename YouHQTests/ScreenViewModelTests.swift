@@ -191,6 +191,8 @@ extension YouHQTests {
 						Other.Draft(
 							id: UUID(-4),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							category: .career,
 							name: "Cert"
 						)
@@ -223,11 +225,15 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-6),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							type: .health
 						)
 						Other.Draft(
 							id: UUID(-7),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							category: .money,
 							name: "Cash"
 						)
@@ -277,12 +283,14 @@ extension YouHQTests {
 							id: UUID(-5),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							type: .renters
 						)
 						Other.Draft(
 							id: UUID(-6),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							category: .homes,
 							name: "Pool"
 						)
@@ -375,18 +383,21 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-3),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							type: .auto
 						)
 						InsurancePolicy.Draft(
 							id: UUID(-4),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							type: .auto
 						)
 						Other.Draft(
 							id: UUID(-5),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							category: .vehicles,
 							name: "Dashcam"
@@ -421,12 +432,14 @@ extension YouHQTests {
 						MaintenanceItem.Draft(
 							id: UUID(-3),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Past Due Filter",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
 							id: UUID(-4),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Future Item",
 							dueDate: futureDate
 						)
@@ -453,18 +466,21 @@ extension YouHQTests {
 						MaintenanceItem.Draft(
 							id: UUID(-3),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Past Due",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
 							id: UUID(-4),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Upcoming Filter",
 							dueDate: upcomingDate
 						)
 						MaintenanceItem.Draft(
 							id: UUID(-5),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Far Future",
 							dueDate: farFuture
 						)
@@ -491,24 +507,28 @@ extension YouHQTests {
 						MaintenanceItem.Draft(
 							id: UUID(-3),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Past Due",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
 							id: UUID(-4),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Upcoming",
 							dueDate: upcomingDate
 						)
 						MaintenanceItem.Draft(
 							id: UUID(-5),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Far Future Other",
 							dueDate: farFuture
 						)
 						MaintenanceItem.Draft(
 							id: UUID(-6),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "No Date Other"
 						)
 					}
@@ -533,6 +553,7 @@ extension YouHQTests {
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Toyota")
 						MaintenanceItem.Draft(
 							id: UUID(-3),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							name: "Oil Change",
 							dueDate: pastDate
@@ -718,6 +739,8 @@ extension YouHQTests {
 						Other.Draft(
 							id: UUID(-5),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							category: .media,
 							name: "Extra"
 						)
