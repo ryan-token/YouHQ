@@ -109,6 +109,49 @@ extension YouHQTests {
 				#expect(stored == "9876")
 			}
 
+			/// The sweep addresses its tables by name in raw SQL, so a name that drifts out of
+			/// step with the schema fails silently: the write throws, `withErrorReporting`
+			/// swallows it, and the run reports nothing converted. Only exercising every entry
+			/// catches that, and the rows are seeded through the real model types so the schema
+			/// is what the sweep's list is being checked against.
+			@Test(
+				"Every column the sweep names is converted",
+				arguments: [
+					("bankAccounts", "accountNumber"),
+					("bankAccounts", "routingNumber"),
+					("investmentAccounts", "accountNumber"),
+					("healthSavingsAccounts", "accountNumber"),
+					("insurancePolicies", "policyNumber"),
+					("vehicles", "vin"),
+					("devices", "serialNumber"),
+					("utilities", "accountNumber"),
+					("serviceProviders", "accountNumber")
+				]
+			)
+			func convertsEveryNamedColumn(table: String, column: String) async throws {
+				let key = SymmetricKey(size: .bits256)
+				let id = try #require(seededRowID[table], "no seeded row for \(table)")
+				try await seedEncryptedTables(in: database)
+				try await setRawValue(
+					try legacyCiphertext(for: "secret-value", key: key),
+					column: column,
+					table: table,
+					id: id,
+					in: database
+				)
+
+				let rewritten = await LegacyEncryptedFieldSweep(
+					decryptor: LegacyFieldDecryptor(key: key)
+				)
+				.run()
+
+				// Every other seeded column is empty or null, so the sweep has exactly one
+				// value to convert and the count doubles as proof it found the right one.
+				#expect(rewritten == 1, "\(table).\(column) was not converted")
+				let stored = try await rawValue(column: column, table: table, id: id, in: database)
+				#expect(stored == "secret-value")
+			}
+
 			@Test("Values encrypted with somebody else's key are left exactly as they are")
 			func leavesSharedValuesAlone() async throws {
 				try await seedBankAccount(in: database)
@@ -294,6 +337,43 @@ private func seedBankAccount(in database: any DatabaseWriter) async throws {
 	}
 }
 
+/// The row the coverage test puts ciphertext into, for each table the sweep names.
+private let seededRowID: [String: UUID] = [
+	"bankAccounts": UUID(-10),
+	"investmentAccounts": UUID(-11),
+	"healthSavingsAccounts": UUID(-12),
+	"insurancePolicies": UUID(-13),
+	"vehicles": UUID(-14),
+	"devices": UUID(-15),
+	"utilities": UUID(-16),
+	"serviceProviders": UUID(-17)
+]
+
+/// Seeds one row in every table the sweep touches, built from the real model types rather
+/// than from the sweep's own list of columns, so the two can be checked against each other.
+private func seedEncryptedTables(in database: any DatabaseWriter) async throws {
+	try await database.write { db in
+		try db.seed {
+			Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
+			Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
+			BankAccount.Draft(id: UUID(-10), profileID: UUID(-1), bankName: "Chase")
+			InvestmentAccount.Draft(id: UUID(-11), profileID: UUID(-1), institution: "Vanguard")
+			HealthSavingsAccount.Draft(id: UUID(-12), profileID: UUID(-1), institution: "Optum")
+			InsurancePolicy.Draft(
+				id: UUID(-13),
+				profileID: UUID(-1),
+				residenceID: nil,
+				vehicleID: nil,
+				type: .health
+			)
+			Vehicle.Draft(id: UUID(-14), profileID: UUID(-1), make: "Toyota")
+			Device.Draft(id: UUID(-15), profileID: UUID(-1), brand: "Apple")
+			Utility.Draft(id: UUID(-16), residenceID: UUID(-2), provider: "Duke Energy")
+			ServiceProvider.Draft(id: UUID(-17), profileID: UUID(-1), name: "AT&T")
+		}
+	}
+}
+
 private func seedJob(in database: any DatabaseWriter) async throws {
 	try await database.write { db in
 		try db.seed {
@@ -305,16 +385,21 @@ private func seedJob(in database: any DatabaseWriter) async throws {
 
 /// Writes straight past the `@Column(as:)` representation, which is the only way to stand up
 /// a row that still holds ciphertext.
+///
+/// `COLLATE NOCASE` because `UUID.uuidString` is uppercase and SQLiteData stores these
+/// lowercase, so a plain `=` silently matches nothing for any id whose hex contains a
+/// letter — which reads as a missing row rather than as a broken helper.
 private func setRawValue(
 	_ value: String,
 	column: String,
 	table: String = "bankAccounts",
+	id: UUID = UUID(-2),
 	in database: any DatabaseWriter
 ) async throws {
 	try await database.write { db in
 		try db.execute(
-			sql: "UPDATE \"\(table)\" SET \"\(column)\" = ? WHERE \"id\" = ?",
-			arguments: [value, UUID(-2).uuidString]
+			sql: "UPDATE \"\(table)\" SET \"\(column)\" = ? WHERE \"id\" = ? COLLATE NOCASE",
+			arguments: [value, id.uuidString]
 		)
 	}
 }
@@ -322,13 +407,14 @@ private func setRawValue(
 private func rawValue(
 	column: String,
 	table: String = "bankAccounts",
+	id: UUID = UUID(-2),
 	in database: any DatabaseWriter
 ) async throws -> String? {
 	try await database.read { db in
 		try String.fetchOne(
 			db,
-			sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ?",
-			arguments: [UUID(-2).uuidString]
+			sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ? COLLATE NOCASE",
+			arguments: [id.uuidString]
 		)
 	}
 }

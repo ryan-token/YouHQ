@@ -1,6 +1,6 @@
 # Agent Guide for YouHQ
 
-This repository contains a multi-platform Xcode project written with Swift and SwiftUI. The app works across iOS, iPadOS, macOS, and even visionOS. Please follow the guidelines below so that the development experience is built on modern, safe API usage. Use the skills listed in the `Available Skills` section at the bottom of the file for in-depth skill knowledge.
+This repository contains a multi-platform Xcode project written with Swift and SwiftUI. The app works across iOS, iPadOS, macOS, and even visionOS. Please follow the guidelines below so that the development experience is built on modern, safe API usage. Reach for skills for depth: this repo ships `youhq-architecture` (layout, schema, sync wiring) and `youhq-app-store-copy`. Library and language practice comes from `pfw-sqlite-data`, `swiftui-pro`, `swift-concurrency-pro`, and `swift-testing-pro`, which are installed per-developer rather than vendored here.
 
 ## Project Overview
 
@@ -12,31 +12,15 @@ The app works across iOS, iPadOS, macOS, and even visionOS. It's written with mo
 
 ## Architecture
 
-### Database Layer
-- **SQLiteData** (PointFreeCo) is the persistence layer, wrapping GRDB - use the `pfw-sqlite-data` skill for reference
-- Database initialization happens in `Database/AppDatabase.swift` via `appDatabase()` function
-- All models use the `@Table` macro from SQLiteData (see `Database/Schema.swift`)
-- Database is bootstrapped at app launch in `YouHQApp.init()` using PointFreeCo's Dependencies library
-- Foreign key relationships are enforced with CASCADE deletes
-- Triggers automatically update profile `updatedAt` timestamps when related data changes
+Use the **`youhq-architecture` skill** for the feature-folder layout, the schema's
+ownership graph, migration and trigger rules, and the CloudKit sync/sharing wiring.
 
-### Core Tables
-- **Profile**: Root entity, contains user profile(s) with `createdAt` and `updatedAt` timestamps
-- **Residence, Vehicle, BankAccount, InvestmentAccount, HealthSavingsAccount, Job, InsurancePolicy**: All reference `profileID`
-- **Utility**: References `residenceID` (child of Residence)
-- **Device, ServiceProvider, Subscription**: Reference `profileID`
+Persistence is **SQLiteData** (PointFreeCo) wrapping GRDB — use the `pfw-sqlite-data`
+skill for library reference. Two things bite often enough to keep here:
 
-### Feature Organization
-Code is organized by feature area in folders:
-- `Residence/` - Home and utility management
-- `Vehicle/` - Vehicle tracking
-- `Money/` - Financial accounts (banking, investments, HSA)
-- `Media/` - Devices, service providers, subscriptions
-- `Career/` - Job history
-
-Each feature typically has:
-- `*Screen.swift` - SwiftUI view
-- `*ViewModel.swift` - `@Observable` class containing business logic
+- Foreign keys cascade on delete, so removing a `Profile` removes everything under it.
+- Triggers keep `Profile.updatedAt` fresh when related rows change, and every one of
+  them must be sync-guarded or it churns CloudKit. See the skill before writing one.
 
 ### View Model Pattern
 View models follow the SQLiteData + Observation pattern:
@@ -49,34 +33,7 @@ View models follow the SQLiteData + Observation pattern:
 
 See `Residence/ResidenceViewModel.swift` for reference implementation.
 
-### Dependencies
-- **swift-dependencies** (PointFreeCo): Dependency injection via `@Dependency` property wrapper
-- **SQLiteData**: Type-safe SQLite queries with observable collections
-- Database is prepared with `prepareDependencies { try! $0.bootstrapDatabase() }` in app initialization
-- Foreign key relationships and indexes are created in migrations
-
-### App Entry
-- `YouHQApp.swift`: Main `@main` entry point, bootstraps database
-- `AppEntryPoint.swift`: Root `TabView` with 5 tabs (Homes, Vehicles, Money, Media, Career)
-- Each tab wraps its screen in a `NavigationStack`
-
 ## Code Conventions
-
-### Modern Swift/SwiftUI (iOS 26+)
-Target **iOS 26.0 or later** with **Swift 6.2+**. Follow all conventions from AGENTS.md, including:
-- Swift concurrency (no GCD)
-- `@Observable` classes (never `ObservableObject`)
-- Modern SwiftUI APIs (`foregroundStyle`, `clipShape(.rect)`, `Tab` API)
-- Static member lookup (`.circle` not `Circle()`)
-- No force unwraps unless unrecoverable
-
-### Database Operations
-- Use `#sql()` macro for raw SQL in migrations
-- Use SQLiteData's query DSL for type-safe queries: `.where { }`, `.order { }`, `.select { }`
-- Always use `.eq()` for equality comparisons in queries
-- Wrap writes in `database.write { db in }` blocks
-- Use `.insert { }`, `.update { }`, `.delete()` fluent API
-- Execute queries with `.execute(db)`
 
 ### Enums
 All database enum types:
@@ -85,7 +42,8 @@ All database enum types:
 
 ### Migrations
 - Add new migrations via `migrator.registerMigration("Description") { db in }`
-- In DEBUG builds, `eraseDatabaseOnSchemaChange = true` automatically handles schema changes
+- Migrations are additive and never edited after shipping — there is no
+  erase-on-schema-change escape hatch, in DEBUG or anywhere else
 - Create indexes for foreign keys and common query patterns
 - Use partial indexes with `WHERE` clauses for boolean flags
 
@@ -98,10 +56,6 @@ All database enum types:
 - Boolean flags use `INTEGER` in SQLite (1/0)
 - The app uses strict mode for SQLite tables
 
-## SwiftLint
-No SwiftLint configuration is currently present. If adding linting, create `.swiftlint.yml` and add build phase in Xcode.
-
-
 ## Role
 
 You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, SQLiteData, and related frameworks. You are an expert at building multi-platform native apps across iOS, iPadOS, macOS, and visionOS with SwiftUI. Your code must always adhere to Apple's Human Interface Guidelines and App Review guidelines.
@@ -109,7 +63,7 @@ You are a **Senior Apple Platforms Engineer**, specializing in Swift, SwiftUI, S
 
 ## Core instructions
 
-These are high-level instructions. For in-depth skill implementations, like best practices across SwiftUI, SQLiteData, Swift Concurrency and more, refer to the `## Available Skills` block at the bottom of this file.
+These are high-level instructions. For in-depth practice across SwiftUI, SQLiteData, and Swift concurrency, use the skills named in the intro above.
 
 - Target iOS 26.0 or later, iPadOS 26.0 or later, macOS 26.0 or later, and visionOS 26.0 or later. (Yes, they definitely exist.)
 - Swift 6.2 or later, using modern Swift concurrency.
@@ -163,96 +117,38 @@ Persistence, CloudKit Sync, and CloudKit Sharing is handled by SQLiteData from P
 - Using `@FetchAll` or `@FetchOne` from an `@Observable` View Model should always be marked with `@ObservationIgnored`
 - CloudKit Sync is configured via the SyncEngine at YouHQApp.swift
 - CloudKit Sharing is configured via CKShare Shared Records, managed via AppDelegate.swift and SQLiteData's CloudSharingView
-- You can use the `@Selection` macro to mark a custom struct as a way to join multiple tables into one `@FetchAll` request. That might look like this:
-
-```swift
-@Selection
-struct ProfileShare { // swiftlint:disable:this nesting
-	let profile: Profile
-	let isShared: Bool
-}
-
-func loadProfiles() async {
-	_ = await withErrorReporting {
-		try await $profiles.load(
-			Profile
-				.group(by: \.id)
-				.leftJoin(SyncMetadata.all) {
-					$0.syncMetadataID.eq($1.id)
-				}
-				.select {
-					ProfileShare.Columns(
-						profile: $0,
-						isShared: $1.isShared.ifnull(false)
-					)
-				},
-			animation: .default
-		)
-	}
-}
-```
+- Join multiple tables into one `@FetchAll` with the `@Selection` macro — see the
+  `youhq-architecture` skill for the pattern and a worked example
 
 Again, refer to the `pfw-sqlite-data` skill for an in-depth reference.
 
 ## Project structure
 
-- Use a consistent project structure, with folder layout determined by app features.
-- Follow strict naming conventions for types, properties, methods, and SQLiteData models.
 - Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
 - Write unit tests for core application logic. Use Swift Testing instead of XCTest.
 - Only write UI tests if unit tests are not possible.
-- Add code comments and documentation comments as needed.
-- If the project requires secrets such as API keys, never include them in the repository.
-- Follow the SwiftLint and swift-format rules defined in the project at `.swiftlint.yml` and `.swift-format`
+- Never commit secrets. `Secrets.xcconfig` is local-only; `Secrets.xcconfig.example` is the tracked template.
 
 
 ## PR instructions
 
-- If installed, make sure SwiftLint returns no warnings or errors before committing.
+- SwiftLint is configured at `.swiftlint.yml`. Make sure it returns no warnings or errors before committing.
 
 
 ## Marketing Information
 
-YouHQ is your personal command center for life's important details. Track everything from home maintenance and vehicles to career history and where all of your money is, all in one place.
-
-🔒 Your data is your own. All of your data stays on your devices and is synced securely over iCloud via your Apple Account.
-
-YouHQ works across iPhone, iPad, Mac, and even Apple Vision Pro. Your data will sync seamlessly between platforms, and you can even share your data with others securely over iCloud.
-
-### Home
-* Track multiple residences with utilities, insurance, paint colors, and more
-* Schedule maintenance reminders and get notifications when they're due
-* See monthly total cost of ownership for each property
-* Attach photos to track visual details
-
-### Vehicles
-* Track multiple vehicles with insurance and paint colors
-* Schedule maintenance and service reminders
-* View monthly cost of ownership per vehicle
-* Attach photos for records and reference
-
-### Money
-* Track bank accounts and investment accounts
-* Manage HSA/FSA accounts
-* Store insurance policy information
-* Monitor all financial accounts in one place
-
-### Media
-* Track streaming services and subscriptions
-* Manage devices and service providers
-* See total monthly media costs at a glance
-
-### Career
-* Track job history and career milestones
-* View salary history over time in a bar chart
-* Store important career-related photos
+App Store copy, the privacy promise, and the per-category feature bullets live in the
+**`youhq-app-store-copy` skill**. Use it for any user-facing description of the app.
 
 
 ## Development Commands
 
 ### Building and Running
+
+Pipe every `xcodebuild`/`swift build` invocation through `xcsift` for structured output.
+
 ```bash
-xcodebuild build -scheme YouHQ -destination "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.2"
+xcodebuild build -scheme YouHQ -destination "platform=iOS Simulator,name=iPhone 17 Pro Max,OS=26.5" | xcsift
 
 # Run on simulator (after building)
 # Use Xcode or: xcrun simctl boot <device_id> && xcrun simctl install booted <path_to_app>
@@ -261,10 +157,13 @@ xcodebuild build -scheme YouHQ -destination "platform=iOS Simulator,name=iPhone 
 xcodebuild clean -project YouHQ.xcodeproj -scheme YouHQ
 ```
 
+Installed simulator runtimes are iOS 26.5 and 27.0 — confirm with
+`xcrun simctl list runtimes` rather than assuming a version.
+
 ### Formatting and pruning dead code
 ```bash
-# Format the entire project after every change
-swift-format format --recursive --in-place /Users/home/Developer/apple/projects/YouHQ/YouHQ
+# Format the entire project after every change (run from the repo root)
+swift-format format --recursive --in-place YouHQ
 
 # Check for unused code (always pass a simulator destination — see note below)
 periphery scan -- -destination 'platform=iOS Simulator,name=iPhone 17'
@@ -276,8 +175,8 @@ periphery scan -- -destination 'platform=iOS Simulator,name=iPhone 17'
 Use Swift Testing framework (not XCTest) for new tests:
 ```bash
 # Run all tests
-xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 15 Pro'
+xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 17 Pro' | xcsift
 
 # Run specific test
-xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 15 Pro' -only-testing:YouHQTests/TestName
+xcodebuild test -project YouHQ.xcodeproj -scheme YouHQ -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:YouHQTests/TestName | xcsift
 ```

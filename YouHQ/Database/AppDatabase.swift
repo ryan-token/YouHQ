@@ -39,7 +39,6 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 	}
 
 	let database = try SQLiteData.defaultDatabase(configuration: configuration)
-	applyDataProtection(to: database.path)
 	print(
 		"""
 		YouHQ database:
@@ -1268,6 +1267,9 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 	}
 
 	try migrator.migrate(database)
+	// After migrating, not before: the `-wal` and `-shm` files only exist once something has
+	// been written, and the loop below silently skips files that are not there yet.
+	applyDataProtection(to: database.path)
 	return database
 }
 

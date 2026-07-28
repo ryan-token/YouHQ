@@ -9,13 +9,8 @@ import SwiftUI
 
 extension Paywall {
 	struct SkipButton: View {
-		let title: String
+		var title = "Skip"
 		let onComplete: (() -> Void)?
-
-		init(title: String = "Skip", onComplete: (() -> Void)?) {
-			self.title = title
-			self.onComplete = onComplete
-		}
 
 		var body: some View {
 			Button {
