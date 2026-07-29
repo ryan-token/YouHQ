@@ -194,6 +194,7 @@
 				)
 
 				PaintColor.Draft(
+					profileID: nil,
 					residenceID: nil,
 					vehicleID: civicID,
 					manufacturer: "",
@@ -209,6 +210,7 @@
 				)
 
 				PaintColor.Draft(
+					profileID: nil,
 					residenceID: nil,
 					vehicleID: civicID,
 					manufacturer: "",
@@ -224,6 +226,7 @@
 				)
 
 				MaintenanceItem.Draft(
+					profileID: nil,
 					residenceID: nil,
 					vehicleID: civicID,
 					name: "Oil Change",
@@ -238,6 +241,7 @@
 				)
 
 				MaintenanceItem.Draft(
+					profileID: nil,
 					residenceID: nil,
 					vehicleID: civicID,
 					name: "AC Issue",
@@ -252,6 +256,7 @@
 				)
 
 				MaintenanceItem.Draft(
+					profileID: nil,
 					residenceID: nil,
 					vehicleID: civicID,
 					name: "Some third thing",

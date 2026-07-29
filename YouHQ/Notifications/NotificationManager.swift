@@ -5,6 +5,7 @@
 //  Created by Ryan Token on 1/20/26.
 //
 
+import CloudKit
 import Dependencies
 import SQLiteData
 import UserNotifications
@@ -236,12 +237,55 @@ final class NotificationManager {
 
 	// MARK: - Refresh All
 
+	/// The profiles somebody else shared with this user.
+	///
+	/// Returns empty when sharing information cannot be read: `SyncMetadata` lives in a
+	/// metadatabase that tests and previews do not attach, and absent that, every profile is
+	/// the user's own.
+	private func profileIDsSharedWithMe() async -> Set<Profile.ID> {
+		let profiles: [ProfileShare]
+		do {
+			profiles = try await database.read { db in
+				try ProfileShare.allWithSyncMetadata.fetchAll(db)
+			}
+		} catch {
+			return []
+		}
+
+		var ids: Set<Profile.ID> = []
+		for profile in profiles {
+			guard let share = profile.metadata?.share else { continue }
+			if share.currentUserParticipant != share.owner {
+				ids.insert(profile.id)
+			}
+		}
+		return ids
+	}
+
 	/// Refresh notifications for all maintenance items and the update reminder.
 	/// This should be called after CloudKit sync or on app launch.
 	func refreshAllNotifications() async {
 		await withErrorReporting {
-			let items = try await database.read { db in
+			// Items belonging to a profile somebody shared with this user are theirs to see,
+			// not to be reminded about. Before those records reached share recipients at all
+			// this filter had nothing to do.
+			//
+			// Expressed as an exclusion rather than an allow-list on purpose: `SyncMetadata`
+			// lives in a metadatabase that tests and previews do not attach, and absent
+			// sharing information every profile is the user's own.
+			let sharedWithMeProfileIDs = await profileIDsSharedWithMe()
+			let allItems: [MaintenanceItem] = try await database.read { db in
 				try MaintenanceItem.fetchAll(db)
+			}
+			var items: [MaintenanceItem] = []
+			for item in allItems {
+				guard let profileID = item.profileID else {
+					items.append(item)
+					continue
+				}
+				if !sharedWithMeProfileIDs.contains(profileID) {
+					items.append(item)
+				}
 			}
 
 			// Build the set of identifiers we expect to be pending so we can

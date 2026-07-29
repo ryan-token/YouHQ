@@ -38,6 +38,7 @@ class PaintColorViewModel {
 	func createDraft(for residenceID: UUID) -> PaintColor {
 		PaintColor(
 			id: UUID(),
+			profileID: nil,
 			residenceID: residenceID,
 			vehicleID: nil,
 			manufacturer: "",
@@ -58,6 +59,7 @@ class PaintColorViewModel {
 	func createVehicleDraft(for vehicleID: UUID) -> PaintColor {
 		PaintColor(
 			id: UUID(),
+			profileID: nil,
 			residenceID: nil,
 			vehicleID: vehicleID,
 			manufacturer: "",

@@ -81,6 +81,7 @@ extension MaintenanceItemsScreen {
 			sheetTransitionSourceID = "addButton"
 			draftMaintenanceItem = MaintenanceItem(
 				id: UUID(),
+				profileID: nil,
 				residenceID: residenceID,
 				vehicleID: vehicleID,
 				name: "",

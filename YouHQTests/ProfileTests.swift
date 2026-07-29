@@ -130,7 +130,7 @@ extension YouHQTests {
 						Device.Draft(id: UUID(-8), profileID: UUID(-1), type: .computer, brand: "Apple")
 						ServiceProvider.Draft(id: UUID(-9), profileID: UUID(-1), providerType: .internet, name: "Comcast")
 						Subscription.Draft(id: UUID(-10), profileID: UUID(-1), name: "Netflix")
-						InsurancePolicy.Draft(id: UUID(-11), profileID: UUID(-1), type: .health)
+						InsurancePolicy.Draft(id: UUID(-11), profileID: UUID(-1), residenceID: nil, vehicleID: nil, type: .health)
 					}
 				}
 

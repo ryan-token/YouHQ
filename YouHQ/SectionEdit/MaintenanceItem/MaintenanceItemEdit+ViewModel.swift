@@ -118,6 +118,7 @@ extension MaintenanceItemEdit {
 						try MaintenanceItem.insert {
 							MaintenanceItem.Draft(
 								id: item.id,
+								profileID: item.profileID,
 								residenceID: item.residenceID,
 								vehicleID: item.vehicleID,
 								name: name,

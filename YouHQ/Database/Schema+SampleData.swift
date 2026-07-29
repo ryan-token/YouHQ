@@ -217,6 +217,7 @@ extension InsurancePolicy {
 extension MaintenanceItem {
 	static let residenceSampleData = MaintenanceItem(
 		id: UUID(),
+		profileID: Profile.sampleData.id,
 		residenceID: Residence.sampleData.id,
 		vehicleID: nil,
 		name: "HVAC Filter Replacement",
@@ -241,6 +242,7 @@ extension MaintenanceItem {
 
 	static let vehicleSampleData = MaintenanceItem(
 		id: UUID(),
+		profileID: Profile.sampleData.id,
 		residenceID: nil,
 		vehicleID: Vehicle.sampleData.id,
 		name: "Tire Rotation",
@@ -267,6 +269,7 @@ extension MaintenanceItem {
 extension PaintColor {
 	static let sampleData = PaintColor(
 		id: UUID(),
+		profileID: Profile.sampleData.id,
 		residenceID: Residence.sampleData.id,
 		vehicleID: nil,
 		manufacturer: "Sherwin-Williams",
@@ -293,6 +296,7 @@ extension PaintColor {
 
 	static let kitchenSampleData = PaintColor(
 		id: UUID(),
+		profileID: Profile.sampleData.id,
 		residenceID: Residence.sampleData.id,
 		vehicleID: nil,
 		manufacturer: "Benjamin Moore",
@@ -319,6 +323,7 @@ extension PaintColor {
 
 	static let bedroomSampleData = PaintColor(
 		id: UUID(),
+		profileID: Profile.sampleData.id,
 		residenceID: Residence.sampleData.id,
 		vehicleID: nil,
 		manufacturer: "Sherwin-Williams",

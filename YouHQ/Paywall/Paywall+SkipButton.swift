@@ -9,13 +9,14 @@ import SwiftUI
 
 extension Paywall {
 	struct SkipButton: View {
+		var title = "Skip"
 		let onComplete: (() -> Void)?
 
 		var body: some View {
 			Button {
 				onComplete?()
 			} label: {
-				HQText("Skip")
+				HQText(title)
 					.foregroundStyle(.white.opacity(0.7))
 					.fontWeight(.medium)
 					.padding(.horizontal)

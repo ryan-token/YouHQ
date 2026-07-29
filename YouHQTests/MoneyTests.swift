@@ -225,6 +225,8 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-4),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							type: .health,
 							provider: "Aetna"
 						)
@@ -233,12 +235,14 @@ extension YouHQTests {
 							id: UUID(-5),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							type: .renters
 						)
 						// Vehicle policy
 						InsurancePolicy.Draft(
 							id: UUID(-6),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-3),
 							type: .auto
 						)

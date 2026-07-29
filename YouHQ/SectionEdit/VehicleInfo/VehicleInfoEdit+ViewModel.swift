@@ -25,6 +25,11 @@ extension VehicleInfoEdit {
 		var backgroundColor: Color
 		var vin: String
 		var costType: VehicleCostType
+
+		// Value as loaded, so `save()` can leave the field out of the update when untouched. A
+		// VIN this device cannot decrypt reads as empty, and writing that back would erase it
+		// for whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedVIN: String
 		var monthlyCost: Double?
 		var currencyCode: String?
 		var url: String
@@ -62,6 +67,7 @@ extension VehicleInfoEdit {
 			self.color = vehicle.color ?? ""
 			self.backgroundColor = Color(databaseValue: vehicle.backgroundColor)
 			self.vin = vehicle.vin ?? ""
+			self.loadedVIN = vehicle.vin ?? ""
 			self.costType = vehicle.costType
 			self.monthlyCost = vehicle.monthlyCost
 			self.currencyCode = vehicle.currencyCode
@@ -88,7 +94,9 @@ extension VehicleInfoEdit {
 							$0.year = year.isEmpty ? nil : year
 							$0.color = color.isEmpty ? nil : color
 							$0.backgroundColor = backgroundColor.databaseValue
-							$0.vin = #bind(vin.isEmpty ? nil : vin)
+							if vin != loadedVIN {
+								$0.vin = #bind(vin.isEmpty ? nil : vin)
+							}
 							$0.monthlyCost = monthlyCost
 							$0.currencyCode = currencyCode
 							$0.costType = costType

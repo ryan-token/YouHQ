@@ -83,7 +83,12 @@ extension AddVehicleSheet {
 							Asset.Draft(
 								id: UUID(),
 								profileID: selectedProfileID,
+								residenceID: nil,
 								vehicleID: vehicleID,
+								insurancePolicyID: nil,
+								maintenanceItemID: nil,
+								deviceID: nil,
+								otherID: nil,
 								imageData: photoData
 							)
 						}

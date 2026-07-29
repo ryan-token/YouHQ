@@ -226,7 +226,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "100 Test St")
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Change HVAC filter"
@@ -251,7 +251,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "100 Test St")
 						PaintColor.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							manufacturer: "Benjamin Moore",

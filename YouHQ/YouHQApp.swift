@@ -43,6 +43,13 @@ struct YouHQApp: App {
 		WindowGroup {
 			AppEntryPoint()
 				.environment(paywallManager)
+				.task {
+					// Has to run after `initializeSQLiteData`, because only writes made once
+					// the sync engine exists are uploaded to iCloud.
+					guard context == .live else { return }
+					await LegacyEncryptedFieldSweep().run()
+					await ShareParentSweep().run()
+				}
 				.task(id: scenePhase) {
 					await paywallManager.setup()
 					await refreshNotifications()
@@ -107,11 +114,19 @@ struct YouHQApp: App {
 	}
 
 	private func initializeSQLiteData() {
-		// Initialize the field encryptor before the database so the encryption key
-		// is available for @Column(as:) representations and migrations.
-		_ = FieldEncryptor.shared
+		// Reported before crashing rather than instead of it: nothing can run without a
+		// database, but a migration that throws throws on every launch, and without this the
+		// crash is indistinguishable from any other launch failure.
+		do {
+			try openDatabaseAndSyncEngine()
+		} catch {
+			Analytics.logError(id: .databaseBootstrapFailed, message: "\(error)")
+			fatalError("Database bootstrap failed: \(error)")
+		}
+	}
 
-		try! prepareDependencies { // swiftlint:disable:this force_try
+	private func openDatabaseAndSyncEngine() throws {
+		try prepareDependencies {
 			try $0.bootstrapDatabase()
 			$0.defaultSyncEngine = try SyncEngine(
 				for: $0.defaultDatabase,

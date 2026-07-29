@@ -11,7 +11,7 @@ import SwiftUI
 
 // Join: Get all profiles, whether they are shared or not, and the sync metadata for shared participants
 @Selection
-struct ProfileShare: Identifiable {
+nonisolated struct ProfileShare: Identifiable {
 	let profile: Profile
 	let isShared: Bool
 	let metadata: SyncMetadata?
@@ -26,7 +26,7 @@ struct ProfileShare: Identifiable {
 
 // MARK: - Shared query
 
-extension ProfileShare {
+nonisolated extension ProfileShare {
 	/// Joins `Profile` with `SyncMetadata` so every profile is returned alongside
 	/// its sharing state. Pass to `$profiles.load(...)` in view models.
 	static var allWithSyncMetadata: some StructuredQueriesCore.Statement<ProfileShare> & Sendable {

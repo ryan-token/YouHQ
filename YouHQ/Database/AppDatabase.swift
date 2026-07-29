@@ -46,6 +46,20 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		"""
 	)
 
+	let migrator = youHQMigrator()
+	try migrator.migrate(database)
+	// After migrating, not before: the `-wal` and `-shm` files only exist once something has
+	// been written, and the loop below silently skips files that are not there yet.
+	applyDataProtection(to: database.path)
+	return database
+}
+
+/// Every migration, in order.
+///
+/// Extracted from `appDatabase()` so tests can migrate to a chosen point, seed rows in the
+/// shape that version wrote, and then run a later migration against realistic data. The
+/// table rebuild is the one step whose correctness depends on the data already present.
+nonisolated func youHQMigrator() -> DatabaseMigrator {
 	var migrator = DatabaseMigrator()
 
 	// MARK: - Initial Migration
@@ -938,46 +952,11 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 
 	// MARK: - Encrypt Sensitive Fields
 
-	migrator.registerMigration("Encrypt sensitive fields") { db in
-		let encryptor = FieldEncryptor.shared
-
-		// Encrypt a sensitive column in place.
-		// For non-nullable TEXT columns use whereClause "!= ''" (skip empty defaults).
-		// For nullable columns use "IS NOT NULL".
-		func encryptColumn(table: String, column: String, whereClause: String = "!= ''") throws {
-			let ids = try String.fetchAll(
-				db,
-				sql: "SELECT \"id\" FROM \"\(table)\" WHERE \"\(column)\" \(whereClause)"
-			)
-			for id in ids {
-				let value =
-					try String.fetchOne(
-						db,
-						sql: "SELECT \"\(column)\" FROM \"\(table)\" WHERE \"id\" = ?",
-						arguments: [id]
-					) ?? ""
-				guard !value.isEmpty else { continue }
-				// Skip already-encrypted values (valid base64 of sufficient length for AES-GCM)
-				if let decoded = Data(base64Encoded: value), decoded.count >= 28 { continue }
-				let encrypted = encryptor.encrypt(value)
-				try db.execute(
-					sql: "UPDATE \"\(table)\" SET \"\(column)\" = ? WHERE \"id\" = ?",
-					arguments: [encrypted, id]
-				)
-			}
-		}
-
-		try encryptColumn(table: "bankAccounts", column: "accountNumber")
-		try encryptColumn(table: "bankAccounts", column: "routingNumber")
-		try encryptColumn(table: "investmentAccounts", column: "accountNumber")
-		try encryptColumn(table: "healthSavingsAccounts", column: "accountNumber")
-		try encryptColumn(table: "insurancePolicies", column: "policyNumber")
-		try encryptColumn(table: "vehicles", column: "vin", whereClause: "IS NOT NULL")
-		try encryptColumn(table: "devices", column: "serialNumber")
-		try encryptColumn(table: "utilities", column: "accountNumber")
-		try encryptColumn(table: "serviceProviders", column: "accountNumber")
-		try encryptColumn(table: "jobs", column: "salary", whereClause: "IS NOT NULL")
-	}
+	// This migration used to encrypt sensitive columns in place. The app no longer encrypts
+	// fields itself, so it does nothing now, but it has to stay registered: GRDB records
+	// applied migrations by identifier, and dropping one it has already seen is an error.
+	// `LegacyEncryptedFieldSweep` undoes what this used to do.
+	migrator.registerMigration("Encrypt sensitive fields") { _ in }
 
 	// MARK: - App Settings
 
@@ -1285,8 +1264,462 @@ func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throw
 		.execute(db)
 	}
 
-	try migrator.migrate(database)
-	return database
+	// MARK: - Plaintext Salary Column
+
+	migrator.registerMigration("Add plaintext salary column") { db in
+		// Salaries are no longer encrypted, and neither existing column can hold a plain
+		// number: `salary` is a deployed CloudKit `DOUBLE` and `salaryEncrypted` a deployed
+		// `STRING`. `salaryEncrypted` stays behind rather than being dropped, so
+		// `LegacyEncryptedFieldSweep` still has something to decrypt and so devices on an
+		// older version keep showing a salary until they update.
+		try #sql(
+			"""
+			ALTER TABLE "jobs" ADD COLUMN "salaryAmount" REAL
+			"""
+		)
+		.execute(db)
+	}
+
+	// MARK: - Single Profile Foreign Key
+
+	migrator.registerMigration("Reduce shared child tables to a single profile foreign key") { db in
+		try reduceToSingleProfileForeignKey(db)
+	}
+
+	return migrator
+}
+
+// MARK: - Single Profile Foreign Key
+
+/// Every table whose only foreign key must be `profileID`.
+///
+/// SQLiteData assigns a CloudKit parent only to a table with exactly one foreign key, and a
+/// record with no parent is a root record that no share ever includes. These five had more, so
+/// none of their records reached the people a profile was shared with.
+nonisolated let singleProfileForeignKeyTables = [
+	"insurancePolicies", "others", "maintenanceItems", "paintColors", "assets"
+]
+
+enum SchemaRebuildError: Error {
+	case foreignKeysEnabled
+	case rowsLost(table: String, before: Int, after: Int)
+}
+
+/// Rebuilds the five tables so `profileID` is their only foreign key, keeping `residenceID`,
+/// `vehicleID` and the rest as plain columns so every query and screen is unaffected.
+private nonisolated func reduceToSingleProfileForeignKey(_ db: Database) throws {
+	// GRDB's default `.deferred` migration turns foreign keys off for the duration and checks
+	// the whole database before committing. That is load bearing rather than incidental: with
+	// them on, `DROP TABLE` performs an implicit delete that cascades, so rebuilding
+	// `maintenanceItems` would take every photo attached to one and all completion history
+	// with it, silently and before the sync engine exists to record any of it.
+	guard try Int.fetchOne(db, sql: "PRAGMA foreign_keys") == 0 else {
+		throw SchemaRebuildError.foreignKeysEnabled
+	}
+
+	let assetsBefore = try rowCount(of: "assets", db)
+	let completionsBefore = try rowCount(of: "maintenanceCompletions", db)
+
+	// Indexes and triggers belong to the table and are dropped with it. Replaying the SQL
+	// SQLite already recorded restores all 19 indexes and 15 triggers exactly as they shipped,
+	// including the `WHEN NOT sqlitedata_icloud_isSynchronizing()` guards that keep profile
+	// timestamp bumps from looping during sync.
+	let recordedObjects = try String.fetchAll(
+		db,
+		sql: """
+			SELECT "sql" FROM "sqlite_master"
+			WHERE "type" IN ('index', 'trigger')
+			AND "tbl_name" IN ('insurancePolicies', 'others', 'maintenanceItems', 'paintColors', 'assets')
+			AND "sql" IS NOT NULL
+			"""
+	)
+
+	try rebuildInsurancePolicies(db)
+	try rebuildOthers(db)
+	try rebuildMaintenanceItems(db)
+	try rebuildPaintColors(db)
+	try rebuildAssets(db)
+
+	// Only rows whose own residence or vehicle names a profile. Never a device-wide "current
+	// profile": multiple profiles ship, and a share recipient holds the owner's profile
+	// alongside their own, so a global fallback would file the owner's records under a
+	// stranger's profile and sync them into the wrong iCloud account.
+	for table in ["maintenanceItems", "paintColors"] {
+		try #sql(
+			"""
+			UPDATE "\(raw: table)" SET "profileID" = COALESCE(
+				(SELECT "profileID" FROM "residences" WHERE "id" = "\(raw: table)"."residenceID"),
+				(SELECT "profileID" FROM "vehicles" WHERE "id" = "\(raw: table)"."vehicleID")
+			)
+			"""
+		)
+		.execute(db)
+	}
+
+	for sql in recordedObjects {
+		try db.execute(sql: sql)
+	}
+	for table in ["maintenanceItems", "paintColors"] {
+		try #sql(
+			"""
+			CREATE INDEX "idx_\(raw: table)_profileID" ON "\(raw: table)"("profileID")
+			"""
+		)
+		.execute(db)
+	}
+
+	try createParentDeletionTriggers(db)
+	try createProfileBackfillTriggers(db)
+
+	let assetsAfter = try rowCount(of: "assets", db)
+	let completionsAfter = try rowCount(of: "maintenanceCompletions", db)
+	guard assetsAfter == assetsBefore else {
+		throw SchemaRebuildError.rowsLost(table: "assets", before: assetsBefore, after: assetsAfter)
+	}
+	guard completionsAfter == completionsBefore else {
+		throw SchemaRebuildError.rowsLost(
+			table: "maintenanceCompletions",
+			before: completionsBefore,
+			after: completionsAfter
+		)
+	}
+}
+
+private nonisolated func rowCount(of table: String, _ db: Database) throws -> Int {
+	try Int.fetchOne(db, sql: "SELECT count(*) FROM \"\(table)\"") ?? 0
+}
+
+/// Copies every row into the rebuilt table and swaps it into place.
+///
+/// Only the new table is ever renamed. Renaming the original aside would have SQLite rewrite
+/// the `REFERENCES` clauses in `assets` and `maintenanceCompletions` to follow it, leaving them
+/// pointing at a table about to be dropped. `SyncEngine` refuses to start on a dangling foreign
+/// key, and it starts inside `try!`, so that mistake would be an unrecoverable launch crash.
+///
+/// Columns are named rather than copied positionally: `currencyCode` was appended by a later
+/// `ALTER TABLE`, so live column order does not match the original `CREATE TABLE`, and every
+/// column involved is `TEXT`, which means a shifted copy would not trip `STRICT`.
+private nonisolated func swapInRebuiltTable(
+	_ table: String,
+	columns: [String],
+	_ db: Database
+) throws {
+	let columnList = (["rowid"] + columns).map { "\"\($0)\"" }.joined(separator: ", ")
+	try #sql(
+		"""
+		INSERT INTO "new_\(raw: table)" (\(raw: columnList))
+		SELECT \(raw: columnList) FROM "\(raw: table)" ORDER BY "rowid"
+		"""
+	)
+	.execute(db)
+	try #sql(
+		"""
+		DROP TABLE "\(raw: table)"
+		"""
+	)
+	.execute(db)
+	try #sql(
+		"""
+		ALTER TABLE "new_\(raw: table)" RENAME TO "\(raw: table)"
+		"""
+	)
+	.execute(db)
+}
+
+private nonisolated func rebuildInsurancePolicies(_ db: Database) throws {
+	try #sql(
+		"""
+		CREATE TABLE "new_insurancePolicies" (
+			"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+			"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
+			"residenceID" TEXT,
+			"vehicleID" TEXT,
+			"type" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'health',
+			"provider" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"policyNumber" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"monthlyCost" TEXT,
+			"deductible" TEXT,
+			"coverageAmount" TEXT,
+			"startDate" TEXT,
+			"renewalDate" TEXT,
+			"isActive" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+			"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'red',
+			"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"currencyCode" TEXT,
+			CHECK (
+				("type" IN ('Home', 'Renters') AND "residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+				("type" = 'Auto' AND "vehicleID" IS NOT NULL AND "residenceID" IS NULL) OR
+				("type" NOT IN ('Home', 'Renters', 'Auto') AND "residenceID" IS NULL AND "vehicleID" IS NULL)
+			)
+		) STRICT
+		"""
+	)
+	.execute(db)
+	try swapInRebuiltTable(
+		"insurancePolicies",
+		columns: [
+			"id", "profileID", "residenceID", "vehicleID", "type", "provider", "policyNumber",
+			"monthlyCost", "deductible", "coverageAmount", "startDate", "renewalDate", "isActive",
+			"backgroundColor", "url", "notes", "currencyCode"
+		],
+		db
+	)
+}
+
+private nonisolated func rebuildOthers(_ db: Database) throws {
+	try #sql(
+		"""
+		CREATE TABLE "new_others" (
+			"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+			"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
+			"residenceID" TEXT,
+			"vehicleID" TEXT,
+			"category" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'Homes',
+			"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"otherDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"monthlyCost" TEXT,
+			"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'gray',
+			"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"currencyCode" TEXT,
+			CHECK (
+				("category" = 'Homes' AND "residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+				("category" = 'Vehicles' AND "vehicleID" IS NOT NULL AND "residenceID" IS NULL) OR
+				("category" IN ('Money', 'Media', 'Career') AND "residenceID" IS NULL AND "vehicleID" IS NULL)
+			)
+		) STRICT
+		"""
+	)
+	.execute(db)
+	try swapInRebuiltTable(
+		"others",
+		columns: [
+			"id", "profileID", "residenceID", "vehicleID", "category", "name", "otherDescription",
+			"monthlyCost", "backgroundColor", "url", "notes", "currencyCode"
+		],
+		db
+	)
+}
+
+private nonisolated func rebuildMaintenanceItems(_ db: Database) throws {
+	try #sql(
+		"""
+		CREATE TABLE "new_maintenanceItems" (
+			"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+			"profileID" TEXT REFERENCES "profiles"("id") ON DELETE CASCADE,
+			"residenceID" TEXT,
+			"vehicleID" TEXT,
+			"name" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"itemDescription" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"intervalType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'month',
+			"intervalValue" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
+			"lastCompletedAt" TEXT,
+			"dueDate" TEXT,
+			"shouldNotify" INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
+			"notificationIdentifier" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'yellow',
+			"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			CHECK (
+				("residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+				("residenceID" IS NULL AND "vehicleID" IS NOT NULL)
+			)
+		) STRICT
+		"""
+	)
+	.execute(db)
+	try swapInRebuiltTable(
+		"maintenanceItems",
+		columns: [
+			"id", "residenceID", "vehicleID", "name", "itemDescription", "intervalType",
+			"intervalValue", "lastCompletedAt", "dueDate", "shouldNotify", "notificationIdentifier",
+			"backgroundColor", "url", "notes"
+		],
+		db
+	)
+}
+
+private nonisolated func rebuildPaintColors(_ db: Database) throws {
+	try #sql(
+		"""
+		CREATE TABLE "new_paintColors" (
+			"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+			"profileID" TEXT REFERENCES "profiles"("id") ON DELETE CASCADE,
+			"residenceID" TEXT,
+			"vehicleID" TEXT,
+			"manufacturer" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"colorName" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"colorCode" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"room" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"finish" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'Eggshell',
+			"purchaseDate" TEXT,
+			"surfaceType" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"storePurchasedFrom" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"applicationDate" TEXT,
+			"backgroundColor" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT 'purple',
+			"url" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			"notes" TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '',
+			CHECK (
+				("residenceID" IS NOT NULL AND "vehicleID" IS NULL) OR
+				("residenceID" IS NULL AND "vehicleID" IS NOT NULL)
+			)
+		) STRICT
+		"""
+	)
+	.execute(db)
+	try swapInRebuiltTable(
+		"paintColors",
+		columns: [
+			"id", "residenceID", "vehicleID", "manufacturer", "colorName", "colorCode", "room",
+			"finish", "purchaseDate", "surfaceType", "storePurchasedFrom", "applicationDate",
+			"backgroundColor", "url", "notes"
+		],
+		db
+	)
+}
+
+private nonisolated func rebuildAssets(_ db: Database) throws {
+	try #sql(
+		"""
+		CREATE TABLE "new_assets" (
+			"id" TEXT PRIMARY KEY NOT NULL ON CONFLICT REPLACE DEFAULT (uuid()),
+			"profileID" TEXT NOT NULL REFERENCES "profiles"("id") ON DELETE CASCADE,
+			"residenceID" TEXT,
+			"vehicleID" TEXT,
+			"insurancePolicyID" TEXT,
+			"maintenanceItemID" TEXT,
+			"deviceID" TEXT,
+			"otherID" TEXT,
+			"imageData" BLOB NOT NULL,
+			CHECK (
+				("residenceID" IS NOT NULL) +
+				("vehicleID" IS NOT NULL) +
+				("insurancePolicyID" IS NOT NULL) +
+				("maintenanceItemID" IS NOT NULL) +
+				("deviceID" IS NOT NULL) +
+				("otherID" IS NOT NULL)
+				= 1
+			)
+		) STRICT
+		"""
+	)
+	.execute(db)
+	try swapInRebuiltTable(
+		"assets",
+		columns: [
+			"id", "profileID", "residenceID", "vehicleID", "insurancePolicyID", "maintenanceItemID",
+			"deviceID", "otherID", "imageData"
+		],
+		db
+	)
+}
+
+/// Fills in `profileID` for maintenance items and paint colors created without one.
+///
+/// The screens that create these hold a residence or a vehicle, not a profile, so resolving it
+/// here keeps every creation path share-correct without threading a profile through them.
+///
+/// Guarded against sync writes, matching the profile timestamp triggers: a row arriving from a
+/// client on an older version has no `profileID`, and `ShareParentSweep` adopts it on the next
+/// launch rather than this trigger writing during sync.
+private nonisolated func createProfileBackfillTriggers(_ db: Database) throws {
+	for table in ["maintenanceItems", "paintColors"] {
+		try #sql(
+			"""
+			CREATE TRIGGER "backfill_profile_on_\(raw: table)_insert"
+			AFTER INSERT ON "\(raw: table)"
+			FOR EACH ROW
+			WHEN NEW."profileID" IS NULL AND NOT \(SyncEngine.$isSynchronizing)
+			BEGIN
+				UPDATE "\(raw: table)" SET "profileID" = COALESCE(
+					(SELECT "profileID" FROM "residences" WHERE "id" = NEW."residenceID"),
+					(SELECT "profileID" FROM "vehicles" WHERE "id" = NEW."vehicleID")
+				)
+				WHERE "id" = NEW."id";
+			END
+			"""
+		)
+		.execute(db)
+	}
+}
+
+/// Recreates, as triggers, the deletes that the removed foreign keys used to cascade.
+///
+/// Deliberately not guarded with `NOT sqlitedata_icloud_isSynchronizing()`, unlike the profile
+/// timestamp triggers. A foreign key cascade ran for remote deletes as well as local ones, and
+/// these have to keep doing that or a deletion synced from another device leaves orphans
+/// behind. The guard exists to stop triggers that *write* data from looping during sync;
+/// propagating a delete does not loop.
+/// The tables that hang off a residence or a vehicle and lost their cascade with the foreign key.
+private nonisolated let childTablesOfPlace = [
+	"insurancePolicies", "others", "maintenanceItems", "paintColors", "assets"
+]
+
+private nonisolated struct ParentDeletion {
+	let parent: String
+	let childColumn: String
+	let children: [String]
+}
+
+private nonisolated func createParentDeletionTriggers(_ db: Database) throws {
+	let childrenByParent: [ParentDeletion] = [
+		ParentDeletion(parent: "residences", childColumn: "residenceID", children: childTablesOfPlace),
+		ParentDeletion(parent: "vehicles", childColumn: "vehicleID", children: childTablesOfPlace),
+		ParentDeletion(parent: "insurancePolicies", childColumn: "insurancePolicyID", children: ["assets"]),
+		ParentDeletion(parent: "maintenanceItems", childColumn: "maintenanceItemID", children: ["assets"]),
+		ParentDeletion(parent: "devices", childColumn: "deviceID", children: ["assets"]),
+		ParentDeletion(parent: "others", childColumn: "otherID", children: ["assets"])
+	]
+
+	for deletion in childrenByParent {
+		var statements: [String] = []
+		for child in deletion.children {
+			statements.append(#"DELETE FROM "\#(child)" WHERE "\#(deletion.childColumn)" = OLD."id";"#)
+		}
+		let parent = deletion.parent
+		let deletes = statements.joined(separator: "\n\t")
+		try #sql(
+			"""
+			CREATE TRIGGER "delete_children_of_\(raw: parent)"
+			AFTER DELETE ON "\(raw: parent)"
+			FOR EACH ROW
+			BEGIN
+				\(raw: deletes)
+			END
+			"""
+		)
+		.execute(db)
+	}
+}
+
+// MARK: - Data Protection
+
+/// Marks the database and its write-ahead log as encrypted at rest until the device has
+/// been unlocked once after a restart.
+///
+/// This is the same class the app container already gives its files, so it changes no
+/// behavior. It is written down because the guarantee matters: sensitive fields are no
+/// longer encrypted by the app itself, and this is what protects them on disk.
+///
+/// A stronger class is deliberately not used. `.complete` and `.completeUnlessOpen` make a
+/// file unreadable whenever the device is locked, and CloudKit wakes the app to sync while
+/// it is locked, which would turn every background sync into a failure.
+private nonisolated func applyDataProtection(to path: String) {
+	#if !os(macOS)
+		// Plain string paths, not a URL round-trip: `URL.path()` percent-encodes, and the
+		// database lives under "Application Support", so the encoded path never matches a
+		// real file and every attribute write would be silently skipped.
+		for filePath in [path, path + "-wal", path + "-shm"]
+		where FileManager.default.fileExists(atPath: filePath) {
+			withErrorReporting {
+				try FileManager.default.setAttributes(
+					[.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
+					ofItemAtPath: filePath
+				)
+			}
+		}
+	#endif
 }
 
 // MARK: - Bootstrap

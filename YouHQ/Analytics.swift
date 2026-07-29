@@ -185,5 +185,6 @@ struct Analytics {
 		// Other
 		case photoSaveFailed = "Failed to save photo to library"
 		case notificationsRequestFailed = "Failed to request notification permissions"
+		case databaseBootstrapFailed = "Failed to open or migrate the database"
 	}
 }

@@ -55,6 +55,7 @@ extension PaintColorsScreen {
 			sheetTransitionSourceID = "addButton"
 			draftPaintColor = PaintColor(
 				id: UUID(),
+				profileID: nil,
 				residenceID: residenceID,
 				vehicleID: vehicleID,
 				manufacturer: "",

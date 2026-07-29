@@ -22,6 +22,11 @@ extension DeviceEdit {
 		var model: String
 		var serialNumber: String
 		var purchaseDate: Date?
+
+		// Value as loaded, so `save()` can leave the field out of the update when untouched. A
+		// value this device cannot decrypt reads as empty, and writing that back would erase it
+		// for whoever shared the profile. See `LegacySensitiveText`.
+		private let loadedSerialNumber: String
 		var url: String
 		var notes: String
 
@@ -55,6 +60,7 @@ extension DeviceEdit {
 			self.brand = device.brand
 			self.model = device.model
 			self.serialNumber = device.serialNumber
+			self.loadedSerialNumber = device.serialNumber
 			self.purchaseDate = device.purchaseDate
 			self.url = device.url
 			self.notes = device.notes
@@ -94,7 +100,9 @@ extension DeviceEdit {
 								$0.type = type
 								$0.brand = brand
 								$0.model = model
-								$0.serialNumber = #bind(serialNumber)
+								if serialNumber != loadedSerialNumber {
+									$0.serialNumber = #bind(serialNumber)
+								}
 								$0.purchaseDate = purchaseDate
 								$0.url = url
 								$0.notes = notes

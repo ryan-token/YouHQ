@@ -34,7 +34,7 @@ extension YouHQTests {
 					("purple", Color.purple),
 					("pink", Color.pink),
 					("brown", Color.brown),
-					("gray", Color.gray),
+					("gray", Color.gray)
 				]
 			)
 			func semanticRoundTrip(expected: String, color: Color) {

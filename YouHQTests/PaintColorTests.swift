@@ -28,11 +28,11 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
 						PaintColor.Draft(
-							id: UUID(-3), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "Sherwin-Williams", colorName: "Alabaster"
 						)
 						PaintColor.Draft(
-							id: UUID(-4), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-4), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "Benjamin Moore", colorName: "Simply White"
 						)
 					}
@@ -51,7 +51,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Toyota")
 						PaintColor.Draft(
-							id: UUID(-3), residenceID: nil, vehicleID: UUID(-2),
+							id: UUID(-3), profileID: nil, residenceID: nil, vehicleID: UUID(-2),
 							manufacturer: "Toyota", colorName: "Super White"
 						)
 					}
@@ -73,11 +73,11 @@ extension YouHQTests {
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "Home 1")
 						Residence.Draft(id: UUID(-3), profileID: UUID(-1), street: "Home 2")
 						PaintColor.Draft(
-							id: UUID(-4), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-4), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "SW", colorName: "White"
 						)
 						PaintColor.Draft(
-							id: UUID(-5), residenceID: UUID(-3), vehicleID: nil,
+							id: UUID(-5), profileID: nil, residenceID: UUID(-3), vehicleID: nil,
 							manufacturer: "BM", colorName: "Gray"
 						)
 					}
@@ -151,7 +151,7 @@ extension YouHQTests {
 			@Test("editPaintColor sets draft from existing item")
 			func editExisting() throws {
 				let existing = PaintColor(
-					id: UUID(-1), residenceID: UUID(-2), vehicleID: nil,
+					id: UUID(-1), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 					manufacturer: "SW", colorName: "Alabaster", colorCode: "SW 7008",
 					room: "Living Room", finish: .satin, purchaseDate: nil,
 					surfaceType: "Drywall", storePurchasedFrom: "Home Depot",
@@ -176,7 +176,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
 						PaintColor.Draft(
-							id: UUID(-3), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "SW", colorName: "Alabaster"
 						)
 					}
@@ -208,11 +208,11 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
 						PaintColor.Draft(
-							id: UUID(-3), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "SW", colorName: "White"
 						)
 						PaintColor.Draft(
-							id: UUID(-4), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-4), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "BM", colorName: "Gray"
 						)
 					}
@@ -233,7 +233,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Toyota")
 						PaintColor.Draft(
-							id: UUID(-3), residenceID: nil, vehicleID: UUID(-2),
+							id: UUID(-3), profileID: nil, residenceID: nil, vehicleID: UUID(-2),
 							manufacturer: "Toyota", colorName: "Super White"
 						)
 					}
@@ -254,7 +254,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
 						PaintColor.Draft(
-							id: UUID(-3), residenceID: UUID(-2), vehicleID: nil,
+							id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil,
 							manufacturer: "SW", colorName: "White"
 						)
 					}

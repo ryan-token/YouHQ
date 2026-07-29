@@ -8,8 +8,8 @@
 import Dependencies
 import DependenciesTestSupport
 import Foundation
-import Sharing
 import SQLiteData
+import Sharing
 import SwiftUI
 import Testing
 
@@ -191,6 +191,8 @@ extension YouHQTests {
 						Other.Draft(
 							id: UUID(-4),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							category: .career,
 							name: "Cert"
 						)
@@ -223,11 +225,15 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-6),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							type: .health
 						)
 						Other.Draft(
 							id: UUID(-7),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							category: .money,
 							name: "Cash"
 						)
@@ -277,12 +283,14 @@ extension YouHQTests {
 							id: UUID(-5),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							type: .renters
 						)
 						Other.Draft(
 							id: UUID(-6),
 							profileID: UUID(-1),
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							category: .homes,
 							name: "Pool"
 						)
@@ -375,18 +383,21 @@ extension YouHQTests {
 						InsurancePolicy.Draft(
 							id: UUID(-3),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							type: .auto
 						)
 						InsurancePolicy.Draft(
 							id: UUID(-4),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							type: .auto
 						)
 						Other.Draft(
 							id: UUID(-5),
 							profileID: UUID(-1),
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							category: .vehicles,
 							name: "Dashcam"
@@ -419,14 +430,16 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1))
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Past Due Filter",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-4),
+							id: UUID(-4), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Future Item",
 							dueDate: futureDate
 						)
@@ -443,7 +456,7 @@ extension YouHQTests {
 			@Test("upcomingItems filters items due within 30 days that are not past due")
 			func upcomingItems() async throws {
 				let pastDate = Date(timeIntervalSince1970: 1_000)
-				let upcomingDate = Date(timeIntervalSinceNow: 86400 * 15)  // 15 days from now
+				let upcomingDate = Date(timeIntervalSinceNow: 86400 * 15) // 15 days from now
 				let farFuture = Date(timeIntervalSinceNow: 86400 * 365)
 
 				try await database.write { db in
@@ -451,20 +464,23 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1))
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Past Due",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-4),
+							id: UUID(-4), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Upcoming Filter",
 							dueDate: upcomingDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-5),
+							id: UUID(-5), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Far Future",
 							dueDate: farFuture
 						)
@@ -489,26 +505,30 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1))
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Past Due",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-4),
+							id: UUID(-4), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Upcoming",
 							dueDate: upcomingDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-5),
+							id: UUID(-5), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "Far Future Other",
 							dueDate: farFuture
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-6),
+							id: UUID(-6), profileID: nil,
 							residenceID: UUID(-2),
+							vehicleID: nil,
 							name: "No Date Other"
 						)
 					}
@@ -532,7 +552,8 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Toyota")
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
+							residenceID: nil,
 							vehicleID: UUID(-2),
 							name: "Oil Change",
 							dueDate: pastDate
@@ -718,6 +739,8 @@ extension YouHQTests {
 						Other.Draft(
 							id: UUID(-5),
 							profileID: UUID(-1),
+							residenceID: nil,
+							vehicleID: nil,
 							category: .media,
 							name: "Extra"
 						)
