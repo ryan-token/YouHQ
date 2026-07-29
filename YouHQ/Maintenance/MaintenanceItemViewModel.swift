@@ -38,6 +38,7 @@ class MaintenanceItemViewModel {
 	func createDraft(for residenceID: UUID) -> MaintenanceItem {
 		MaintenanceItem(
 			id: UUID(),
+			profileID: nil,
 			residenceID: residenceID,
 			vehicleID: nil,
 			name: "",
@@ -56,6 +57,7 @@ class MaintenanceItemViewModel {
 	func createVehicleDraft(for vehicleID: UUID) -> MaintenanceItem {
 		MaintenanceItem(
 			id: UUID(),
+			profileID: nil,
 			residenceID: nil,
 			vehicleID: vehicleID,
 			name: "",

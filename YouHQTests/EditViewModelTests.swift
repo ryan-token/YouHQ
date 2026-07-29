@@ -23,8 +23,8 @@ extension YouHQTests {
 
 			@Test("deleteConfirmationMessage uses room when present, falls back when empty")
 			func deleteMessage() {
-				let withRoom = PaintColor(id: UUID(-1), residenceID: UUID(-2), vehicleID: nil, room: "Kitchen")
-				let withoutRoom = PaintColor(id: UUID(-3), residenceID: UUID(-2), vehicleID: nil, room: "")
+				let withRoom = PaintColor(id: UUID(-1), profileID: nil, residenceID: UUID(-2), vehicleID: nil, room: "Kitchen")
+				let withoutRoom = PaintColor(id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil, room: "")
 				let vmWith = PaintColorEdit.ViewModel(paintColor: withRoom, isNew: false)
 				let vmWithout = PaintColorEdit.ViewModel(paintColor: withoutRoom, isNew: false)
 
@@ -42,7 +42,7 @@ extension YouHQTests {
 				}
 
 				let paintColor = PaintColor(
-					id: UUID(0),
+					id: UUID(0), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					manufacturer: "Sherwin-Williams",
@@ -70,7 +70,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
 						PaintColor.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							manufacturer: "Behr",
@@ -99,7 +99,7 @@ extension YouHQTests {
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
-						PaintColor.Draft(id: UUID(-3), residenceID: UUID(-2), vehicleID: nil)
+						PaintColor.Draft(id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil)
 					}
 				}
 
@@ -566,7 +566,7 @@ extension YouHQTests {
 
 			@Test("isValid requires non-empty trimmed name")
 			func isValid() {
-				let item = MaintenanceItem(id: UUID(-1), residenceID: UUID(-2), vehicleID: nil)
+				let item = MaintenanceItem(id: UUID(-1), profileID: nil, residenceID: UUID(-2), vehicleID: nil)
 				let vm = MaintenanceItemEdit.ViewModel(item: item, isNew: true)
 
 				#expect(!vm.isValid)
@@ -582,7 +582,7 @@ extension YouHQTests {
 			func calculatedNextDueDateFromCompletion() {
 				let baseDate = Date(timeIntervalSince1970: 1_000_000)
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					intervalType: .month,
@@ -603,7 +603,7 @@ extension YouHQTests {
 			func resetToAutomatic() {
 				let baseDate = Date(timeIntervalSince1970: 1_000_000)
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					intervalType: .month,
@@ -631,7 +631,7 @@ extension YouHQTests {
 				}
 
 				let item = MaintenanceItem(
-					id: UUID(0),
+					id: UUID(0), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "HVAC Filter"

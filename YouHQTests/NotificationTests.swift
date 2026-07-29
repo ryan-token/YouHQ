@@ -344,7 +344,7 @@ extension YouHQTests {
 			func scheduleMaintenanceItem() async throws {
 				let dueDate = Date(timeIntervalSince1970: 2_000_000)
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Change HVAC filter",
@@ -372,7 +372,7 @@ extension YouHQTests {
 			@Test("scheduleNotification with shouldNotify=false cancels instead")
 			func scheduleNotifyFalse() async throws {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter",
@@ -391,7 +391,7 @@ extension YouHQTests {
 			@Test("scheduleNotification with no due date cancels instead")
 			func scheduleNoDueDate() async throws {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter",
@@ -414,7 +414,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-11), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-12), profileID: UUID(-11), street: "123 Main")
 						MaintenanceItem.Draft(
-							id: itemID,
+							id: itemID, profileID: nil,
 							residenceID: UUID(-12),
 							vehicleID: nil,
 							name: "Test Item",
@@ -426,7 +426,7 @@ extension YouHQTests {
 				}
 
 				let item = MaintenanceItem(
-					id: itemID,
+					id: itemID, profileID: nil,
 					residenceID: UUID(-12),
 					vehicleID: nil,
 					name: "Test Item",
@@ -454,7 +454,7 @@ extension YouHQTests {
 			@Test("scheduleNotification returns false when not authorized")
 			func scheduleNotAuthorized() async throws {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter",
@@ -474,7 +474,7 @@ extension YouHQTests {
 			@Test("cancelNotification uses notificationIdentifier when present")
 			func cancelWithIdentifier() async {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter",
@@ -489,7 +489,7 @@ extension YouHQTests {
 			@Test("cancelNotification falls back to item ID when identifier is empty")
 			func cancelWithFallback() async {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter",
@@ -511,7 +511,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-20), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-21), profileID: UUID(-20), street: "123 Main")
 						MaintenanceItem.Draft(
-							id: UUID(-22),
+							id: UUID(-22), profileID: nil,
 							residenceID: UUID(-21),
 							vehicleID: nil,
 							name: "HVAC Filter",

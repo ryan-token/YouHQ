@@ -135,6 +135,13 @@ import SQLiteData
 
 @Table nonisolated struct MaintenanceItem: Identifiable {
 	let id: UUID
+	/// The owning profile, and the only foreign key on this table.
+	///
+	/// SQLiteData gives a record a CloudKit parent only when its table has exactly one foreign
+	/// key, and a record with no parent is never included in a share. `residenceID` and
+	/// `vehicleID` are therefore plain columns now. Nullable because an older client can still
+	/// create rows without it; the sweep adopts those.
+	let profileID: Profile.ID?
 	let residenceID: Residence.ID?
 	let vehicleID: Vehicle.ID?
 	var name: String = ""
@@ -187,6 +194,8 @@ extension MaintenanceItem {
 
 @Table nonisolated struct PaintColor: Identifiable {
 	let id: UUID
+	/// The owning profile. See `MaintenanceItem.profileID` for why this is the only foreign key.
+	let profileID: Profile.ID?
 	let residenceID: Residence.ID?
 	let vehicleID: Vehicle.ID?
 	var manufacturer: String = ""

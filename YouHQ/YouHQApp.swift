@@ -48,6 +48,7 @@ struct YouHQApp: App {
 					// the sync engine exists are uploaded to iCloud.
 					guard context == .live else { return }
 					await LegacyEncryptedFieldSweep().run()
+					await ShareParentSweep().run()
 				}
 				.task(id: scenePhase) {
 					await paywallManager.setup()
@@ -113,7 +114,19 @@ struct YouHQApp: App {
 	}
 
 	private func initializeSQLiteData() {
-		try! prepareDependencies { // swiftlint:disable:this force_try
+		// Reported before crashing rather than instead of it: nothing can run without a
+		// database, but a migration that throws throws on every launch, and without this the
+		// crash is indistinguishable from any other launch failure.
+		do {
+			try openDatabaseAndSyncEngine()
+		} catch {
+			Analytics.logError(id: .databaseBootstrapFailed, message: "\(error)")
+			fatalError("Database bootstrap failed: \(error)")
+		}
+	}
+
+	private func openDatabaseAndSyncEngine() throws {
+		try prepareDependencies {
 			try $0.bootstrapDatabase()
 			$0.defaultSyncEngine = try SyncEngine(
 				for: $0.defaultDatabase,

@@ -68,6 +68,7 @@ extension PaintColorEdit {
 						try PaintColor.insert {
 							PaintColor.Draft(
 								id: paintColor.id,
+								profileID: paintColor.profileID,
 								residenceID: paintColor.residenceID,
 								vehicleID: paintColor.vehicleID,
 								manufacturer: manufacturer,

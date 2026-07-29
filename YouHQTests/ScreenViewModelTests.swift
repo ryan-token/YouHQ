@@ -430,14 +430,14 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1))
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Past Due Filter",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-4),
+							id: UUID(-4), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Future Item",
@@ -464,21 +464,21 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1))
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Past Due",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-4),
+							id: UUID(-4), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Upcoming Filter",
 							dueDate: upcomingDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-5),
+							id: UUID(-5), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Far Future",
@@ -505,28 +505,28 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1))
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Past Due",
 							dueDate: pastDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-4),
+							id: UUID(-4), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Upcoming",
 							dueDate: upcomingDate
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-5),
+							id: UUID(-5), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "Far Future Other",
 							dueDate: farFuture
 						)
 						MaintenanceItem.Draft(
-							id: UUID(-6),
+							id: UUID(-6), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "No Date Other"
@@ -552,7 +552,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Toyota")
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: nil,
 							vehicleID: UUID(-2),
 							name: "Oil Change",

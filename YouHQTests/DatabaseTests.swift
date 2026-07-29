@@ -39,9 +39,10 @@ extension YouHQTests {
 						InsurancePolicy.Draft(id: UUID(-12), profileID: UUID(-1), residenceID: nil, vehicleID: nil, type: .health)
 						Other.Draft(
 							id: UUID(-13), profileID: UUID(-1), residenceID: UUID(-2), vehicleID: nil, category: .homes, name: "Pool")
-						MaintenanceItem.Draft(id: UUID(-14), residenceID: UUID(-2), vehicleID: nil, name: "Filter")
+						MaintenanceItem.Draft(id: UUID(-14), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Filter")
 						MaintenanceCompletion.Draft(id: UUID(-15), maintenanceItemID: UUID(-14), completedAt: Date())
-						PaintColor.Draft(id: UUID(-16), residenceID: UUID(-2), vehicleID: nil, manufacturer: "SW", colorName: "White")
+						PaintColor.Draft(
+							id: UUID(-16), profileID: nil, residenceID: UUID(-2), vehicleID: nil, manufacturer: "SW", colorName: "White")
 					}
 				}
 

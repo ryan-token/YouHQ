@@ -22,7 +22,7 @@ extension YouHQTests {
 			@Test("isPastDue returns true when due date is in the past")
 			func pastDue() {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter change",
@@ -34,7 +34,7 @@ extension YouHQTests {
 			@Test("isPastDue returns false when due date is in the future")
 			func notPastDue() {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter change",
@@ -46,7 +46,7 @@ extension YouHQTests {
 			@Test("isPastDue returns false when no due date")
 			func noDueDate() {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter change",
@@ -58,7 +58,7 @@ extension YouHQTests {
 			@Test("isUpcoming returns true when due within 30 days")
 			func upcomingWithin30Days() {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter change",
@@ -70,7 +70,7 @@ extension YouHQTests {
 			@Test("isUpcoming returns false when more than 30 days out")
 			func notUpcoming() {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter change",
@@ -82,7 +82,7 @@ extension YouHQTests {
 			@Test("isUpcoming returns false for past due items")
 			func pastDueNotUpcoming() {
 				let item = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Filter change",
@@ -98,7 +98,7 @@ extension YouHQTests {
 
 				// Monthly interval
 				let monthlyItem = MaintenanceItem(
-					id: UUID(-1),
+					id: UUID(-1), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Monthly task",
@@ -111,7 +111,7 @@ extension YouHQTests {
 
 				// Yearly interval
 				let yearlyItem = MaintenanceItem(
-					id: UUID(-3),
+					id: UUID(-3), profileID: nil,
 					residenceID: UUID(-2),
 					vehicleID: nil,
 					name: "Annual task",
@@ -136,8 +136,8 @@ extension YouHQTests {
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
-						MaintenanceItem.Draft(id: UUID(-3), residenceID: UUID(-2), vehicleID: nil, name: "HVAC filter")
-						MaintenanceItem.Draft(id: UUID(-4), residenceID: UUID(-2), vehicleID: nil, name: "Gutter clean")
+						MaintenanceItem.Draft(id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "HVAC filter")
+						MaintenanceItem.Draft(id: UUID(-4), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Gutter clean")
 					}
 				}
 
@@ -153,7 +153,7 @@ extension YouHQTests {
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Toyota")
-						MaintenanceItem.Draft(id: UUID(-3), residenceID: nil, vehicleID: UUID(-2), name: "Oil change")
+						MaintenanceItem.Draft(id: UUID(-3), profileID: nil, residenceID: nil, vehicleID: UUID(-2), name: "Oil change")
 					}
 				}
 
@@ -196,7 +196,7 @@ extension YouHQTests {
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
-						MaintenanceItem.Draft(id: UUID(-3), residenceID: UUID(-2), vehicleID: nil, name: "Filter")
+						MaintenanceItem.Draft(id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Filter")
 					}
 				}
 
@@ -218,7 +218,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: UUID(-2),
 							vehicleID: nil,
 							name: "HVAC filter",
@@ -268,7 +268,7 @@ extension YouHQTests {
 			func editItem() {
 				let vm = MaintenanceItemsScreen.ViewModel(residenceID: UUID(-1), vehicleID: nil)
 				let item = MaintenanceItem(
-					id: UUID(-2),
+					id: UUID(-2), profileID: nil,
 					residenceID: UUID(-1),
 					vehicleID: nil,
 					name: "Test item"
@@ -293,7 +293,7 @@ extension YouHQTests {
 					try db.seed {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
-						MaintenanceItem.Draft(id: UUID(-3), residenceID: UUID(-2), vehicleID: nil, name: "Filter")
+						MaintenanceItem.Draft(id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Filter")
 						MaintenanceCompletion.Draft(id: UUID(-4), maintenanceItemID: UUID(-3), completedAt: Date())
 						MaintenanceCompletion.Draft(id: UUID(-5), maintenanceItemID: UUID(-3), completedAt: Date())
 					}

@@ -182,7 +182,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "Honda")
 						MaintenanceItem.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: nil,
 							vehicleID: UUID(-2),
 							name: "Oil change"
@@ -207,7 +207,7 @@ extension YouHQTests {
 						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
 						Vehicle.Draft(id: UUID(-2), profileID: UUID(-1), make: "BMW")
 						PaintColor.Draft(
-							id: UUID(-3),
+							id: UUID(-3), profileID: nil,
 							residenceID: nil,
 							vehicleID: UUID(-2),
 							manufacturer: "PPG",
