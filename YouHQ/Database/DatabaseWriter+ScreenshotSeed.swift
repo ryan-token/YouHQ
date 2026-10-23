@@ -14,30 +14,29 @@
 	extension DatabaseWriter {
 		/// Wipes the database of profiles (cascades to all related data) and
 		/// inserts the canonical App Store screenshot data set.
-		func seedScreenshotData() throws {
+		///
+		/// Every company name is made up, so the store listing shows no third-party trademarks.
+		/// Due dates are relative to today, so each maintenance item stays in the same section.
+		///
+		/// - Returns: The "App Store" profile and the residence the Home tab should open to.
+		@discardableResult
+		func seedScreenshotData() throws -> (profileID: Profile.ID, residenceID: Residence.ID) {
+			let appStoreProfileID = UUID()
+			let denverID = UUID()
+
 			try write { db in
 				// Delete every profile — cascades delete all children.
 				try Profile.delete().execute(db)
 
-				let appStoreProfileID = UUID()
-				let ryanProfileID = UUID()
-				let now = Date.now
-
-				let denverID = UUID()
 				let morrisonID = UUID()
 				let civicID = UUID()
 				let renegadeID = UUID()
+				let now = Date.now
 
 				try db.seed {
 					Profile.Draft(
 						id: appStoreProfileID,
 						name: "App Store",
-						createdAt: now,
-						updatedAt: now
-					)
-					Profile.Draft(
-						id: ryanProfileID,
-						name: "Ryan",
 						createdAt: now,
 						updatedAt: now
 					)
@@ -63,6 +62,8 @@
 
 				print("✅ Screenshot sample data seeded successfully")
 			}
+
+			return (appStoreProfileID, denverID)
 		}
 
 		// MARK: - Residence
@@ -84,7 +85,7 @@
 					state: "CO",
 					zipCode: "80203",
 					country: "USA",
-					moveInDate: .components(year: 2000, month: 1, day: 1),
+					moveInDate: .components(year: 2021, month: 6, day: 1),
 					moveOutDate: nil,
 					isCurrent: true,
 					monthlyCost: 3000,
@@ -114,23 +115,135 @@
 				Utility.Draft(
 					residenceID: denverID,
 					type: .electric,
-					provider: "Xcel Energy",
-					accountNumber: "1234567890",
+					provider: "Front Range Energy",
+					accountNumber: "4810 2273 9065",
 					approximateMonthlyCost: 75,
 					backgroundColor: "#F6D045",
-					url: "xcelenergy.com",
+					url: "",
 					notes: ""
 				)
 
 				Utility.Draft(
 					residenceID: denverID,
 					type: .gas,
-					provider: "Xcel Energy",
-					accountNumber: "0987654321",
+					provider: "Front Range Energy",
+					accountNumber: "4810 2273 9188",
 					approximateMonthlyCost: 70,
 					backgroundColor: "#3783EF",
-					url: "xcelenergy.com",
-					notes: "Yes, Xcel handles both electric and gas."
+					url: "",
+					notes: "Front Range handles both electric and gas."
+				)
+
+				InsurancePolicy.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					type: .renters,
+					provider: "Summit Mutual",
+					policyNumber: "RN-5528-0193",
+					monthlyCost: 18,
+					deductible: 500,
+					coverageAmount: 40_000,
+					startDate: nil,
+					renewalDate: .daysFromNow(74),
+					isActive: true,
+					backgroundColor: "teal",
+					url: "",
+					notes: ""
+				)
+
+				PaintColor.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					manufacturer: "Ridgeline Paints",
+					colorName: "Morning Fog",
+					colorCode: "RP-1124",
+					room: "Living Room",
+					finish: .eggshell,
+					purchaseDate: nil,
+					surfaceType: "Walls",
+					storePurchasedFrom: "",
+					applicationDate: nil,
+					backgroundColor: "gray",
+					notes: ""
+				)
+
+				PaintColor.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					manufacturer: "Ridgeline Paints",
+					colorName: "Sage Meadow",
+					colorCode: "RP-2307",
+					room: "Kitchen",
+					finish: .satin,
+					purchaseDate: nil,
+					surfaceType: "Cabinets",
+					storePurchasedFrom: "",
+					applicationDate: nil,
+					backgroundColor: "green",
+					notes: ""
+				)
+
+				MaintenanceItem.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					name: "Replace HVAC Filter",
+					itemDescription: "",
+					intervalType: .month,
+					intervalValue: 3,
+					lastCompletedAt: nil,
+					dueDate: .daysFromNow(-3),
+					shouldNotify: true,
+					notificationIdentifier: "",
+					notes: ""
+				)
+
+				MaintenanceItem.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					name: "Test Smoke Detectors",
+					itemDescription: "",
+					intervalType: .month,
+					intervalValue: 6,
+					lastCompletedAt: nil,
+					dueDate: .daysFromNow(9),
+					shouldNotify: true,
+					notificationIdentifier: "",
+					notes: ""
+				)
+
+				MaintenanceItem.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					name: "Clean Gutters",
+					itemDescription: "",
+					intervalType: .year,
+					intervalValue: 1,
+					lastCompletedAt: nil,
+					dueDate: .daysFromNow(21),
+					shouldNotify: true,
+					notificationIdentifier: "",
+					notes: ""
+				)
+
+				MaintenanceItem.Draft(
+					profileID: profileID,
+					residenceID: denverID,
+					vehicleID: nil,
+					name: "Flush Water Heater",
+					itemDescription: "",
+					intervalType: .year,
+					intervalValue: 1,
+					lastCompletedAt: nil,
+					dueDate: .daysFromNow(120),
+					shouldNotify: true,
+					notificationIdentifier: "",
+					notes: ""
 				)
 			}
 		}
@@ -180,28 +293,28 @@
 					residenceID: nil,
 					vehicleID: civicID,
 					type: .auto,
-					provider: "State Farm",
-					policyNumber: "",
+					provider: "Summit Mutual",
+					policyNumber: "AU-7731-4402",
 					monthlyCost: 179,
-					deductible: nil,
+					deductible: 1000,
 					coverageAmount: nil,
 					startDate: nil,
-					renewalDate: nil,
+					renewalDate: .daysFromNow(74),
 					isActive: true,
 					backgroundColor: "red",
-					url: "statefarm.com",
+					url: "",
 					notes: ""
 				)
 
 				PaintColor.Draft(
-					profileID: nil,
+					profileID: profileID,
 					residenceID: nil,
 					vehicleID: civicID,
 					manufacturer: "",
-					colorName: "Magenta",
-					colorCode: "",
+					colorName: "Aegean Blue Metallic",
+					colorCode: "B-593M",
 					room: "Exterior",
-					finish: .eggshell,
+					finish: .gloss,
 					purchaseDate: nil,
 					surfaceType: "Exterior",
 					storePurchasedFrom: "",
@@ -209,62 +322,46 @@
 					notes: ""
 				)
 
-				PaintColor.Draft(
-					profileID: nil,
-					residenceID: nil,
-					vehicleID: civicID,
-					manufacturer: "",
-					colorName: "Dark Grey",
-					colorCode: "",
-					room: "Interior",
-					finish: .semiGloss,
-					purchaseDate: nil,
-					surfaceType: "Interior",
-					storePurchasedFrom: "",
-					applicationDate: nil,
-					notes: ""
-				)
-
 				MaintenanceItem.Draft(
-					profileID: nil,
+					profileID: profileID,
 					residenceID: nil,
 					vehicleID: civicID,
 					name: "Oil Change",
 					itemDescription: "",
 					intervalType: .month,
-					intervalValue: 1,
+					intervalValue: 6,
 					lastCompletedAt: nil,
-					dueDate: .components(year: 2026, month: 6, day: 20),
+					dueDate: .daysFromNow(12),
 					shouldNotify: true,
 					notificationIdentifier: "",
 					notes: ""
 				)
 
 				MaintenanceItem.Draft(
-					profileID: nil,
+					profileID: profileID,
 					residenceID: nil,
 					vehicleID: civicID,
-					name: "AC Issue",
+					name: "Tire Rotation",
 					itemDescription: "",
 					intervalType: .month,
-					intervalValue: 1,
+					intervalValue: 6,
 					lastCompletedAt: nil,
-					dueDate: .components(year: 2026, month: 6, day: 20),
+					dueDate: .daysFromNow(40),
 					shouldNotify: true,
 					notificationIdentifier: "",
 					notes: ""
 				)
 
 				MaintenanceItem.Draft(
-					profileID: nil,
+					profileID: profileID,
 					residenceID: nil,
 					vehicleID: civicID,
-					name: "Some third thing",
+					name: "Replace Wiper Blades",
 					itemDescription: "",
-					intervalType: .month,
-					intervalValue: 3,
+					intervalType: .year,
+					intervalValue: 1,
 					lastCompletedAt: nil,
-					dueDate: .components(year: 2026, month: 8, day: 22),
+					dueDate: .daysFromNow(95),
 					shouldNotify: true,
 					notificationIdentifier: "",
 					notes: ""
@@ -278,47 +375,47 @@
 			try db.seed {
 				BankAccount.Draft(
 					profileID: profileID,
-					bankName: "Ally Bank",
+					bankName: "Harbor Bank",
 					accountType: .checking,
-					accountNumber: "1234567890",
-					routingNumber: "0987654321",
+					accountNumber: "7302 1948 56",
+					routingNumber: "102 938 475",
 					isActive: true,
 					backgroundColor: "#6E1FA2",
-					url: "ally.com",
+					url: "",
 					notes: ""
 				)
 
 				BankAccount.Draft(
 					profileID: profileID,
-					bankName: "Mercury",
+					bankName: "Clearwater Savings",
 					accountType: .savings,
-					accountNumber: "1234567890",
+					accountNumber: "5521 8830 17",
 					routingNumber: "",
 					isActive: true,
 					backgroundColor: "#E0B979",
-					url: "mercury.com",
+					url: "",
 					notes: ""
 				)
 
 				InvestmentAccount.Draft(
 					profileID: profileID,
-					institution: "Charles Schwab",
+					institution: "Evergreen Investments",
 					accountType: .brokerage,
-					accountNumber: "1223334444",
+					accountNumber: "EV-2216-0847",
 					isActive: true,
 					backgroundColor: "#4394E5",
-					url: "schwab.com",
+					url: "",
 					notes: ""
 				)
 
 				HealthSavingsAccount.Draft(
 					profileID: profileID,
 					accountType: .hsa,
-					institution: "HSA Bank",
-					accountNumber: "4444333221",
+					institution: "Meridian Health",
+					accountNumber: "HS-6604-3192",
 					isActive: true,
 					backgroundColor: "#438E93",
-					url: "hsabank.com",
+					url: "",
 					notes: ""
 				)
 			}
@@ -331,9 +428,9 @@
 				ServiceProvider.Draft(
 					profileID: profileID,
 					providerType: .internet,
-					name: "BAM Broadband",
+					name: "Peak Fiber",
 					monthlyCost: 66,
-					accountNumber: "1234567890",
+					accountNumber: "PF-80203-114",
 					backgroundColor: "#EA6E2C",
 					url: "",
 					notes: ""
@@ -342,35 +439,72 @@
 				ServiceProvider.Draft(
 					profileID: profileID,
 					providerType: .cell,
-					name: "T-Mobile",
+					name: "Brightwave Wireless",
 					monthlyCost: 70,
 					accountNumber: "",
 					backgroundColor: "purple",
-					url: "t-mobile.com",
+					url: "",
 					notes: ""
 				)
 
 				ServiceProvider.Draft(
 					profileID: profileID,
 					providerType: .tv,
-					name: "YouTube TV",
+					name: "Streamline TV",
 					monthlyCost: 83,
 					accountNumber: "",
 					backgroundColor: "#E42C1F",
-					url: "tv.youtube.com",
+					url: "",
 					notes: ""
 				)
 
 				Subscription.Draft(
 					profileID: profileID,
-					name: "Apple Music",
-					category: .software,
-					monthlyCost: 6,
+					name: "Encore Music",
+					category: .music,
+					monthlyCost: 11,
 					billingCycle: .monthly,
-					renewalDate: .components(year: 2026, month: 5, day: 23),
+					renewalDate: .daysFromNow(8),
 					isActive: true,
 					backgroundColor: "#7D9FE1",
-					url: "music.apple.com",
+					url: "",
+					notes: ""
+				)
+
+				Subscription.Draft(
+					profileID: profileID,
+					name: "Skyvault Storage",
+					category: .cloud,
+					monthlyCost: 3,
+					billingCycle: .monthly,
+					renewalDate: .daysFromNow(17),
+					isActive: true,
+					backgroundColor: "#34AADC",
+					url: "",
+					notes: ""
+				)
+
+				Device.Draft(
+					profileID: profileID,
+					type: .computer,
+					brand: "Nimbus",
+					model: "Air 14",
+					serialNumber: "NB14-7Q2K-93XD",
+					purchaseDate: .components(year: 2024, month: 9, day: 14),
+					backgroundColor: "#5E5CE6",
+					url: "",
+					notes: ""
+				)
+
+				Device.Draft(
+					profileID: profileID,
+					type: .tv,
+					brand: "Vistara",
+					model: "65-inch 4K",
+					serialNumber: "VS65-4K-20817",
+					purchaseDate: .components(year: 2023, month: 11, day: 24),
+					backgroundColor: "#FF6482",
+					url: "",
 					notes: ""
 				)
 			}
@@ -382,10 +516,10 @@
 			try db.seed {
 				Job.Draft(
 					profileID: profileID,
-					company: "TinyCorp",
+					company: "Birch",
 					title: "Junior App Developer",
-					startDate: .components(year: 2000, month: 1, day: 1),
-					endDate: .components(year: 2021, month: 1, day: 1),
+					startDate: .components(year: 2016, month: 6, day: 1),
+					endDate: .components(year: 2018, month: 8, day: 1),
 					isCurrent: false,
 					salary: 70_000,
 					employmentType: .fullTime,
@@ -395,10 +529,10 @@
 
 				Job.Draft(
 					profileID: profileID,
-					company: "SmallCorp",
+					company: "Lumen",
 					title: "App Developer",
-					startDate: .components(year: 2021, month: 1, day: 1),
-					endDate: .components(year: 2022, month: 1, day: 1),
+					startDate: .components(year: 2018, month: 9, day: 1),
+					endDate: .components(year: 2021, month: 3, day: 1),
 					isCurrent: false,
 					salary: 90_000,
 					employmentType: .fullTime,
@@ -408,10 +542,10 @@
 
 				Job.Draft(
 					profileID: profileID,
-					company: "MedCorp",
+					company: "Tidal",
 					title: "Senior App Developer",
-					startDate: .components(year: 2022, month: 1, day: 1),
-					endDate: .components(year: 2023, month: 1, day: 1),
+					startDate: .components(year: 2021, month: 4, day: 1),
+					endDate: .components(year: 2023, month: 12, day: 1),
 					isCurrent: false,
 					salary: 135_000,
 					employmentType: .fullTime,
@@ -421,9 +555,9 @@
 
 				Job.Draft(
 					profileID: profileID,
-					company: "MegaCorp",
+					company: "Cascade",
 					title: "Lead App Developer",
-					startDate: .components(year: 2023, month: 1, day: 1),
+					startDate: .components(year: 2024, month: 1, day: 8),
 					endDate: nil,
 					isCurrent: true,
 					salary: 200_000,
@@ -440,6 +574,10 @@
 			Calendar.current.date(
 				from: DateComponents(year: year, month: month, day: day)
 			) ?? Date.now
+		}
+
+		fileprivate static func daysFromNow(_ days: Int) -> Date {
+			Calendar.current.date(byAdding: .day, value: days, to: .now) ?? .now
 		}
 	}
 

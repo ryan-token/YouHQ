@@ -21,6 +21,9 @@ struct AppEntryPoint: View {
 			}
 		}
 		.environment(paywallPresenter)
+		#if DEBUG
+			.preferredColorScheme(ScreenshotMode.colorScheme)
+		#endif
 	}
 }
 

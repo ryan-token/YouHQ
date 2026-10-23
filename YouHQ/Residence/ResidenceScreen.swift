@@ -72,6 +72,11 @@ struct ResidenceScreen: View {
 		.task {
 			await vm.loadProfiles()
 			await vm.loadResidenceData()
+			#if DEBUG
+				if ScreenshotMode.opensMaintenanceItems {
+					vm.isNavigatingToMaintenanceItems = true
+				}
+			#endif
 		}
 		.reloadOnProfileChange(
 			profileCount: vm.profiles.count,

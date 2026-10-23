@@ -11,7 +11,10 @@ import SQLiteData
 
 // swiftlint:disable file_length
 
-nonisolated func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throws -> any DatabaseWriter {
+nonisolated func appDatabase(
+	path: String? = nil,
+	attachMetadatabase shouldAttachMetadatabase: Bool = true
+) throws -> any DatabaseWriter {
 	var configuration = Configuration()
 	configuration.foreignKeysEnabled = true
 	configuration.prepareDatabase { db in
@@ -38,7 +41,7 @@ nonisolated func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool =
 		#endif
 	}
 
-	let database = try SQLiteData.defaultDatabase(configuration: configuration)
+	let database = try SQLiteData.defaultDatabase(path: path, configuration: configuration)
 	print(
 		"""
 		YouHQ database:

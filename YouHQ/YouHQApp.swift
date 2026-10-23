@@ -38,6 +38,12 @@ struct YouHQApp: App {
 	#endif
 
 	init() {
+		#if DEBUG
+			if ScreenshotMode.isEnabled {
+				ScreenshotMode.prepare()
+				return
+			}
+		#endif
 		if context == .live {
 			initializeSQLiteData()
 			TelemetryDeck.initialize(config: .init(appID: Constants.telemetryDeckAPIKey))
@@ -51,11 +57,13 @@ struct YouHQApp: App {
 				.task {
 					// Has to run after `initializeSQLiteData`, because only writes made once
 					// the sync engine exists are uploaded to iCloud.
-					guard context == .live else { return }
+					guard context == .live, !isScreenshotMode else { return }
 					await LegacyEncryptedFieldSweep().run()
 					await ShareParentSweep().run()
 				}
 				.task(id: scenePhase) {
+					// Screenshots skip StoreKit, notification scheduling and review requests.
+					guard !isScreenshotMode else { return }
 					await paywallManager.setup()
 					await refreshNotifications()
 					checkForReviewRequest()
@@ -72,6 +80,10 @@ struct YouHQApp: App {
 					)
 				#endif
 		}
+		#if DEBUG && os(macOS)
+			// The content's ideal size, unless screenshot mode needs a 2560×1600 Retina capture.
+			.defaultSize(width: ScreenshotMode.isEnabled ? 1280 : 800, height: ScreenshotMode.isEnabled ? 800 : 500)
+		#endif
 		.commands {
 			CommandGroup(replacing: .appInfo) {
 				Button("About YouHQ", systemImage: "info.circle") {
@@ -112,6 +124,14 @@ struct YouHQApp: App {
 			}
 			.windowBackgroundDragBehavior(.enabled)
 			.restorationBehavior(.disabled)
+		#endif
+	}
+
+	private var isScreenshotMode: Bool {
+		#if DEBUG
+			ScreenshotMode.isEnabled
+		#else
+			false
 		#endif
 	}
 
