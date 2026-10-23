@@ -32,11 +32,8 @@ extension MaintenanceItemsScreen {
 			self.vehicleID = vehicleID
 		}
 
-		var pastDueItems: [MaintenanceItem] { groupedItems.pastDue }
-		var upcomingItems: [MaintenanceItem] { groupedItems.upcoming }
-		var otherItems: [MaintenanceItem] { groupedItems.other }
-
-		private var groupedItems: GroupedMaintenanceItems {
+		/// The items split by due date. Read it once per update; each read regroups every item.
+		var groupedItems: GroupedMaintenanceItems {
 			var groups = GroupedMaintenanceItems()
 			for item in maintenanceItems {
 				if item.isPastDue {
@@ -50,7 +47,7 @@ extension MaintenanceItemsScreen {
 			return groups
 		}
 
-		private struct GroupedMaintenanceItems { // swiftlint:disable:this nesting
+		struct GroupedMaintenanceItems { // swiftlint:disable:this nesting
 			var pastDue: [MaintenanceItem] = []
 			var upcoming: [MaintenanceItem] = []
 			var other: [MaintenanceItem] = []
@@ -131,7 +128,7 @@ extension MaintenanceItemsScreen {
 						.execute(db)
 				}
 
-				Analytics.sendSignal(.residenceMaintenanceItemCreated)
+				Analytics.sendSignal(.residenceMaintenanceItemDeleted)
 
 				// Cancel notification when deleting item
 				Task {

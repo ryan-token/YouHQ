@@ -44,11 +44,8 @@ struct ResidenceInfo: View {
 						vm.showSectionEditSheet(for: .utility(utility), sourceID: utility.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: utility.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button("Delete", systemImage: "trash", role: .destructive) {
-						vm.utilityViewModel.delete(utility)
-					}
+				.editableRow(id: utility.id) {
+					vm.utilityViewModel.delete(utility)
 				}
 			}
 
@@ -66,11 +63,8 @@ struct ResidenceInfo: View {
 						vm.showSectionEditSheet(for: .insurancePolicy(policy), sourceID: policy.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button("Delete", systemImage: "trash", role: .destructive) {
-						vm.insuranceViewModel.delete(policy)
-					}
+				.editableRow(id: policy.id) {
+					vm.insuranceViewModel.delete(policy)
 				}
 			}
 
@@ -88,11 +82,8 @@ struct ResidenceInfo: View {
 						vm.showSectionEditSheet(for: .other(other), sourceID: other.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: other.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button("Delete", systemImage: "trash", role: .destructive) {
-						vm.otherViewModel.delete(other)
-					}
+				.editableRow(id: other.id) {
+					vm.otherViewModel.delete(other)
 				}
 			}
 

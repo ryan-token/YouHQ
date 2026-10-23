@@ -39,6 +39,7 @@ private struct PhotoViewerOverlayHost: ViewModifier {
 							data: presentation.payload.data,
 							onClose: presentation.onClose
 						)
+						.id(presentation.payload.id)
 						.frame(maxWidth: .infinity, maxHeight: .infinity)
 						.transition(.opacity)
 					}

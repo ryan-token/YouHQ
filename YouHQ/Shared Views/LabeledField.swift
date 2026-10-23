@@ -25,6 +25,7 @@ struct LabeledField<Content: View>: View {
 		LabeledContent {
 			content
 				.focused($isFocused)
+				.accessibilityLabel(Text(label))
 		} label: {
 			// Tapping the label focuses its field, like tapping a label in Settings.
 			Button(action: focusField) {
@@ -33,6 +34,8 @@ struct LabeledField<Content: View>: View {
 					.contentShape(.rect)
 			}
 			.buttonStyle(.plain)
+			// The field above carries the label, so VoiceOver skips this duplicate stop.
+			.accessibilityHidden(true)
 		}
 	}
 

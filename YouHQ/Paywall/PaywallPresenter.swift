@@ -28,10 +28,11 @@ final class PaywallPresenter {
 	/// On iOS, this dismisses the Settings sheet first so the paywall can present from AppTabView.
 	/// On macOS, this presents the paywall in the Settings window only (not the main window).
 	func showPaywallFromSettings() {
-		Analytics.sendSignal(.paywallPresented)
 		#if os(macOS)
+			Analytics.sendSignal(.paywallPresented)
 			isShowingPaywallInSettingsWindow = true
 		#else
+			// `showPaywall()` records the presentation once Settings finishes dismissing.
 			needsSettingsDismissalBeforePaywall = true
 		#endif
 	}

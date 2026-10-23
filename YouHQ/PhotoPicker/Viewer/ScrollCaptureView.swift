@@ -1,3 +1,10 @@
+//
+//  ScrollCaptureView.swift
+//  YouHQ
+//
+//  Created by Ryan Token on 10/22/26.
+//
+
 #if os(macOS)
 	import AppKit
 

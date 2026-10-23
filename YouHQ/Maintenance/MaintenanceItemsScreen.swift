@@ -30,16 +30,18 @@ struct MaintenanceItemsScreen: View {
 					)
 				}
 			} else {
-				if !vm.pastDueItems.isEmpty {
-					ItemsSection(title: "Past Due", items: vm.pastDueItems, vm: vm, namespace: addButtonNamespace)
+				let groups = vm.groupedItems
+
+				if !groups.pastDue.isEmpty {
+					ItemsSection(title: "Past Due", items: groups.pastDue, vm: vm, namespace: addButtonNamespace)
 				}
 
-				if !vm.upcomingItems.isEmpty {
-					ItemsSection(title: "Upcoming", items: vm.upcomingItems, vm: vm, namespace: addButtonNamespace)
+				if !groups.upcoming.isEmpty {
+					ItemsSection(title: "Upcoming", items: groups.upcoming, vm: vm, namespace: addButtonNamespace)
 				}
 
-				if !vm.otherItems.isEmpty {
-					ItemsSection(title: "Scheduled", items: vm.otherItems, vm: vm, namespace: addButtonNamespace)
+				if !groups.other.isEmpty {
+					ItemsSection(title: "Scheduled", items: groups.other, vm: vm, namespace: addButtonNamespace)
 				}
 			}
 		}
@@ -89,4 +91,6 @@ struct MaintenanceItemsScreen: View {
 	NavigationStack {
 		MaintenanceItemsScreen(residenceID: Residence.sampleData.id)
 	}
+	.environment(PaywallManager())
+	.environment(PaywallPresenter())
 }

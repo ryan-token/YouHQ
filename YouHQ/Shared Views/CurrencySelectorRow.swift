@@ -34,6 +34,8 @@ struct CurrencySelectorRow: View {
 				.foregroundStyle(.secondary)
 			}
 			.buttonStyle(.plain)
+			// `LabeledField` replaces the button's label with "Currency", so keep the choice as its value.
+			.accessibilityValue(displayLabel)
 		}
 		.sheet(isPresented: $isPresentingPicker) {
 			CurrencyPicker(selection: $currencyCode)

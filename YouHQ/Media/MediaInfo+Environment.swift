@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension EnvironmentValues {
-	/// Whether the Media tab blurs costs. Read by each Media row, so toggling it updates the
-	/// rows without rebuilding the list that hosts them.
+	/// Whether the Media tab blurs costs. Only the rows that show a cost read it, so toggling it
+	/// skips `MediaInfo` and the device rows.
 	@Entry var hideMediaCosts = false
 }

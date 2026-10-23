@@ -36,8 +36,7 @@ nonisolated struct TextStoredDouble: QueryBindable, QueryDecodable, QueryReprese
 		.double(queryOutput)
 	}
 
-	/// Unparseable text reads as zero, matching SQLite's own numeric conversion that the
-	/// previous direct `Double` decoding relied on.
+	/// Text that doesn't parse as a number reads as zero.
 	init(decoder: inout some QueryDecoder) throws {
 		self.queryOutput = Double(try String(decoder: &decoder)) ?? 0
 	}

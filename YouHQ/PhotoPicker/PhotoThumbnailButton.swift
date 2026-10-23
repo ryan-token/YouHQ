@@ -18,6 +18,7 @@ struct PhotoThumbnailButton: View {
 				showViewer(for: photoData)
 			} label: {
 				PhotoThumbnail(data: photoData)
+					.id(viewModel.photoRevision)
 			}
 			.buttonStyle(.plain)
 		}

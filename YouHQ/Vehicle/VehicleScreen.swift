@@ -65,11 +65,7 @@ struct VehicleScreen: View {
 			initialLoad: vm.loadVehicleData,
 			onProfileChanged: vm.handleProfileChange
 		)
-		// `vehicles` is delivered by SQLiteData's database observation, so there is no app-owned
-		// mutation path to bump a revision in. The key must also catch in-place edits (the
-		// selection is refreshed with edited data), which counts or ID arrays would miss. The
-		// array is small (capped by the paywall), and `Array ==` returns early when the
-		// fetch hasn't delivered a new buffer, so comparing it is cheap.
+		// Compares whole vehicles, not IDs, so in-place edits also refresh the selection.
 		.onChange(of: vm.vehicles) {
 			vm.updateSelectedVehicle()
 		}

@@ -12,7 +12,11 @@ import SwiftUI
 /// Manages photo selection, display, and persistence for entities that support image attachments.
 @Observable
 final class PhotoPickerViewModel {
-	var photoData: Data?
+	var photoData: Data? {
+		didSet { photoRevision &+= 1 }
+	}
+	/// Changes whenever `photoData` is set, so views can key on it instead of comparing bytes.
+	private(set) var photoRevision = 0
 	var photoItem: PhotosPickerItem?
 	var viewerPayload: PhotoViewerPayload?
 

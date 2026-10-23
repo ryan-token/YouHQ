@@ -33,7 +33,10 @@ struct ResidenceMap: View {
 		// Re-geocodes on appear and whenever the residences change, cancelling any lookup still in
 		// flight. Selection changes only move the camera, via `syncSelection` below.
 		.task(id: residences) {
-			await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id)
+			await vm.geocodeResidences(residences)
+			// Read the selection after the lookup, since it may have changed while geocoding.
+			guard !Task.isCancelled else { return }
+			vm.syncSelection(with: selectedResidence?.id)
 		}
 		.onChange(of: vm.selectedMapLocation) { _, newLocation in
 			if let newLocation {

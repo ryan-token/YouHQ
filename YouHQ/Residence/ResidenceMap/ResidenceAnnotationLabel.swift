@@ -8,9 +8,6 @@
 import SwiftUI
 
 /// The house button drawn for one residence on the map.
-///
-/// Takes `isSelected` as a plain value so a selection change re-renders only the labels whose
-/// highlight actually flips, rather than every annotation in the map.
 struct ResidenceAnnotationLabel: View {
 	let location: ResidenceMapLocation
 	let title: String

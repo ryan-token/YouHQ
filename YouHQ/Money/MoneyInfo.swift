@@ -10,7 +10,6 @@ import SwiftUI
 struct MoneyInfo: View {
 	let vm: MoneyScreen.ViewModel
 	let hideAccountNumbers: Bool
-	@Environment(\.sheetNamespace) private var namespace
 
 	var body: some View {
 		ForEach(vm.bankAccountViewModel.bankAccounts) { account in
@@ -27,11 +26,8 @@ struct MoneyInfo: View {
 					vm.showSectionEditSheet(for: .bankAccount(account), sourceID: account.id.uuidString)
 				}
 			)
-			.matchedTransitionSource(id: account.id.uuidString, in: namespace)
-			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-				Button("Delete", systemImage: "trash", role: .destructive) {
-					vm.bankAccountViewModel.delete(account)
-				}
+			.editableRow(id: account.id) {
+				vm.bankAccountViewModel.delete(account)
 			}
 		}
 
@@ -49,11 +45,8 @@ struct MoneyInfo: View {
 					vm.showSectionEditSheet(for: .investmentAccount(account), sourceID: account.id.uuidString)
 				}
 			)
-			.matchedTransitionSource(id: account.id.uuidString, in: namespace)
-			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-				Button("Delete", systemImage: "trash", role: .destructive) {
-					vm.investmentAccountViewModel.delete(account)
-				}
+			.editableRow(id: account.id) {
+				vm.investmentAccountViewModel.delete(account)
 			}
 		}
 
@@ -71,11 +64,8 @@ struct MoneyInfo: View {
 					vm.showSectionEditSheet(for: .healthSavingsAccount(account), sourceID: account.id.uuidString)
 				}
 			)
-			.matchedTransitionSource(id: account.id.uuidString, in: namespace)
-			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-				Button("Delete", systemImage: "trash", role: .destructive) {
-					vm.healthSavingsAccountViewModel.delete(account)
-				}
+			.editableRow(id: account.id) {
+				vm.healthSavingsAccountViewModel.delete(account)
 			}
 		}
 
@@ -93,11 +83,8 @@ struct MoneyInfo: View {
 					vm.showSectionEditSheet(for: .insurancePolicy(policy), sourceID: policy.id.uuidString)
 				}
 			)
-			.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
-			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-				Button("Delete", systemImage: "trash", role: .destructive) {
-					vm.insuranceViewModel.delete(policy)
-				}
+			.editableRow(id: policy.id) {
+				vm.insuranceViewModel.delete(policy)
 			}
 		}
 
@@ -115,11 +102,8 @@ struct MoneyInfo: View {
 					vm.showSectionEditSheet(for: .other(other), sourceID: other.id.uuidString)
 				}
 			)
-			.matchedTransitionSource(id: other.id.uuidString, in: namespace)
-			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-				Button("Delete", systemImage: "trash", role: .destructive) {
-					vm.otherViewModel.delete(other)
-				}
+			.editableRow(id: other.id) {
+				vm.otherViewModel.delete(other)
 			}
 		}
 	}

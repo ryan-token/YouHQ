@@ -9,6 +9,7 @@ import SwiftUI
 
 /// A photo view that supports pinch-to-zoom and pan gestures.
 /// On macOS, also supports scroll wheel panning and trackpad magnification.
+/// Decodes its photo once; give it a new identity to show a different one.
 struct ZoomablePhoto: View {
 	let data: Data
 	@Binding var zoomScale: Double
@@ -17,7 +18,7 @@ struct ZoomablePhoto: View {
 	@Binding var lastPanOffset: CGSize
 
 	@State private var containerSize: CGSize = .zero
-	@State private var imageCache = DecodedImageCache()
+	@State private var photo = DecodedPhoto.loading
 
 	#if !os(macOS)
 		@GestureState private var dragTranslation: CGSize = .zero
@@ -25,8 +26,11 @@ struct ZoomablePhoto: View {
 	#endif
 
 	var body: some View {
-		Group {
-			if let cgImage = imageCache.image(for: data) {
+		ZStack {
+			switch photo {
+			case .loading:
+				Color.clear
+			case .image(let cgImage):
 				Image(decorative: cgImage, scale: 1)
 					.resizable()
 					.scaledToFit()
@@ -57,10 +61,7 @@ struct ZoomablePhoto: View {
 					} action: { newValue in
 						updateContainerSize(newValue)
 					}
-					.onAppear {
-						updatePanBounds()
-					}
-			} else {
+			case .unavailable:
 				ContentUnavailableView(
 					"Image Unavailable",
 					systemImage: "photo"
@@ -69,6 +70,10 @@ struct ZoomablePhoto: View {
 			}
 		}
 		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+		.task {
+			photo = await DecodedPhoto.decode(data)
+			updatePanBounds()
+		}
 	}
 
 	// MARK: - Gestures
@@ -178,9 +183,8 @@ struct ZoomablePhoto: View {
 
 	// MARK: - Zoom Helpers
 
-	/// The decoded image's pixel size, read from the cache so it always matches `data`.
 	private var imageSize: CGSize? {
-		imageCache.image(for: data).map { CGSize(width: $0.width, height: $0.height) }
+		photo.size
 	}
 
 	private func updateContainerSize(_ newValue: CGSize) {

@@ -83,7 +83,7 @@ extension CareerScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showEditSheet(for section: EditableSection, sourceID: String) {
+		func showSectionEditSheet(for section: EditableSection, sourceID: String) {
 			sheetTransitionSourceID = sourceID
 			sectionToEdit = section
 			isShowingSectionEditSheet = true
@@ -91,12 +91,12 @@ extension CareerScreen {
 
 		func showAddJobSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			showEditSheet(for: .jobDraft(jobViewModel.createDraft(for: profileID)), sourceID: sourceID)
+			showSectionEditSheet(for: .jobDraft(jobViewModel.createDraft(for: profileID)), sourceID: sourceID)
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			showEditSheet(
+			showSectionEditSheet(
 				for: .otherDraft(
 					otherViewModel.createCategoryDraft(for: .career, profileID: profileID)
 				),

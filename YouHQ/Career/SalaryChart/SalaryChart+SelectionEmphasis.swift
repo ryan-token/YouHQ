@@ -11,8 +11,7 @@ import SwiftUI
 extension SalaryChart {
 	/// Colors each bar with its job's color, dimming the others while one is selected.
 	///
-	/// Reading the resolved selection in the style-scale mapping, rather than in the marks,
-	/// lets the chart reuse its content when the selection changes.
+	/// Keeps the selection read out of the mark builder, so the marks don't rebuild when it changes.
 	struct SelectionEmphasis: ViewModifier {
 		let vm: ViewModel
 		let chartData: [JobChartData]

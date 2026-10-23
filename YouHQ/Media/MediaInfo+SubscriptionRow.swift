@@ -11,7 +11,6 @@ extension MediaInfo {
 	struct SubscriptionRow: View {
 		let subscription: Subscription
 		let vm: MediaScreen.ViewModel
-		@Environment(\.sheetNamespace) private var namespace
 		@Environment(\.hideMediaCosts) private var hideCosts
 
 		var body: some View {
@@ -21,10 +20,7 @@ extension MediaInfo {
 				onColorChange: updateBackgroundColor,
 				onTap: showEditSheet
 			)
-			.matchedTransitionSource(id: subscription.id.uuidString, in: namespace)
-			.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-				Button("Delete", systemImage: "trash", role: .destructive, action: delete)
-			}
+			.editableRow(id: subscription.id, onDelete: delete)
 		}
 
 		private func updateBackgroundColor(_ newColor: Color) {

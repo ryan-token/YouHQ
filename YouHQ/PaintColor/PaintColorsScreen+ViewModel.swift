@@ -82,8 +82,8 @@ extension PaintColorsScreen {
 
 		/// Deletes the paint colors at `offsets` of `paintColors`, as a `List` reports them.
 		func deletePaintColors(at offsets: IndexSet) {
-			for index in offsets {
-				deletePaintColor(paintColors[index])
+			for paintColor in offsets.map({ paintColors[$0] }) {
+				deletePaintColor(paintColor)
 			}
 		}
 

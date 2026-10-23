@@ -80,4 +80,6 @@ struct PaintColorsScreen: View {
 	NavigationStack {
 		PaintColorsScreen(residenceID: Residence.sampleData.id)
 	}
+	.environment(PaywallManager())
+	.environment(PaywallPresenter())
 }

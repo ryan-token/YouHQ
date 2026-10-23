@@ -97,4 +97,6 @@ struct SharingStatus: View {
 
 #Preview {
 	SharingStatus(for: ProfileShare(profile: Profile.sampleData, isShared: true, metadata: nil))
+		.environment(PaywallManager())
+		.environment(PaywallPresenter())
 }

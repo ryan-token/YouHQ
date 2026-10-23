@@ -449,8 +449,8 @@ extension YouHQTests {
 				let vm = MaintenanceItemsScreen.ViewModel(residenceID: UUID(-2), vehicleID: nil)
 				await vm.loadData()
 
-				#expect(vm.pastDueItems.count == 1)
-				#expect(vm.pastDueItems[0].name == "Past Due Filter")
+				#expect(vm.groupedItems.pastDue.count == 1)
+				#expect(vm.groupedItems.pastDue[0].name == "Past Due Filter")
 			}
 
 			@Test("upcomingItems filters items due within 30 days that are not past due")
@@ -490,8 +490,8 @@ extension YouHQTests {
 				let vm = MaintenanceItemsScreen.ViewModel(residenceID: UUID(-2), vehicleID: nil)
 				await vm.loadData()
 
-				#expect(vm.upcomingItems.count == 1)
-				#expect(vm.upcomingItems[0].name == "Upcoming Filter")
+				#expect(vm.groupedItems.upcoming.count == 1)
+				#expect(vm.groupedItems.upcoming[0].name == "Upcoming Filter")
 			}
 
 			@Test("otherItems filters items that are neither past due nor upcoming")
@@ -537,8 +537,8 @@ extension YouHQTests {
 				let vm = MaintenanceItemsScreen.ViewModel(residenceID: UUID(-2), vehicleID: nil)
 				await vm.loadData()
 
-				#expect(vm.otherItems.count == 2)
-				let names = vm.otherItems.map(\.name)
+				#expect(vm.groupedItems.other.count == 2)
+				let names = vm.groupedItems.other.map(\.name)
 				#expect(names.contains("Far Future Other"))
 				#expect(names.contains("No Date Other"))
 			}
@@ -565,8 +565,8 @@ extension YouHQTests {
 				await vm.loadData()
 
 				#expect(vm.maintenanceItems.count == 1)
-				#expect(vm.pastDueItems.count == 1)
-				#expect(vm.pastDueItems[0].name == "Oil Change")
+				#expect(vm.groupedItems.pastDue.count == 1)
+				#expect(vm.groupedItems.pastDue[0].name == "Oil Change")
 			}
 		}
 

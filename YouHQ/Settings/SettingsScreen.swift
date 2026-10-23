@@ -21,11 +21,9 @@ struct SettingsScreen: View {
 
 	@Environment(PaywallPresenter.self) private var paywallPresenter
 	@Environment(\.dismiss) private var dismiss
-	#if !os(macOS)
-		@Environment(\.horizontalSizeClass) private var horizontalSizeClass
-	#endif
-	// Lives above the split view, so the selection survives the split view collapsing and
-	// expanding as an iPad window resizes or an iPhone Duo folds.
+	// Lives above the split view, so a chosen setting survives the split view collapsing and
+	// expanding as an iPad window resizes or an iPhone Duo folds. On iOS it stays `nil` until the
+	// user picks a row: a collapsed split view would push any preselection past the list.
 	@State private var selectedSetting: SettingsOption?
 
 	var body: some View {
@@ -108,7 +106,9 @@ struct SettingsScreen: View {
 		} detail: {
 			Group {
 				switch selectedSetting {
-				case .premium:
+				// With nothing chosen, the detail column beside the list shows Premium; a collapsed
+				// split view shows the list instead.
+				case .premium, nil:
 					#if os(macOS)
 						ScrollView {
 							Paywall(shouldShowDismissButton: false)
@@ -128,12 +128,6 @@ struct SettingsScreen: View {
 					case .sampleData:
 						SampleDataSettingsView()
 				#endif
-				case nil:
-					ContentUnavailableView {
-						Label("No Selection", systemImage: "questionmark.circle")
-					} description: {
-						HQText("Tap an option in the sidebar for settings.")
-					}
 				}
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
@@ -143,11 +137,6 @@ struct SettingsScreen: View {
 				selectedSetting = .premium
 			}
 		#else
-			// Only preselect when the split view shows the detail column beside the sidebar;
-			// a collapsed split view would otherwise push straight past the sidebar.
-			.onChange(of: horizontalSizeClass, initial: true) {
-				selectDefaultSettingIfShowingDetailColumn()
-			}
 			.horizontalToolbarForSingleActionSheet()
 		#endif
 		.onReceive(NotificationCenter.default.publisher(for: .onboardingCompleted)) { _ in
@@ -165,14 +154,6 @@ struct SettingsScreen: View {
 			}
 		#endif
 	}
-
-	#if !os(macOS)
-		private func selectDefaultSettingIfShowingDetailColumn() {
-			if horizontalSizeClass == .regular && selectedSetting == nil {
-				selectedSetting = .premium
-			}
-		}
-	#endif
 
 	private func iconColor(for setting: SettingsOption) -> Color {
 		var settingColor: Color {
@@ -204,4 +185,6 @@ struct SettingsScreen: View {
 
 #Preview {
 	SettingsScreen()
+		.environment(PaywallManager())
+		.environment(PaywallPresenter())
 }

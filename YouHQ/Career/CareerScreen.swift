@@ -39,13 +39,10 @@ struct CareerScreen: View {
 										for: job
 									)
 								},
-								onTap: { vm.showEditSheet(for: .job(job), sourceID: job.id.uuidString) }
+								onTap: { vm.showSectionEditSheet(for: .job(job), sourceID: job.id.uuidString) }
 							)
-							.matchedTransitionSource(id: job.id.uuidString, in: addButtonNamespace)
-							.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-								Button("Delete", systemImage: "trash", role: .destructive) {
-									vm.jobViewModel.delete(job)
-								}
+							.editableRow(id: job.id) {
+								vm.jobViewModel.delete(job)
 							}
 						}
 
@@ -59,13 +56,10 @@ struct CareerScreen: View {
 										for: other
 									)
 								},
-								onTap: { vm.showEditSheet(for: .other(other), sourceID: other.id.uuidString) }
+								onTap: { vm.showSectionEditSheet(for: .other(other), sourceID: other.id.uuidString) }
 							)
-							.matchedTransitionSource(id: other.id.uuidString, in: addButtonNamespace)
-							.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-								Button("Delete", systemImage: "trash", role: .destructive) {
-									vm.otherViewModel.delete(other)
-								}
+							.editableRow(id: other.id) {
+								vm.otherViewModel.delete(other)
 							}
 						}
 

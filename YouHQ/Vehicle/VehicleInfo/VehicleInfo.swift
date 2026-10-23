@@ -43,11 +43,8 @@ struct VehicleInfo: View {
 						vm.showSectionEditSheet(for: .insurancePolicy(policy), sourceID: policy.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button("Delete", systemImage: "trash", role: .destructive) {
-						vm.insuranceViewModel.delete(policy)
-					}
+				.editableRow(id: policy.id) {
+					vm.insuranceViewModel.delete(policy)
 				}
 			}
 
@@ -65,11 +62,8 @@ struct VehicleInfo: View {
 						vm.showSectionEditSheet(for: .other(other), sourceID: other.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: other.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button("Delete", systemImage: "trash", role: .destructive) {
-						vm.otherViewModel.delete(other)
-					}
+				.editableRow(id: other.id) {
+					vm.otherViewModel.delete(other)
 				}
 			}
 
