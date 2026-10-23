@@ -19,12 +19,17 @@ struct SettingsScreen: View {
 		#endif
 	}
 
-	@Environment(PaywallManager.self) private var paywallManager
-	@Environment(\.dismiss) var dismiss
+	@Environment(PaywallPresenter.self) private var paywallPresenter
+	@Environment(\.dismiss) private var dismiss
+	#if !os(macOS)
+		@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+	#endif
+	// Lives above the split view, so the selection survives the split view collapsing and
+	// expanding as an iPad window resizes or an iPhone Duo folds.
 	@State private var selectedSetting: SettingsOption?
 
 	var body: some View {
-		@Bindable var paywallManager = paywallManager
+		@Bindable var paywallPresenter = paywallPresenter
 
 		NavigationSplitView {
 			List(selection: $selectedSetting) {
@@ -93,11 +98,10 @@ struct SettingsScreen: View {
 			#if !os(macOS)
 				.navigationBarTitleDisplayMode(.inline)
 				.toolbar {
-					ToolbarItem(placement: .navigation) {
+					ToolbarItem(placement: .cancellationAction) {
 						Button("Close", systemImage: "xmark") {
 							dismiss()
 						}
-						.labelStyle(.iconOnly)
 					}
 				}
 			#endif
@@ -134,30 +138,41 @@ struct SettingsScreen: View {
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
 		}
-		.onAppear {
-			#if !os(macOS)
-				if UIDevice.current.userInterfaceIdiom != .phone {
-					selectedSetting = .premium
-				}
-			#else
+		#if os(macOS)
+			.onAppear {
 				selectedSetting = .premium
-			#endif
-		}
+			}
+		#else
+			// Only preselect when the split view shows the detail column beside the sidebar;
+			// a collapsed split view would otherwise push straight past the sidebar.
+			.onChange(of: horizontalSizeClass, initial: true) {
+				selectDefaultSettingIfShowingDetailColumn()
+			}
+			.horizontalToolbarForSingleActionSheet()
+		#endif
 		.onReceive(NotificationCenter.default.publisher(for: .onboardingCompleted)) { _ in
 			dismiss()
 		}
 		#if os(macOS)
-			.sheet(isPresented: $paywallManager.isShowingPaywallInSettingsWindow) {
+			.sheet(isPresented: $paywallPresenter.isShowingPaywallInSettingsWindow) {
 				Paywall()
 			}
 		#else
-			.onChange(of: paywallManager.needsSettingsDismissalBeforePaywall) {
-				if paywallManager.needsSettingsDismissalBeforePaywall {
+			.onChange(of: paywallPresenter.needsSettingsDismissalBeforePaywall) {
+				if paywallPresenter.needsSettingsDismissalBeforePaywall {
 					dismiss()
 				}
 			}
 		#endif
 	}
+
+	#if !os(macOS)
+		private func selectDefaultSettingIfShowingDetailColumn() {
+			if horizontalSizeClass == .regular && selectedSetting == nil {
+				selectedSetting = .premium
+			}
+		}
+	#endif
 
 	private func iconColor(for setting: SettingsOption) -> Color {
 		var settingColor: Color {

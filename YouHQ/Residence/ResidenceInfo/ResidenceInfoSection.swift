@@ -47,35 +47,35 @@ struct ResidenceInfoSection: View {
 		var items: [CostLineItem] = []
 
 		if let residenceCost = residence.monthlyCost, residence.costType != .owned {
-			items.append(CostLineItem(label: residence.costType.rawValue, cost: residenceCost))
+			items.append(CostLineItem(id: residence.id, label: residence.costType.rawValue, cost: residenceCost))
 		}
 
 		for utility in utilities {
 			if let cost = utility.approximateMonthlyCost {
-				items.append(CostLineItem(label: utility.type.rawValue, cost: cost))
+				items.append(CostLineItem(id: utility.id, label: utility.type.rawValue, cost: cost))
 			}
 		}
 
 		for policy in insurancePolicies {
 			if let cost = policy.monthlyCost {
-				items.append(CostLineItem(label: "\(policy.type.rawValue) Insurance", cost: cost))
+				items.append(CostLineItem(id: policy.id, label: "\(policy.type.rawValue) Insurance", cost: cost))
 			}
 		}
 
 		for other in others {
 			if let cost = other.monthlyCost {
-				items.append(CostLineItem(label: other.name, cost: cost))
+				items.append(CostLineItem(id: other.id, label: other.name, cost: cost))
 			}
 		}
 
 		return items
 	}
 
-	private var totalMonthlyCost: Double {
-		costLineItems.reduce(0) { $0 + $1.cost }
-	}
-
 	var body: some View {
+		// Build the breakdown once per body evaluation; it's read three times below.
+		let lineItems = costLineItems
+		let totalMonthlyCost = lineItems.reduce(0) { $0 + $1.cost }
+
 		InfoSection(
 			"Info",
 			backgroundColor: backgroundColor,
@@ -126,7 +126,7 @@ struct ResidenceInfoSection: View {
 				) {
 					CostBreakdownView(
 						title: "Monthly Total Cost of Ownership",
-						lineItems: costLineItems,
+						lineItems: lineItems,
 						totalCost: totalMonthlyCost,
 						currencyCode: resolvedCurrencyCode
 					)

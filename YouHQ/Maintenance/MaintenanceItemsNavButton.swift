@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MaintenanceItemsNavButton: View {
-	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.colorScheme) private var colorScheme
 
 	@Binding var isNavigating: Bool
 	let maintenanceItems: [MaintenanceItem]
@@ -25,8 +25,8 @@ struct MaintenanceItemsNavButton: View {
 					HQText("Maintenance Items")
 						.font(.headline)
 
-					let pastDue = maintenanceItems.filter { $0.isPastDue }.count
-					let upcoming = maintenanceItems.filter { $0.isUpcoming }.count
+					let pastDue = maintenanceItems.count(where: \.isPastDue)
+					let upcoming = maintenanceItems.count(where: \.isUpcoming)
 
 					VStack(alignment: .leading) {
 						Text("^[\(maintenanceItems.count) item](inflect: true)")

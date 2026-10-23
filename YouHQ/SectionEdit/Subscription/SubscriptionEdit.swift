@@ -59,10 +59,7 @@ struct SubscriptionEdit: View {
 				LabeledField("Renewal Date") {
 					DatePicker(
 						"",
-						selection: Binding(
-							get: { vm.renewalDate ?? Date() },
-							set: { vm.renewalDate = $0 }
-						),
+						selection: $vm.renewalDate.orNow,
 						displayedComponents: .date
 					)
 					.labelsHidden()

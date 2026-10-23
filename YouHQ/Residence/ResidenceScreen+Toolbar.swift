@@ -16,17 +16,7 @@ extension ResidenceScreen {
 		var body: some ToolbarContent {
 			if vm.residences.count > 1 {
 				ToolbarTitleMenu {
-					Picker(
-						"Choose Home",
-						selection: Binding(
-							get: { vm.selectedResidence?.id },
-							set: { newID in
-								if let residence = vm.residences.first(where: { $0.id == newID }) {
-									vm.selectedResidence = residence
-								}
-							}
-						)
-					) {
+					Picker("Choose Home", selection: $vm.titleMenuResidenceID) {
 						ForEach(vm.residences) { residence in
 							HQText(residence.unitOrStreet ?? residence.street)
 								.tag(residence.id)

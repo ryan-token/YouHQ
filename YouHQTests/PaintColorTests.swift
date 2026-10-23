@@ -133,7 +133,6 @@ extension YouHQTests {
 				#expect(draft.residenceID == UUID(-1))
 				#expect(draft.vehicleID == nil)
 				#expect(vm.isNewItem == true)
-				#expect(vm.isShowingEditSheet == true)
 			}
 
 			@Test("showAddPaintColorSheet sets draft with correct vehicle ID")
@@ -145,7 +144,6 @@ extension YouHQTests {
 				#expect(draft.residenceID == nil)
 				#expect(draft.vehicleID == UUID(-2))
 				#expect(vm.isNewItem == true)
-				#expect(vm.isShowingEditSheet == true)
 			}
 
 			@Test("editPaintColor sets draft from existing item")
@@ -165,7 +163,6 @@ extension YouHQTests {
 				#expect(draft.id == UUID(-1))
 				#expect(draft.colorName == "Alabaster")
 				#expect(vm.isNewItem == false)
-				#expect(vm.isShowingEditSheet == true)
 				#expect(vm.sheetTransitionSourceID == UUID(-1).uuidString)
 			}
 

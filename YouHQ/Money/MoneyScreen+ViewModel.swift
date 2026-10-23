@@ -19,11 +19,11 @@ extension MoneyScreen {
 		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
 
 		// Child view models for entity-specific operations
-		var bankAccountViewModel = BankAccountViewModel()
-		var investmentAccountViewModel = InvestmentAccountViewModel()
-		var healthSavingsAccountViewModel = HealthSavingsAccountViewModel()
-		var insuranceViewModel = InsurancePolicyViewModel()
-		var otherViewModel = OtherItemViewModel()
+		let bankAccountViewModel = BankAccountViewModel()
+		let investmentAccountViewModel = InvestmentAccountViewModel()
+		let healthSavingsAccountViewModel = HealthSavingsAccountViewModel()
+		let insuranceViewModel = InsurancePolicyViewModel()
+		let otherViewModel = OtherItemViewModel()
 
 		init() {}
 
@@ -42,6 +42,14 @@ extension MoneyScreen {
 			let policiesCount = insuranceViewModel.insurancePolicies.count
 			let otherCount = otherViewModel.others.count
 			return bankAccountCount + investmentAccountsCount + healthSavingsAccountsCount + policiesCount + otherCount
+		}
+
+		var hasNoMoneyItems: Bool {
+			bankAccountViewModel.bankAccounts.isEmpty
+				&& investmentAccountViewModel.investmentAccounts.isEmpty
+				&& healthSavingsAccountViewModel.healthSavingsAccounts.isEmpty
+				&& insuranceViewModel.insurancePolicies.isEmpty
+				&& otherViewModel.others.isEmpty
 		}
 
 		var isShowingSectionEditSheet = false
@@ -91,45 +99,56 @@ extension MoneyScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showAddBankAccountSheet(sourceID: String = "addButton") {
-			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .bankAccountDraft(bankAccountViewModel.createDraft(for: profileID))
+		func showSectionEditSheet(for section: EditableSection, sourceID: String) {
+			sectionToEdit = section
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
+		}
+
+		func showAddBankAccountSheet(sourceID: String = "addButton") {
+			guard let profileID = selectedProfile?.profile.id else { return }
+			showSectionEditSheet(
+				for: .bankAccountDraft(bankAccountViewModel.createDraft(for: profileID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddInvestmentAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .investmentAccountDraft(investmentAccountViewModel.createDraft(for: profileID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .investmentAccountDraft(investmentAccountViewModel.createDraft(for: profileID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddHealthSavingsAccountSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .healthSavingsAccountDraft(
-				healthSavingsAccountViewModel.createDraft(for: profileID)
+			showSectionEditSheet(
+				for: .healthSavingsAccountDraft(
+					healthSavingsAccountViewModel.createDraft(for: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 
 		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .insurancePolicyDraft(
-				InsurancePolicy(id: UUID(), profileID: profileID, type: .health)
+			showSectionEditSheet(
+				for: .insurancePolicyDraft(
+					InsurancePolicy(id: UUID(), profileID: profileID, type: .health)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .otherDraft(
-				otherViewModel.createCategoryDraft(for: .money, profileID: profileID)
+			showSectionEditSheet(
+				for: .otherDraft(
+					otherViewModel.createCategoryDraft(for: .money, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 	}
 }

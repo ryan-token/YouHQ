@@ -23,10 +23,7 @@ struct SectionEditSheet: View {
 				if vm.sectionViewModel.supportsProfileSwitching {
 					ProfilePickerSection(
 						profiles: vm.sectionViewModel.profiles,
-						selectedProfileID: Binding(
-							get: { vm.sectionViewModel.currentProfileID },
-							set: { vm.sectionViewModel.currentProfileID = $0 }
-						),
+						selectedProfileID: $vm.currentProfileID,
 						itemName: vm.sectionViewModel.itemNameForProfilePicker,
 						isNewItem: vm.section.isDraft
 					)
@@ -109,8 +106,6 @@ struct SectionEditSheet: View {
 			#if os(macOS)
 				.formStyle(.grouped)
 				.frame(minWidth: 500, minHeight: 350)
-			#else
-				.frame(minHeight: 350)
 			#endif
 			.navigationTitle(vm.title)
 			#if !os(macOS)

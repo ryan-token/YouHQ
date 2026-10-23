@@ -29,9 +29,13 @@ struct CurrencyPicker: View {
 			#endif
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel") { dismiss() }
+					Button(role: .cancel) {
+						dismiss()
+					}
 				}
 			}
+			// Cancel is the only toolbar action, so a vertical bar would cost more width than it saves.
+			.horizontalToolbarForSingleActionSheet()
 		}
 	}
 }

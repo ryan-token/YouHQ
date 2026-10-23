@@ -34,7 +34,7 @@ extension VehicleInfoEdit {
 		var currencyCode: String?
 		var url: String
 		var notes: String
-		var photoPicker = PhotoPickerViewModel()
+		let photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
 		@ObservationIgnored
@@ -97,7 +97,7 @@ extension VehicleInfoEdit {
 							if vin != loadedVIN {
 								$0.vin = #bind(vin.isEmpty ? nil : vin)
 							}
-							$0.monthlyCost = monthlyCost
+							$0.monthlyCost = #bind(monthlyCost)
 							$0.currencyCode = currencyCode
 							$0.costType = costType
 							$0.url = url

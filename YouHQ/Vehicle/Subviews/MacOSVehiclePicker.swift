@@ -12,22 +12,14 @@ struct MacOSVehiclePicker: View {
 	// assignment but not the read.
 	// periphery:ignore
 	let vehicles: [Vehicle]
-	@Binding var selectedVehicle: Vehicle?
+	// The owner ignores writes of IDs that don't match a vehicle; see
+	// `VehicleScreen.ViewModel.pickerSelectedVehicleID`.
+	@Binding var selectedVehicleID: Vehicle.ID?
 
 	var body: some View {
 		#if os(macOS)
 			if vehicles.count > 1 {
-				Picker(
-					"Choose Vehicle",
-					selection: Binding(
-						get: { selectedVehicle?.id },
-						set: { newID in
-							if let vehicle = vehicles.first(where: { $0.id == newID }) {
-								selectedVehicle = vehicle
-							}
-						}
-					)
-				) {
+				Picker("Choose Vehicle", selection: $selectedVehicleID) {
 					ForEach(vehicles) { vehicle in
 						HQText(vehicle.displayName)
 							.tag(vehicle.id)

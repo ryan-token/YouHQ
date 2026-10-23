@@ -38,7 +38,7 @@ struct PaintColorsNavButton: View {
 			.padding()
 			.background(
 				LinearGradient(
-					gradient: Gradient(colors: [.purple, .pink]),
+					colors: [.purple, .pink],
 					startPoint: .leading,
 					endPoint: .trailing
 				)

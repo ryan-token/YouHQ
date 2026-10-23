@@ -10,18 +10,22 @@ import SwiftUI
 /// Renders the current photo as a tappable thumbnail. Tapping presents the
 /// full-screen photo viewer through the overlay-host preference.
 struct PhotoThumbnailButton: View {
-	@Bindable var viewModel: PhotoPickerViewModel
+	let viewModel: PhotoPickerViewModel
 
 	var body: some View {
 		if let photoData = viewModel.photoData {
 			Button {
-				withAnimation {
-					viewModel.viewerPayload = PhotoViewerPayload(data: photoData)
-				}
+				showViewer(for: photoData)
 			} label: {
 				PhotoThumbnail(data: photoData)
 			}
 			.buttonStyle(.plain)
+		}
+	}
+
+	private func showViewer(for photoData: Data) {
+		withAnimation {
+			viewModel.viewerPayload = PhotoViewerPayload(data: photoData)
 		}
 	}
 }

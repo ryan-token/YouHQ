@@ -14,19 +14,22 @@ struct CareerScreen: View {
 	@AppStorage("hideSalaries") private var hideSalaries = false
 
 	var body: some View {
+		// Sorted once per update rather than once per read.
+		let sortedJobs = vm.sortedJobs
+
 		List {
 			Group {
 				SharingStatus(for: vm.selectedProfile)
 
 				Group {
-					if vm.sortedJobs.isEmpty && vm.otherViewModel.others.isEmpty {
+					if sortedJobs.isEmpty && vm.otherViewModel.others.isEmpty {
 						NoJobsView(vm: vm)
 					} else {
 						HideSalariesToggle(hideSalaries: $hideSalaries)
 
-						SalaryChart(jobs: vm.sortedJobs, hideSalaries: hideSalaries)
+						SalaryChart(jobs: sortedJobs, hideSalaries: hideSalaries)
 
-						ForEach(vm.sortedJobs) { job in
+						ForEach(sortedJobs) { job in
 							JobSection(
 								job: job,
 								hideSalaries: hideSalaries,
@@ -36,18 +39,12 @@ struct CareerScreen: View {
 										for: job
 									)
 								},
-								onTap: {
-									vm.sheetTransitionSourceID = job.id.uuidString
-									vm.sectionToEdit = .job(job)
-									vm.isShowingSectionEditSheet = true
-								}
+								onTap: { vm.showEditSheet(for: .job(job), sourceID: job.id.uuidString) }
 							)
 							.matchedTransitionSource(id: job.id.uuidString, in: addButtonNamespace)
 							.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-								Button(role: .destructive) {
+								Button("Delete", systemImage: "trash", role: .destructive) {
 									vm.jobViewModel.delete(job)
-								} label: {
-									Label("Delete", systemImage: "trash")
 								}
 							}
 						}
@@ -62,18 +59,12 @@ struct CareerScreen: View {
 										for: other
 									)
 								},
-								onTap: {
-									vm.sheetTransitionSourceID = other.id.uuidString
-									vm.sectionToEdit = .other(other)
-									vm.isShowingSectionEditSheet = true
-								}
+								onTap: { vm.showEditSheet(for: .other(other), sourceID: other.id.uuidString) }
 							)
 							.matchedTransitionSource(id: other.id.uuidString, in: addButtonNamespace)
 							.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-								Button(role: .destructive) {
+								Button("Delete", systemImage: "trash", role: .destructive) {
 									vm.otherViewModel.delete(other)
-								} label: {
-									Label("Delete", systemImage: "trash")
 								}
 							}
 						}
@@ -86,7 +77,7 @@ struct CareerScreen: View {
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)
 		}
-		.animation(.default, value: vm.sortedJobs)
+		.animation(.default, value: sortedJobs)
 		.animation(.default, value: vm.otherViewModel.others)
 		.navigationTitle("Career")
 		#if !os(macOS)

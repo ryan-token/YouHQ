@@ -34,6 +34,7 @@ extension OnboardingProfileCreationView {
 		var residencesCount = 0
 		var vehiclesCount = 0
 		var jobsCount = 0
+		var draftJob: Job?
 
 		var selectedProfileID: UUID? {
 			UUID(uuidString: selectedProfileIDString)
@@ -41,6 +42,43 @@ extension OnboardingProfileCreationView {
 
 		var isProfileNameEmpty: Bool {
 			newProfileName.trimmingCharacters(in: .whitespaces).isEmpty
+		}
+
+		func presentPaywall() {
+			showPaywallSheet = true
+		}
+
+		func presentCreateProfileAlert() {
+			isShowingCreateProfileAlert = true
+		}
+
+		/// Opens the add-residence sheet, or the paywall once the free tier's limit is reached.
+		func addResidence(hasUnlockedPremium: Bool) {
+			if hasUnlockedPremium || residencesCount < Constants.paywallResidencesThreshold {
+				showAddResidence = true
+			} else {
+				showPaywallSheet = true
+			}
+		}
+
+		/// Opens the add-vehicle sheet, or the paywall once the free tier's limit is reached.
+		func addVehicle(hasUnlockedPremium: Bool) {
+			if hasUnlockedPremium || vehiclesCount < Constants.paywallVehiclesThreshold {
+				showAddVehicle = true
+			} else {
+				showPaywallSheet = true
+			}
+		}
+
+		/// Opens a draft job's edit sheet, or the paywall once the free tier's limit is reached.
+		func addJob(hasUnlockedPremium: Bool) {
+			guard let selectedProfileID else { return }
+			if hasUnlockedPremium || jobsCount < Constants.paywallCoreItemsThreshold {
+				draftJob = Job(id: UUID(), profileID: selectedProfileID)
+				showAddJob = true
+			} else {
+				showPaywallSheet = true
+			}
 		}
 
 		func checkForProfile() async {

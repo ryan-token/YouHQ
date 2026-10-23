@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AboutWindow: View {
+	@Environment(\.calendar) private var calendar
+
 	private var appVersionAndBuild: String {
 		let version =
 			Bundle.main
@@ -19,8 +21,7 @@ struct AboutWindow: View {
 	}
 
 	private var copyright: String {
-		let calendar = Calendar.current
-		let year = calendar.component(.year, from: Date())
+		let year = calendar.component(.year, from: .now)
 		return "© \(year) Ryan Token"
 	}
 

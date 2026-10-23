@@ -44,18 +44,18 @@ struct VehicleInfoSection: View {
 		var items: [CostLineItem] = []
 
 		if let vehicleCost = vehicle.monthlyCost, vehicle.costType != .owned {
-			items.append(CostLineItem(label: vehicle.costType.rawValue, cost: vehicleCost))
+			items.append(CostLineItem(id: vehicle.id, label: vehicle.costType.rawValue, cost: vehicleCost))
 		}
 
 		for policy in insurancePolicies {
 			if let cost = policy.monthlyCost {
-				items.append(CostLineItem(label: "\(policy.type.rawValue) Insurance", cost: cost))
+				items.append(CostLineItem(id: policy.id, label: "\(policy.type.rawValue) Insurance", cost: cost))
 			}
 		}
 
 		for other in others {
 			if let cost = other.monthlyCost {
-				items.append(CostLineItem(label: other.name, cost: cost))
+				items.append(CostLineItem(id: other.id, label: other.name, cost: cost))
 			}
 		}
 
@@ -75,7 +75,7 @@ struct VehicleInfoSection: View {
 				onTap?(vehicle)
 			}
 		) {
-			HQText(vehicleDisplayName)
+			HQText(vehicle.displayName)
 				.sectionTitle()
 
 			if vehicle.type != .car || vehicle.subType != .gas {
@@ -127,20 +127,6 @@ struct VehicleInfoSection: View {
 				}
 			}
 		}
-	}
-
-	private var vehicleDisplayName: String {
-		var parts: [String] = []
-		if let year = vehicle.year, year.isNotEmpty {
-			parts.append(year)
-		}
-		if vehicle.make.isNotEmpty {
-			parts.append(vehicle.make)
-		}
-		if vehicle.model.isNotEmpty {
-			parts.append(vehicle.model)
-		}
-		return parts.isEmpty ? "Vehicle" : parts.joined(separator: " ")
 	}
 }
 

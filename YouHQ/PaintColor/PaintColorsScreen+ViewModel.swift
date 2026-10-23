@@ -20,7 +20,7 @@ extension PaintColorsScreen {
 
 		let residenceID: UUID?
 		let vehicleID: UUID?
-		var isShowingEditSheet = false
+		/// The paint color the edit sheet is presenting; `nil` while the sheet is dismissed.
 		var draftPaintColor: PaintColor?
 		var isNewItem = false
 		var sheetTransitionSourceID: String = "addButton"
@@ -72,14 +72,19 @@ extension PaintColorsScreen {
 				notes: ""
 			)
 			isNewItem = true
-			isShowingEditSheet = true
 		}
 
 		func editPaintColor(_ item: PaintColor) {
-			draftPaintColor = item
 			isNewItem = false
 			sheetTransitionSourceID = item.id.uuidString
-			isShowingEditSheet = true
+			draftPaintColor = item
+		}
+
+		/// Deletes the paint colors at `offsets` of `paintColors`, as a `List` reports them.
+		func deletePaintColors(at offsets: IndexSet) {
+			for index in offsets {
+				deletePaintColor(paintColors[index])
+			}
 		}
 
 		func deletePaintColor(_ item: PaintColor) {

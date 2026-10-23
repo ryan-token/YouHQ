@@ -45,25 +45,31 @@ struct CurrencyList<Header: View>: View {
 
 			if searchText.isEmpty {
 				Section {
-					CurrencyOptionRow(
-						title: "Default",
-						subtitle: defaultSubtitle,
-						isSelected: selectedCode == nil
-					) {
+					Button {
 						onSelect(nil)
+					} label: {
+						CurrencyOptionRow(
+							title: "Default",
+							subtitle: defaultSubtitle,
+							isSelected: selectedCode == nil
+						)
 					}
+					.buttonStyle(.plain)
 				}
 			}
 
 			Section {
 				ForEach(filteredCodes, id: \.self) { code in
-					CurrencyOptionRow(
-						title: code,
-						subtitle: Currency.localizedName(for: code),
-						isSelected: selectedCode == code
-					) {
+					Button {
 						onSelect(code)
+					} label: {
+						CurrencyOptionRow(
+							title: code,
+							subtitle: Currency.localizedName(for: code),
+							isSelected: selectedCode == code
+						)
 					}
+					.buttonStyle(.plain)
 				}
 			}
 		}

@@ -25,11 +25,11 @@ extension ResidenceScreen {
 		@FetchAll(Residence.none, animation: .default) var residences
 
 		// Child view models for entity-specific operations
-		var utilityViewModel = UtilityViewModel()
-		var insuranceViewModel = InsurancePolicyViewModel()
-		var otherViewModel = OtherItemViewModel()
-		var paintColorViewModel = PaintColorViewModel()
-		var maintenanceViewModel = MaintenanceItemViewModel()
+		let utilityViewModel = UtilityViewModel()
+		let insuranceViewModel = InsurancePolicyViewModel()
+		let otherViewModel = OtherItemViewModel()
+		let paintColorViewModel = PaintColorViewModel()
+		let maintenanceViewModel = MaintenanceItemViewModel()
 
 		@ObservationIgnored
 		@Shared(.appStorage("selectedResidenceID")) var selectedResidenceID: String?
@@ -68,6 +68,17 @@ extension ResidenceScreen {
 			}
 		}
 
+		/// The title menu's selection. Choosing an ID that isn't among `residences` leaves the
+		/// current selection unchanged.
+		var titleMenuResidenceID: UUID? {
+			get { selectedResidence?.id }
+			set {
+				if let residence = residences.first(where: { $0.id == newValue }) {
+					selectedResidence = residence
+				}
+			}
+		}
+
 		var hasMappableAddresses: Bool {
 			residences.contains { $0.street.isNotEmpty && $0.city.isNotEmpty }
 		}
@@ -92,6 +103,7 @@ extension ResidenceScreen {
 		var isNavigatingToPaintColors = false
 		var hasCompletedInitialLoad = false
 
+		@ObservationIgnored
 		private var loadDataTask: Task<Void, Never>?
 
 		// MARK: PROFILE FUNCTIONS
@@ -193,6 +205,13 @@ extension ResidenceScreen {
 			isShowingAddResidenceSheet = true
 		}
 
+		/// Presents the edit sheet for `section`, zooming from the view identified by `sourceID`.
+		func showSectionEditSheet(for section: EditableSection, sourceID: String) {
+			sheetTransitionSourceID = sourceID
+			sectionToEdit = section
+			isShowingSectionEditSheet = true
+		}
+
 		func updateResidenceBackgroundColor(_ color: Color) {
 			guard let selectedResidence else { return }
 			withErrorReporting {
@@ -210,45 +229,47 @@ extension ResidenceScreen {
 
 		func showAddUtilitySheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
-			sectionToEdit = .utilityDraft(utilityViewModel.createDraft(for: residenceID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(for: .utilityDraft(utilityViewModel.createDraft(for: residenceID)), sourceID: sourceID)
 		}
 
 		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			sectionToEdit = .insurancePolicyDraft(
-				insuranceViewModel.createDraft(for: residenceID, profileID: profileID)
+			showSectionEditSheet(
+				for: .insurancePolicyDraft(
+					insuranceViewModel.createDraft(for: residenceID, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 
 		func showAddMaintenanceItemSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
-			sectionToEdit = .maintenanceItemDraft(maintenanceViewModel.createDraft(for: residenceID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .maintenanceItemDraft(maintenanceViewModel.createDraft(for: residenceID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddPaintColorSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id else { return }
-			sectionToEdit = .paintColorDraft(paintColorViewModel.createDraft(for: residenceID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .paintColorDraft(paintColorViewModel.createDraft(for: residenceID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let residenceID = selectedResidence?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			sectionToEdit = .otherDraft(
-				otherViewModel.createResidenceDraft(for: residenceID, profileID: profileID)
+			showSectionEditSheet(
+				for: .otherDraft(
+					otherViewModel.createResidenceDraft(for: residenceID, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 
 	}

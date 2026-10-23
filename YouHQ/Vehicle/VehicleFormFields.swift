@@ -67,7 +67,7 @@ struct VehicleFormFields: View {
 	var body: some View {
 		Section("Basic Info") {
 			LabeledField("Type") {
-				Picker("", selection: $type) {
+				Picker("Type", selection: $type) {
 					ForEach(VehicleType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
 					}
@@ -76,7 +76,7 @@ struct VehicleFormFields: View {
 			}
 
 			LabeledField("Subtype") {
-				Picker("", selection: $subType) {
+				Picker("Subtype", selection: $subType) {
 					ForEach(VehicleSubType.allCases, id: \.self) { subType in
 						HQText(subType.rawValue).tag(subType)
 					}
@@ -111,7 +111,7 @@ struct VehicleFormFields: View {
 
 			LabeledField("Color") {
 				ColorPicker(
-					"",
+					"Color",
 					selection: $backgroundColor,
 					supportsOpacity: false
 				)
@@ -131,7 +131,7 @@ struct VehicleFormFields: View {
 
 		Section("Cost") {
 			LabeledField("Cost Type") {
-				Picker("", selection: $costType) {
+				Picker("Cost Type", selection: $costType) {
 					ForEach(VehicleCostType.allCases, id: \.self) { type in
 						HQText(type.rawValue).tag(type)
 					}

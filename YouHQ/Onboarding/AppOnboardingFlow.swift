@@ -9,12 +9,15 @@ import SwiftUI
 
 struct AppOnboardingFlow: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	#if !os(macOS)
+		@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+	#endif
 
 	@State private var vm = ViewModel()
 
 	let fromSettings: Bool
-	let timeOnEachTab = 4
-	let lastAutoAdvanceTab = 5 // Stop auto-advancing after OnboardingSummaryView
+	private let timeOnEachTab = 4
+	private let lastAutoAdvanceTab = 5 // Stop auto-advancing after OnboardingSummaryView
 
 	init(fromSettings: Bool = false) {
 		self.fromSettings = fromSettings
@@ -24,19 +27,18 @@ struct AppOnboardingFlow: View {
 		NavigationStack(path: $vm.navigationPath) {
 			OnboardingCarousel(
 				vm: vm,
-				screenshots: OnboardingScreenshot.appOnboardingScreenshots,
 				timeOnEachTab: timeOnEachTab,
 				lastAutoAdvanceTab: lastAutoAdvanceTab,
 				onSummaryAdvance: { vm.navigationPath.append(.profileCreation) }
 			)
 			.navigationDestination(for: Destination.self) { destination in
-				destinationView(for: destination)
+				DestinationView(destination: destination, vm: vm)
 			}
 		}
 		#if !os(macOS)
 			.toolbar(.hidden, for: .navigationBar)
 			.overlay(alignment: .topLeading) {
-				if fromSettings && UIDevice.current.userInterfaceIdiom == .phone {
+				if showsBackButton {
 					OnboardingBackButton()
 					.padding()
 				}
@@ -47,25 +49,14 @@ struct AppOnboardingFlow: View {
 		}
 	}
 
-	@ViewBuilder
-	private func destinationView(for destination: Destination) -> some View {
-		switch destination {
-		case .profileCreation:
-			OnboardingProfileCreationView {
-				vm.navigationPath.append(.reminder)
-			}
-		case .reminder:
-			OnboardingReminderView {
-				vm.navigateAfterReminder(hasUnlockedPremium: paywallManager.hasUnlockedPremium)
-			}
-		case .paywall:
-			OnboardingPaywallStep {
-				vm.navigationPath.append(.congratulations)
-			}
-		case .congratulations:
-			OnboardingCongratulationsView()
+	#if !os(macOS)
+		/// From Settings, the flow is pushed onto a collapsed split view whose navigation bar it
+		/// hides, so it needs its own way back. When the split view shows the sidebar beside it
+		/// (regular width), the sidebar already provides that.
+		private var showsBackButton: Bool {
+			fromSettings && horizontalSizeClass != .regular
 		}
-	}
+	#endif
 }
 
 #Preview {

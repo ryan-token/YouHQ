@@ -39,11 +39,7 @@ struct PaintColorsScreen: View {
 					)
 					.matchedTransitionSource(id: paintColor.id.uuidString, in: addButtonNamespace)
 				}
-				.onDelete { indexSet in
-					for index in indexSet {
-						vm.deletePaintColor(vm.paintColors[index])
-					}
-				}
+				.onDelete(perform: vm.deletePaintColors)
 			}
 		}
 		.navigationTitle("Paint Colors")
@@ -64,15 +60,13 @@ struct PaintColorsScreen: View {
 			}
 		}
 		.task { await vm.loadData() }
-		.sheet(isPresented: $vm.isShowingEditSheet) {
-			if let draftItem = vm.draftPaintColor {
-				SectionEditSheet(
-					section: vm.isNewItem ? .paintColorDraft(draftItem) : .paintColor(draftItem)
-				)
-				#if !os(macOS)
-					.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
-				#endif
-			}
+		.sheet(item: $vm.draftPaintColor) { draftItem in
+			SectionEditSheet(
+				section: vm.isNewItem ? .paintColorDraft(draftItem) : .paintColor(draftItem)
+			)
+			#if !os(macOS)
+				.navigationTransition(.zoom(sourceID: vm.sheetTransitionSourceID, in: addButtonNamespace))
+			#endif
 		}
 	}
 }

@@ -10,9 +10,12 @@ import SwiftUI
 struct PhotoThumbnail: View {
 	let data: Data
 
+	// Decodes once per photo rather than on every body evaluation.
+	@State private var imageCache = DecodedImageCache()
+
 	var body: some View {
-		if let image {
-			image
+		if let cgImage = imageCache.image(for: data) {
+			Image(decorative: cgImage, scale: 1)
 				.resizable()
 				.scaledToFit()
 				.clipShape(.rect(cornerRadius: 12))
@@ -20,10 +23,5 @@ struct PhotoThumbnail: View {
 		} else {
 			ContentUnavailableView("Image Unavailable", systemImage: "photo")
 		}
-	}
-
-	private var image: Image? {
-		guard let cgImage = orientedCGImage(from: data) else { return nil }
-		return Image(decorative: cgImage, scale: 1)
 	}
 }

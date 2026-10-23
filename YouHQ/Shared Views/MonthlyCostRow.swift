@@ -37,12 +37,10 @@ struct MonthlyCostRow: View {
 	}
 
 	var body: some View {
-		HStack(alignment: .center) {
+		AdaptiveRowStack {
 			HQText(label)
 				.font(.headline)
-			Button {
-				showPopover.toggle()
-			} label: {
+			Button(action: toggleBreakdown) {
 				HQText(totalCost.formatted(currencyCode: currencyCode))
 					.lineLimit(1)
 					.blur(radius: blurred ? 4 : 0)
@@ -57,6 +55,10 @@ struct MonthlyCostRow: View {
 			}
 		}
 	}
+
+	private func toggleBreakdown() {
+		showPopover.toggle()
+	}
 }
 
 #Preview {
@@ -64,10 +66,10 @@ struct MonthlyCostRow: View {
 		CostBreakdownView(
 			title: "Monthly Total Cost of Ownership",
 			lineItems: [
-				CostLineItem(label: "Mortgage", cost: 2000),
-				CostLineItem(label: "Electric", cost: 150),
-				CostLineItem(label: "Internet", cost: 100),
-				CostLineItem(label: "Renters Insurance", cost: 250)
+				CostLineItem(id: UUID(), label: "Mortgage", cost: 2000),
+				CostLineItem(id: UUID(), label: "Electric", cost: 150),
+				CostLineItem(id: UUID(), label: "Internet", cost: 100),
+				CostLineItem(id: UUID(), label: "Renters Insurance", cost: 250)
 			],
 			totalCost: 2500,
 			currencyCode: "USD"

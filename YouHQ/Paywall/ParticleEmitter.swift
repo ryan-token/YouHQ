@@ -39,11 +39,14 @@ struct ParticleEmitter: View {
 	var animationDelayThreshold = 0.0
 
 	var body: some View {
+		// GeometryReader stays: each particle's start and end points are computed from the
+		// emitter's size when the particle is created, which must be known before the first
+		// frame. `onGeometryChange` would only report it after layout.
 		GeometryReader { geo in
 			ZStack {
 				ForEach(0..<particleCount, id: \.self) { _ in
 					ParticleView(
-						image: Image(images.randomElement()!),
+						image: Image(decorative: images.randomElement() ?? ""),
 						position: position(in: geo),
 						opacity: makeOpacity(),
 						rotation: makeRotation(),
@@ -56,6 +59,7 @@ struct ParticleEmitter: View {
 				}
 			}
 		}
+		.accessibilityHidden(true)
 	}
 
 	private func position(in proxy: GeometryProxy) -> ParticleState<CGPoint> {

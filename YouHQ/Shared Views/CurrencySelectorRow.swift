@@ -29,6 +29,7 @@ struct CurrencySelectorRow: View {
 						.lineLimit(1)
 					Image(systemName: "chevron.up.chevron.down")
 						.font(.caption)
+						.accessibilityHidden(true)
 				}
 				.foregroundStyle(.secondary)
 			}

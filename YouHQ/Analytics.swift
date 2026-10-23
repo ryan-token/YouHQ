@@ -9,7 +9,7 @@ import Dependencies
 import StoreKit
 import TelemetryDeck
 
-struct Analytics {
+enum Analytics {
 	@Dependency(\.context) private static var context
 
 	static func sendSignal(_ signal: Signal) {

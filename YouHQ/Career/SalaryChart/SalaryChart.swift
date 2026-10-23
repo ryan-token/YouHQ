@@ -11,6 +11,9 @@ import SwiftUI
 struct SalaryChart: View {
 	@State private var vm = ViewModel()
 	@Environment(\.defaultCurrencyCode) private var defaultCurrencyCode
+	#if !os(macOS)
+		@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+	#endif
 
 	let jobs: [Job]
 	let hideSalaries: Bool
@@ -27,19 +30,23 @@ struct SalaryChart: View {
 					.fontWeight(.semibold)
 					.foregroundStyle(.secondary)
 
+				// Selection is read only inside the focused modifiers and overlay below, so dragging
+				// across bars doesn't rebuild the marks.
 				Chart(chartData) { data in
+					let label = vm.chartLabel(for: data)
 					BarMark(
-						x: .value("Job", vm.chartLabel(for: data)),
+						x: .value("Job", label),
 						y: .value("Salary", data.salary)
 					)
-					.foregroundStyle(Color(databaseValue: data.backgroundColor))
-					.opacity(vm.selectedJob == nil || vm.selectedJob?.id == data.id ? 1.0 : 0.5)
+					.foregroundStyle(by: .value("Job", label))
 					.cornerRadius(6)
 				}
+				.chartLegend(.hidden)
+				.modifier(SelectionEmphasis(vm: vm, chartData: chartData))
 				.frame(height: 200)
 				.chartScrollableAxes(.horizontal)
 				.chartXVisibleDomain(length: visibleBars())
-				.chartXSelection(value: $vm.selectedJobLabel)
+				.modifier(SelectionInput(vm: vm))
 				.chartYAxis {
 					AxisMarks(position: .leading) { value in
 						AxisValueLabel {
@@ -65,32 +72,7 @@ struct SalaryChart: View {
 				}
 				.padding()
 				.overlay(alignment: .top) {
-					if let selectedJob = vm.selectedJob {
-						VStack(spacing: 4) {
-							Text(selectedJob.xLabel)
-								.font(.caption)
-								.bold()
-							Text(
-								selectedJob.salary,
-								format: .currency(
-									code: Currency.resolved(selectedJob.currencyCode, default: defaultCurrencyCode)
-								)
-							)
-							.font(.caption)
-							.blur(radius: hideSalaries ? 4 : 0)
-						}
-						.padding(.horizontal, 12)
-						.padding(.vertical, 8)
-						.legibleForeground(on: Color(databaseValue: selectedJob.backgroundColor))
-						.background(
-							Color(databaseValue: selectedJob.backgroundColor)
-								.opacity(0.9)
-						)
-						.clipShape(.rect(cornerRadius: 8))
-						.shadow(radius: 4)
-						.padding(.top, 8)
-						.transition(.opacity.combined(with: .scale(scale: 0.9)))
-					}
+					SelectionTooltipOverlay(vm: vm, hideSalaries: hideSalaries)
 				}
 				.background {
 					#if os(macOS)
@@ -110,11 +92,12 @@ struct SalaryChart: View {
 		}
 	}
 
+	/// How many bars fit before the chart scrolls: more when the window is wide.
 	private func visibleBars() -> Int {
 		#if os(macOS)
 			6
 		#else
-			UIDevice.current.userInterfaceIdiom == .pad ? 6 : 4
+			horizontalSizeClass == .regular ? 6 : 4
 		#endif
 	}
 }
@@ -126,7 +109,7 @@ struct SalaryChart: View {
 			profileID: UUID(),
 			company: "Apple",
 			title: "Software Engineer",
-			startDate: Date(),
+			startDate: Date.now,
 			endDate: nil,
 			isCurrent: true,
 			salary: 150000,
@@ -140,8 +123,8 @@ struct SalaryChart: View {
 			profileID: UUID(),
 			company: "Google",
 			title: "Senior Engineer",
-			startDate: Date(),
-			endDate: Date(),
+			startDate: Date.now,
+			endDate: Date.now,
 			isCurrent: false,
 			salary: 180000,
 			employmentType: .fullTime,
@@ -154,8 +137,8 @@ struct SalaryChart: View {
 			profileID: UUID(),
 			company: "Microsoft",
 			title: "Engineer",
-			startDate: Date(),
-			endDate: Date(),
+			startDate: Date.now,
+			endDate: Date.now,
 			isCurrent: false,
 			salary: 120000,
 			employmentType: .fullTime,

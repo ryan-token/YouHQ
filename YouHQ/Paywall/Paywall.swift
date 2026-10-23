@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Paywall: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@Environment(\.accessibilityReduceMotion) private var reduceMotion
 
 	@State private var showContent = false
 	@State private var shouldRainConfetti = false
@@ -18,7 +19,7 @@ struct Paywall: View {
 	let shouldShowSkipButton: Bool
 	let shouldShowDismissButton: Bool
 	let onComplete: (() -> Void)?
-	let animationDuration: TimeInterval = 7
+	private let animationDuration: TimeInterval = 7
 
 	init(
 		fromOnboarding: Bool = false,
@@ -53,7 +54,8 @@ struct Paywall: View {
 				await paywallManager.refreshEntitlements()
 			}
 
-			if shouldRainConfetti {
+			// Confetti is pure motion, so it's skipped when Reduce Motion is on.
+			if shouldRainConfetti && !reduceMotion {
 				ParticleEmitter(
 					images: ["confetti"],
 					particleCount: 350,
@@ -70,9 +72,13 @@ struct Paywall: View {
 					animation: Animation.linear(duration: animationDuration),
 					animationDelayThreshold: 4
 				)
+				.ignoresSafeArea()
+				.allowsHitTesting(false)
 			}
 		}
-		.ignoresSafeArea(.all, edges: .vertical)
+		// Only the top edge, so the gradient runs under the status bar while the store's
+		// purchase and restore controls stay above the home indicator.
+		.ignoresSafeArea(.container, edges: .top)
 		.task {
 			try? await Task.sleep(for: .seconds(0.5))
 			withAnimation {

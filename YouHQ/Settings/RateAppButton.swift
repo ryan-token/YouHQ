@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RateAppButton: View {
-	@Environment(\.openURL) var openURL
+	@Environment(\.openURL) private var openURL
 
 	var body: some View {
 		Button {

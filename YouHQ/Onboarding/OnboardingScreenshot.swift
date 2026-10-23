@@ -7,10 +7,6 @@
 
 import Foundation
 
-#if canImport(UIKit)
-	import UIKit
-#endif
-
 /// One slide's worth of metadata for the onboarding carousel.
 struct OnboardingScreenshot {
 	let title: String
@@ -20,28 +16,32 @@ struct OnboardingScreenshot {
 }
 
 extension OnboardingScreenshot {
-	static let appOnboardingScreenshots: [OnboardingScreenshot] = makeScreenshots()
-
-	private static var platform: String {
+	/// The carousel's slides, using the screenshot set that suits the space available.
+	///
+	/// On iOS this follows the window's size classes rather than the device idiom: the
+	/// near-square iPad screenshots suit any window that is regular in both dimensions,
+	/// including iPhone Duo's inner display (which reports a phone idiom), while the tall
+	/// iPhone screenshots suit compact windows, including a narrow iPad split.
+	static func appOnboardingScreenshots(usesRegularLayout: Bool) -> [OnboardingScreenshot] {
 		#if os(iOS)
-			switch UIDevice.current.userInterfaceIdiom {
-			case .phone:
-				"ios"
-			case .pad:
-				"ipados"
-			default:
-				"ios"
-			}
-		#elseif os(macOS)
-			"macos"
-		#elseif os(visionOS)
-			"visionos"
+			usesRegularLayout ? regularLayoutScreenshots : compactLayoutScreenshots
 		#else
-			"ios"
+			platformScreenshots
 		#endif
 	}
 
-	private static func makeScreenshots() -> [OnboardingScreenshot] {
+	#if os(iOS)
+		private static let compactLayoutScreenshots = makeScreenshots(platform: "ios")
+		private static let regularLayoutScreenshots = makeScreenshots(platform: "ipados")
+	#elseif os(macOS)
+		private static let platformScreenshots = makeScreenshots(platform: "macos")
+	#elseif os(visionOS)
+		private static let platformScreenshots = makeScreenshots(platform: "visionos")
+	#else
+		private static let platformScreenshots = makeScreenshots(platform: "ios")
+	#endif
+
+	private static func makeScreenshots(platform: String) -> [OnboardingScreenshot] {
 		#if os(visionOS)
 			return [
 				OnboardingScreenshot(

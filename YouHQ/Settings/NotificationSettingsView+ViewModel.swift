@@ -32,29 +32,31 @@ extension NotificationSettingsView {
 			let status = await NotificationManager.shared.checkAuthorizationStatus()
 			isAuthorized = (status == .authorized)
 
-			withErrorReporting {
-				let settings = try database.read { db in
+			let settings = await withErrorReporting {
+				try await database.read { db in
 					try AppSettings.fetchAll(db).first
 				}
-				if let settings {
-					appSettingsID = settings.id
+			}
+			if let settings {
+				appSettingsID = settings.id
 
-					if !isAuthorized && settings.reminderInterval != .none {
-						// Permissions were revoked — reset to .none and cancel notification
-						selectedInterval = .none
-						previousInterval = .none
-						NotificationManager.shared.cancelReminderNotification()
-						try database.write { db in
+				if !isAuthorized && settings.reminderInterval != .none {
+					// Permissions were revoked — reset to .none and cancel notification
+					selectedInterval = .none
+					previousInterval = .none
+					NotificationManager.shared.cancelReminderNotification()
+					await withErrorReporting {
+						try await database.write { db in
 							try AppSettings.find(settings.id)
 								.update {
 									$0.reminderInterval = ReminderInterval.none
 								}
 								.execute(db)
 						}
-					} else {
-						selectedInterval = settings.reminderInterval
-						previousInterval = settings.reminderInterval
 					}
+				} else {
+					selectedInterval = settings.reminderInterval
+					previousInterval = settings.reminderInterval
 				}
 			}
 

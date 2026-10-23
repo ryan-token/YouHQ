@@ -14,8 +14,8 @@ struct PhotoViewer: View {
 	let onClose: (() -> Void)?
 
 	@Environment(\.dismiss) private var dismiss
-	@State private var zoomScale: CGFloat = 1
-	@State private var lastZoomScale: CGFloat = 1
+	@State private var zoomScale: Double = 1
+	@State private var lastZoomScale: Double = 1
 	@State private var panOffset: CGSize = .zero
 	@State private var lastPanOffset: CGSize = .zero
 	@State private var isShowingDownloadOptions = false
@@ -79,11 +79,7 @@ struct PhotoViewer: View {
 				downloadErrorMessage = error.localizedDescription
 			}
 		}
-		.alert(
-			"Download Failed",
-			isPresented: $downloadErrorMessage.isPresent(),
-			presenting: downloadErrorMessage
-		) { _ in
+		.alert("Download Failed", item: $downloadErrorMessage) { _ in
 		} message: { message in
 			HQText(message)
 		}

@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-enum BadgeType {
-	case success
-	case warning
-	case alert
-}
-
 struct BadgeStyle: ViewModifier {
 	let type: BadgeType
 

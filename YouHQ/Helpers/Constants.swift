@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Constants {
+enum Constants {
 	// MARK: - Paywall
 	static let paywallProfilesThreshold = 1
 	static let paywallResidencesThreshold = 1

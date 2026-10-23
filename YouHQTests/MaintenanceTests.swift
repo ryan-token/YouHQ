@@ -210,6 +210,30 @@ extension YouHQTests {
 				#expect(count == 0)
 			}
 
+			@Test("Deleting at offsets indexes the section's items, not the full list")
+			func deleteAtSectionOffsets() async throws {
+				try await database.write { db in
+					try db.seed {
+						Profile.Draft(id: UUID(-1), name: "Test", createdAt: Date(), updatedAt: Date())
+						Residence.Draft(id: UUID(-2), profileID: UUID(-1), street: "123 Main")
+						MaintenanceItem.Draft(id: UUID(-3), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Filter")
+						MaintenanceItem.Draft(id: UUID(-4), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Gutters")
+						MaintenanceItem.Draft(id: UUID(-5), profileID: nil, residenceID: UUID(-2), vehicleID: nil, name: "Roof")
+					}
+				}
+
+				let vm = MaintenanceItemsScreen.ViewModel(residenceID: UUID(-2), vehicleID: nil)
+				let section = try await database.read { db in
+					try MaintenanceItem.where { $0.id.in([UUID(-4), UUID(-5)]) }.order(by: \.name).fetchAll(db)
+				}
+				vm.deleteMaintenanceItems(at: [1], from: section)
+
+				let remaining = try await database.read { db in
+					try MaintenanceItem.order(by: \.name).fetchAll(db).map(\.name)
+				}
+				#expect(remaining == ["Filter", "Gutters"])
+			}
+
 			@Test("Complete maintenance item creates completion record and updates due date")
 			func completeItem() async throws {
 				let dueDate = Date(timeIntervalSinceNow: -86400) // past due
@@ -261,7 +285,6 @@ extension YouHQTests {
 				#expect(vm.draftMaintenanceItem?.residenceID == UUID(-1))
 				#expect(vm.draftMaintenanceItem?.vehicleID == nil)
 				#expect(vm.isNewItem == true)
-				#expect(vm.isShowingEditSheet == true)
 			}
 
 			@Test("editMaintenanceItem sets draft to existing item")
@@ -277,7 +300,6 @@ extension YouHQTests {
 
 				#expect(vm.draftMaintenanceItem?.id == UUID(-2))
 				#expect(vm.isNewItem == false)
-				#expect(vm.isShowingEditSheet == true)
 			}
 		}
 

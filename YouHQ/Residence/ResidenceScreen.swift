@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ResidenceScreen: View {
 	@AppStorage("hideResidenceCosts") private var hideResidenceCosts = false
-	@Dependency(\.defaultSyncEngine) var syncEngine
+	@Dependency(\.defaultSyncEngine) private var syncEngine
 	@Namespace private var addButtonNamespace
 	@State private var vm = ViewModel()
 

@@ -33,7 +33,7 @@ extension InsuranceEdit {
 		var hasRenewalDate: Bool
 		var url: String
 		var notes: String
-		var photoPicker = PhotoPickerViewModel()
+		let photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
 		@ObservationIgnored
@@ -43,6 +43,20 @@ extension InsuranceEdit {
 		var itemNameForProfilePicker: String {
 			let name = provider.isNotEmpty ? "\(provider) - \(type.rawValue)" : "this policy"
 			return name
+		}
+
+		/// Policy types offered for this policy's parent: auto for a vehicle,
+		/// home or renters for a residence, and everything else otherwise.
+		var availableTypes: [InsurancePolicyType] {
+			InsurancePolicyType.allCases.filter {
+				if policy.vehicleID != nil {
+					$0 == .auto
+				} else if policy.residenceID != nil {
+					$0 == .home || $0 == .renters
+				} else {
+					$0 != .home && $0 != .renters && $0 != .auto
+				}
+			}
 		}
 
 		var title: String {
@@ -123,9 +137,9 @@ extension InsuranceEdit {
 								if policyNumber != loadedPolicyNumber {
 									$0.policyNumber = #bind(policyNumber)
 								}
-								$0.monthlyCost = monthlyCost
-								$0.deductible = deductible
-								$0.coverageAmount = coverageAmount
+								$0.monthlyCost = #bind(monthlyCost)
+								$0.deductible = #bind(deductible)
+								$0.coverageAmount = #bind(coverageAmount)
 								$0.currencyCode = currencyCode
 								$0.renewalDate =
 									hasRenewalDate ? renewalDate : nil

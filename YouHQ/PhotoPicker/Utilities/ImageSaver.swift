@@ -6,13 +6,6 @@
 //
 
 import Photos
-import SwiftUI
-
-#if os(iOS) || os(visionOS)
-	import UIKit
-#elseif os(macOS)
-	import AppKit
-#endif
 
 /// Saves images to the user's photo library with completion handling.
 /// Works across iOS, macOS, and visionOS.
@@ -41,22 +34,5 @@ final class ImageSaver {
 		}
 
 		return await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-	}
-}
-
-enum ImageSaveError: LocalizedError {
-	case accessDenied
-	case invalidImageData
-	case saveFailed
-
-	var errorDescription: String? {
-		switch self {
-		case .accessDenied:
-			"Photos access is not allowed for this app."
-		case .invalidImageData:
-			"The image data could not be read."
-		case .saveFailed:
-			"Unable to save the image to Photos."
-		}
 	}
 }

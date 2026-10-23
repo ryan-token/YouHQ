@@ -18,22 +18,28 @@ struct AddMenuToolbarItem<MenuContent: View>: ToolbarContent {
 
 	let showProgressViewIfSyncing: Bool
 	let namespace: Namespace.ID
-	@ViewBuilder let menu: () -> MenuContent
+	@ViewBuilder let menu: MenuContent
 
 	var body: some ToolbarContent {
-		if showProgressViewIfSyncing && syncEngine.isSynchronizing {
-			ToolbarItem(placement: .primaryAction) {
-				ProgressView()
+		// Adding is each tab's most frequent action, so keep it in the bar when space runs out —
+		// on iPhone Duo's outer display the tabs, toolbar items and status share one vertical bar.
+		// visionOS has no `.high` priority; its ornaments don't share space with tabs.
+		#if os(visionOS)
+			item
+		#else
+			if #available(iOS 27.0, macOS 26.1, *) {
+				item.visibilityPriority(.high)
+			} else {
+				item
 			}
-		} else {
-			ToolbarItem(placement: .primaryAction) {
-				Menu {
-					menu()
-				} label: {
-					Label("Add", systemImage: "plus")
-				}
-				.matchedTransitionSource(id: "addButton", in: namespace)
-			}
-		}
+		#endif
+	}
+
+	private var item: AddMenuToolbarItemContent<MenuContent> {
+		AddMenuToolbarItemContent(
+			isShowingProgress: showProgressViewIfSyncing && syncEngine.isSynchronizing,
+			namespace: namespace,
+			menu: menu
+		)
 	}
 }

@@ -11,23 +11,23 @@ import SwiftUI
 /// On macOS, also supports scroll wheel panning and trackpad magnification.
 struct ZoomablePhoto: View {
 	let data: Data
-	@Binding var zoomScale: CGFloat
-	@Binding var lastZoomScale: CGFloat
+	@Binding var zoomScale: Double
+	@Binding var lastZoomScale: Double
 	@Binding var panOffset: CGSize
 	@Binding var lastPanOffset: CGSize
 
 	@State private var containerSize: CGSize = .zero
-	@State private var imageSize: CGSize?
+	@State private var imageCache = DecodedImageCache()
 
 	#if !os(macOS)
 		@GestureState private var dragTranslation: CGSize = .zero
-		@GestureState private var magnifyScale: CGFloat = 1
+		@GestureState private var magnifyScale: Double = 1
 	#endif
 
 	var body: some View {
 		Group {
-			if let image {
-				image
+			if let cgImage = imageCache.image(for: data) {
+				Image(decorative: cgImage, scale: 1)
 					.resizable()
 					.scaledToFit()
 					.containerRelativeFrame(
@@ -42,7 +42,15 @@ struct ZoomablePhoto: View {
 					#endif
 					.simultaneousGesture(panGesture)
 					#if os(macOS)
-						.overlay(scrollWheelPanOverlay)
+						.overlay {
+							ScrollWheelPanView(
+								isScrollEnabled: zoomScale > 1,
+								onScroll: handleScroll,
+								onMagnifyBegan: beginMagnify,
+								onMagnifyChanged: changeMagnify,
+								onMagnifyEnded: finishZoom
+							)
+						}
 					#endif
 					.onGeometryChange(for: CGSize.self) { proxy in
 						proxy.size
@@ -50,7 +58,7 @@ struct ZoomablePhoto: View {
 						updateContainerSize(newValue)
 					}
 					.onAppear {
-						configureImageIfNeeded()
+						updatePanBounds()
 					}
 			} else {
 				ContentUnavailableView(
@@ -61,13 +69,6 @@ struct ZoomablePhoto: View {
 			}
 		}
 		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-	}
-
-	// MARK: - Image
-
-	private var image: Image? {
-		guard let cgImage = orientedCGImage(from: data) else { return nil }
-		return Image(decorative: cgImage, scale: 1)
 	}
 
 	// MARK: - Gestures
@@ -132,36 +133,30 @@ struct ZoomablePhoto: View {
 	#endif
 
 	#if os(macOS)
-		private var scrollWheelPanOverlay: some View {
-			ScrollWheelPanView(
-				isScrollEnabled: zoomScale > 1,
-				onScroll: { delta in
-					let proposed = CGSize(
-						width: panOffset.width + delta.width,
-						height: panOffset.height + delta.height
-					)
-					applyClampedPan(proposed)
-				},
-				onMagnifyBegan: {
-					lastZoomScale = zoomScale
-				},
-				onMagnifyChanged: { magnification in
-					let newScale = min(
-						max(1, lastZoomScale * (1 + magnification)),
-						6
-					)
-					updateZoomScale(newScale)
-				},
-				onMagnifyEnded: {
-					finishZoom()
-				}
+		private func handleScroll(_ delta: CGSize) {
+			let proposed = CGSize(
+				width: panOffset.width + delta.width,
+				height: panOffset.height + delta.height
 			)
+			applyClampedPan(proposed)
+		}
+
+		private func beginMagnify() {
+			lastZoomScale = zoomScale
+		}
+
+		private func changeMagnify(_ magnification: CGFloat) {
+			let newScale = min(
+				max(1, lastZoomScale * (1 + magnification)),
+				6
+			)
+			updateZoomScale(newScale)
 		}
 	#endif
 
 	// MARK: - Scale and Offset
 
-	private var currentScale: CGFloat {
+	private var currentScale: Double {
 		#if os(macOS)
 			zoomScale
 		#else
@@ -183,16 +178,9 @@ struct ZoomablePhoto: View {
 
 	// MARK: - Zoom Helpers
 
-	private func configureImageIfNeeded() {
-		guard imageSize == nil else { return }
-		imageSize = resolvedImageSize()
-		updatePanBounds()
-		applyClampedPan(panOffset)
-	}
-
-	private func resolvedImageSize() -> CGSize? {
-		guard let cgImage = orientedCGImage(from: data) else { return nil }
-		return CGSize(width: cgImage.width, height: cgImage.height)
+	/// The decoded image's pixel size, read from the cache so it always matches `data`.
+	private var imageSize: CGSize? {
+		imageCache.image(for: data).map { CGSize(width: $0.width, height: $0.height) }
 	}
 
 	private func updateContainerSize(_ newValue: CGSize) {
@@ -204,7 +192,7 @@ struct ZoomablePhoto: View {
 
 	// Called only from the macOS magnify gesture handler above.
 	// periphery:ignore
-	private func updateZoomScale(_ newScale: CGFloat) {
+	private func updateZoomScale(_ newScale: Double) {
 		zoomScale = newScale
 		updatePanBounds()
 		if zoomScale <= 1 {
@@ -255,7 +243,7 @@ struct ZoomablePhoto: View {
 		lastPanOffset = clamped
 	}
 
-	private func clampedOffset(_ offset: CGSize, scale: CGFloat) -> CGSize {
+	private func clampedOffset(_ offset: CGSize, scale: Double) -> CGSize {
 		guard scale > 1 else { return .zero }
 		let maxOffset = maxPanOffset(for: scale)
 		return CGSize(
@@ -264,7 +252,7 @@ struct ZoomablePhoto: View {
 		)
 	}
 
-	private func maxPanOffset(for scale: CGFloat) -> CGSize {
+	private func maxPanOffset(for scale: Double) -> CGSize {
 		guard scale > 1,
 			let imageSize,
 			containerSize.width > 0,

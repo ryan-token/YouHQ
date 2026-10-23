@@ -22,14 +22,14 @@ extension CurrencySettingsView {
 		private var appSettingsID: UUID?
 
 		func load() async {
-			withErrorReporting {
-				let settings = try database.read { db in
+			let settings = await withErrorReporting {
+				try await database.read { db in
 					try AppSettings.fetchAll(db).first
 				}
-				if let settings {
-					appSettingsID = settings.id
-					selectedCode = settings.currencyCode
-				}
+			}
+			if let settings {
+				appSettingsID = settings.id
+				selectedCode = settings.currencyCode
 			}
 		}
 

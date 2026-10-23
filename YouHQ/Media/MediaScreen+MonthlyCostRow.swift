@@ -24,14 +24,14 @@ extension MediaScreen {
 			for provider in serviceProviders {
 				if let cost = provider.monthlyCost {
 					let label = provider.name.isEmpty ? provider.providerType.rawValue : provider.name
-					items.append(CostLineItem(label: label, cost: cost))
+					items.append(CostLineItem(id: provider.id, label: label, cost: cost))
 				}
 			}
 
 			for subscription in subscriptions where subscription.isActive {
 				if let cost = subscription.monthlyCost {
 					let normalized = subscription.billingCycle == .annual ? cost / 12 : cost
-					items.append(CostLineItem(label: subscription.name, cost: normalized))
+					items.append(CostLineItem(id: subscription.id, label: subscription.name, cost: normalized))
 				}
 			}
 

@@ -24,7 +24,7 @@ struct VehicleScreen: View {
 							onAddVehicleTapped: { vm.showCreateVehicleSheet(sourceID: "emptyStateButton") }
 						)
 					} else {
-						MacOSVehiclePicker(vehicles: vm.vehicles, selectedVehicle: $vm.selectedVehicle)
+						MacOSVehiclePicker(vehicles: vm.vehicles, selectedVehicleID: $vm.pickerSelectedVehicleID)
 
 						HideCostsToggle(hideCosts: $hideVehicleCosts)
 
@@ -38,23 +38,19 @@ struct VehicleScreen: View {
 			.listRowBackground(Color.clear)
 		}
 		.animation(.default, value: vm.vehicles)
-		.navigationTitle(vehicleTitle)
+		.navigationTitle(vm.navigationTitle)
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 		#endif
 		.toolbar { Toolbar(vm: vm, namespace: addButtonNamespace) }
 		.environment(\.sheetNamespace, addButtonNamespace)
 		.navigationDestination(isPresented: $vm.isNavigatingToMaintenanceItems) {
-			if let vehicleIDString = vm.selectedVehicleID,
-				let vehicleID = UUID(uuidString: vehicleIDString)
-			{
+			if let vehicleID = vm.persistedSelectedVehicleUUID {
 				MaintenanceItemsScreen(vehicleID: vehicleID)
 			}
 		}
 		.navigationDestination(isPresented: $vm.isNavigatingToPaintColors) {
-			if let vehicleIDString = vm.selectedVehicleID,
-				let vehicleID = UUID(uuidString: vehicleIDString)
-			{
+			if let vehicleID = vm.persistedSelectedVehicleUUID {
 				PaintColorsScreen(vehicleID: vehicleID)
 			}
 		}
@@ -69,6 +65,11 @@ struct VehicleScreen: View {
 			initialLoad: vm.loadVehicleData,
 			onProfileChanged: vm.handleProfileChange
 		)
+		// `vehicles` is delivered by SQLiteData's database observation, so there is no app-owned
+		// mutation path to bump a revision in. The key must also catch in-place edits (the
+		// selection is refreshed with edited data), which counts or ID arrays would miss. The
+		// array is small (capped by the paywall), and `Array ==` returns early when the
+		// fetch hasn't delivered a new buffer, so comparing it is cheap.
 		.onChange(of: vm.vehicles) {
 			vm.updateSelectedVehicle()
 		}
@@ -94,23 +95,6 @@ struct VehicleScreen: View {
 		#if !os(visionOS)
 			.scrollDismissesKeyboard(.immediately)
 		#endif
-	}
-
-	private var vehicleTitle: String {
-		if let vehicle = vm.selectedVehicle {
-			var parts: [String] = []
-			if let year = vehicle.year, year.isNotEmpty {
-				parts.append(year)
-			}
-			if vehicle.make.isNotEmpty {
-				parts.append(vehicle.make)
-			}
-			if vehicle.model.isNotEmpty {
-				parts.append(vehicle.model)
-			}
-			return parts.isEmpty ? "Vehicles" : parts.joined(separator: " ")
-		}
-		return "Vehicles"
 	}
 }
 

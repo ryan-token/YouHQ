@@ -11,7 +11,7 @@ import SQLiteData
 
 // swiftlint:disable file_length
 
-func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throws -> any DatabaseWriter {
+nonisolated func appDatabase(attachMetadatabase shouldAttachMetadatabase: Bool = true) throws -> any DatabaseWriter {
 	var configuration = Configuration()
 	configuration.foreignKeysEnabled = true
 	configuration.prepareDatabase { db in
@@ -1725,7 +1725,7 @@ private nonisolated func applyDataProtection(to path: String) {
 // MARK: - Bootstrap
 
 extension DependencyValues {
-	mutating func bootstrapDatabase() throws {
+	nonisolated mutating func bootstrapDatabase() throws {
 		defaultDatabase = try appDatabase(attachMetadatabase: context != .test)
 	}
 }

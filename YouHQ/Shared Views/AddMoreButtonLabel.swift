@@ -17,11 +17,12 @@ struct AddMoreButtonLabel: View {
 	}
 
 	var body: some View {
-		HStack {
-			Image(systemName: "plus.circle.fill")
-				.font(.title2)
+		Label {
 			HQText(text)
 				.font(.headline)
+		} icon: {
+			Image(systemName: "plus.circle.fill")
+				.font(.title2)
 		}
 		.frame(maxWidth: .infinity)
 		.padding()

@@ -33,12 +33,9 @@ extension CareerScreen {
 		}
 
 		var careerItemsCount: Int {
-			let jobsCount = jobViewModel.jobs.count
-			let otherCount = otherViewModel.others.count
-			return jobsCount + otherCount
+			jobViewModel.jobs.count + otherViewModel.others.count
 		}
 
-		var isShowingAddJobSheet = false
 		var isShowingSectionEditSheet = false
 		var sectionToEdit: EditableSection?
 		var sheetTransitionSourceID: String = "addButton"
@@ -86,20 +83,25 @@ extension CareerScreen {
 
 		// MARK: SHEET PRESENTATION
 
+		func showEditSheet(for section: EditableSection, sourceID: String) {
+			sheetTransitionSourceID = sourceID
+			sectionToEdit = section
+			isShowingSectionEditSheet = true
+		}
+
 		func showAddJobSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .jobDraft(jobViewModel.createDraft(for: profileID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showEditSheet(for: .jobDraft(jobViewModel.createDraft(for: profileID)), sourceID: sourceID)
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .otherDraft(
-				otherViewModel.createCategoryDraft(for: .career, profileID: profileID)
+			showEditSheet(
+				for: .otherDraft(
+					otherViewModel.createCategoryDraft(for: .career, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 	}
 }

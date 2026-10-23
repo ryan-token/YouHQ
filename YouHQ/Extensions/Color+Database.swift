@@ -13,22 +13,22 @@ extension Color {
 	/// Uses semantic names for built-in colors, falls back to hex for custom colors
 	var databaseValue: String {
 		switch self {
-		case .red: return "red"
-		case .orange: return "orange"
-		case .yellow: return "yellow"
-		case .green: return "green"
-		case .mint: return "mint"
-		case .teal: return "teal"
-		case .cyan: return "cyan"
-		case .blue: return "blue"
-		case .indigo: return "indigo"
-		case .purple: return "purple"
-		case .pink: return "pink"
-		case .brown: return "brown"
-		case .gray: return "gray"
+		case .red: "red"
+		case .orange: "orange"
+		case .yellow: "yellow"
+		case .green: "green"
+		case .mint: "mint"
+		case .teal: "teal"
+		case .cyan: "cyan"
+		case .blue: "blue"
+		case .indigo: "indigo"
+		case .purple: "purple"
+		case .pink: "pink"
+		case .brown: "brown"
+		case .gray: "gray"
 		default:
 			// For custom colors, convert to hex
-			return toHex() ?? "indigo"
+			toHex() ?? "indigo"
 		}
 	}
 
@@ -51,15 +51,17 @@ extension Color {
 		case "gray": self = .gray
 		default:
 			// Try to parse as hex, fallback to indigo
-			if let color = Color(hex: databaseValue) {
-				self = color
-			} else {
-				self = .indigo
-			}
+			self = Color(hex: databaseValue) ?? .indigo
 		}
 	}
 
 	/// Converts Color to hex string
+	///
+	/// The result is persisted and synced, so this deliberately keeps reading the platform
+	/// color's own `CGColor` components rather than `resolve(in:)`. Resolving converts to
+	/// sRGB, which would store different values for colors in other spaces, such as Display P3
+	/// from the color picker, and change which colors (like two-component grayscale ones) fall
+	/// back to `"indigo"`.
 	private func toHex() -> String? {
 		#if canImport(UIKit)
 			guard let components = UIColor(self).cgColor.components else {
@@ -77,11 +79,19 @@ extension Color {
 		let green = Int(components[1] * 255.0)
 		let blue = Int(components[2] * 255.0)
 
-		return String(format: "#%02X%02X%02X", red, green, blue)
+		return "#" + Self.hexByte(red) + Self.hexByte(green) + Self.hexByte(blue)
+	}
+
+	/// Formats one channel exactly as `String(format: "%02X")` did, so stored values never
+	/// change: uppercase, zero-padded to two digits, and reading the low 32 bits as unsigned
+	/// for the out-of-range values that extended-range components can produce.
+	private static func hexByte(_ value: Int) -> String {
+		let digits = String(UInt32(truncatingIfNeeded: value), radix: 16, uppercase: true)
+		return digits.count < 2 ? "0" + digits : digits
 	}
 
 	/// Creates a Color from a hex string
-	init?(hex: String) {
+	nonisolated init?(hex: String) {
 		let hex = hex.trimmingCharacters(in: CharacterSet(charactersIn: "#"))
 		guard let rgbValue = UInt64(hex, radix: 16) else { return nil }
 

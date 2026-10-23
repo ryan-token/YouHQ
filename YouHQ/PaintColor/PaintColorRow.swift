@@ -10,6 +10,7 @@ import SwiftUI
 struct PaintColorRow: View {
 	let paintColor: PaintColor
 	let onTap: () -> Void
+	@ScaledMetric(relativeTo: .headline) private var swatchSize = 40.0
 
 	var body: some View {
 		Button(action: onTap) {
@@ -18,7 +19,7 @@ struct PaintColorRow: View {
 				RoundedRectangle(cornerRadius: 8)
 					.fill(Color(databaseValue: paintColor.backgroundColor))
 					.stroke(.separator, lineWidth: 1)
-					.frame(width: 40, height: 40)
+					.frame(width: swatchSize, height: swatchSize)
 
 				VStack(alignment: .leading, spacing: 4) {
 					HQText(paintColor.room.isNotEmpty ? paintColor.room : "No Room")

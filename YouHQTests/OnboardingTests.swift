@@ -151,6 +151,45 @@ extension YouHQTests {
 				#expect(vm.jobsCount == 3)
 			}
 
+			/// `offset` is the item count relative to the free-tier limit: one under it, or at it.
+			@Test("Free users can add until the limit, then see the paywall", arguments: [(-1, false), (0, true)])
+			func freeTierLimits(offset: Int, expectsPaywall: Bool) {
+				let vm = OnboardingProfileCreationView.ViewModel()
+				vm.$selectedProfileIDString.withLock { $0 = UUID(-1).uuidString }
+				vm.residencesCount = Constants.paywallResidencesThreshold + offset
+				vm.vehiclesCount = Constants.paywallVehiclesThreshold + offset
+				vm.jobsCount = Constants.paywallCoreItemsThreshold + offset
+
+				vm.addResidence(hasUnlockedPremium: false)
+				vm.addVehicle(hasUnlockedPremium: false)
+				vm.addJob(hasUnlockedPremium: false)
+
+				#expect(vm.showAddResidence == !expectsPaywall)
+				#expect(vm.showAddVehicle == !expectsPaywall)
+				#expect(vm.showAddJob == !expectsPaywall)
+				#expect((vm.draftJob != nil) == !expectsPaywall)
+				#expect(vm.showPaywallSheet == expectsPaywall)
+			}
+
+			@Test("Premium users can add past the free-tier limits")
+			func premiumBypassesLimits() {
+				let vm = OnboardingProfileCreationView.ViewModel()
+				vm.$selectedProfileIDString.withLock { $0 = UUID(-1).uuidString }
+				vm.residencesCount = Constants.paywallResidencesThreshold
+				vm.vehiclesCount = Constants.paywallVehiclesThreshold
+				vm.jobsCount = Constants.paywallCoreItemsThreshold
+
+				vm.addResidence(hasUnlockedPremium: true)
+				vm.addVehicle(hasUnlockedPremium: true)
+				vm.addJob(hasUnlockedPremium: true)
+
+				#expect(vm.showAddResidence)
+				#expect(vm.showAddVehicle)
+				#expect(vm.showAddJob)
+				#expect(vm.draftJob?.profileID == UUID(-1))
+				#expect(!vm.showPaywallSheet)
+			}
+
 			@Test("checkIfJobWasSaved finds existing job")
 			func checkJobSaved() async throws {
 				try await database.write { db in

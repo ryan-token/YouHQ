@@ -12,7 +12,7 @@ import SwiftUI
 /// Shows a thumbnail when a photo is selected, with options to view, change, or remove it.
 struct PhotoPickerSection: View {
 	let title: String
-	@Bindable var viewModel: PhotoPickerViewModel
+	let viewModel: PhotoPickerViewModel
 
 	#if os(iOS)
 		@State private var cameraPresentation: CameraPresentation?

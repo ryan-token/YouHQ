@@ -16,6 +16,7 @@ struct FreeTierLimitationCard: View {
 				Image(systemName: "person.circle.fill")
 					.foregroundStyle(.indigo)
 					.font(.largeTitle)
+					.accessibilityHidden(true)
 
 				VStack(alignment: .leading, spacing: 0) {
 					HQText("You already have a profile")

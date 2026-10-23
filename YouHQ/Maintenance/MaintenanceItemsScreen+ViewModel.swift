@@ -20,9 +20,9 @@ extension MaintenanceItemsScreen {
 
 		let residenceID: UUID?
 		let vehicleID: UUID?
-		var isShowingEditSheet = false
-		var isShowingCompleteAlert = false
+		/// The item the edit sheet is presenting; `nil` while the sheet is dismissed.
 		var draftMaintenanceItem: MaintenanceItem?
+		/// The item awaiting confirmation in the "Mark as Complete" alert.
 		var itemToComplete: MaintenanceItem?
 		var isNewItem = false
 		var sheetTransitionSourceID: String = "addButton"
@@ -97,19 +97,30 @@ extension MaintenanceItemsScreen {
 				notes: ""
 			)
 			isNewItem = true
-			isShowingEditSheet = true
 		}
 
 		func editMaintenanceItem(_ item: MaintenanceItem) {
-			draftMaintenanceItem = item
 			isNewItem = false
 			sheetTransitionSourceID = item.id.uuidString
-			isShowingEditSheet = true
+			draftMaintenanceItem = item
 		}
 
 		func showCompleteAlert(for item: MaintenanceItem) {
 			itemToComplete = item
-			isShowingCompleteAlert = true
+		}
+
+		/// The confirmation alert's message, describing the due date completing `item` would set.
+		func completionMessage(for item: MaintenanceItem) -> String {
+			let nextDue = item.calculateNextDueDate(from: .now)
+			return
+				"This will mark \"\(item.name)\" as complete and set the next due date to \(nextDue.formatted(date: .abbreviated, time: .omitted))."
+		}
+
+		/// Deletes the rows at `offsets` of `items`, the collection a `List` section displays.
+		func deleteMaintenanceItems(at offsets: IndexSet, from items: [MaintenanceItem]) {
+			for index in offsets {
+				deleteMaintenanceItem(items[index])
+			}
 		}
 
 		func deleteMaintenanceItem(_ item: MaintenanceItem) {
@@ -137,7 +148,7 @@ extension MaintenanceItemsScreen {
 		func completeMaintenanceItem(_ item: MaintenanceItem) {
 			withErrorReporting {
 				try database.write { db in
-					let completedAt = Date()
+					let completedAt = Date.now
 					let nextDue = item.calculateNextDueDate(from: completedAt)
 
 					// Create completion record
@@ -170,11 +181,12 @@ extension MaintenanceItemsScreen {
 
 				if let updatedItem {
 					Task {
-						_ = try await NotificationManager.shared.scheduleNotification(for: updatedItem)
+						_ = await withErrorReporting {
+							try await NotificationManager.shared.scheduleNotification(for: updatedItem)
+						}
 					}
 				}
 			}
-			isShowingCompleteAlert = false
 		}
 	}
 }

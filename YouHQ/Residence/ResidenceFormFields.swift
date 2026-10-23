@@ -143,10 +143,7 @@ struct ResidenceFormFields: View {
 			LabeledField("Move-in Date") {
 				DatePicker(
 					"",
-					selection: Binding(
-						get: { moveInDate ?? Date() },
-						set: { moveInDate = $0 }
-					),
+					selection: $moveInDate.orNow,
 					displayedComponents: .date
 				)
 				.labelsHidden()
@@ -161,10 +158,7 @@ struct ResidenceFormFields: View {
 				LabeledField("Move-out Date") {
 					DatePicker(
 						"",
-						selection: Binding(
-							get: { moveOutDate ?? Date() },
-							set: { moveOutDate = $0 }
-						),
+						selection: $moveOutDate.orNow,
 						displayedComponents: .date
 					)
 					.labelsHidden()

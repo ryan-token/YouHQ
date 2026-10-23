@@ -10,9 +10,9 @@ import SQLiteData
 import SwiftUI
 
 struct SharingStatus: View {
-	@ObservationIgnored
-	@Dependency(\.defaultSyncEngine) var syncEngine
+	@Dependency(\.defaultSyncEngine) private var syncEngine
 	@Environment(PaywallManager.self) private var paywallManager
+	@Environment(PaywallPresenter.self) private var paywallPresenter
 
 	let profile: ProfileShare?
 	let shouldShowShareButtonIfNotShared: Bool
@@ -62,12 +62,12 @@ struct SharingStatus: View {
 		#endif
 	}
 
-	func shareProfileTapped() async {
+	private func shareProfileTapped() async {
 		guard paywallManager.hasUnlockedPremium else {
 			if isInsideSheet {
-				paywallManager.showPaywallFromSettings()
+				paywallPresenter.showPaywallFromSettings()
 			} else {
-				paywallManager.showPaywall()
+				paywallPresenter.showPaywall()
 			}
 			return
 		}

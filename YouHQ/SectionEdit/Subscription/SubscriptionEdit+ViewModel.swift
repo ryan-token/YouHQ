@@ -97,7 +97,7 @@ extension SubscriptionEdit {
 								$0.profileID = currentProfileID
 								$0.name = name
 								$0.category = category
-								$0.monthlyCost = monthlyCost
+								$0.monthlyCost = #bind(monthlyCost)
 								$0.currencyCode = currencyCode
 								$0.billingCycle = billingCycle
 								$0.renewalDate = renewalDate

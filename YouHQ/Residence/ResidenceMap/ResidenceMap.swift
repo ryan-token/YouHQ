@@ -30,11 +30,10 @@ struct ResidenceMap: View {
 		.buttonStyle(.plain)
 		.accessibilityLabel("Open full-screen map")
 		.matchedTransitionSource(id: "residenceMap", in: namespace)
-		.task {
+		// Re-geocodes on appear and whenever the residences change, cancelling any lookup still in
+		// flight. Selection changes only move the camera, via `syncSelection` below.
+		.task(id: residences) {
 			await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id)
-		}
-		.onChange(of: residences) {
-			Task { await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id) }
 		}
 		.onChange(of: vm.selectedMapLocation) { _, newLocation in
 			if let newLocation {
@@ -43,9 +42,6 @@ struct ResidenceMap: View {
 		}
 		.onChange(of: selectedResidence?.id) {
 			vm.syncSelection(with: selectedResidence?.id)
-		}
-		.onChange(of: selectedResidence) {
-			Task { await vm.geocodeResidences(residences, selectedResidenceId: selectedResidence?.id) }
 		}
 		.sheet(isPresented: $vm.isShowingFullScreenMap) {
 			FullScreenMapView(

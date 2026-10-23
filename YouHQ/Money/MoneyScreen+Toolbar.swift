@@ -10,19 +10,11 @@ import SwiftUI
 
 extension MoneyScreen {
 	struct Toolbar: ToolbarContent {
-		@Bindable var vm: MoneyScreen.ViewModel
+		let vm: MoneyScreen.ViewModel
 		let namespace: Namespace.ID
 
-		private var hasNoMoneyItems: Bool {
-			vm.bankAccountViewModel.bankAccounts.isEmpty
-				&& vm.investmentAccountViewModel.investmentAccounts.isEmpty
-				&& vm.healthSavingsAccountViewModel.healthSavingsAccounts.isEmpty
-				&& vm.insuranceViewModel.insurancePolicies.isEmpty
-				&& vm.otherViewModel.others.isEmpty
-		}
-
 		var body: some ToolbarContent {
-			AddMenuToolbarItem(showProgressViewIfSyncing: hasNoMoneyItems, namespace: namespace) {
+			AddMenuToolbarItem(showProgressViewIfSyncing: vm.hasNoMoneyItems, namespace: namespace) {
 				MoneyMenu(vm: vm)
 			}
 		}

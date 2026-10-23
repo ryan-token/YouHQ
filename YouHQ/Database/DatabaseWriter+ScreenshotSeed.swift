@@ -21,7 +21,7 @@
 
 				let appStoreProfileID = UUID()
 				let ryanProfileID = UUID()
-				let now = Date()
+				let now = Date.now
 
 				let denverID = UUID()
 				let morrisonID = UUID()
@@ -439,7 +439,7 @@
 		fileprivate static func components(year: Int, month: Int, day: Int) -> Date {
 			Calendar.current.date(
 				from: DateComponents(year: year, month: month, day: day)
-			) ?? Date()
+			) ?? Date.now
 		}
 	}
 

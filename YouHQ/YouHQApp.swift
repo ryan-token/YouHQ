@@ -21,6 +21,11 @@ struct YouHQApp: App {
 	@Environment(\.scenePhase) private var scenePhase
 	@State private var isColdLaunch = true
 	@State private var paywallManager = PaywallManager()
+	#if os(macOS)
+		// The Settings `Window` is its own scene (and has a single instance), so it gets its own
+		// paywall presenter; main windows each create theirs in `AppEntryPoint`.
+		@State private var settingsWindowPaywallPresenter = PaywallPresenter()
+	#endif
 
 	// Used only by the macOS-only Settings `Window` scene below.
 	// periphery:ignore
@@ -69,20 +74,16 @@ struct YouHQApp: App {
 		}
 		.commands {
 			CommandGroup(replacing: .appInfo) {
-				Button {
+				Button("About YouHQ", systemImage: "info.circle") {
 					openWindow(id: "about")
-				} label: {
-					Label("About YouHQ", systemImage: "info.circle")
 				}
 			}
 
 			CommandGroup(replacing: .appSettings) {
-				Button {
+				Button("Settings…", systemImage: "gear") {
 					openWindow(id: "settings")
-				} label: {
-					Label("Settings...", systemImage: "gear")
 				}
-				.keyboardShortcut(",", modifiers: .command)
+				.keyboardShortcut(",")
 			}
 		}
 
@@ -105,6 +106,7 @@ struct YouHQApp: App {
 					.toolbarBackground(.hidden, for: .windowToolbar)
 					.containerBackground(.ultraThinMaterial, for: .window)
 					.environment(paywallManager)
+					.environment(settingsWindowPaywallPresenter)
 					.task { await paywallManager.setup() }
 					.frame(minWidth: settingsWindowFrame, minHeight: settingsWindowFrame)
 			}

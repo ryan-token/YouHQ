@@ -15,10 +15,8 @@ struct NoResidencesView: View {
 		ContentUnavailableView {
 			Label("No residences", systemImage: "house")
 		} description: {
-			Button("Add residence") {
-				onAddResidenceTapped()
-			}
-			.matchedTransitionSource(id: "emptyStateButton", in: namespace)
+			Button("Add residence", action: onAddResidenceTapped)
+				.matchedTransitionSource(id: "emptyStateButton", in: namespace)
 		}
 		.frame(maxWidth: .infinity, alignment: .center)
 	}

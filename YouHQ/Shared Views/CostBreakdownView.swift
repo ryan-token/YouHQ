@@ -7,20 +7,12 @@
 
 import SwiftUI
 
-struct CostLineItem: Identifiable {
-	let id = UUID()
-	let label: String
-	let cost: Double
-}
-
 /// A popover-style breakdown showing labeled line items and a total.
 ///
 /// Used by `MonthlyCostRow` to power the residence, vehicle, and media cost
 /// breakdowns. The first line item renders without a leading `+`; subsequent
 /// items get a `+` prefix.
 struct CostBreakdownView: View {
-	@Environment(\.colorScheme) var colorScheme
-
 	let title: String
 	let lineItems: [CostLineItem]
 	let totalCost: Double
@@ -53,7 +45,7 @@ struct CostBreakdownView: View {
 							.fontWeight(.semibold)
 						Spacer()
 						HQText(totalCost.formatted(currencyCode: currencyCode))
-							.fontWeight(.bold)
+							.bold()
 					}
 					.font(.title3)
 				}
@@ -61,7 +53,9 @@ struct CostBreakdownView: View {
 			.padding()
 			.frame(minWidth: 300)
 		}
-		.foregroundStyle(colorScheme == .light ? .black : .white)
+		// Reset to the plain label color: the popover otherwise inherits the card's legible
+		// foreground, which may be white on a light popover background.
+		.foregroundStyle(Color.primary)
 	}
 }
 
@@ -69,10 +63,10 @@ struct CostBreakdownView: View {
 	CostBreakdownView(
 		title: "Monthly Total Cost of Ownership",
 		lineItems: [
-			CostLineItem(label: "Mortgage", cost: 2000),
-			CostLineItem(label: "Electric", cost: 150),
-			CostLineItem(label: "Internet", cost: 100),
-			CostLineItem(label: "Renters Insurance", cost: 250)
+			CostLineItem(id: UUID(), label: "Mortgage", cost: 2000),
+			CostLineItem(id: UUID(), label: "Electric", cost: 150),
+			CostLineItem(id: UUID(), label: "Internet", cost: 100),
+			CostLineItem(id: UUID(), label: "Renters Insurance", cost: 250)
 		],
 		totalCost: 2500,
 		currencyCode: "USD"

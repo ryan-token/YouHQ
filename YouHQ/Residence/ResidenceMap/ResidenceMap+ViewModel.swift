@@ -24,9 +24,11 @@ extension ResidenceMap {
 
 			await withTaskGroup(of: ResidenceMapLocation?.self) { group in
 				for residence in residences where residence.street.isNotEmpty && residence.city.isNotEmpty {
-					group.addTask {
+					// Stop queueing lookups once a newer geocode request has replaced this one.
+					let isQueued = group.addTaskUnlessCancelled {
 						await self.geocode(residence)
 					}
+					guard isQueued else { break }
 				}
 
 				for await location in group.compactMap({ $0 }) {
@@ -34,6 +36,8 @@ extension ResidenceMap {
 				}
 			}
 
+			// A cancelled run has incomplete results; leave the newer request to publish its own.
+			guard !Task.isCancelled else { return }
 			mapLocations = locations
 			syncSelection(with: selectedResidenceId)
 		}

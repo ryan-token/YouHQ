@@ -12,6 +12,13 @@ struct DeviceSection: View {
 	let onColorChange: (Color) -> Void
 	let onTap: (() -> Void)?
 
+	/// "Brand Model", skipping whichever part is empty.
+	private var title: String {
+		[device.brand, device.model]
+			.filter(\.isNotEmpty)
+			.joined(separator: " ")
+	}
+
 	var body: some View {
 		InfoSection(
 			device.type.rawValue,
@@ -19,10 +26,7 @@ struct DeviceSection: View {
 			onColorChange: onColorChange,
 			onTap: onTap
 		) {
-			if device.brand.isNotEmpty || device.model.isNotEmpty {
-				let title = [device.brand, device.model]
-					.filter { $0.isNotEmpty }
-					.joined(separator: " ")
+			if title.isNotEmpty {
 				HQText(title)
 					.sectionTitle()
 			}
@@ -65,7 +69,7 @@ struct DeviceSection: View {
 			brand: "Apple",
 			model: "MacBook Pro",
 			serialNumber: "C02ABC123DEF",
-			purchaseDate: Date(),
+			purchaseDate: .now,
 			backgroundColor: "pink",
 			url: "https://apple.com",
 			notes: "Work laptop"

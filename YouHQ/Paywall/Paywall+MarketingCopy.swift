@@ -50,7 +50,10 @@ extension Paywall {
 			}
 			.foregroundStyle(.white)
 			#if os(visionOS)
-				.background(PaywallGradient())
+				.background {
+					PaywallGradient()
+					.ignoresSafeArea()
+				}
 			#else
 				.containerBackground(for: .subscriptionStoreFullHeight) {
 					PaywallGradient()

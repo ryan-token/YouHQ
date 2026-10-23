@@ -11,23 +11,23 @@
 	/// Launches the camera UI by writing into the binding that controls the
 	/// overlay-host preference key.
 	struct PhotoCameraButton: View {
-		@Bindable var viewModel: PhotoPickerViewModel
+		let viewModel: PhotoPickerViewModel
 		@Binding var cameraPresentation: CameraPresentation?
 
 		var body: some View {
-			Button {
-				cameraPresentation = CameraPresentation(
-					id: UUID(),
-					onImageCaptured: { imageData in
-						viewModel.photoData = imageData
-					},
-					onDismiss: {
-						cameraPresentation = nil
-					}
-				)
-			} label: {
-				Label("Take Photo", systemImage: "camera")
-			}
+			Button("Take Photo", systemImage: "camera", action: presentCamera)
+		}
+
+		private func presentCamera() {
+			cameraPresentation = CameraPresentation(
+				id: UUID(),
+				onImageCaptured: { imageData in
+					viewModel.photoData = imageData
+				},
+				onDismiss: {
+					cameraPresentation = nil
+				}
+			)
 		}
 	}
 #endif

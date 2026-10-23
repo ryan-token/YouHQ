@@ -19,10 +19,10 @@ extension MediaScreen {
 		@Shared(.appStorage(.selectedProfileIDKey)) var selectedProfileIDString = ""
 
 		// Child view models for entity-specific operations
-		var deviceViewModel = DeviceViewModel()
-		var serviceProviderViewModel = ServiceProviderViewModel()
-		var subscriptionViewModel = SubscriptionViewModel()
-		var otherViewModel = OtherItemViewModel()
+		let deviceViewModel = DeviceViewModel()
+		let serviceProviderViewModel = ServiceProviderViewModel()
+		let subscriptionViewModel = SubscriptionViewModel()
+		let otherViewModel = OtherItemViewModel()
 
 		init() {}
 
@@ -40,6 +40,13 @@ extension MediaScreen {
 			let subscriptionsCount = subscriptionViewModel.subscriptions.count
 			let otherCount = otherViewModel.others.count
 			return devicesCount + serviceProvidersCount + subscriptionsCount + otherCount
+		}
+
+		var hasNoMediaItems: Bool {
+			deviceViewModel.devices.isEmpty
+				&& serviceProviderViewModel.serviceProviders.isEmpty
+				&& subscriptionViewModel.subscriptions.isEmpty
+				&& otherViewModel.others.isEmpty
 		}
 
 		var isShowingSectionEditSheet = false
@@ -96,34 +103,41 @@ extension MediaScreen {
 
 		// MARK: SHEET PRESENTATION
 
-		func showAddDeviceSheet(sourceID: String = "addButton") {
-			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .deviceDraft(deviceViewModel.createDraft(for: profileID))
+		func showSectionEditSheet(for section: EditableSection, sourceID: String) {
+			sectionToEdit = section
 			sheetTransitionSourceID = sourceID
 			isShowingSectionEditSheet = true
+		}
+
+		func showAddDeviceSheet(sourceID: String = "addButton") {
+			guard let profileID = selectedProfile?.profile.id else { return }
+			showSectionEditSheet(for: .deviceDraft(deviceViewModel.createDraft(for: profileID)), sourceID: sourceID)
 		}
 
 		func showAddServiceProviderSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .serviceProviderDraft(serviceProviderViewModel.createDraft(for: profileID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .serviceProviderDraft(serviceProviderViewModel.createDraft(for: profileID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddSubscriptionSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .subscriptionDraft(subscriptionViewModel.createDraft(for: profileID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .subscriptionDraft(subscriptionViewModel.createDraft(for: profileID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let profileID = selectedProfile?.profile.id else { return }
-			sectionToEdit = .otherDraft(
-				otherViewModel.createCategoryDraft(for: .media, profileID: profileID)
+			showSectionEditSheet(
+				for: .otherDraft(
+					otherViewModel.createCategoryDraft(for: .media, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 	}
 }

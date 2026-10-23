@@ -9,7 +9,7 @@ import SQLiteData
 import SwiftUI
 
 struct AppTabView: View {
-	@Environment(PaywallManager.self) private var paywallManager
+	@Environment(PaywallPresenter.self) private var paywallPresenter
 	@FetchOne private var appSettings: AppSettings?
 	@State private var selectedTab: AppTab = .home
 
@@ -18,7 +18,7 @@ struct AppTabView: View {
 	}
 
 	var body: some View {
-		@Bindable var paywallManager = paywallManager
+		@Bindable var paywallPresenter = paywallPresenter
 
 		TabView(selection: $selectedTab) {
 			Tab("Home", systemImage: "house", value: .home) {
@@ -71,7 +71,7 @@ struct AppTabView: View {
 		.onChange(of: selectedTab) {
 			logTabSelection(for: selectedTab)
 		}
-		.sheet(isPresented: $paywallManager.isShowingPaywallSheet) {
+		.sheet(isPresented: $paywallPresenter.isShowingPaywallSheet) {
 			Paywall()
 		}
 	}

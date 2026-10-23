@@ -15,10 +15,8 @@ struct NoVehiclesView: View {
 		ContentUnavailableView {
 			Label("No vehicles", systemImage: "car.2")
 		} description: {
-			Button("Add vehicle") {
-				onAddVehicleTapped()
-			}
-			.matchedTransitionSource(id: "emptyStateButton", in: namespace)
+			Button("Add vehicle", action: onAddVehicleTapped)
+				.matchedTransitionSource(id: "emptyStateButton", in: namespace)
 		}
 		.frame(maxWidth: .infinity, alignment: .center)
 	}

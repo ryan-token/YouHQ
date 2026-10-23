@@ -34,7 +34,7 @@ import SQLiteData
 	var moveInDate: Date?
 	var moveOutDate: Date?
 	var isCurrent: Bool = true
-	var monthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var monthlyCost: Double?
 	var currencyCode: String?
 	var costType: ResidenceCostType = .rent
 	var backgroundColor: String = "indigo"
@@ -126,7 +126,7 @@ import SQLiteData
 	var type: UtilityType = .electric
 	var provider: String = ""
 	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
-	var approximateMonthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var approximateMonthlyCost: Double?
 	var currencyCode: String?
 	var backgroundColor: String = "blue"
 	var url: String = ""
@@ -161,16 +161,16 @@ extension MaintenanceItem {
 	/// Calculate if this item is past due
 	var isPastDue: Bool {
 		guard let dueDate else { return false }
-		return dueDate < Date()
+		return dueDate < Date.now
 	}
 
 	/// Calculate if this item is upcoming (due within 30 days)
 	var isUpcoming: Bool {
 		guard let dueDate else { return false }
 		let thirtyDaysFromNow =
-			Calendar.current.date(byAdding: .day, value: 30, to: Date())
-			?? Date()
-		return dueDate >= Date() && dueDate <= thirtyDaysFromNow
+			Calendar.current.date(byAdding: .day, value: 30, to: Date.now)
+			?? Date.now
+		return dueDate >= Date.now && dueDate <= thirtyDaysFromNow
 	}
 
 	/// Calculate the next due date based on completed date and interval
@@ -224,7 +224,7 @@ extension MaintenanceItem {
 	var year: String?
 	var color: String?
 	@Column(as: LegacySensitiveText?.self) var vin: String?
-	var monthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var monthlyCost: Double?
 	var currencyCode: String?
 	var costType: VehicleCostType = .owned
 	var backgroundColor: String = "teal"
@@ -233,8 +233,8 @@ extension MaintenanceItem {
 
 	var displayName: String {
 		var parts: [String] = []
-		if year?.isEmpty == false {
-			parts.append(year!)
+		if let year, year.isNotEmpty {
+			parts.append(year)
 		}
 		if make.isNotEmpty {
 			parts.append(make)
@@ -292,7 +292,7 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var providerType: ServiceProviderType = .internet
 	var name: String = ""
-	var monthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var monthlyCost: Double?
 	var currencyCode: String?
 	@Column(as: LegacySensitiveText.self) var accountNumber: String = ""
 	var backgroundColor: String = "purple"
@@ -318,7 +318,7 @@ extension MaintenanceItem {
 	let profileID: Profile.ID
 	var name: String = ""
 	var category: SubscriptionCategory = .streaming
-	var monthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var monthlyCost: Double?
 	var currencyCode: String?
 	var billingCycle: BillingCycle = .monthly
 	var renewalDate: Date?
@@ -361,9 +361,9 @@ extension MaintenanceItem {
 	var type: InsurancePolicyType = .health
 	var provider: String = ""
 	@Column(as: LegacySensitiveText.self) var policyNumber: String = ""
-	var monthlyCost: Double?
-	var deductible: Double?
-	var coverageAmount: Double?
+	@Column(as: TextStoredDouble?.self) var monthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var deductible: Double?
+	@Column(as: TextStoredDouble?.self) var coverageAmount: Double?
 	var currencyCode: String?
 	var startDate: Date?
 	var renewalDate: Date?
@@ -383,7 +383,7 @@ extension MaintenanceItem {
 	var category: OtherCategory = .homes
 	var name: String = ""
 	var otherDescription: String = ""
-	var monthlyCost: Double?
+	@Column(as: TextStoredDouble?.self) var monthlyCost: Double?
 	var currencyCode: String?
 	var backgroundColor: String = "gray"
 	var url: String = ""
