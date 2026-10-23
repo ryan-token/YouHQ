@@ -54,7 +54,10 @@ struct ResidenceMap: View {
 				cameraPosition: vm.cameraPosition,
 				latLonDelta: vm.latLonDelta
 			)
-			#if !os(macOS)
+			// A map has no ideal size, so a macOS sheet would shrink to its toolbar without one.
+			#if os(macOS)
+				.presentationSizing(.page)
+			#else
 				.navigationTransition(.zoom(sourceID: "residenceMap", in: namespace))
 			#endif
 		}
