@@ -60,10 +60,7 @@ struct DeviceEdit: View {
 				LabeledField("Purchase Date") {
 					DatePicker(
 						"",
-						selection: Binding(
-							get: { vm.purchaseDate ?? Date() },
-							set: { vm.purchaseDate = $0 }
-						),
+						selection: $vm.purchaseDate.orNow,
 						displayedComponents: .date
 					)
 					.labelsHidden()

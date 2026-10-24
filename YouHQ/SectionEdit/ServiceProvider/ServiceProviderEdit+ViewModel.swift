@@ -98,7 +98,7 @@ extension ServiceProviderEdit {
 								$0.profileID = currentProfileID
 								$0.providerType = providerType
 								$0.name = name
-								$0.monthlyCost = monthlyCost
+								$0.monthlyCost = #bind(monthlyCost)
 								$0.currencyCode = currencyCode
 								if accountNumber != loadedAccountNumber {
 									$0.accountNumber = #bind(accountNumber)

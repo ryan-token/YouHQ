@@ -67,10 +67,7 @@ struct MaintenanceItemEdit: View {
 				LabeledField("Unit") {
 					Picker("", selection: $vm.intervalType) {
 						ForEach(MaintenanceIntervalType.allCases, id: \.self) { type in
-							HQText(
-								vm.intervalValue == 1
-									? type.rawValue : "\(type.rawValue)s"
-							).tag(type)
+							HQText(vm.unitLabel(for: type)).tag(type)
 						}
 					}
 					.labelsHidden()
@@ -82,10 +79,8 @@ struct MaintenanceItemEdit: View {
 				}
 
 				if vm.isUsingManualDueDate {
-					Button("Reset Due Date") {
-						vm.resetToAutomaticDueDate()
-					}
-					.buttonStyle(.bordered)
+					Button("Reset Due Date", action: vm.resetToAutomaticDueDate)
+						.buttonStyle(.bordered)
 				}
 
 				LabeledField("Notify When Due") {
@@ -108,9 +103,7 @@ struct MaintenanceItemEdit: View {
 				"Notifications Disabled",
 				isPresented: $vm.isShowingPermissionAlert
 			) {
-				Button("Open Settings") {
-					vm.openNotificationSettings()
-				}
+				Button("Open Settings", action: vm.openNotificationSettings)
 				Button("Cancel", role: .cancel) {}
 			} message: {
 				HQText(

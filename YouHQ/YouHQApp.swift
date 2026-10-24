@@ -21,6 +21,11 @@ struct YouHQApp: App {
 	@Environment(\.scenePhase) private var scenePhase
 	@State private var isColdLaunch = true
 	@State private var paywallManager = PaywallManager()
+	#if os(macOS)
+		// The Settings `Window` is its own scene (and has a single instance), so it gets its own
+		// paywall presenter; main windows each create theirs in `AppEntryPoint`.
+		@State private var settingsWindowPaywallPresenter = PaywallPresenter()
+	#endif
 
 	// Used only by the macOS-only Settings `Window` scene below.
 	// periphery:ignore
@@ -33,6 +38,12 @@ struct YouHQApp: App {
 	#endif
 
 	init() {
+		#if DEBUG
+			if ScreenshotMode.isEnabled {
+				ScreenshotMode.prepare()
+				return
+			}
+		#endif
 		if context == .live {
 			initializeSQLiteData()
 			TelemetryDeck.initialize(config: .init(appID: Constants.telemetryDeckAPIKey))
@@ -46,11 +57,13 @@ struct YouHQApp: App {
 				.task {
 					// Has to run after `initializeSQLiteData`, because only writes made once
 					// the sync engine exists are uploaded to iCloud.
-					guard context == .live else { return }
+					guard context == .live, !isScreenshotMode else { return }
 					await LegacyEncryptedFieldSweep().run()
 					await ShareParentSweep().run()
 				}
 				.task(id: scenePhase) {
+					// Screenshots skip StoreKit, notification scheduling and review requests.
+					guard !isScreenshotMode else { return }
 					await paywallManager.setup()
 					await refreshNotifications()
 					checkForReviewRequest()
@@ -67,22 +80,22 @@ struct YouHQApp: App {
 					)
 				#endif
 		}
+		#if DEBUG && os(macOS)
+			// The content's ideal size, unless screenshot mode needs a 2560×1600 Retina capture.
+			.defaultSize(width: ScreenshotMode.isEnabled ? 1280 : 800, height: ScreenshotMode.isEnabled ? 800 : 500)
+		#endif
 		.commands {
 			CommandGroup(replacing: .appInfo) {
-				Button {
+				Button("About YouHQ", systemImage: "info.circle") {
 					openWindow(id: "about")
-				} label: {
-					Label("About YouHQ", systemImage: "info.circle")
 				}
 			}
 
 			CommandGroup(replacing: .appSettings) {
-				Button {
+				Button("Settings…", systemImage: "gear") {
 					openWindow(id: "settings")
-				} label: {
-					Label("Settings...", systemImage: "gear")
 				}
-				.keyboardShortcut(",", modifiers: .command)
+				.keyboardShortcut(",")
 			}
 		}
 
@@ -105,11 +118,20 @@ struct YouHQApp: App {
 					.toolbarBackground(.hidden, for: .windowToolbar)
 					.containerBackground(.ultraThinMaterial, for: .window)
 					.environment(paywallManager)
+					.environment(settingsWindowPaywallPresenter)
 					.task { await paywallManager.setup() }
 					.frame(minWidth: settingsWindowFrame, minHeight: settingsWindowFrame)
 			}
 			.windowBackgroundDragBehavior(.enabled)
 			.restorationBehavior(.disabled)
+		#endif
+	}
+
+	private var isScreenshotMode: Bool {
+		#if DEBUG
+			ScreenshotMode.isEnabled
+		#else
+			false
 		#endif
 	}
 

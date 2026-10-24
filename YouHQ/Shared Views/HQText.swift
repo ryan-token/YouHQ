@@ -21,19 +21,18 @@ struct HQText: View {
 			.fontDesign(.rounded)
 			.padding(.leading, italic ? 2 : 0)
 			// italic + rounded don't combine natively, so apply a manual shear for italic.
-			.transformEffect(italic ? italicShearTransform : .identity)
+			.transformEffect(italic ? Self.italicShearTransform : .identity)
 	}
 
-	private var italicShearTransform: CGAffineTransform {
-		CGAffineTransform(
-			a: 1,
-			b: 0,
-			c: CGFloat(tan(-10 * CGFloat.pi / 180)),
-			d: 1,
-			tx: 0,
-			ty: 0
-		)
-	}
+	/// A 10° shear, computed once rather than on every body evaluation.
+	private static let italicShearTransform = CGAffineTransform(
+		a: 1,
+		b: 0,
+		c: tan(-10 * CGFloat.pi / 180),
+		d: 1,
+		tx: 0,
+		ty: 0
+	)
 }
 
 #Preview {

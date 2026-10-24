@@ -32,7 +32,7 @@ extension ResidenceInfoEdit {
 		var currencyCode: String?
 		var url: String
 		var notes: String
-		var photoPicker = PhotoPickerViewModel()
+		let photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
 		@ObservationIgnored
@@ -99,7 +99,7 @@ extension ResidenceInfoEdit {
 							$0.moveInDate = moveInDate
 							$0.moveOutDate = hasMoveOutDate ? moveOutDate : nil
 							$0.costType = costType
-							$0.monthlyCost = monthlyCost
+							$0.monthlyCost = #bind(monthlyCost)
 							$0.currencyCode = currencyCode
 							$0.url = url
 							$0.notes = notes

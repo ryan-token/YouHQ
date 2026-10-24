@@ -14,31 +14,6 @@
 	// This avoids the iOS bug where presenting a sheet from within another sheet
 	// causes both sheets to auto-dismiss.
 
-	struct CameraPresentation: Equatable {
-		let id: UUID
-		let onImageCaptured: (Data) -> Void
-		let onDismiss: () -> Void
-
-		static func == (
-			lhs: CameraPresentation, rhs: CameraPresentation
-		)
-			-> Bool
-		{
-			lhs.id == rhs.id
-		}
-	}
-
-	struct CameraPresentationPreferenceKey: PreferenceKey {
-		static let defaultValue: CameraPresentation? = nil
-
-		static func reduce(
-			value: inout CameraPresentation?,
-			nextValue: () -> CameraPresentation?
-		) {
-			value = nextValue() ?? value
-		}
-	}
-
 	private struct CameraOverlayHost: ViewModifier {
 		func body(content: Content) -> some View {
 			content

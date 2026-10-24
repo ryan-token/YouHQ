@@ -24,6 +24,10 @@ struct InfoSection<Content: View>: View {
 	) {
 		self.title = title
 		self.initialColor = backgroundColor
+		// Seeded once here rather than via `onChange(of:initial:)`: an initial-run sync would
+		// fire `onChange(of: backgroundColor)` and write the color back to the database (and
+		// CloudKit) every time the card appears. Later external changes arrive through
+		// `onChange(of: initialColor)` below.
 		self._backgroundColor = State(initialValue: backgroundColor)
 		self.onColorChange = onColorChange
 		self.onTap = onTap
@@ -54,13 +58,17 @@ struct InfoSection<Content: View>: View {
 			Group {
 				if let onTap {
 					Button(action: onTap) {
-						contentStack
-							.frame(minHeight: 24)
-							.contentShape(.rect)
+						InfoSectionContent {
+							content
+						}
+						.frame(minHeight: 24)
+						.contentShape(.rect)
 					}
 					.buttonStyle(.plain)
 				} else {
-					contentStack
+					InfoSectionContent {
+						content
+					}
 				}
 			}
 			.cardStyle(backgroundColor: backgroundColor)
@@ -68,13 +76,6 @@ struct InfoSection<Content: View>: View {
 		.onChange(of: initialColor) { _, newColor in
 			backgroundColor = newColor
 		}
-	}
-
-	private var contentStack: some View {
-		VStack(alignment: .leading, spacing: 4) {
-			content
-		}
-		.frame(maxWidth: .infinity, alignment: .leading)
 	}
 }
 

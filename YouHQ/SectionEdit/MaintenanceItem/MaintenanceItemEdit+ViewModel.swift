@@ -28,7 +28,7 @@ extension MaintenanceItemEdit {
 		var isUsingManualDueDate: Bool
 		var url: String
 		var notes: String
-		var photoPicker = PhotoPickerViewModel()
+		let photoPicker = PhotoPickerViewModel()
 
 		var isShowingPermissionAlert = false
 		private var previousShouldNotify: Bool
@@ -45,15 +45,16 @@ extension MaintenanceItemEdit {
 		}
 
 		var calculatedNextDueDate: Date {
-			let calendar = Calendar.current
-			let component = intervalType.calendarComponent
-			// Use lastCompletedAt if available, otherwise use current date
-			let baseDate = lastCompletedAt ?? Date()
-			return calendar.date(
-				byAdding: component,
-				value: intervalValue,
-				to: baseDate
-			) ?? baseDate
+			Self.nextDueDate(
+				lastCompletedAt: lastCompletedAt,
+				intervalType: intervalType,
+				intervalValue: intervalValue
+			)
+		}
+
+		/// Interval unit name, pluralized unless the interval is exactly one.
+		func unitLabel(for type: MaintenanceIntervalType) -> String {
+			intervalValue == 1 ? type.rawValue : "\(type.rawValue)s"
 		}
 
 		var title: String {
@@ -82,17 +83,11 @@ extension MaintenanceItemEdit {
 			self.notes = item.notes
 
 			// Calculate initial next due date
-			let calculated = {
-				let calendar = Calendar.current
-				let component = item.intervalType.calendarComponent
-				// Use lastCompletedAt if available, otherwise use current date
-				let baseDate = item.lastCompletedAt ?? Date()
-				return calendar.date(
-					byAdding: component,
-					value: item.intervalValue,
-					to: baseDate
-				) ?? baseDate
-			}()
+			let calculated = Self.nextDueDate(
+				lastCompletedAt: item.lastCompletedAt,
+				intervalType: item.intervalType,
+				intervalValue: item.intervalValue
+			)
 
 			self.dueDate = item.dueDate ?? calculated
 
@@ -157,7 +152,6 @@ extension MaintenanceItemEdit {
 								$0.notes = notes
 							}
 							.execute(db)
-						print("[DB] Database update completed")
 					}
 
 					try photoPicker.updateAsset(
@@ -173,8 +167,12 @@ extension MaintenanceItemEdit {
 					}
 
 					if let savedItem {
+						// Report scheduling failures instead of letting the
+						// unstructured task discard them.
 						Task {
-							_ = try await NotificationManager.shared.scheduleNotification(for: savedItem)
+							await withErrorReporting {
+								_ = try await NotificationManager.shared.scheduleNotification(for: savedItem)
+							}
 						}
 					}
 				}
@@ -257,6 +255,21 @@ extension MaintenanceItemEdit {
 
 		func openNotificationSettings() {
 			NotificationManager.shared.openNotificationSettings()
+		}
+
+		/// The due date one interval after the last completion, or after today
+		/// when the item has never been completed.
+		private static func nextDueDate(
+			lastCompletedAt: Date?,
+			intervalType: MaintenanceIntervalType,
+			intervalValue: Int
+		) -> Date {
+			let baseDate = lastCompletedAt ?? .now
+			return Calendar.current.date(
+				byAdding: intervalType.calendarComponent,
+				value: intervalValue,
+				to: baseDate
+			) ?? baseDate
 		}
 
 		private func loadExistingPhotoData() {

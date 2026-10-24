@@ -47,7 +47,7 @@ struct FullScreenMapView: View {
 			#endif
 			.toolbar {
 				ToolbarItem(placement: .confirmationAction) {
-					Button("Done", action: dismiss.callAsFunction)
+					Button(role: .confirm, action: dismiss.callAsFunction)
 				}
 			}
 			.onChange(of: selectedMapLocation) { _, newLocation in
@@ -57,6 +57,7 @@ struct FullScreenMapView: View {
 				}
 			}
 		}
+		.horizontalToolbarForSingleActionSheet()
 	}
 
 	private func updateCamera(to coordinate: CLLocationCoordinate2D) {

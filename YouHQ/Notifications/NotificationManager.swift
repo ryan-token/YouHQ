@@ -85,8 +85,8 @@ final class NotificationManager {
 
 		// Update the identifier in the database if it was empty
 		if item.notificationIdentifier.isEmpty {
-			withErrorReporting {
-				try database.write { db in
+			await withErrorReporting {
+				try await database.write { db in
 					try MaintenanceItem.find(item.id)
 						.update {
 							$0.notificationIdentifier = identifier
@@ -277,15 +277,9 @@ final class NotificationManager {
 			let allItems: [MaintenanceItem] = try await database.read { db in
 				try MaintenanceItem.fetchAll(db)
 			}
-			var items: [MaintenanceItem] = []
-			for item in allItems {
-				guard let profileID = item.profileID else {
-					items.append(item)
-					continue
-				}
-				if !sharedWithMeProfileIDs.contains(profileID) {
-					items.append(item)
-				}
+			let items = allItems.filter { item in
+				guard let profileID = item.profileID else { return true }
+				return !sharedWithMeProfileIDs.contains(profileID)
 			}
 
 			// Build the set of identifiers we expect to be pending so we can
@@ -325,7 +319,7 @@ final class NotificationManager {
 
 	// MARK: - Helpers
 
-	static func nextQuarterStartDate(from now: Date = Date()) -> Date {
+	static func nextQuarterStartDate(from now: Date = .now) -> Date {
 		let calendar = Calendar.current
 		let currentMonth = calendar.component(.month, from: now)
 		let quarterStartMonths = [1, 4, 7, 10]

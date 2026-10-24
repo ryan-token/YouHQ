@@ -76,7 +76,7 @@ struct SubscriptionSection: View {
 			category: .streaming,
 			monthlyCost: 15.99,
 			billingCycle: .monthly,
-			renewalDate: Date(),
+			renewalDate: .now,
 			isActive: true,
 			backgroundColor: "orange",
 			url: "https://netflix.com",

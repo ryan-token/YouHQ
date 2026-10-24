@@ -5,23 +5,37 @@
 //  Created by Ryan Token on 5/20/26.
 //
 
-import Combine
 import SwiftUI
 
 /// Auto-advancing image carousel that introduces the major sections of the app
 /// before sending the user into profile creation.
 struct OnboardingCarousel: View {
 	@Environment(\.colorScheme) private var colorScheme
+	#if !os(macOS)
+		@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+		@Environment(\.verticalSizeClass) private var verticalSizeClass
+	#endif
 	@Bindable var vm: AppOnboardingFlow.ViewModel
 
-	let screenshots: [OnboardingScreenshot]
 	let timeOnEachTab: Int
 	let lastAutoAdvanceTab: Int
 	let onSummaryAdvance: () -> Void
 
-	private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+	/// Regular in both dimensions, such as a full-screen iPad or iPhone Duo's inner display.
+	/// Landscape iPhones stay compact here because their height is compact.
+	private var usesRegularLayout: Bool {
+		#if os(macOS)
+			false
+		#else
+			horizontalSizeClass == .regular && verticalSizeClass == .regular
+		#endif
+	}
 
 	var body: some View {
+		// Both screenshot sets have the same slides, so the selected tab (owned by `vm`)
+		// carries over when folding or resizing switches between them.
+		let screenshots = OnboardingScreenshot.appOnboardingScreenshots(usesRegularLayout: usesRegularLayout)
+
 		VStack(spacing: 8) {
 			VStack(spacing: 0) {
 				ScalableImage("AppIcon-1024", height: 90)
@@ -35,13 +49,13 @@ struct OnboardingCarousel: View {
 					.fontWeight(.semibold)
 			}
 			.padding(.top)
-			#if !os(macOS)
-				.padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 0)
+			#if os(iOS)
+				.padding(.top, usesRegularLayout ? 40 : 0)
 			#endif
 
 			TabView(selection: $vm.currentTab) {
 				ForEach(0..<screenshots.count, id: \.self) { idx in
-					OnboardingCarouselSlide(screenshot: screenshots[idx], colorScheme: colorScheme)
+					Slide(screenshot: screenshots[idx], colorScheme: colorScheme)
 						.tag(idx)
 				}
 
@@ -58,33 +72,21 @@ struct OnboardingCarousel: View {
 		.onChange(of: vm.currentTab) {
 			vm.handleManualTabChange()
 		}
-		.onReceive(timer) { _ in
-			vm.handleTimerTick(timeOnEachTab: timeOnEachTab, lastAutoAdvanceTab: lastAutoAdvanceTab)
+		.task {
+			await runAutoAdvanceTimer()
 		}
 	}
-}
 
-private struct OnboardingCarouselSlide: View {
-	let screenshot: OnboardingScreenshot
-	let colorScheme: ColorScheme
-
-	var body: some View {
-		VStack {
-			ScalableImage(
-				colorScheme == .light ? screenshot.imageNameLight : screenshot.imageNameDark,
-				height: nil
-			)
-			.frame(maxHeight: 525)
-
-			HQText(screenshot.title)
-				.font(.title2)
-				.fontWeight(.bold)
-
-			HQText(screenshot.description)
-				.font(.headline)
-				.fontWeight(.medium)
+	/// Ticks once a second while auto-advance is active. Being a `task`, it stops when the
+	/// carousel leaves the screen and resumes when it returns.
+	private func runAutoAdvanceTimer() async {
+		while vm.isTimerActive {
+			do {
+				try await Task.sleep(for: .seconds(1))
+			} catch {
+				return
+			}
+			vm.handleTimerTick(timeOnEachTab: timeOnEachTab, lastAutoAdvanceTab: lastAutoAdvanceTab)
 		}
-		.padding(.horizontal, 8)
-		.padding(.bottom, 40)
 	}
 }

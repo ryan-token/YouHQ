@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct PaywallGradient: View {
-	@Environment(\.colorScheme) var colorScheme
+	@Environment(\.colorScheme) private var colorScheme
 
-	var finalGradientColor: Color {
+	private var finalGradientColor: Color {
 		colorScheme == .light ? .white : .black
 	}
 

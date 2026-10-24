@@ -53,8 +53,6 @@ struct AddVehicleSheet: View {
 			#if os(macOS)
 				.formStyle(.grouped)
 				.frame(minWidth: 500, minHeight: 350)
-			#else
-				.frame(minHeight: 350)
 			#endif
 			.navigationTitle("New Vehicle")
 			#if !os(macOS)
@@ -65,21 +63,17 @@ struct AddVehicleSheet: View {
 			#endif
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel") {
-						dismiss()
-					}
+					// The system supplies the standard Cancel label and symbol.
+					Button(role: .cancel, action: dismiss.callAsFunction)
 				}
 
 				ToolbarItem(placement: .confirmationAction) {
-					Button("Save") {
-						if let newVehicle = vm.save(),
-							vm.isSavingToOriginalProfile
-						{
-							selectedVehicle = newVehicle
-						}
-						dismiss()
-					}
-					.disabled(!vm.isValid)
+					Button("Save", systemImage: "checkmark", role: .confirm, action: save)
+						#if os(macOS)
+							// Keep the existing "Save" text button on macOS.
+							.labelStyle(.titleOnly)
+						#endif
+						.disabled(!vm.isValid)
 				}
 			}
 		}
@@ -90,6 +84,13 @@ struct AddVehicleSheet: View {
 		#if os(iOS)
 			.cameraOverlayHost()
 		#endif
+	}
+
+	private func save() {
+		if let newVehicle = vm.save(), vm.isSavingToOriginalProfile {
+			selectedVehicle = newVehicle
+		}
+		dismiss()
 	}
 }
 

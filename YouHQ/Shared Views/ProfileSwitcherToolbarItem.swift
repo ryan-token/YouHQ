@@ -11,8 +11,8 @@ import SwiftUI
 /// A self-contained toolbar item that allows users to quickly switch between profiles
 /// Only appears when the user has multiple profiles
 struct ProfileSwitcherToolbarItem: ToolbarContent {
-	@FetchAll(Profile.all, animation: .default) var profiles
-	@AppStorage(.selectedProfileIDKey) var selectedProfileIDString: String = ""
+	@FetchAll(Profile.all, animation: .default) private var profiles
+	@AppStorage(.selectedProfileIDKey) private var selectedProfileIDString: String = ""
 
 	private var selectedProfileID: UUID? {
 		guard !selectedProfileIDString.isEmpty else { return nil }
@@ -23,13 +23,13 @@ struct ProfileSwitcherToolbarItem: ToolbarContent {
 		// Only show if there are multiple profiles
 		if profiles.count > 1 {
 			ToolbarItem(placement: .navigation) {
-				Menu {
-					VStack {
-						HQText("Switch Profiles")
-						ForEach(profiles, id: \.id) { profile in
+				// A title as well as a symbol: iPhone Duo's vertical bar shows the symbol, and the
+				// overflow menu it collapses into shows the title.
+				Menu("Switch Profile", systemImage: "person.2.square.stack") {
+					Section("Switch Profiles") {
+						ForEach(profiles) { profile in
 							Button {
-								selectedProfileIDString = profile.id.uuidString
-								notifyProfileChanged()
+								select(profile)
 							} label: {
 								HStack {
 									HQText(profile.name)
@@ -40,11 +40,13 @@ struct ProfileSwitcherToolbarItem: ToolbarContent {
 							}
 						}
 					}
-				} label: {
-					Label("Switch Profile", systemImage: "person.2.square.stack")
-						.labelStyle(.iconOnly)
 				}
 			}
 		}
+	}
+
+	private func select(_ profile: Profile) {
+		selectedProfileIDString = profile.id.uuidString
+		notifyProfileChanged()
 	}
 }

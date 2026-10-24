@@ -9,22 +9,30 @@ import Dependencies
 import StoreKit
 import TelemetryDeck
 
-struct Analytics {
+enum Analytics {
 	@Dependency(\.context) private static var context
 
+	/// Screenshot mode never initializes TelemetryDeck, so it must not send anything either.
+	private static var isSending: Bool {
+		#if DEBUG
+			guard !ScreenshotMode.isEnabled else { return false }
+		#endif
+		return context == .live
+	}
+
 	static func sendSignal(_ signal: Signal) {
-		guard context == .live else { return }
+		guard isSending else { return }
 		TelemetryDeck.signal(signal.rawValue)
 	}
 
 	static func logError(id: ErrorID, message: String) {
 		print("Error: \(id). Message: \(message)")
-		guard context == .live else { return }
+		guard isSending else { return }
 		TelemetryDeck.errorOccurred(id: id.rawValue, message: message)
 	}
 
 	static func trackPurchase(for transaction: Transaction) {
-		guard context == .live else { return }
+		guard isSending else { return }
 		TelemetryDeck.purchaseCompleted(transaction: transaction)
 	}
 

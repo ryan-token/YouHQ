@@ -28,7 +28,10 @@ struct OnboardingPaywallStep: View {
 				shouldShowDismissButton: false,
 				onComplete: onComplete
 			)
-			.background(PaywallGradient())
+			.background {
+				PaywallGradient()
+					.ignoresSafeArea()
+			}
 		#endif
 	}
 }

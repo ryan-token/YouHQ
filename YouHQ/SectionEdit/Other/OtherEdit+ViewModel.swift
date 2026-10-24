@@ -23,7 +23,7 @@ extension OtherEdit {
 		var currencyCode: String?
 		var url: String
 		var notes: String
-		var photoPicker = PhotoPickerViewModel()
+		let photoPicker = PhotoPickerViewModel()
 
 		// Profile switching support
 		@ObservationIgnored
@@ -105,7 +105,7 @@ extension OtherEdit {
 								$0.profileID = currentProfileID
 								$0.name = name
 								$0.otherDescription = otherDescription
-								$0.monthlyCost = monthlyCost
+								$0.monthlyCost = #bind(monthlyCost)
 								$0.url = url
 								$0.notes = notes
 							}

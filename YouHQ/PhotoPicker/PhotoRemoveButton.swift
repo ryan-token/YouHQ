@@ -8,15 +8,17 @@
 import SwiftUI
 
 struct PhotoRemoveButton: View {
-	@Bindable var viewModel: PhotoPickerViewModel
+	let viewModel: PhotoPickerViewModel
 
 	var body: some View {
 		if viewModel.photoData != nil {
-			Button("Remove Image", role: .destructive) {
-				withAnimation {
-					viewModel.clearPhoto()
-				}
-			}
+			Button("Remove Image", role: .destructive, action: removePhoto)
+		}
+	}
+
+	private func removePhoto() {
+		withAnimation {
+			viewModel.clearPhoto()
 		}
 	}
 }

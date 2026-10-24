@@ -14,40 +14,38 @@ struct MoneyScreen: View {
 	@AppStorage("hideAccountNumbers") private var hideAccountNumbers = false
 
 	var body: some View {
-		Group {
-			List {
+		List {
+			Group {
+				SharingStatus(for: vm.selectedProfile)
+
 				Group {
-					SharingStatus(for: vm.selectedProfile)
-
-					Group {
-						if hasNoAccounts {
-							NoAccountsView(vm: vm)
-						} else {
-							Toggle(isOn: $hideAccountNumbers) {
-								HQText("Hide Account Numbers")
-									.foregroundStyle(.secondary)
-									.font(.headline)
-							}
-							#if os(macOS)
-								.padding(.vertical, 4)
-							#endif
-
-							MoneyInfo(vm: vm, hideAccountNumbers: hideAccountNumbers)
-
-							AddMoreButton(vm: vm)
+					if vm.hasNoMoneyItems {
+						NoAccountsView(vm: vm)
+					} else {
+						Toggle(isOn: $hideAccountNumbers) {
+							HQText("Hide Account Numbers")
+								.foregroundStyle(.secondary)
+								.font(.headline)
 						}
+						#if os(macOS)
+							.padding(.vertical, 4)
+						#endif
+
+						MoneyInfo(vm: vm, hideAccountNumbers: hideAccountNumbers)
+
+						AddMoreButton(vm: vm)
 					}
-					.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
 				}
-				.listRowSeparator(.hidden)
-				.listRowBackground(Color.clear)
+				.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
 			}
-			.animation(.default, value: vm.bankAccountViewModel.bankAccounts.count)
-			.animation(.default, value: vm.investmentAccountViewModel.investmentAccounts.count)
-			.animation(.default, value: vm.healthSavingsAccountViewModel.healthSavingsAccounts.count)
-			.animation(.default, value: vm.insuranceViewModel.insurancePolicies.count)
-			.animation(.default, value: vm.otherViewModel.others.count)
+			.listRowSeparator(.hidden)
+			.listRowBackground(Color.clear)
 		}
+		.animation(.default, value: vm.bankAccountViewModel.bankAccounts.count)
+		.animation(.default, value: vm.investmentAccountViewModel.investmentAccounts.count)
+		.animation(.default, value: vm.healthSavingsAccountViewModel.healthSavingsAccounts.count)
+		.animation(.default, value: vm.insuranceViewModel.insurancePolicies.count)
+		.animation(.default, value: vm.otherViewModel.others.count)
 		.navigationTitle("Money")
 		#if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
@@ -75,14 +73,6 @@ struct MoneyScreen: View {
 		#if !os(visionOS)
 			.scrollDismissesKeyboard(.immediately)
 		#endif
-	}
-
-	private var hasNoAccounts: Bool {
-		vm.bankAccountViewModel.bankAccounts.isEmpty
-			&& vm.investmentAccountViewModel.investmentAccounts.isEmpty
-			&& vm.healthSavingsAccountViewModel.healthSavingsAccounts.isEmpty
-			&& vm.insuranceViewModel.insurancePolicies.isEmpty
-			&& vm.otherViewModel.others.isEmpty
 	}
 }
 

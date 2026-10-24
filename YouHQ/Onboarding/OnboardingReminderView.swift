@@ -10,7 +10,7 @@ import SwiftUI
 struct OnboardingReminderView: View {
 	@State private var vm = ViewModel()
 
-	var onComplete: () -> Void
+	let onComplete: () -> Void
 
 	var body: some View {
 		ScrollView {
@@ -29,7 +29,7 @@ struct OnboardingReminderView: View {
 
 				HStack {
 					HQText("Remind me")
-					Picker("", selection: $vm.selectedInterval) {
+					Picker("Remind me", selection: $vm.selectedInterval) {
 						ForEach(ReminderInterval.allCases, id: \.self) { interval in
 							HQText(interval.displayName).tag(interval)
 						}
@@ -42,14 +42,7 @@ struct OnboardingReminderView: View {
 				if vm.selectedInterval != .none {
 					VStack(alignment: .leading, spacing: 6) {
 						OnboardingButton(
-							action: {
-								Task {
-									await vm.enableReminder()
-									if !vm.isShowingPermissionAlert {
-										onComplete()
-									}
-								}
-							},
+							action: enableReminder,
 							text: vm.enableButtonText,
 							iconName: "bell.fill",
 							backgroundColor: .green
@@ -61,16 +54,12 @@ struct OnboardingReminderView: View {
 					}
 				}
 
-				Button {
-					onComplete()
-				} label: {
+				Button(action: onComplete) {
 					HQText("Skip")
 						.fontWeight(.medium)
 				}
 				.frame(maxWidth: .infinity, alignment: .center)
 				.padding(.bottom, 24)
-
-				Spacer()
 			}
 			.padding()
 			.padding(.horizontal, 8)
@@ -89,6 +78,15 @@ struct OnboardingReminderView: View {
 			HQText(
 				"To receive update reminders, please enable notifications in Settings."
 			)
+		}
+	}
+
+	private func enableReminder() {
+		Task {
+			await vm.enableReminder()
+			if !vm.isShowingPermissionAlert {
+				onComplete()
+			}
 		}
 	}
 }

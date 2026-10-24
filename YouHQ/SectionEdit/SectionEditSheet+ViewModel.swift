@@ -45,6 +45,13 @@ extension SectionEditSheet {
 
 		let sectionString: String
 
+		/// Profile the edited item belongs to, forwarded to the section's view
+		/// model so the profile picker can bind to it.
+		var currentProfileID: UUID {
+			get { sectionViewModel.currentProfileID }
+			set { sectionViewModel.currentProfileID = newValue }
+		}
+
 		// swiftlint:disable:next function_body_length
 		init(section: EditableSection) {
 			self.section = section

@@ -17,6 +17,9 @@ extension SalaryChart {
 				updateSelectedJobFromLabel()
 			}
 		}
+		// Written from `body` through `prepareChartData(from:)` and only read to resolve a
+		// selection, so it's kept out of observation to avoid invalidating views mid-update.
+		@ObservationIgnored
 		private var cachedChartData: [JobChartData] = []
 
 		func prepareChartData(from jobs: [Job]) -> [JobChartData] {

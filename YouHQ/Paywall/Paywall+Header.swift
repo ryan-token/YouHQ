@@ -22,10 +22,11 @@ extension Paywall {
 						Button {
 							dismiss()
 						} label: {
-							Image(systemName: "xmark")
+							Label("Close", systemImage: "xmark")
+								.labelStyle(.iconOnly)
 								.font(.title2.weight(.medium))
 								.frame(width: 20, height: 30)
-								.contentShape(Circle())
+								.contentShape(.circle)
 						}
 						#if os(visionOS)
 							.buttonStyle(.bordered)
@@ -49,6 +50,8 @@ extension Paywall {
 			}
 			.padding(.top)
 			#if !os(macOS)
+				// The paywall extends under the top edge so its gradient reaches it; this keeps
+				// the header clear of the status bar and sheet grabber.
 				.padding(.top, 40)
 			#endif
 		}

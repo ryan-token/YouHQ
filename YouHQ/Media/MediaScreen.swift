@@ -19,7 +19,7 @@ struct MediaScreen: View {
 				SharingStatus(for: vm.selectedProfile)
 
 				Group {
-					if hasNoData {
+					if vm.hasNoMediaItems {
 						NoMediaView(vm: vm)
 					} else {
 						HideCostsToggle(hideCosts: $hideMediaCosts)
@@ -33,7 +33,8 @@ struct MediaScreen: View {
 							)
 						}
 
-						MediaInfo(vm: vm, hideCosts: hideMediaCosts)
+						MediaInfo(vm: vm)
+							.environment(\.hideMediaCosts, hideMediaCosts)
 					}
 				}
 				.opacity(vm.hasCompletedInitialLoad ? 1 : 0)
@@ -72,13 +73,6 @@ struct MediaScreen: View {
 		#if !os(visionOS)
 			.scrollDismissesKeyboard(.immediately)
 		#endif
-	}
-
-	var hasNoData: Bool {
-		vm.deviceViewModel.devices.isEmpty
-			&& vm.serviceProviderViewModel.serviceProviders.isEmpty
-			&& vm.subscriptionViewModel.subscriptions.isEmpty
-			&& vm.otherViewModel.others.isEmpty
 	}
 }
 

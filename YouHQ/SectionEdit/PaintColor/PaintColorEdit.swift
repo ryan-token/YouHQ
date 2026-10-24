@@ -107,10 +107,7 @@ struct PaintColorEdit: View {
 				LabeledField("Purchase Date") {
 					DatePicker(
 						"",
-						selection: Binding(
-							get: { vm.purchaseDate ?? Date() },
-							set: { vm.purchaseDate = $0 }
-						),
+						selection: $vm.purchaseDate.orNow,
 						displayedComponents: .date
 					)
 					.labelsHidden()
@@ -119,10 +116,7 @@ struct PaintColorEdit: View {
 				LabeledField("Application Date") {
 					DatePicker(
 						"",
-						selection: Binding(
-							get: { vm.applicationDate ?? Date() },
-							set: { vm.applicationDate = $0 }
-						),
+						selection: $vm.applicationDate.orNow,
 						displayedComponents: .date
 					)
 					.labelsHidden()

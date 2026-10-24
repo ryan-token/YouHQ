@@ -15,8 +15,8 @@ struct ProfilePickerSection: View {
 	let itemName: String
 	let isNewItem: Bool
 
+	/// Profile awaiting confirmation; non-nil while the move alert is shown.
 	@State private var pendingProfileID: UUID?
-	@State private var showingConfirmation = false
 
 	var body: some View {
 		// Only show if there's more than one profile
@@ -32,20 +32,15 @@ struct ProfilePickerSection: View {
 			}
 			.alert(
 				"Move to \(selectedProfileName)?",
-				isPresented: $showingConfirmation
-			) {
-				Button("Cancel", role: .cancel) {
-					// Revert to original profile
-					pendingProfileID = nil
-				}
+				item: $pendingProfileID
+			) { newProfileID in
+				// Dismissing clears `pendingProfileID`, reverting the picker
+				// to the current profile.
+				Button("Cancel", role: .cancel) {}
 				Button("Move") {
-					// Apply the change
-					if let newProfileID = pendingProfileID {
-						selectedProfileID = newProfileID
-					}
-					pendingProfileID = nil
+					selectedProfileID = newProfileID
 				}
-			} message: {
+			} message: { _ in
 				Text("This will move \(itemName) and all related items to the selected profile.")
 			}
 		}
@@ -66,7 +61,6 @@ struct ProfilePickerSection: View {
 					// For existing items, show confirmation before moving
 					if newValue != selectedProfileID {
 						pendingProfileID = newValue
-						showingConfirmation = true
 					}
 				}
 			}
@@ -74,8 +68,8 @@ struct ProfilePickerSection: View {
 	}
 
 	private var selectedProfileName: String {
-		if let pendingID = pendingProfileID,
-			let profile = profiles.first(where: { $0.profile.id == pendingID })
+		if let pendingProfileID,
+			let profile = profiles.first(where: { $0.profile.id == pendingProfileID })
 		{
 			return profile.profile.name
 		}

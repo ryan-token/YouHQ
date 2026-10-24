@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ResidenceScreen: View {
 	@AppStorage("hideResidenceCosts") private var hideResidenceCosts = false
-	@Dependency(\.defaultSyncEngine) var syncEngine
+	@Dependency(\.defaultSyncEngine) private var syncEngine
 	@Namespace private var addButtonNamespace
 	@State private var vm = ViewModel()
 
@@ -72,6 +72,11 @@ struct ResidenceScreen: View {
 		.task {
 			await vm.loadProfiles()
 			await vm.loadResidenceData()
+			#if DEBUG
+				if ScreenshotMode.opensMaintenanceItems {
+					vm.isNavigatingToMaintenanceItems = true
+				}
+			#endif
 		}
 		.reloadOnProfileChange(
 			profileCount: vm.profiles.count,

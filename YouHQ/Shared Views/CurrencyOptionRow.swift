@@ -7,32 +7,31 @@
 
 import SwiftUI
 
-/// A selectable row showing a currency option (a code with a localized name, or
-/// the "Default" choice) and a checkmark when selected. Shared by
-/// `CurrencyPicker` and `CurrencySettingsView`.
+/// The label for a currency option (a code with a localized name, or the
+/// "Default" choice) with a checkmark when selected. `CurrencyList` wraps it in
+/// the button that makes the selection.
 struct CurrencyOptionRow: View {
 	let title: String
 	let subtitle: String
 	let isSelected: Bool
-	let action: () -> Void
 
 	var body: some View {
-		Button(action: action) {
-			HStack {
-				VStack(alignment: .leading, spacing: 2) {
-					HQText(title)
-					HQText(subtitle)
-						.font(.caption)
-						.foregroundStyle(.secondary)
-				}
-				Spacer()
-				if isSelected {
-					Image(systemName: "checkmark")
-						.foregroundStyle(.tint)
-				}
+		HStack {
+			VStack(alignment: .leading, spacing: 2) {
+				HQText(title)
+				HQText(subtitle)
+					.font(.caption)
+					.foregroundStyle(.secondary)
 			}
-			.contentShape(.rect)
+			Spacer()
+			if isSelected {
+				Image(systemName: "checkmark")
+					.foregroundStyle(.tint)
+					.accessibilityHidden(true)
+			}
 		}
-		.buttonStyle(.plain)
+		.contentShape(.rect)
+		.accessibilityElement(children: .combine)
+		.accessibilityAddTraits(isSelected ? .isSelected : [])
 	}
 }

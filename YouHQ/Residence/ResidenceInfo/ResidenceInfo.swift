@@ -22,9 +22,7 @@ struct ResidenceInfo: View {
 				hideCosts: hideCosts,
 				backgroundColor: vm.backgroundColor,
 				onTap: { residence in
-					vm.sheetTransitionSourceID = residence.id.uuidString
-					vm.sectionToEdit = .residenceInfo(residence)
-					vm.isShowingSectionEditSheet = true
+					vm.showSectionEditSheet(for: .residenceInfo(residence), sourceID: residence.id.uuidString)
 				},
 				onColorChange: { newColor in
 					vm.updateResidenceBackgroundColor(newColor)
@@ -43,18 +41,11 @@ struct ResidenceInfo: View {
 						)
 					},
 					onTap: {
-						vm.sheetTransitionSourceID = utility.id.uuidString
-						vm.sectionToEdit = .utility(utility)
-						vm.isShowingSectionEditSheet = true
+						vm.showSectionEditSheet(for: .utility(utility), sourceID: utility.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: utility.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button(role: .destructive) {
-						vm.utilityViewModel.delete(utility)
-					} label: {
-						Label("Delete", systemImage: "trash")
-					}
+				.editableRow(id: utility.id) {
+					vm.utilityViewModel.delete(utility)
 				}
 			}
 
@@ -69,18 +60,11 @@ struct ResidenceInfo: View {
 						)
 					},
 					onTap: {
-						vm.sheetTransitionSourceID = policy.id.uuidString
-						vm.sectionToEdit = .insurancePolicy(policy)
-						vm.isShowingSectionEditSheet = true
+						vm.showSectionEditSheet(for: .insurancePolicy(policy), sourceID: policy.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button(role: .destructive) {
-						vm.insuranceViewModel.delete(policy)
-					} label: {
-						Label("Delete", systemImage: "trash")
-					}
+				.editableRow(id: policy.id) {
+					vm.insuranceViewModel.delete(policy)
 				}
 			}
 
@@ -95,18 +79,11 @@ struct ResidenceInfo: View {
 						)
 					},
 					onTap: {
-						vm.sheetTransitionSourceID = other.id.uuidString
-						vm.sectionToEdit = .other(other)
-						vm.isShowingSectionEditSheet = true
+						vm.showSectionEditSheet(for: .other(other), sourceID: other.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: other.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button(role: .destructive) {
-						vm.otherViewModel.delete(other)
-					} label: {
-						Label("Delete", systemImage: "trash")
-					}
+				.editableRow(id: other.id) {
+					vm.otherViewModel.delete(other)
 				}
 			}
 

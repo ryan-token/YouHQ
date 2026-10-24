@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct OnboardingCongratulationsView: View {
-	@AppStorage("hasLaunchedApp") var hasLaunchedApp = false
-	@Environment(\.dismiss) var dismiss
+	@AppStorage("hasLaunchedApp") private var hasLaunchedApp = false
 
 	var body: some View {
-		VStack(spacing: 32) {
-			Spacer()
-
+		// Scrolls rather than clipping on a short window at large text sizes, and stays
+		// vertically centered when it fits.
+		ScrollView {
 			VStack(spacing: 16) {
 				Image(systemName: "checkmark.circle.fill")
-					.font(.system(.largeTitle))
+					.font(.largeTitle)
 					.imageScale(.large)
 					.dynamicTypeSize(.xxxLarge)
 					.foregroundStyle(.green)
+					.accessibilityHidden(true)
 
 				HQText("Congratulations!")
 					.font(.largeTitle)
@@ -31,13 +31,20 @@ struct OnboardingCongratulationsView: View {
 					.fontWeight(.semibold)
 					.foregroundStyle(.secondary)
 			}
-
-			Spacer()
+			.frame(maxWidth: .infinity)
+			.padding()
 		}
+		.defaultScrollAnchor(.center, for: .alignment)
+		.scrollBounceBehavior(.basedOnSize)
 		.navigationBarBackButtonHidden(true)
-		.padding()
 		.task {
-			try? await Task.sleep(for: .seconds(3))
+			// Leaving before the pause ends (such as choosing another setting while this
+			// shows in the Settings detail column) cancels the sleep; don't finish then.
+			do {
+				try await Task.sleep(for: .seconds(3))
+			} catch {
+				return
+			}
 			withAnimation {
 				hasLaunchedApp = true
 				notifyOnboardingCompleted()

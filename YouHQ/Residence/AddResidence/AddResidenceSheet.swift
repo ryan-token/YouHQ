@@ -56,8 +56,6 @@ struct AddResidenceSheet: View {
 			#if os(macOS)
 				.formStyle(.grouped)
 				.frame(minWidth: 500, minHeight: 350)
-			#else
-				.frame(minHeight: 350)
 			#endif
 			.navigationTitle("New Residence")
 			#if !os(macOS)
@@ -68,21 +66,17 @@ struct AddResidenceSheet: View {
 			#endif
 			.toolbar {
 				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel") {
-						dismiss()
-					}
+					// The system supplies the standard Cancel label and symbol.
+					Button(role: .cancel, action: dismiss.callAsFunction)
 				}
 
 				ToolbarItem(placement: .confirmationAction) {
-					Button("Save") {
-						if let newResidence = vm.save(),
-							vm.isSavingToOriginalProfile
-						{
-							selectedResidence = newResidence
-						}
-						dismiss()
-					}
-					.disabled(!vm.isValid)
+					Button("Save", systemImage: "checkmark", role: .confirm, action: save)
+						#if os(macOS)
+							// Keep the existing "Save" text button on macOS.
+							.labelStyle(.titleOnly)
+						#endif
+						.disabled(!vm.isValid)
 				}
 			}
 		}
@@ -93,6 +87,14 @@ struct AddResidenceSheet: View {
 		#if os(iOS)
 			.cameraOverlayHost()
 		#endif
+	}
+
+	/// Saves the residence, selects it when it belongs to the profile being viewed, and dismisses.
+	private func save() {
+		if let newResidence = vm.save(), vm.isSavingToOriginalProfile {
+			selectedResidence = newResidence
+		}
+		dismiss()
 	}
 }
 

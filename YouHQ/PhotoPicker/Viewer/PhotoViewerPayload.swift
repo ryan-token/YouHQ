@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PhotoViewerPayload: Identifiable {
+struct PhotoViewerPayload: Identifiable, Equatable {
 	let id = UUID()
 	let data: Data
 }

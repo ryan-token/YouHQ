@@ -25,14 +25,22 @@ struct LabeledField<Content: View>: View {
 		LabeledContent {
 			content
 				.focused($isFocused)
+				.accessibilityLabel(Text(label))
 		} label: {
-			HQText(label)
-				.foregroundStyle(.secondary)
-				.contentShape(.rect)
-				.onTapGesture {
-					isFocused = true
-				}
+			// Tapping the label focuses its field, like tapping a label in Settings.
+			Button(action: focusField) {
+				HQText(label)
+					.foregroundStyle(.secondary)
+					.contentShape(.rect)
+			}
+			.buttonStyle(.plain)
+			// The field above carries the label, so VoiceOver skips this duplicate stop.
+			.accessibilityHidden(true)
 		}
+	}
+
+	private func focusField() {
+		isFocused = true
 	}
 }
 

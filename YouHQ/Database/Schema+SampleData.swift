@@ -11,8 +11,8 @@ extension Profile {
 	static let sampleData = Profile(
 		id: UUID(),
 		name: "John Doe",
-		createdAt: Date(),
-		updatedAt: Date()
+		createdAt: Date.now,
+		updatedAt: Date.now
 	)
 }
 
@@ -30,7 +30,7 @@ extension Residence {
 		moveInDate: Calendar.current.date(
 			byAdding: .year,
 			value: -2,
-			to: Date()
+			to: Date.now
 		),
 		moveOutDate: nil,
 		isCurrent: true,
@@ -129,7 +129,7 @@ extension Device {
 		purchaseDate: Calendar.current.date(
 			byAdding: .year,
 			value: -1,
-			to: Date()
+			to: Date.now
 		),
 		notes: "M3 Max, 64GB RAM"
 	)
@@ -146,7 +146,7 @@ extension Subscription {
 		renewalDate: Calendar.current.date(
 			byAdding: .month,
 			value: 1,
-			to: Date()
+			to: Date.now
 		),
 		isActive: true,
 		notes: "Premium plan with 4K"
@@ -162,7 +162,7 @@ extension Job {
 		startDate: Calendar.current.date(
 			byAdding: .year,
 			value: -3,
-			to: Date()
+			to: Date.now
 		),
 		endDate: nil,
 		isCurrent: true,
@@ -202,12 +202,12 @@ extension InsurancePolicy {
 		startDate: Calendar.current.date(
 			byAdding: .year,
 			value: -1,
-			to: Date()
+			to: Date.now
 		),
 		renewalDate: Calendar.current.date(
 			byAdding: .month,
 			value: 2,
-			to: Date()
+			to: Date.now
 		),
 		isActive: true,
 		notes: "Covers personal property and liability"
@@ -227,12 +227,12 @@ extension MaintenanceItem {
 		lastCompletedAt: Calendar.current.date(
 			byAdding: .month,
 			value: -2,
-			to: Date()
+			to: Date.now
 		),
 		dueDate: Calendar.current.date(
 			byAdding: .month,
 			value: 1,
-			to: Date()
+			to: Date.now
 		),
 		shouldNotify: true,
 		backgroundColor: "yellow",
@@ -252,12 +252,12 @@ extension MaintenanceItem {
 		lastCompletedAt: Calendar.current.date(
 			byAdding: .month,
 			value: -4,
-			to: Date()
+			to: Date.now
 		),
 		dueDate: Calendar.current.date(
 			byAdding: .month,
 			value: 1,
-			to: Date()
+			to: Date.now
 		),
 		shouldNotify: true,
 		backgroundColor: "orange",
@@ -280,14 +280,14 @@ extension PaintColor {
 		purchaseDate: Calendar.current.date(
 			byAdding: .month,
 			value: -6,
-			to: Date()
+			to: Date.now
 		),
 		surfaceType: "Walls",
 		storePurchasedFrom: "Home Depot",
 		applicationDate: Calendar.current.date(
 			byAdding: .month,
 			value: -5,
-			to: Date()
+			to: Date.now
 		),
 		backgroundColor: "brown",
 		url: "https://www.sherwin-williams.com/homeowners/color/find-and-explore-colors/paint-colors-by-family/SW7029-agreeable-gray",
@@ -307,14 +307,14 @@ extension PaintColor {
 		purchaseDate: Calendar.current.date(
 			byAdding: .month,
 			value: -3,
-			to: Date()
+			to: Date.now
 		),
 		surfaceType: "Walls",
 		storePurchasedFrom: "Lowe's",
 		applicationDate: Calendar.current.date(
 			byAdding: .month,
 			value: -2,
-			to: Date()
+			to: Date.now
 		),
 		backgroundColor: "gray",
 		url: "",
@@ -334,14 +334,14 @@ extension PaintColor {
 		purchaseDate: Calendar.current.date(
 			byAdding: .year,
 			value: -1,
-			to: Date()
+			to: Date.now
 		),
 		surfaceType: "Accent Wall",
 		storePurchasedFrom: "Sherwin-Williams Store",
 		applicationDate: Calendar.current.date(
 			byAdding: .year,
 			value: -1,
-			to: Date()
+			to: Date.now
 		),
 		backgroundColor: "blue",
 		url: "https://www.sherwin-williams.com/homeowners/color/find-and-explore-colors/paint-colors-by-family/SW6244-naval",

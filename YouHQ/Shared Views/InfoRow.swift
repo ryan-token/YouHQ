@@ -26,7 +26,7 @@ struct InfoRow: View {
 	}
 
 	var body: some View {
-		HStack(alignment: .top) {
+		AdaptiveRowStack(alignment: .top) {
 			HQText(label)
 				.font(.headline)
 			Group {

@@ -14,6 +14,7 @@ import SwiftUI
 /// otherwise see the paywall.
 struct PaywalledButton: View {
 	@Environment(PaywallManager.self) private var paywallManager
+	@Environment(PaywallPresenter.self) private var paywallPresenter
 
 	let title: String
 	let systemImage: String
@@ -22,14 +23,14 @@ struct PaywalledButton: View {
 	let action: () -> Void
 
 	var body: some View {
-		Button {
-			if paywallManager.hasUnlockedPremium || currentCount < threshold {
-				action()
-			} else {
-				paywallManager.showPaywall()
-			}
-		} label: {
-			Label(title, systemImage: systemImage)
+		Button(title, systemImage: systemImage, action: performAction)
+	}
+
+	private func performAction() {
+		if paywallManager.hasUnlockedPremium || currentCount < threshold {
+			action()
+		} else {
+			paywallPresenter.showPaywall()
 		}
 	}
 }

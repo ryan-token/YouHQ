@@ -21,9 +21,7 @@ struct VehicleInfo: View {
 				hideCosts: hideCosts,
 				backgroundColor: vm.backgroundColor,
 				onTap: { vehicle in
-					vm.sheetTransitionSourceID = vehicle.id.uuidString
-					vm.sectionToEdit = .vehicleInfo(vehicle)
-					vm.isShowingSectionEditSheet = true
+					vm.showSectionEditSheet(for: .vehicleInfo(vehicle), sourceID: vehicle.id.uuidString)
 				},
 				onColorChange: { newColor in
 					vm.updateVehicleBackgroundColor(newColor)
@@ -42,18 +40,11 @@ struct VehicleInfo: View {
 						)
 					},
 					onTap: {
-						vm.sheetTransitionSourceID = policy.id.uuidString
-						vm.sectionToEdit = .insurancePolicy(policy)
-						vm.isShowingSectionEditSheet = true
+						vm.showSectionEditSheet(for: .insurancePolicy(policy), sourceID: policy.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: policy.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button(role: .destructive) {
-						vm.insuranceViewModel.delete(policy)
-					} label: {
-						Label("Delete", systemImage: "trash")
-					}
+				.editableRow(id: policy.id) {
+					vm.insuranceViewModel.delete(policy)
 				}
 			}
 
@@ -68,18 +59,11 @@ struct VehicleInfo: View {
 						)
 					},
 					onTap: {
-						vm.sheetTransitionSourceID = other.id.uuidString
-						vm.sectionToEdit = .other(other)
-						vm.isShowingSectionEditSheet = true
+						vm.showSectionEditSheet(for: .other(other), sourceID: other.id.uuidString)
 					}
 				)
-				.matchedTransitionSource(id: other.id.uuidString, in: namespace)
-				.swipeActions(edge: .trailing, allowsFullSwipe: true) {
-					Button(role: .destructive) {
-						vm.otherViewModel.delete(other)
-					} label: {
-						Label("Delete", systemImage: "trash")
-					}
+				.editableRow(id: other.id) {
+					vm.otherViewModel.delete(other)
 				}
 			}
 

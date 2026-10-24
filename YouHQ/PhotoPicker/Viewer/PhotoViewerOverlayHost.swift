@@ -13,22 +13,6 @@ import SwiftUI
 // This avoids the iOS bug where presenting a sheet from within another sheet
 // causes both sheets to auto-dismiss.
 
-struct PhotoViewerPresentation {
-	let payload: PhotoViewerPayload
-	let onClose: () -> Void
-}
-
-struct PhotoViewerPresentationPreferenceKey: PreferenceKey {
-	static let defaultValue: PhotoViewerPresentation? = nil
-
-	static func reduce(
-		value: inout PhotoViewerPresentation?,
-		nextValue: () -> PhotoViewerPresentation?
-	) {
-		value = nextValue() ?? value
-	}
-}
-
 // MARK: - Environment Value
 
 extension EnvironmentValues {
@@ -55,6 +39,7 @@ private struct PhotoViewerOverlayHost: ViewModifier {
 							data: presentation.payload.data,
 							onClose: presentation.onClose
 						)
+						.id(presentation.payload.id)
 						.frame(maxWidth: .infinity, maxHeight: .infinity)
 						.transition(.opacity)
 					}

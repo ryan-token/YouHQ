@@ -34,7 +34,7 @@ struct LinkRow: View {
 	}
 
 	var body: some View {
-		HStack(alignment: .center) {
+		AdaptiveRowStack {
 			if let label {
 				HQText(label)
 					.font(.headline)

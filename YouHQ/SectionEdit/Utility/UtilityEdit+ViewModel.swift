@@ -85,7 +85,7 @@ extension UtilityEdit {
 								if accountNumber != loadedAccountNumber {
 									$0.accountNumber = #bind(accountNumber)
 								}
-								$0.approximateMonthlyCost = monthlyCost
+								$0.approximateMonthlyCost = #bind(monthlyCost)
 								$0.currencyCode = currencyCode
 								$0.url = url
 								$0.notes = notes

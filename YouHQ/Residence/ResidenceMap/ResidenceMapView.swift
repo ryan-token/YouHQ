@@ -21,7 +21,7 @@ struct ResidenceMapView: View {
 				ResidenceAnnotation(
 					location: location,
 					isSelected: location.residence.id == selectedResidence?.id,
-					onSelect: { selectedMapLocation = location }
+					selection: $selectedMapLocation
 				)
 				.tag(location)
 			}

@@ -16,17 +16,7 @@ extension VehicleScreen {
 		var body: some ToolbarContent {
 			if vm.vehicles.count > 1 {
 				ToolbarTitleMenu {
-					Picker(
-						"Choose Vehicle",
-						selection: Binding(
-							get: { vm.selectedVehicle?.id },
-							set: { newID in
-								if let vehicle = vm.vehicles.first(where: { $0.id == newID }) {
-									vm.selectedVehicle = vehicle
-								}
-							}
-						)
-					) {
+					Picker("Choose Vehicle", selection: $vm.pickerSelectedVehicleID) {
 						ForEach(vm.vehicles) { vehicle in
 							HQText(vehicle.displayName)
 								.tag(vehicle.id)

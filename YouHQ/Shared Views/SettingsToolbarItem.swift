@@ -23,34 +23,35 @@ struct SettingsToolbarItem: ToolbarContent {
 			@Environment(\.openWindow) private var openWindow
 
 			var body: some View {
-				Button {
-					openWindow(id: "settings")
-				} label: {
-					Image(systemName: "gear")
-				}
+				Button("Settings", systemImage: "gear", action: openSettings)
+			}
+
+			private func openSettings() {
+				openWindow(id: "settings")
 			}
 		}
 	#else
 		private struct SettingsButton: View {
-			@Environment(PaywallManager.self) private var paywallManager
+			@Environment(PaywallPresenter.self) private var paywallPresenter
 			@State private var isShowingSettingsSheet = false
 
 			var body: some View {
-				Button {
-					isShowingSettingsSheet = true
-				} label: {
-					Image(systemName: "gear")
-				}
-				.sheet(
-					isPresented: $isShowingSettingsSheet,
-					onDismiss: {
-						if paywallManager.needsSettingsDismissalBeforePaywall {
-							paywallManager.needsSettingsDismissalBeforePaywall = false
-							paywallManager.showPaywall()
-						}
+				Button("Settings", systemImage: "gear", action: showSettings)
+					.sheet(isPresented: $isShowingSettingsSheet, onDismiss: settingsDismissed) {
+						SettingsScreen()
 					}
-				) {
-					SettingsScreen()
+			}
+
+			private func showSettings() {
+				isShowingSettingsSheet = true
+			}
+
+			/// Settings asks to be dismissed before the paywall appears, so the paywall can
+			/// present from `AppTabView` instead of stacking on top of the Settings sheet.
+			private func settingsDismissed() {
+				if paywallPresenter.needsSettingsDismissalBeforePaywall {
+					paywallPresenter.needsSettingsDismissalBeforePaywall = false
+					paywallPresenter.showPaywall()
 				}
 			}
 		}
@@ -58,9 +59,12 @@ struct SettingsToolbarItem: ToolbarContent {
 }
 
 #Preview {
-	HQText("Sample view with toolbar")
-		.frame(width: 100, height: 74)
-		.toolbar {
-			SettingsToolbarItem()
-		}
+	NavigationStack {
+		HQText("Sample view with toolbar")
+			.toolbar {
+				SettingsToolbarItem()
+			}
+	}
+	.environment(PaywallManager())
+	.environment(PaywallPresenter())
 }

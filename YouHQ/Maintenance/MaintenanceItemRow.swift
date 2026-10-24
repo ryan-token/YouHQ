@@ -55,12 +55,11 @@ struct MaintenanceItemRow: View {
 
 				Spacer()
 
-				Button(action: onComplete) {
-					Image(systemName: "checkmark.circle")
-						.font(.title2)
-						.foregroundStyle(.green)
-				}
-				.buttonStyle(.plain)
+				Button("Mark as Complete", systemImage: "checkmark.circle", action: onComplete)
+					.labelStyle(.iconOnly)
+					.font(.title2)
+					.foregroundStyle(.green)
+					.buttonStyle(.plain)
 			}
 			.padding(.vertical, 4)
 		}

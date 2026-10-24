@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OnboardingSummaryView: View {
-	var onContinue: () -> Void
+	let onContinue: () -> Void
 
 	var body: some View {
 		ScrollView {
@@ -33,9 +33,7 @@ struct OnboardingSummaryView: View {
 						.fontWeight(.semibold)
 						.frame(maxWidth: .infinity, alignment: .leading)
 
-					Button {
-						onContinue()
-					} label: {
+					Button(action: onContinue) {
 						HQText("Let's Go")
 							.fontWeight(.semibold)
 							.frame(maxWidth: .infinity)
@@ -53,8 +51,6 @@ struct OnboardingSummaryView: View {
 				.fontWeight(.medium)
 				.frame(maxWidth: .infinity, alignment: .leading)
 				.padding(.top, 16)
-
-				Spacer()
 			}
 			.padding()
 			.padding(.horizontal, 8)

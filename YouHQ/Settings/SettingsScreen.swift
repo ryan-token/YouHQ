@@ -19,12 +19,15 @@ struct SettingsScreen: View {
 		#endif
 	}
 
-	@Environment(PaywallManager.self) private var paywallManager
-	@Environment(\.dismiss) var dismiss
+	@Environment(PaywallPresenter.self) private var paywallPresenter
+	@Environment(\.dismiss) private var dismiss
+	// Lives above the split view, so a chosen setting survives the split view collapsing and
+	// expanding as an iPad window resizes or an iPhone Duo folds. On iOS it stays `nil` until the
+	// user picks a row: a collapsed split view would push any preselection past the list.
 	@State private var selectedSetting: SettingsOption?
 
 	var body: some View {
-		@Bindable var paywallManager = paywallManager
+		@Bindable var paywallPresenter = paywallPresenter
 
 		NavigationSplitView {
 			List(selection: $selectedSetting) {
@@ -93,18 +96,19 @@ struct SettingsScreen: View {
 			#if !os(macOS)
 				.navigationBarTitleDisplayMode(.inline)
 				.toolbar {
-					ToolbarItem(placement: .navigation) {
+					ToolbarItem(placement: .cancellationAction) {
 						Button("Close", systemImage: "xmark") {
 							dismiss()
 						}
-						.labelStyle(.iconOnly)
 					}
 				}
 			#endif
 		} detail: {
 			Group {
 				switch selectedSetting {
-				case .premium:
+				// With nothing chosen, the detail column beside the list shows Premium; a collapsed
+				// split view shows the list instead.
+				case .premium, nil:
 					#if os(macOS)
 						ScrollView {
 							Paywall(shouldShowDismissButton: false)
@@ -124,35 +128,27 @@ struct SettingsScreen: View {
 					case .sampleData:
 						SampleDataSettingsView()
 				#endif
-				case nil:
-					ContentUnavailableView {
-						Label("No Selection", systemImage: "questionmark.circle")
-					} description: {
-						HQText("Tap an option in the sidebar for settings.")
-					}
 				}
 			}
 			.frame(maxHeight: .infinity, alignment: .top)
 		}
-		.onAppear {
-			#if !os(macOS)
-				if UIDevice.current.userInterfaceIdiom != .phone {
-					selectedSetting = .premium
-				}
-			#else
+		#if os(macOS)
+			.onAppear {
 				selectedSetting = .premium
-			#endif
-		}
+			}
+		#else
+			.horizontalToolbarForSingleActionSheet()
+		#endif
 		.onReceive(NotificationCenter.default.publisher(for: .onboardingCompleted)) { _ in
 			dismiss()
 		}
 		#if os(macOS)
-			.sheet(isPresented: $paywallManager.isShowingPaywallInSettingsWindow) {
+			.sheet(isPresented: $paywallPresenter.isShowingPaywallInSettingsWindow) {
 				Paywall()
 			}
 		#else
-			.onChange(of: paywallManager.needsSettingsDismissalBeforePaywall) {
-				if paywallManager.needsSettingsDismissalBeforePaywall {
+			.onChange(of: paywallPresenter.needsSettingsDismissalBeforePaywall) {
+				if paywallPresenter.needsSettingsDismissalBeforePaywall {
 					dismiss()
 				}
 			}
@@ -189,4 +185,6 @@ struct SettingsScreen: View {
 
 #Preview {
 	SettingsScreen()
+		.environment(PaywallManager())
+		.environment(PaywallPresenter())
 }

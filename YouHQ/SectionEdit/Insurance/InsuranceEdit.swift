@@ -23,18 +23,7 @@ struct InsuranceEdit: View {
 			Section("Policy Info") {
 				LabeledField("Type") {
 					Picker("", selection: $vm.type) {
-						ForEach(
-							InsurancePolicyType.allCases.filter {
-								if vm.policy.vehicleID != nil {
-									return $0 == .auto
-								} else if vm.policy.residenceID != nil {
-									return $0 == .home || $0 == .renters
-								} else {
-									return $0 != .home && $0 != .renters && $0 != .auto
-								}
-							},
-							id: \.self
-						) { type in
+						ForEach(vm.availableTypes, id: \.self) { type in
 							HQText(type.rawValue).tag(type)
 						}
 					}
@@ -86,10 +75,7 @@ struct InsuranceEdit: View {
 					LabeledField("Renewal Date") {
 						DatePicker(
 							"",
-							selection: Binding(
-								get: { vm.renewalDate ?? Date() },
-								set: { vm.renewalDate = $0 }
-							),
+							selection: $vm.renewalDate.orNow,
 							displayedComponents: .date
 						)
 						.labelsHidden()

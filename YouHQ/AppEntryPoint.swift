@@ -8,14 +8,22 @@
 import SwiftUI
 
 struct AppEntryPoint: View {
-	@AppStorage("hasLaunchedApp") var hasLaunchedApp = false
+	@AppStorage("hasLaunchedApp") private var hasLaunchedApp = false
+	// One per window: `WindowGroup` creates a separate `AppEntryPoint` for each scene.
+	@State private var paywallPresenter = PaywallPresenter()
 
 	var body: some View {
-		if hasLaunchedApp {
-			AppTabView()
-		} else {
-			AppOnboardingFlow()
+		Group {
+			if hasLaunchedApp {
+				AppTabView()
+			} else {
+				AppOnboardingFlow()
+			}
 		}
+		.environment(paywallPresenter)
+		#if DEBUG
+			.preferredColorScheme(ScreenshotMode.colorScheme)
+		#endif
 	}
 }
 

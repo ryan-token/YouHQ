@@ -25,10 +25,10 @@ extension VehicleScreen {
 		@FetchAll(Vehicle.none, animation: .default) var vehicles
 
 		// Child view models for entity-specific operations
-		var insuranceViewModel = InsurancePolicyViewModel()
-		var otherViewModel = OtherItemViewModel()
-		var paintColorViewModel = PaintColorViewModel()
-		var maintenanceViewModel = MaintenanceItemViewModel()
+		let insuranceViewModel = InsurancePolicyViewModel()
+		let otherViewModel = OtherItemViewModel()
+		let paintColorViewModel = PaintColorViewModel()
+		let maintenanceViewModel = MaintenanceItemViewModel()
 
 		@ObservationIgnored
 		@Shared(.appStorage("selectedVehicleID")) var selectedVehicleID: String?
@@ -65,6 +65,27 @@ extension VehicleScreen {
 					}
 				}
 			}
+		}
+
+		/// The selected vehicle's ID, for binding vehicle pickers. Setting an ID that
+		/// doesn't match a loaded vehicle leaves the selection unchanged.
+		var pickerSelectedVehicleID: Vehicle.ID? {
+			get { selectedVehicle?.id }
+			set {
+				if let vehicle = vehicles.first(where: { $0.id == newValue }) {
+					selectedVehicle = vehicle
+				}
+			}
+		}
+
+		/// The persisted selection as a UUID, used to build the pushed vehicle screens.
+		var persistedSelectedVehicleUUID: UUID? {
+			selectedVehicleID.flatMap { UUID(uuidString: $0) }
+		}
+
+		/// The selected vehicle's name, or "Vehicles" when none is selected.
+		var navigationTitle: String {
+			selectedVehicle?.displayName ?? "Vehicles"
 		}
 
 		// used to determine whether we should show the paywall
@@ -201,40 +222,50 @@ extension VehicleScreen {
 
 		// MARK: SHEET PRESENTATION
 
+		func showSectionEditSheet(for section: EditableSection, sourceID: String) {
+			sectionToEdit = section
+			sheetTransitionSourceID = sourceID
+			isShowingSectionEditSheet = true
+		}
+
 		func showAddInsurancePolicySheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			sectionToEdit = .insurancePolicyDraft(
-				insuranceViewModel.createVehicleDraft(for: vehicleID, profileID: profileID)
+			showSectionEditSheet(
+				for: .insurancePolicyDraft(
+					insuranceViewModel.createVehicleDraft(for: vehicleID, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 
 		func showAddMaintenanceItemSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id else { return }
-			sectionToEdit = .maintenanceItemDraft(maintenanceViewModel.createVehicleDraft(for: vehicleID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .maintenanceItemDraft(maintenanceViewModel.createVehicleDraft(for: vehicleID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddPaintColorSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id else { return }
-			sectionToEdit = .paintColorDraft(paintColorViewModel.createVehicleDraft(for: vehicleID))
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
+			showSectionEditSheet(
+				for: .paintColorDraft(paintColorViewModel.createVehicleDraft(for: vehicleID)),
+				sourceID: sourceID
+			)
 		}
 
 		func showAddOtherSheet(sourceID: String = "addButton") {
 			guard let vehicleID = selectedVehicle?.id,
 				let profileID = selectedProfile?.profile.id
 			else { return }
-			sectionToEdit = .otherDraft(
-				otherViewModel.createVehicleDraft(for: vehicleID, profileID: profileID)
+			showSectionEditSheet(
+				for: .otherDraft(
+					otherViewModel.createVehicleDraft(for: vehicleID, profileID: profileID)
+				),
+				sourceID: sourceID
 			)
-			sheetTransitionSourceID = sourceID
-			isShowingSectionEditSheet = true
 		}
 
 	}

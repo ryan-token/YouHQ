@@ -15,9 +15,8 @@ struct OnboardingProfileCreationView: View {
 
 	@State private var selectedResidence: Residence?
 	@State private var selectedVehicle: Vehicle?
-	@State private var draftJob: Job?
 
-	var onComplete: () -> Void
+	let onComplete: () -> Void
 
 	var body: some View {
 		ScrollView {
@@ -35,28 +34,7 @@ struct OnboardingProfileCreationView: View {
 							.fontWeight(.semibold)
 
 						if !vm.hasAnyProfile {
-							VStack(alignment: .leading, spacing: 12) {
-								Text("A **Profile** holds residences, vehicles, money, media, and career info.")
-
-								Text(
-									"""
-									**Create additional profiles** to manage data for someone else, \
-									or to isolate your own data more cleanly.
-									"""
-								)
-
-								Text("You can **switch between profiles** at any time.")
-
-								Text(
-									"""
-									Profiles can be **shared** with others. Sharing a profile \
-									with someone else means all data in that profile \
-									will be synced seamlessly between all participants.
-									"""
-								)
-							}
-							.foregroundStyle(.secondary)
-							.fontDesign(.rounded)
+							ProfileExplanation()
 						}
 
 						// Show limitation card if free user has existing profile
@@ -66,9 +44,7 @@ struct OnboardingProfileCreationView: View {
 
 						// Button logic: Subscribe for free users with profile, Create for others
 						if vm.hasAnyProfile && !paywallManager.hasUnlockedPremium {
-							Button {
-								vm.showPaywallSheet = true
-							} label: {
+							Button(action: vm.presentPaywall) {
 								HQText("Subscribe to Create More Profiles")
 									.fontWeight(.medium)
 									.frame(maxWidth: .infinity)
@@ -76,9 +52,7 @@ struct OnboardingProfileCreationView: View {
 							.buttonStyle(.borderedProminent)
 							.controlSize(.large)
 						} else {
-							Button {
-								vm.isShowingCreateProfileAlert = true
-							} label: {
+							Button(action: vm.presentCreateProfileAlert) {
 								AddMoreButtonLabel(
 									text: vm.hasAnyProfile ? "Create New Profile" : "Create Profile",
 									backgroundColor: .indigo
@@ -90,61 +64,13 @@ struct OnboardingProfileCreationView: View {
 				}
 
 				if vm.createdNewProfile {
-					VStack(alignment: .leading, spacing: 12) {
-						HQText("Now add your first residence, vehicle, or job:")
-							.fontWeight(.medium)
-							.padding(.bottom, 4)
-
-						OnboardingButton(
-							action: {
-								if paywallManager.hasUnlockedPremium || vm.residencesCount < Constants.paywallResidencesThreshold {
-									vm.showAddResidence = true
-								} else {
-									vm.showPaywallSheet = true
-								}
-							},
-							text: "Add Residence",
-							iconName: "house.fill",
-							backgroundColor: .indigo
-						)
-
-						OnboardingButton(
-							action: {
-								if paywallManager.hasUnlockedPremium || vm.vehiclesCount < Constants.paywallVehiclesThreshold {
-									vm.showAddVehicle = true
-								} else {
-									vm.showPaywallSheet = true
-								}
-							},
-							text: "Add Vehicle",
-							iconName: "car.fill",
-							backgroundColor: .teal
-						)
-
-						OnboardingButton(
-							action: {
-								if let selectedProfileID = vm.selectedProfileID {
-									if paywallManager.hasUnlockedPremium || vm.jobsCount < Constants.paywallCoreItemsThreshold {
-										draftJob = Job(id: UUID(), profileID: selectedProfileID)
-										vm.showAddJob = true
-									} else {
-										vm.showPaywallSheet = true
-									}
-								}
-							},
-							text: "Add Job",
-							iconName: "briefcase.fill",
-							backgroundColor: .blue
-						)
-					}
-					.transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
+					AddFirstItemSection(vm: vm)
+						.transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .bottom)))
 				}
 
 				// Show Skip button if user has any profiles
 				if vm.hasAnyProfile {
-					Button {
-						onComplete()
-					} label: {
+					Button(action: onComplete) {
 						HQText("Skip")
 							.fontWeight(.medium)
 					}
@@ -165,8 +91,6 @@ struct OnboardingProfileCreationView: View {
 				.font(.callout)
 				.fontWeight(.medium)
 				.frame(maxWidth: .infinity, alignment: .leading)
-
-				Spacer()
 			}
 			.padding()
 			.padding(.horizontal, 8)
@@ -216,7 +140,7 @@ struct OnboardingProfileCreationView: View {
 			}
 		}
 		.sheet(isPresented: $vm.showAddJob) {
-			if let draftJob {
+			if let draftJob = vm.draftJob {
 				SectionEditSheet(section: .jobDraft(draftJob))
 			}
 		}
@@ -228,7 +152,7 @@ struct OnboardingProfileCreationView: View {
 		}
 		.onChange(of: vm.showAddJob) { _, isShowing in
 			// When job sheet dismisses, check if a job was saved
-			if !isShowing, let draftJob {
+			if !isShowing, let draftJob = vm.draftJob {
 				Task {
 					let wasSaved = await vm.checkIfJobWasSaved(jobID: draftJob.id)
 					if wasSaved {

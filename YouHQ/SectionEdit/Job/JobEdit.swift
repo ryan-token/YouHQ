@@ -59,10 +59,7 @@ struct JobEdit: View {
 				LabeledField("Start Date") {
 					DatePicker(
 						"",
-						selection: Binding(
-							get: { vm.startDate ?? Date() },
-							set: { vm.startDate = $0 }
-						),
+						selection: $vm.startDate.orNow,
 						displayedComponents: [.date]
 					)
 					.labelsHidden()
@@ -72,15 +69,10 @@ struct JobEdit: View {
 					LabeledField("End Date") {
 						DatePicker(
 							"",
-							selection: Binding(
-								get: { vm.endDate ?? Date() },
-								set: { vm.endDate = $0 }
-							),
+							selection: $vm.endDate.orNow,
 							displayedComponents: [.date]
 						)
 						.labelsHidden()
-						.disabled(vm.isCurrent)
-						.opacity(vm.isCurrent ? 0.5 : 1.0)
 					}
 				}
 

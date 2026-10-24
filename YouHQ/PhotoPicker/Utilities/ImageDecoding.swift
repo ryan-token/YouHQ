@@ -8,18 +8,20 @@
 import Foundation
 import ImageIO
 
-func orientedCGImage(from data: Data) -> CGImage? {
+/// Decodes `data` upright, downsampled so its longer side is at most `maxPixelSize` pixels,
+/// or at full size when `maxPixelSize` is `nil`.
+nonisolated func orientedCGImage(from data: Data, maxPixelSize: Int? = nil) -> CGImage? {
 	guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
 		return nil
 	}
 
-	let maxPixelSize = maxPixelSize(from: source)
 	var options: [CFString: Any] = [
 		kCGImageSourceCreateThumbnailFromImageAlways: true,
 		kCGImageSourceCreateThumbnailWithTransform: true
 	]
-	if let maxPixelSize {
-		options[kCGImageSourceThumbnailMaxPixelSize] = maxPixelSize
+	if let pixelSize = pixelSize(of: source) {
+		let fullSize = Int(max(pixelSize.width, pixelSize.height))
+		options[kCGImageSourceThumbnailMaxPixelSize] = min(maxPixelSize ?? fullSize, fullSize)
 	}
 
 	return CGImageSourceCreateThumbnailAtIndex(
@@ -30,15 +32,32 @@ func orientedCGImage(from data: Data) -> CGImage? {
 		?? CGImageSourceCreateImageAtIndex(source, 0, nil)
 }
 
-private func maxPixelSize(from source: CGImageSource) -> Int? {
-	guard
-		let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
-			as? [CFString: Any],
-		let width = properties[kCGImagePropertyPixelWidth] as? Int,
-		let height = properties[kCGImagePropertyPixelHeight] as? Int
+/// The size `data` displays at once its orientation is applied, read from the image header
+/// without decoding pixels.
+nonisolated func orientedPixelSize(of data: Data) -> CGSize? {
+	guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+		let size = pixelSize(of: source)
 	else {
 		return nil
 	}
 
-	return max(width, height)
+	// EXIF orientations 5 through 8 rotate the image a quarter turn.
+	let orientation =
+		(CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any])?[kCGImagePropertyOrientation]
+		as? Int ?? 1
+	return orientation >= 5 ? CGSize(width: size.height, height: size.width) : size
+}
+
+private nonisolated func pixelSize(of source: CGImageSource) -> CGSize? {
+	guard
+		let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil)
+			as? [CFString: Any],
+		let width = properties[kCGImagePropertyPixelWidth] as? Int,
+		let height = properties[kCGImagePropertyPixelHeight] as? Int,
+		width > 0, height > 0
+	else {
+		return nil
+	}
+
+	return CGSize(width: width, height: height)
 }
